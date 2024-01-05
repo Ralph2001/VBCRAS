@@ -50,10 +50,6 @@ function mainWindow() {
 
 
 app.whenReady().then(() => {
-<<<<<<< HEAD
-=======
-  const { net } = require('electron')
->>>>>>> 3bcb63d86e5c6f4ca0553947930db7f042d14856
   electronApp.setAppUserModelId('com.localcivilregistry.office');
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
@@ -67,12 +63,6 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-<<<<<<< HEAD
-=======
-    if (pythonProcess) {
-      pythonProcess.kill('SIGINT');  // Send SIGINT to terminate gracefully
-    }
->>>>>>> 3bcb63d86e5c6f4ca0553947930db7f042d14856
     app.quit()
   }
 })
