@@ -1,10 +1,10 @@
 {
-  "name": "lcro",
+  "name": "thegenerator",
   "version": "1.0.0",
-  "description": "An Electron application with Vue",
+  "description": "Auto Generate Documents",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://www.electronjs.org",
+  "author": "Ralph A. Villanueva",
+  "homepage": "#",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
@@ -20,6 +20,8 @@
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
     "axios": "^1.6.4",
+    "datatables.net-dt": "^1.13.8",
+    "datatables.net-vue3": "^2.1.3",
     "electron-updater": "^6.1.1",
     "flowbite": "^2.2.1",
     "mysql2": "^3.6.5",

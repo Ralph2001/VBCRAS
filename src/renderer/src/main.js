@@ -7,7 +7,6 @@ import './assets/css/index.css'
 import Start from './views/Start.vue';
 import Scanned from './views/Scanned.vue';
 
-
 const routes = [
     {
         path: "/", component: Start, name: "Start"

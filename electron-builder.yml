@@ -11,7 +11,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: lcro
+  executableName: Local Civil Registry
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
