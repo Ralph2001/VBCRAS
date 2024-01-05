@@ -1,18 +1,12 @@
 import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-<<<<<<< HEAD
 import icon from '../../resources/icon.png'
 import { PythonShell } from 'python-shell';
 var child = require('child_process').execFile;
-=======
-import icon from '../../resources/icon.png?asset'
-import { PythonShell } from 'python-shell';
->>>>>>> 3bcb63d86e5c6f4ca0553947930db7f042d14856
 
 let pythonProcess;
 
-<<<<<<< HEAD
 if (is.dev) {
   PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
     console.log('finished');
@@ -20,12 +14,6 @@ if (is.dev) {
 } else {
   child(join(__dirname, '../../resources/script/dist/main/main.exe'))
 }
-=======
-PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
-  console.log('finished');
-  pythonProcess = this;
-})
->>>>>>> 3bcb63d86e5c6f4ca0553947930db7f042d14856
 
 
 //Main Window
