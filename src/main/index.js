@@ -1,8 +1,11 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { PythonShell } from 'python-shell';
+const { dialog } = require('electron')
+
+
 var child = require('child_process').execFile;
 
 let pythonProcess;
@@ -14,6 +17,16 @@ if (is.dev) {
 } else {
   child(join(__dirname, '../../resources/script/dist/main/main.exe'))
 }
+
+
+ipcMain.handle('select-folder', async (event) => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    defaultPath: 'C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS'
+  });
+
+  return { canceled, filePaths }; // Return result directly
+});
 
 
 //Main Window
@@ -30,6 +43,7 @@ function mainWindow() {
     }
   })
 
+  mainWindow.setMinimumSize(817, 610)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()

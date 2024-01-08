@@ -1,5 +1,5 @@
 {
-  "name": "thegenerator",
+  "name": "System",
   "version": "1.0.0",
   "description": "Auto Generate Documents",
   "main": "./out/main/index.js",
