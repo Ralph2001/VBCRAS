@@ -4,6 +4,10 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { PythonShell } from 'python-shell';
 const { dialog } = require('electron')
+const os = require('os');
+const username = os.userInfo().username;
+
+
 
 
 var child = require('child_process').execFile;
@@ -22,10 +26,10 @@ if (is.dev) {
 ipcMain.handle('select-folder', async (event) => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openDirectory'],
-    defaultPath: 'C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS'
+    defaultPath: 'C:\\Users\\'+ username+ '\\SynologyDrive\\Joan\\SCANNED DOCUMENTS'
   });
 
-  return { canceled, filePaths }; // Return result directly
+  return { canceled, filePaths }; 
 });
 
 
