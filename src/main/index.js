@@ -7,7 +7,7 @@ const { dialog } = require('electron')
 const os = require('os');
 const username = os.userInfo().username;
 var child = require('child_process').execFile;
-
+const fs = require('fs-extra')
 
 
 
@@ -45,6 +45,19 @@ ipcMain.handle('select-file', async (event) => {
   return { canceled, filePaths };
 });
 
+
+ipcMain.handle('move-file', async (event, data) => {
+  const original = data.value1;
+  const destination = data.value2;
+
+  try {
+    await fs.move(original, destination);
+    event.returnValue = 'File moved successfully!';
+  } catch (err) {
+    console.error(err);
+    event.returnValue = 'Error moving file: ' + err.message;
+  }
+});
 
 
 

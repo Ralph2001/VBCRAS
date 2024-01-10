@@ -24,5 +24,11 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     const { canceled, filePaths } = await ipcRenderer.invoke('select-file');
     return canceled ? null : filePaths[0];
   },
+  moveFile: async (data) => {
+    const result = await ipcRenderer.invoke('sendDataToMain', data);
+    return result
+  },
 });
+
+
 

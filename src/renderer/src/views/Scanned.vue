@@ -11,7 +11,7 @@
     <div class="flex flex-row justify-between p-2">
       <p class="text-2xl text-slate-800 text-wrap font-medium">Scanned Documents</p>
       <button @click="openModal"
-        class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-sm text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-sm text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         type="button">
         ADD
       </button>
@@ -63,8 +63,7 @@
               class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
               <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                 <div class="flex items-center ps-3">
-                  <input id="select_birth" type="radio" value="birth" name="list-radio" 
-                    @change="updateFilePath"
+                  <input id="select_birth" type="radio" value="birth" name="list-radio" @change="updateFilePath"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                   <label for="select_birth"
                     class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Birth
@@ -73,8 +72,7 @@
               </li>
               <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                 <div class="flex items-center ps-3">
-                  <input id="select_death" type="radio" value="death" name="list-radio" 
-                    @change="updateFilePath"
+                  <input id="select_death" type="radio" value="death" name="list-radio" @change="updateFilePath"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                   <label for="select_death"
                     class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Death</label>
@@ -82,8 +80,7 @@
               </li>
               <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                 <div class="flex items-center ps-3">
-                  <input id="select_marriage" type="radio" value="marriage" name="list-radio" 
-                    @change="updateFilePath"
+                  <input id="select_marriage" type="radio" value="marriage" name="list-radio" @change="updateFilePath"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                   <label for="select_marriage"
                     class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Marriage</label>
@@ -91,8 +88,7 @@
               </li>
               <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                 <div class="flex items-center ps-3">
-                  <input id="select_legal" type="radio" value="legal" name="list-radio" 
-                    @change="updateFilePath"
+                  <input id="select_legal" type="radio" value="legal" name="list-radio" @change="updateFilePath"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                   <label for="select_legal"
                     class="block text-nowrap w-full py-3 px-2 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Legal
@@ -101,8 +97,7 @@
               </li>
               <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                 <div class="flex items-center ps-3">
-                  <input id="select_other" type="radio" value="other" name="list-radio" 
-                    @change="updateFilePath"
+                  <input id="select_other" type="radio" value="other" name="list-radio" @change="updateFilePath"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
                   <label for="select_other"
                     class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Other</label>
@@ -198,6 +193,18 @@
           console.error("Error during file selection:", error);
         }
       },
+      moveFileSelection() {
+        const data = {
+          value1: 'data1',
+          value2: 42,
+          value3: ['item1', 'item2']
+        }; 
+        
+        electronAPI.moveFile(data)
+          .then((responseFromMain) => {
+            console.log('Response from main process:', responseFromMain);
+          });
+      }
     },
     components: {},
   };
