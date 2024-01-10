@@ -49,15 +49,6 @@ ipcMain.handle('select-file', async (event) => {
 
 
 
-
-
-
-
-
-
-
-
-
 //Main Window
 function mainWindow() {
   const mainWindow = new BrowserWindow({
