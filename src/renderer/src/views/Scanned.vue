@@ -66,8 +66,21 @@
           </button>
         </div>
         <div class="p-4 md:p-5 space-y-4">
-          <div>
-            <label
+          <div class="flex flex-row justify-start items-center p-2 gap-1">
+            <div>
+              <img
+                src="https://png.pngtree.com/png-clipart/20220612/original/pngtree-pdf-file-icon-png-png-image_7965915.png"
+                class="h-12 max-w-xs"
+                alt=""
+              />
+            </div>
+            <div>
+              <p class="text-md font-semibold text-slate-900 text-justify">
+                {{ fileinfo }}
+              </p>
+              <p class="text-sm text-slate-900 text-justify">{{ filesize }} MB</p>
+            </div>
+            <!-- <label
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               for="dropInput"
               >File</label
@@ -78,7 +91,7 @@
               id="dropInput"
               ref="dropInput"
               type="file"
-            />
+            /> -->
           </div>
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -205,7 +218,6 @@
               >Folder Path</label
             >
             <div class="flex flex-row gap-1">
-
               <input
                 type="text"
                 id="folder-input"
@@ -256,6 +268,8 @@ export default {
     return {
       members: [],
       filename: "",
+      fileinfo: "",
+      filesize: "",
       filePathChange: "",
       isDropzoneVisible: false,
     };
@@ -293,21 +307,31 @@ export default {
         modal.show();
         this.$refs.filename.focus();
         this.filename = file.name;
+        this.fileinfo = file.name;
+        this.filesize = (file.size / (1024 * 1024)).toFixed(2);
       } else {
         this.isDropzoneVisible = false;
         alert("PDF FILE ONLY!");
       }
     },
-    closeModal() {
-      this.isDropzoneVisible = false;
-      const modal = new Modal(this.$refs.dropModal);
-      modal.hide();
+
+    async handleFileSelection() {
+      try {
+        const selectedFile = await window.LocalCivilApi.selectFile();
+
+        if (selectedFile) {
+          this.isDropzoneVisible = false;
+          console.log(selectedFile);
+          const modal = new Modal(this.$refs.dropModal);
+          modal.show();
+        } else {
+          console.log("File selection was canceled.");
+        }
+      } catch (error) {
+        console.error("Error during file selection:", error);
+      }
     },
-    openModal() {
-      this.isDropzoneVisible = false;
-      const modal = new Modal(this.$refs.dropModal);
-      modal.show();
-    },
+
     updateFilePath() {
       switch (this.selectedOption) {
         case "birth":
@@ -333,7 +357,16 @@ export default {
           this.filePathChange = "";
       }
     },
+    closeModal() {
+      this.isDropzoneVisible = false;
+      const modal = new Modal(this.$refs.dropModal);
+      modal.hide();
+    },
+    openModal() {
+      this.handleFileSelection();
+    },
   },
+
   mounted() {
     // Select Folder API
     const selectFolderButton = document.getElementById("select-folder");
@@ -344,7 +377,7 @@ export default {
 
     async function handleFolderSelection() {
       try {
-        const selectedPath = await window.electronAPI.selectFolder();
+        const selectedPath = await window.LocalCivilApi.selectFolder();
 
         if (selectedPath) {
           updateFolderInputValue(selectedPath);

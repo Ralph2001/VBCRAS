@@ -15,9 +15,14 @@ if (process.contextIsolated) {
   window.api = api
 }
 
-contextBridge.exposeInMainWorld('electronAPI', {
+contextBridge.exposeInMainWorld('LocalCivilApi', {
   selectFolder: async () => {
     const { canceled, filePaths } = await ipcRenderer.invoke('select-folder');
     return canceled ? null : filePaths[0];
   },
+  selectFile: async () => {
+    const { canceled, filePaths } = await ipcRenderer.invoke('select-file');
+    return canceled ? null : filePaths[0];
+  },
 });
+

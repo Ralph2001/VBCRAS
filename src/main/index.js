@@ -6,11 +6,11 @@ import { PythonShell } from 'python-shell';
 const { dialog } = require('electron')
 const os = require('os');
 const username = os.userInfo().username;
-
-
-
-
 var child = require('child_process').execFile;
+
+
+
+
 
 let pythonProcess;
 
@@ -23,14 +23,39 @@ if (is.dev) {
 }
 
 
+
+
 ipcMain.handle('select-folder', async (event) => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openDirectory'],
-    defaultPath: 'C:\\Users\\'+ username+ '\\SynologyDrive\\Joan\\SCANNED DOCUMENTS'
+    defaultPath: 'C:\\Users\\' + username + '\\SynologyDrive\\Joan\\SCANNED DOCUMENTS'
   });
 
-  return { canceled, filePaths }; 
+  return { canceled, filePaths };
 });
+
+ipcMain.handle('select-file', async (event) => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openFile '],
+    filters: [
+      { name: 'PDF Files', extensions: ['pdf'] },
+    ]
+  });
+
+  return { canceled, filePaths };
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //Main Window
@@ -66,7 +91,6 @@ function mainWindow() {
   }
 }
 
-
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.localcivilregistry.office');
   app.on('browser-window-created', (_, window) => {
@@ -77,7 +101,6 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) mainWindow()
   })
 })
-
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
