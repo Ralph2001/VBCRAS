@@ -10,9 +10,31 @@ var child = require('child_process').execFile;
 const fs = require('fs-extra')
 
 
+const chokidar = require('chokidar');
+const { Notification } = require('electron');
+
+const watcher = chokidar.watch(['D:\\Watch This Folder']);
+
+
+watcher
+  .on('add', (path) => {
+    new Notification({ title: 'File Added', body: path }).show();
+  })
+  .on('change', (path) => {
+    new Notification({ title: 'File Change', body: path }).show();
+  })
+  .on('unlink', (path) => {
+    new Notification({ title: 'File Deleted', body: path }).show();
+  })
+  // ... handle other events as needed
+  .on('error', (error) => {
+    console.error('Error watching files:', error);
+  });
+
 
 
 let pythonProcess;
+let dialogOpen = false;
 
 if (is.dev) {
   PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
@@ -24,34 +46,41 @@ if (is.dev) {
 
 
 
-
 ipcMain.handle('select-folder', async (event) => {
-  const { canceled, filePaths } = await dialog.showOpenDialog({
-    properties: ['openDirectory'],
-    defaultPath: 'C:\\Users\\' + username + '\\SynologyDrive\\Joan\\SCANNED DOCUMENTS'
-  });
-
-  return { canceled, filePaths };
+  if (dialogOpen) return;
+  try {
+    dialogOpen = true
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+      defaultPath: 'C:\\Users\\' + username + '\\SynologyDrive\\Joan\\SCANNED DOCUMENTS'
+    });
+    return { canceled, filePaths };
+  } catch (err) {
+    console.error("There was an error", err)
+  }
+  finally {
+    dialogOpen = false
+  }
 });
 
 ipcMain.handle('select-file', async (event) => {
-  const { canceled, filePaths } = await dialog.showOpenDialog({
-    properties: ['openFile '],
-    filters: [
-      { name: 'PDF Files', extensions: ['pdf'] },
-    ]
-  });
-
-  return { canceled, filePaths };
+  if (dialogOpen) return;
+  try {
+    dialogOpen = true;
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+    });
+    return { canceled, filePaths };
+  } finally {
+    dialogOpen = false;
+  }
 });
 
 
-ipcMain.handle('move-file', async (event, data) => {
-  const original = data.value1;
-  const destination = data.value2;
-
+ipcMain.handle('move-file', async (event, { source, destination }) => {
   try {
-    await fs.move(original, destination);
+    await fs.move(source, destination);
     event.returnValue = 'File moved successfully!';
   } catch (err) {
     console.error(err);
@@ -77,6 +106,8 @@ function mainWindow() {
   })
 
   mainWindow.setMinimumSize(817, 610)
+
+
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
