@@ -21,7 +21,7 @@ watcher
     new Notification({ title: 'File Added', body: path }).show();
   })
   .on('change', (path) => {
-    new Notification({ title: 'File Change', body: path }).show();
+    new Notification({ title: 'File Change f', body: path }).show();
   })
   .on('unlink', (path) => {
     new Notification({ title: 'File Deleted', body: path }).show();
