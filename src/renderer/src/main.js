@@ -7,6 +7,9 @@ import './assets/css/index.css'
 import Start from './views/Start.vue';
 import Scanned from './views/Scanned.vue';
 
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 const routes = [
     {
         path: "/", component: Start, name: "Start"
@@ -24,7 +27,7 @@ const router = createRouter({
 
 
 
-createApp(App).use(router).mount('#app')
+createApp(App).use(router).use(VueSweetalert2).mount('#app')
 
 
 

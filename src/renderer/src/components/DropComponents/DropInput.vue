@@ -16,7 +16,9 @@ export default {
   name: "DropInput",
   created() {},
   data() {
-    return {};
+    return {
+      filename: "",
+    };
   },
   props: {
     type: {
@@ -25,7 +27,6 @@ export default {
     },
     label: String,
     id: String,
-   
   },
 };
 </script>

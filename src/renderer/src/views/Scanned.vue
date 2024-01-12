@@ -96,12 +96,13 @@
           <div>
             <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">Type</h3>
             <ul
-              class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              class="items-center w-full text-sm font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
               <DropOption id="birth" value="birth" label="Birth" />
               <DropOption id="death" value="death" label="Death" />
               <DropOption id="marriage" value="marriage" label="Marriage" />
               <DropOption id="legal" value="legal" label="Legal Instrument" />
+              <DropOption id="other" value="other" label="Other" />
             </ul>
           </div>
           <div>
@@ -151,6 +152,7 @@
 </template>
 
 <script>
+// import { move } from "fs-extra";
 import DataTable from "../components/DataTable.vue";
 import DropInput from "../components/DropComponents/DropInput.vue";
 import DropOption from "../components/DropComponents/DropOption.vue";
@@ -165,7 +167,7 @@ export default {
       source: "",
       filename: "",
 
-      destination: "Hi",
+      destination: "",
     };
   },
   methods: {
@@ -196,7 +198,11 @@ export default {
 
         this.source = file.path;
       } else {
-        alert("Upload PDF only.");
+        this.$swal({
+          icon: "error",
+          title: "File Type",
+          text: "Upload PDF only!",
+        });
       }
     },
     openModal() {
@@ -206,6 +212,12 @@ export default {
       this.toggleDropzoneVisibility(false);
       const modal = new Modal(this.$refs.dropModal);
       modal.hide();
+
+      (this.fileinfo = ""),
+        (this.filesize = ""),
+        (this.source = ""),
+        (filename.value = ""),
+        (this.destination = "");
     },
     async handleFileSelection() {
       try {
@@ -215,7 +227,7 @@ export default {
           const modal = new Modal(this.$refs.dropModal);
           modal.show();
         } else {
-          console.log("There was an error.");
+          console.log("Cancelled.");
         }
       } catch (error) {
         console.error("Error during file selection:", error);
@@ -251,7 +263,29 @@ export default {
       }
     },
 
-    async moveFile() {
+    moveFile() {
+      this.$swal({
+        title: "<p class='select-none'>Do you want to move the file?</P",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `Copy`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.move();
+          if (this.move()) {
+            this.$swal("Moved!", "", "success");
+            this.closeModal();
+          } else {
+            this.$swal("Error!", "", "error");
+          }
+        } else if (result.isDenied) {
+          this.$swal("Copied", "", "success");
+        }
+      });
+    },
+
+    async move() {
       try {
         const data = await window.LocalCivilApi.moveFile(
           this.source,

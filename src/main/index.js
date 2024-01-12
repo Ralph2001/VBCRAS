@@ -3,38 +3,19 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { PythonShell } from 'python-shell';
+
 const { dialog } = require('electron')
 const os = require('os');
 const username = os.userInfo().username;
 var child = require('child_process').execFile;
+
 const fs = require('fs-extra')
-
-
-const chokidar = require('chokidar');
-const { Notification } = require('electron');
-
-const watcher = chokidar.watch(['D:\\Watch This Folder']);
-
-
-watcher
-  .on('add', (path) => {
-    new Notification({ title: 'File Added', body: path }).show();
-  })
-  .on('change', (path) => {
-    new Notification({ title: 'File Change f', body: path }).show();
-  })
-  .on('unlink', (path) => {
-    new Notification({ title: 'File Deleted', body: path }).show();
-  })
-  // ... handle other events as needed
-  .on('error', (error) => {
-    console.error('Error watching files:', error);
-  });
 
 
 
 let pythonProcess;
 let dialogOpen = false;
+
 
 if (is.dev) {
   PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
