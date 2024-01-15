@@ -28,6 +28,10 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     const result = await ipcRenderer.invoke('move-file', { source, destination });
     return result
   },
+  copyFile: async (source, destination) => {
+    const result = await ipcRenderer.invoke('copy-file', { source, destination });
+    return result
+  },
 });
 
 

@@ -69,13 +69,24 @@ ipcMain.handle('move-file', async (event, { source, destination }) => {
   }
 });
 
+ipcMain.handle('copy-file', async (event, { source, destination }) => {
+  try {
+    await fs.copy(source, destination);
+    event.returnValue = 'File copy successfully!';
+  } catch (err) {
+    console.error(err);
+    event.returnValue = 'Error moving file: ' + err.message;
+  }
+});
+
+
 
 
 
 //Main Window
 function mainWindow() {
   const mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1070,
     height: 670,
     show: false,
     autoHideMenuBar: true,
@@ -86,7 +97,7 @@ function mainWindow() {
     }
   })
 
-  mainWindow.setMinimumSize(817, 610)
+  mainWindow.setMinimumSize(1070, 610)
 
 
 

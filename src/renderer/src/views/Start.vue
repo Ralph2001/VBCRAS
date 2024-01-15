@@ -31,4 +31,3 @@ import FrontCarousel from "../components/FrontCarousel.vue";
 export default { components: { FrontCarousel } };
 </script>
 
-<style lang="scss" scoped></style>

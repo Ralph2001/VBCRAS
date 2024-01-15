@@ -4,7 +4,7 @@
       <router-link to="/" class="flex items-center space-x-3 rtl:space-x-reverse">
         <img src="../assets/logo.png" class="h-14" alt="System Logo" />
         <span class="self-center text-lg font-semibold whitespace-nowrap dark:text-white"
-          >[System Name]</span
+          >Civil Registry Archive System</span
         >
       </router-link>
 
@@ -58,21 +58,21 @@
             <a
               href="#"
               class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >[App]</a
+              >CCE</a
             >
           </li>
           <li>
             <a
               href="#"
               class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >[App]</a
+              >LCR Forms</a
             >
           </li>
           <li>
             <a
               href="#"
               class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >[App]</a
+              >Collections</a
             >
           </li>
           <li>
@@ -81,7 +81,7 @@
               to="/scanned"
               class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
             >
-              Scanned Doc's
+              Scanned Documents
             </router-link>
           </li>
           <li>
