@@ -10,7 +10,9 @@
       <p class="text-2xl text-slate-800 text-wrap font-medium">Scanned Documents</p>
       <!-- <fwb-button @click="isShowModal = true" class="rounded-sm"> Add </fwb-button> -->
     </div>
-    <div class="mt-5"></div>
+    <div class="mt-5">
+    <DataAppTable/>
+    </div>
 
     <fwb-modal v-if="isShowModal" @close="closeModal" persistent class="rounded-sm">
       <template #header>
@@ -111,7 +113,7 @@
       <template #footer>
         <div class="flex justify-between">
           <fwb-button @click="closeModal" color="alternative"> Cancel </fwb-button>
-          <fwb-button @click="moveFile" color="blue"> Save </fwb-button>
+          <fwb-button @click="FileOperation" color="blue"> Save </fwb-button>
         </div>
       </template>
     </fwb-modal>
@@ -121,10 +123,12 @@
 <script setup>
 import { ref, inject } from "vue";
 import DropZone from "../components/ScanApp/DropZone.vue";
+import DataAppTable from "../components/DataAppTable.vue";
+
 import { FwbButton, FwbModal } from "flowbite-vue";
 import DropInputField from "../components/ScanApp/dropinputfield.vue";
 import { FwbRadio } from "flowbite-vue";
-import { FwbInput } from 'flowbite-vue'
+import { FwbInput } from "flowbite-vue";
 // SweetAlert
 const swal = inject("$swal");
 
@@ -142,25 +146,25 @@ const name = ref("");
 const destination = ref("C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS");
 const source = ref("");
 
-function closeModal() {
+// Close Modal
+const closeModal = () => {
   isShowModal.value = false;
   filename.value = "";
   filesize.value = "";
   picked.value = "other";
-
   name.value = "";
   destination.value = "C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS";
-}
+};
 
-function showDropzone() {
+const showDropzone = () => {
   isDropzoneVisible.value = true;
-}
+};
 
-function handleDragLeave() {
+const handleDragLeave = () => {
   isDropzoneVisible.value = false;
-}
+};
 
-function handleDrop(event) {
+const handleDrop = (event) => {
   event.preventDefault();
   const file = event.dataTransfer.files[0];
   isDropzoneVisible.value = false;
@@ -182,9 +186,9 @@ function handleDrop(event) {
       text: "Upload PDF only!",
     });
   }
-}
+};
 
-async function changePath() {
+const changePath = async () => {
   try {
     const selectedPath = await window.LocalCivilApi.selectFolder();
     if (selectedPath) {
@@ -195,14 +199,9 @@ async function changePath() {
   } catch (error) {
     console.error("Error during folder selection:", error);
   }
-}
+};
 
-function moveFile() {
-  console.log(source.value);
-  console.log(name.value);
-
-  console.log(destination.value);
-
+const FileOperation = () => {
   swal({
     title: "<p class='select-none'>Do you want to move the file?</P",
     showDenyButton: true,
@@ -213,7 +212,11 @@ function moveFile() {
     if (result.isConfirmed) {
       move();
       if (move()) {
-        swal("Moved!", "", "success");
+        swal({
+          icon: "success",
+          title: "Moved!",
+          text: "The file was moved to the desired location.",
+        });
         closeModal();
       } else {
         swal("Error!", "", "error");
@@ -221,41 +224,38 @@ function moveFile() {
     } else if (result.isDenied) {
       copy();
       if (copy()) {
-        swal("Copied!", "", "success");
+        swal({
+          icon: "success",
+          title: "Moved!",
+          text: "The file was moved to the desired location.",
+        });
         closeModal();
       } else {
         swal("Error!", "", "error");
       }
     }
   });
-}
-
-async function move() {
+};
+// Move
+const move = async () => {
   try {
-    const data = await window.LocalCivilApi.moveFile(
+    await window.LocalCivilApi.moveFile(
       source.value,
       destination.value + "\\" + name.value + ".pdf"
     );
-
-    if (data) {
-      console.log("Successfully Moved!");
-    }
   } catch (error) {
     console.error("Error:", error);
   }
-}
-async function copy() {
+};
+// Copy
+const copy = async () => {
   try {
-    const data = await window.LocalCivilApi.copyFile(
+    await window.LocalCivilApi.copyFile(
       source.value,
       destination.value + "\\" + name.value + ".pdf"
     );
-
-    if (data) {
-      console.log("Successfully Copied!");
-    }
   } catch (error) {
     console.error("Error:", error);
   }
-}
+};
 </script>

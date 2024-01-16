@@ -1,14 +1,18 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import 'flowbite';
+
 import { createRouter, createWebHistory } from 'vue-router';
-import './assets/css/index.css'
 
 import Start from './views/Start.vue';
 import Scanned from './views/Scanned.vue';
-
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import './assets/css/index.css'
+
+
+import PrimeVue from 'primevue/config';
+import Lara from './assets/presets/lara';
 
 const routes = [
     {
@@ -25,10 +29,11 @@ const router = createRouter({
 })
 
 
+createApp(App)
+    .use(router)
+    .use(PrimeVue,{unstyled: true,pt: Lara})
+    .use(VueSweetalert2)
+    .mount('#app')
 
 
-createApp(App).use(router).use(VueSweetalert2).mount('#app')
 
-
-
-  

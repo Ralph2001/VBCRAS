@@ -1,5 +1,5 @@
 {
-  "name": "Civil Registry Archive System",
+  "name": "civilregistryarchievesystem",
   "version": "1.0.0",
   "description": "Auto Generate Documents | Record Management",
   "main": "./out/main/index.js",
@@ -27,6 +27,7 @@
     "flowbite-vue": "^0.1.2",
     "fs-extra": "^11.2.0",
     "mysql2": "^3.6.5",
+    "primeicons": "^6.0.1",
     "primevue": "^3.46.0",
     "python-shell": "^5.0.0",
     "vue-router": "^4.2.5",
