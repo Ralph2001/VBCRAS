@@ -1,4 +1,4 @@
-# lcro
+#  Civil Registry Archive System
 
 An Electron application with Vue
 
