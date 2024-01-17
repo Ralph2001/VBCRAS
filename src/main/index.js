@@ -12,7 +12,6 @@ var child = require('child_process').execFile;
 const fs = require('fs-extra')
 
 
-
 let pythonProcess;
 let dialogOpen = false;
 
@@ -23,6 +22,7 @@ if (is.dev) {
   });
 } else {
   child(join(__dirname, '../../resources/script/dist/main/main.exe'))
+  console.log('notmain');
 }
 
 
