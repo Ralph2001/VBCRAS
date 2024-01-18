@@ -58,4 +58,4 @@ def add():
 if __name__ == '__main__':
 
     CORS(app)
-    app.run()
+    app.run(host="localhost", port=1216)

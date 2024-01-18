@@ -14,7 +14,7 @@
       <DataAppTable />
     </div>
 
-    <fwb-modal v-if="isShowModal" @close="closeModal" persistent class="rounded-sm">
+    <fwb-modal v-if="isShowModal" @close="closeModal" persistent class="rounded-sm z-50">
       <template #header>
         <div class="flex items-center text-lg font-bold">Scanned Document</div>
       </template>
@@ -93,14 +93,16 @@ const name_file = ref("");
 const target = ref("C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS");
 const source = ref("");
 
+
+
 const submitForm = () => {
   const name = name_file.value;
-  const filepath = target.value;
+  const filepath = target.value + "\\" + name_file.value + ".pdf"
   const type = "Other";
 
   axios
     .post(
-      "http://127.0.0.1:5000/add",
+      "http://127.0.0.1:1216/add",
       { name, filepath, type },
       {
         headers: {
