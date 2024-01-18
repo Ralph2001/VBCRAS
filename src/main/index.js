@@ -19,10 +19,10 @@ let dialogOpen = false;
 
 
 if (is.dev) {
-  // PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
-  //   console.log('finished');
-  // });
-  spawn('python', [join(__dirname, '../../resources/script/main.py')])
+  PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
+    console.log('finished');
+  });
+  // spawn('python', [join(__dirname, '../../resources/script/main.py')])
 } else {
   child(join(__dirname, '../../resources/script/dist/main/main.exe'))
   console.log('notmain');

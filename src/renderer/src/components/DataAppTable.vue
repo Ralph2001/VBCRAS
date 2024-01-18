@@ -14,8 +14,8 @@
       :loading="loading"
       :globalFilterFields="['name']"
     >
-      <template #header >
-        <div class="flex flex-row justify-end " >
+      <template #header>
+        <div class="flex flex-row justify-end">
           <span class="relative">
             <i
               class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
@@ -70,6 +70,7 @@
               :model="items"
               severity="danger"
               size="small"
+              @click="showthis"
             />
           </div>
         </template>
@@ -106,6 +107,10 @@ onMounted(async () => {
   }
 });
 
+const showthis = () => {
+  alert("Hoy");
+};
+
 const items = [
   {
     label: "Update",
@@ -114,6 +119,9 @@ const items = [
   {
     label: "Open File Path",
     icon: "pi pi-folder-open",
+    command: () => {
+      alert("Hi");
+    },
   },
 ];
 
