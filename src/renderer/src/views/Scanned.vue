@@ -44,7 +44,7 @@
               <DropInputField
                 type="text"
                 id="destination"
-                label="Target Destination"
+                label="File Path"
                 v-model="target"
                 className=" w-full"
               />
@@ -90,14 +90,12 @@ const picked = ref("other");
 
 // File
 const name_file = ref("");
-const target = ref("C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS");
+const target = ref("");
 const source = ref("");
-
-
 
 const submitForm = () => {
   const name = name_file.value;
-  const filepath = target.value + "\\" + name_file.value + ".pdf"
+  const filepath = target.value + "\\" + name_file.value + ".pdf";
   const type = "Other";
 
   axios
@@ -143,7 +141,7 @@ const closeModal = () => {
   filesize.value = "";
   picked.value = "other";
   name_file.value = "";
-  target.value = "C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS";
+  target.value = "";
 };
 
 const showDropzone = () => {
@@ -164,7 +162,7 @@ const handleDrop = (event) => {
 
     filename.value = file.name;
     filesize.value = (file.size / (1024 * 1024)).toFixed(2);
-
+    target.value = file.path;
     const filenameWithoutExtension = file.name.replace(/\.pdf$/i, "");
     filename.value = filenameWithoutExtension;
     name_file.value = filenameWithoutExtension;

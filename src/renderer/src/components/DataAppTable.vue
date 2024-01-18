@@ -100,6 +100,7 @@ onMounted(async () => {
   try {
     const response = await axios.get("http://127.0.0.1:1216/scanned");
     products.value = response.data.scans;
+    console.log(response.data.scans);
     loading.value = false;
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -108,7 +109,7 @@ onMounted(async () => {
 });
 
 const showthis = () => {
-  alert("Hoy");
+  alert("Open File");
 };
 
 const items = [
@@ -120,7 +121,7 @@ const items = [
     label: "Open File Path",
     icon: "pi pi-folder-open",
     command: () => {
-      alert("Hi");
+      alert("Open File Path");
     },
   },
 ];
