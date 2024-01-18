@@ -3,6 +3,8 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { PythonShell } from 'python-shell';
+import { spawn } from 'child_process';
+
 
 const { dialog } = require('electron')
 const os = require('os');
@@ -17,9 +19,10 @@ let dialogOpen = false;
 
 
 if (is.dev) {
-  PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
-    console.log('finished');
-  });
+  // PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
+  //   console.log('finished');
+  // });
+  spawn('python', [join(__dirname, '../../resources/script/main.py')])
 } else {
   child(join(__dirname, '../../resources/script/dist/main/main.exe'))
   console.log('notmain');

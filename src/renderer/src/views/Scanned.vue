@@ -11,7 +11,7 @@
       <!-- <fwb-button @click="isShowModal = true" class="rounded-sm"> Add </fwb-button> -->
     </div>
     <div class="mt-5">
-    <DataAppTable/>
+      <DataAppTable />
     </div>
 
     <fwb-modal v-if="isShowModal" @close="closeModal" persistent class="rounded-sm">
@@ -36,61 +36,7 @@
             </div>
           </div>
           <div>
-            <DropInputField type="text" id="name" label="File Name" v-model="name" />
-          </div>
-          <div>
-            <div class="grid grid-cols-5 gap-1">
-              <div
-                class="flex items-center p-2 border border-gray-200 rounded hover:bg-gray-200 cursor-pointer dark:border-gray-700"
-              >
-                <fwb-radio
-                  v-model="picked"
-                  label="Birth"
-                  value="birth"
-                  class="cursor-pointer select-none"
-                />
-              </div>
-              <div
-                class="flex items-center p-2 border border-gray-200 rounded hover:bg-gray-200 cursor-pointer dark:border-gray-700"
-              >
-                <fwb-radio
-                  v-model="picked"
-                  label="Death"
-                  value="death"
-                  class="cursor-pointer select-none"
-                />
-              </div>
-              <div
-                class="flex items-center p-2 border border-gray-200 rounded hover:bg-gray-200 cursor-pointer dark:border-gray-700"
-              >
-                <fwb-radio
-                  v-model="picked"
-                  label="Marriage"
-                  value="marriage"
-                  class="cursor-pointer select-none"
-                />
-              </div>
-              <div
-                class="flex items-center p-2 border border-gray-200 rounded hover:bg-gray-200 cursor-pointer dark:border-gray-700"
-              >
-                <fwb-radio
-                  v-model="picked"
-                  label="Legal Instrument"
-                  value="legal"
-                  class="cursor-pointer select-none"
-                />
-              </div>
-              <div
-                class="flex items-center p-2 border border-gray-200 rounded hover:bg-gray-200 cursor-pointer dark:border-gray-700"
-              >
-                <fwb-radio
-                  v-model="picked"
-                  label="Other"
-                  value="other"
-                  class="cursor-pointer select-none"
-                />
-              </div>
-            </div>
+            <DropInputField type="text" id="name" label="File Name" v-model="name_file" />
           </div>
 
           <div class="flex flex-row gap-1 items-center">
@@ -99,7 +45,7 @@
                 type="text"
                 id="destination"
                 label="Target Destination"
-                v-model="destination"
+                v-model="target"
                 className=" w-full"
               />
             </div>
@@ -113,7 +59,7 @@
       <template #footer>
         <div class="flex justify-between">
           <fwb-button @click="closeModal" color="alternative"> Cancel </fwb-button>
-          <fwb-button @click="FileOperation" color="blue"> Save </fwb-button>
+          <fwb-button @click="submitForm" color="blue"> Save </fwb-button>
         </div>
       </template>
     </fwb-modal>
@@ -124,6 +70,7 @@
 import { ref, inject } from "vue";
 import DropZone from "../components/ScanApp/DropZone.vue";
 import DataAppTable from "../components/DataAppTable.vue";
+import axios from "axios";
 
 import { FwbButton, FwbModal } from "flowbite-vue";
 import DropInputField from "../components/ScanApp/dropinputfield.vue";
@@ -142,9 +89,50 @@ const filesize = ref("");
 const picked = ref("other");
 
 // File
-const name = ref("");
-const destination = ref("C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS");
+const name_file = ref("");
+const target = ref("C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS");
 const source = ref("");
+
+const submitForm = () => {
+  const name = name_file.value;
+  const filepath = target.value;
+  const type = "Other";
+
+  axios
+    .post(
+      "http://127.0.0.1:5000/add",
+      { name, filepath, type },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      if (response.status === 201) {
+        closeModal();
+        swal({
+          title: "Success!",
+          text: "Document added successfully.",
+          icon: "success",
+        });
+      } else {
+        swal({
+          title: "Error",
+          text: "Failed to add document. Please try again.",
+          icon: "error",
+        });
+      }
+    })
+    .catch((error) => {
+      closeModal();
+      swal({
+        title: "Success!",
+        text: "Document added successfully.",
+        icon: "success",
+      });
+    });
+};
 
 // Close Modal
 const closeModal = () => {
@@ -152,8 +140,8 @@ const closeModal = () => {
   filename.value = "";
   filesize.value = "";
   picked.value = "other";
-  name.value = "";
-  destination.value = "C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS";
+  name_file.value = "";
+  target.value = "C:\\Users\\Erika Joyce\\SynologyDrive\\Joan\\SCANNED DOCUMENTS";
 };
 
 const showDropzone = () => {
@@ -177,13 +165,13 @@ const handleDrop = (event) => {
 
     const filenameWithoutExtension = file.name.replace(/\.pdf$/i, "");
     filename.value = filenameWithoutExtension;
-    name.value = filenameWithoutExtension;
+    name_file.value = filenameWithoutExtension;
     source.value = file.path;
   } else {
     swal({
       icon: "error",
-      title: "File Type",
-      text: "Upload PDF only!",
+      title: "Upload PDF only!",
+      text: "File",
     });
   }
 };
@@ -192,7 +180,7 @@ const changePath = async () => {
   try {
     const selectedPath = await window.LocalCivilApi.selectFolder();
     if (selectedPath) {
-      destination.value = selectedPath;
+      target.value = selectedPath;
     } else {
       console.log("Folder selection was canceled.");
     }
@@ -241,7 +229,7 @@ const move = async () => {
   try {
     await window.LocalCivilApi.moveFile(
       source.value,
-      destination.value + "\\" + name.value + ".pdf"
+      target.value + "\\" + name_file.value + ".pdf"
     );
   } catch (error) {
     console.error("Error:", error);
@@ -252,7 +240,7 @@ const copy = async () => {
   try {
     await window.LocalCivilApi.copyFile(
       source.value,
-      destination.value + "\\" + name.value + ".pdf"
+      target.value + "\\" + name_file.value + ".pdf"
     );
   } catch (error) {
     console.error("Error:", error);

@@ -17,7 +17,6 @@
     >
       <template #header>
         <div class="flex flex-row justify-end">
-          
           <span class="relative">
             <i
               class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
@@ -32,23 +31,20 @@
       </template>
       <template #empty>
         <div class="flex flex-col items-center justify-center gap-1">
-          <p class="text-lg text-gray-500 font-semibold">
-            Sorry, No Results.
-          </p>
+          <p class="text-lg text-gray-500 font-semibold">Sorry, No Results.</p>
         </div>
       </template>
       <template #loading>
         <p class="text-md font-semibold text-center">Loading Data. Please wait...</p>
       </template>
 
-      <Column field="name" sortable header="Name" style="width: 30%"> </Column>
-      <Column field="filepath" sortable header="Filepath" style="width: 40%"> </Column>
-      <Column field="type" sortable header="Type" style="width: 10%"></Column>
-      <!-- <Column field="name" sortable header="Year" style="width: 10%"></Column> -->
-      <Column header="Action" style="width: 10%">
+      <Column field="name" sortable header="Name" class=" overflow-ellipsis" style=" width:30% ;max-width: 30%"> </Column>
+      <Column field="filepath" sortable header="Filepath" style=" width:40%; max-width: 40%"> </Column>
+      <Column field="type" sortable header="Type" style=" width:10%; max-width: 10%"></Column>
+      <Column header="Action" style=" width:10%; max-width: 10%">
         <template #body="slotProps">
           <div class="flex flex-row gap-1 items-center">
-            <SplitButton label="Open" icon="pi pi-file-pdf" :model="items" size="small" />
+            <SplitButton label="Open" icon="pi pi-file-pdf" :model="items" severity="danger" size="small" />
           </div>
         </template>
       </Column>
@@ -75,10 +71,10 @@ const products = ref([]);
 
 onMounted(async () => {
   try {
-    const response = await axios.get("http://127.0.0.1:5000/scanned"); 
-    products.value = response.data;
+    const response = await axios.get("http://127.0.0.1:5000/scanned");
+    products.value = response.data.scans;
     loading.value = false;
-    console.log(products.value)
+    console.log(response);
   } catch (error) {
     console.error("Error fetching products:", error);
     alert("Can't Fucking Connect to the Serveeeeeeeer! Call 911");

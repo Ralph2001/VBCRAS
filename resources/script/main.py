@@ -1,16 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 from sqlalchemy import Column, DateTime, func
-
+from sqlalchemy.orm import class_mapper
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///local.db"
-
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app) 
-ma = Marshmallow(app)
 
 class ScannedDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,31 +18,44 @@ class ScannedDocuments(db.Model):
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
-
-class ScannedDocumentsSchema(ma.SQLAlchemySchema):
-    class Meta:
-        fields = ('id', 'name', 'filepath', 'type')
+try:
+    with app.app_context():
+        db.create_all()
+        db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.name)).scalars()
+except Exception as e:
+    print(f"Error connecting to the database: {str(e)}")
+    exit(1)
     
-scan_schema = ScannedDocumentsSchema()
-scans_schema = ScannedDocumentsSchema(many=True)
-
-    
-@app.route('/scanned', methods=['GET'])
+@app.route('/scanned', methods=['GET', 'POST'])
 def scanned():
-    all_scanned = ScannedDocuments.query.all()
-    results = scans_schema.dump(all_scanned)
-    return jsonify(results)
+    scans = db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.id)).scalars()
+    scans_list = []
     
-@app.route('/add_scanned', methods=['POST'])
-def add_document():
-    data = request.get_json()  
-    new_document = ScannedDocuments(**data) 
-    db.session.add(new_document)  
-    db.session.commit()  
-    return jsonify({'status': 'success', 'message': 'Document added successfully'})
+    for scan in scans:
+        mapped_scan = {column.key: getattr(scan, column.key) for column in class_mapper(ScannedDocuments).columns}
+        scans_list.append(mapped_scan)
+    
+    return jsonify({
+        'message': 'success',
+        'scans': scans_list
+    })
+
+@app.route('/add', methods=['POST'])
+def add():
+    data = request.json
+
+    if not data or not all(field in data for field in ['name', 'filepath', 'type']):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    new_document = ScannedDocuments(**data)
+    db.session.add(new_document)
+    db.session.commit()
+
+    return jsonify({'message': 'Document added successfully', 'document': new_document.to_dict()}), 201
+
+    
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all() 
+
     CORS(app)
     app.run()
