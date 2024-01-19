@@ -2,6 +2,9 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import 'flowbite';
 
+import Toast from 'primevue/toast'; 
+import ToastService from 'primevue/toastservice';
+
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Start from './views/Start.vue';
@@ -10,9 +13,9 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './assets/css/index.css'
 
-
 import PrimeVue from 'primevue/config';
 import Lara from './assets/presets/lara';
+
 
 const routes = [
     {
@@ -28,12 +31,14 @@ const router = createRouter({
     routes
 })
 
+const app = createApp(App);
 
-createApp(App)
-    .use(router)
-    .use(PrimeVue,{unstyled: true,pt: Lara})
-    .use(VueSweetalert2)
-    .mount('#app')
+
+app.use(router)
+app.use(PrimeVue,{unstyled: true,pt: Lara})
+app.use(ToastService)
+app.use(VueSweetalert2)
+app.mount('#app')
 
 
 

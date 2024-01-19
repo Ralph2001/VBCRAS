@@ -10,7 +10,7 @@
       <p class="text-2xl text-slate-800 text-wrap font-medium">Scanned Documents</p>
       <!-- <fwb-button @click="isShowModal = true" class="rounded-sm"> Add </fwb-button> -->
     </div>
-    <div class="mt-5">
+    <div class="mt-5 mb-5 h-max">
       <DataAppTable />
     </div>
 

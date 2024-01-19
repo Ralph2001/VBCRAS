@@ -2,14 +2,11 @@
   <div class="card">
     <DataTable
       :value="products"
-      paginator
       removableSort
-      :rows="5"
-      :rowsPerPageOptions="[5, 10, 20, 50]"
       stripedRows
+      stateStorage="session"
+      stateKey="dt-state-demo-session"
       tableStyle="min-width: 50rem"
-      paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
-      currentPageReportTemplate="{first} to {last} of {totalRecords}"
       v-model:filters="filters"
       :loading="loading"
       :globalFilterFields="['name']"
@@ -40,35 +37,34 @@
         <p class="text-md font-semibold text-center">Loading Data. Please wait...</p>
       </template>
 
-      <Column
-        field="name"
-        sortable
-        header="Name"
-        class="overflow-ellipsis"
-        style="width: 30%; max-width: 30%"
-      >
-      </Column>
-      <Column
-        field="filepath"
-        sortable
-        header="Filepath"
-        style="width: 40%; max-width: 40%"
-      >
+      <Column sortable header="Name" class="overflow-ellipsis" style="width: 50%">
+        <template #body="slotProps">
+         
+            <p class="text-md text-slate-900 font-medium overflow-ellipsis">
+              {{ slotProps.data.name }}
+            </p>
+          
+        </template>
       </Column>
       <Column
         field="type"
         sortable
         header="Type"
-        style="width: 10%; max-width: 10%"
+        style="width: 20%; max-width: 20%"
       ></Column>
-      <Column header="Action" style="width: 10%; max-width: 10%">
+      <Column style="width: 10%; max-width: 10%">
+        <template #header>
+          <div class="flex flex-row w-full justify-center">
+            <p class="text-center">Action</p>
+          </div>
+        </template>
         <template #body="slotProps">
           <div class="flex flex-row gap-1 items-center justify-center">
             <SplitButton
               label="Open"
               icon="pi pi-file-pdf"
               :model="items"
-              severity="danger"
+              severity="success"
               size="small"
               @click="showthis(slotProps.data.filepath)"
             />
@@ -86,15 +82,16 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
+import InputText from "primevue/inputtext";
+import "primeicons/primeicons.css";
+import axios from "axios";
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
+
+
+
 
 const swal = inject("$swal");
-
-// import ProgressBar from 'primevue/progressbar';
-import InputText from "primevue/inputtext";
-
-import "primeicons/primeicons.css";
-
-import axios from "axios";
 
 const products = ref([]);
 
@@ -113,23 +110,12 @@ onMounted(async () => {
 const showthis = async (filepath) => {
   try {
     const check = await window.LocalCivilApi.checkFile(filepath);
-    if (check) {
-      swal({
-        title: "File Path!",
-        text: "System notice that the filepath does exist! .",
-        icon: "success",
-      });
-    } else {
-      swal({
-        title: "File Path!",
-        text: "System notice that the filepath does exist! .",
-        icon: "success",
-      });
-    }
+    toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content', life: 3000 });
   } catch (error) {
-    console.error("Error during folder selection:", error);
+    toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content', life: 3000 });
   }
 };
+
 
 const items = [
   {
@@ -140,7 +126,12 @@ const items = [
     label: "Open File Path",
     icon: "pi pi-folder-open",
     command: () => {
-      alert("Open File Path");
+      toast.add({
+        severity: "info",
+        summary: "Info",
+        detail: "Message Content",
+        life: 3000,
+      });
     },
   },
   {
