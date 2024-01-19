@@ -70,7 +70,7 @@
               :model="items"
               severity="danger"
               size="small"
-              @click="showthis"
+              @click="showthis(slotProps.data.filepath)"
             />
           </div>
         </template>
@@ -80,12 +80,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
+
+const swal = inject("$swal");
 
 // import ProgressBar from 'primevue/progressbar';
 import InputText from "primevue/inputtext";
@@ -108,8 +110,25 @@ onMounted(async () => {
   }
 });
 
-const showthis = () => {
-  alert("Open File");
+const showthis = async (filepath) => {
+  try {
+    const check = await window.LocalCivilApi.checkFile(filepath);
+    if (check) {
+      swal({
+        title: "File Path!",
+        text: "System notice that the filepath does exist! .",
+        icon: "success",
+      });
+    } else {
+      swal({
+        title: "File Path!",
+        text: "System notice that the filepath does exist! .",
+        icon: "success",
+      });
+    }
+  } catch (error) {
+    console.error("Error during folder selection:", error);
+  }
 };
 
 const items = [
@@ -122,6 +141,13 @@ const items = [
     icon: "pi pi-folder-open",
     command: () => {
       alert("Open File Path");
+    },
+  },
+  {
+    label: "Remove Record",
+    icon: "pi pi-ban",
+    command: () => {
+      alert("Remove Record");
     },
   },
 ];

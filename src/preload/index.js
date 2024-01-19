@@ -32,7 +32,13 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     const result = await ipcRenderer.invoke('copy-file', { source, destination });
     return result
   },
+  checkFile: async (source) => {
+    const result = await ipcRenderer.invoke('check-file', source);
+    return result;
+  },
 });
+
+
 
 
 

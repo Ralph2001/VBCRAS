@@ -83,6 +83,24 @@ ipcMain.handle('copy-file', async (event, { source, destination }) => {
 });
 
 
+ipcMain.handle('check-file', async (event, source) => {
+  try {
+
+    // const fixedSource = source.replace(/\\/g, "\\\\");
+    const open = await shell.openExternal(source);
+    if (open) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+});
+
+
+
 
 
 

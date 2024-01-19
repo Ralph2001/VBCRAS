@@ -95,7 +95,7 @@ const source = ref("");
 
 const submitForm = () => {
   const name = name_file.value;
-  const filepath = target.value + "\\" + name_file.value + ".pdf";
+  const filepath = target.value;
   const type = "Other";
 
   axios
