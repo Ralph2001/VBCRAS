@@ -74,8 +74,7 @@ import axios from "axios";
 
 import { FwbButton, FwbModal } from "flowbite-vue";
 import DropInputField from "../components/ScanApp/dropinputfield.vue";
-import { FwbRadio } from "flowbite-vue";
-import { FwbInput } from "flowbite-vue";
+
 // SweetAlert
 const swal = inject("$swal");
 
@@ -109,11 +108,12 @@ const submitForm = () => {
       }
     )
     .then((response) => {
-      if (response.status === 201) {
+      console.log(response);
+      if (response.data.status === "success") {
         closeModal();
         swal({
           title: "Success!",
-          text: "Document added successfully.",
+          text: response.data.message,
           icon: "success",
         });
       } else {

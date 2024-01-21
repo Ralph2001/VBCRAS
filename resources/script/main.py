@@ -40,22 +40,34 @@ def scanned():
         'scans': scans_list
     })
 
+# @app.route('/add', methods=['POST'])
+# def add():
+#     data = request.json
+
+#     if not data or not all(field in data for field in ['name', 'filepath', 'type']):
+#         return jsonify({'error': 'Missing required fields'}), 400
+
+#     new_document = ScannedDocuments(**data)
+#     db.session.add(new_document)
+#     db.session.commit()
+
+#     return jsonify({'message': 'Document added successfully', 'status': 'success'}), 201
+
 @app.route('/add', methods=['POST'])
-def add():
+def add_scanned():
     data = request.json
-
-    if not data or not all(field in data for field in ['name', 'filepath', 'type']):
-        return jsonify({'error': 'Missing required fields'}), 400
-
-    new_document = ScannedDocuments(**data)
-    db.session.add(new_document)
-    db.session.commit()
-
-    return jsonify({'message': 'Document added successfully', 'document': new_document.to_dict()}), 201
-
+    # scanned =  ScannedDocuments(
+    #     name = data["name"],
+    #     filepath = data["filepath"],
+    #     type = data["type"],
+    # )
+    # db.session.add(scanned)
+    # db.session.commit()
+    
+    return jsonify({'status': data})
     
 
 if __name__ == '__main__':
 
     CORS(app)
-    app.run(host="localhost", port=1216)
+    app.run(host="localhost", port=1216, debug=True)

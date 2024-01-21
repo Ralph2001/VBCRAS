@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import 'flowbite';
 
-import Toast from 'primevue/toast'; 
+
 import ToastService from 'primevue/toastservice';
 
 import { createRouter, createWebHistory } from 'vue-router';
@@ -35,8 +35,8 @@ const app = createApp(App);
 
 
 app.use(router)
-app.use(PrimeVue,{unstyled: true,pt: Lara})
-app.use(ToastService)
+app.use(PrimeVue, { unstyled: true, pt: Lara })
+app.use(ToastService);
 app.use(VueSweetalert2)
 app.mount('#app')
 

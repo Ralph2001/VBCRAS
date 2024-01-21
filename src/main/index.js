@@ -22,7 +22,7 @@ if (is.dev) {
   PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
     console.log('finished');
   });
-  // spawn('python', [join(__dirname, '../../resources/script/main.py')])
+
 } else {
   child(join(__dirname, '../../resources/script/dist/main/main.exe'))
   console.log('notmain');
@@ -75,7 +75,7 @@ ipcMain.handle('move-file', async (event, { source, destination }) => {
 ipcMain.handle('copy-file', async (event, { source, destination }) => {
   try {
     await fs.copy(source, destination);
-    event.returnValue = 'File copy successfully!';
+    event.returnValue = true;
   } catch (err) {
     console.error(err);
     event.returnValue = 'Error moving file: ' + err.message;
@@ -83,13 +83,12 @@ ipcMain.handle('copy-file', async (event, { source, destination }) => {
 });
 
 
-ipcMain.handle('check-file', async (event, source) => {
+ipcMain.handle('open-file', async (event, source) => {
   try {
     const open = await shell.openExternal(source);
-    return true;
+    return true
   } catch (err) {
-    console.error(err);
-    return false;
+    return false
   }
 });
 
@@ -112,7 +111,7 @@ function mainWindow() {
     }
   })
 
-  mainWindow.setMinimumSize(1070, 610)
+  
 
 
 

@@ -37,13 +37,17 @@
         <p class="text-md font-semibold text-center">Loading Data. Please wait...</p>
       </template>
 
-      <Column sortable header="Name" class="overflow-ellipsis" style="width: 50%">
+      <Column
+        sortable
+        field="name"
+        header="Name"
+        class="overflow-ellipsis"
+        style="width: 50%"
+      >
         <template #body="slotProps">
-         
-            <p class="text-md text-slate-900 font-medium overflow-ellipsis">
-              {{ slotProps.data.name }}
-            </p>
-          
+          <p class="text-md text-slate-900 font-medium overflow-ellipsis">
+            {{ slotProps.data.name }}
+          </p>
         </template>
       </Column>
       <Column
@@ -62,6 +66,7 @@
           <div class="flex flex-row gap-1 items-center justify-center">
             <SplitButton
               label="Open"
+              :loading="ikot"
               icon="pi pi-file-pdf"
               :model="items"
               severity="success"
@@ -78,6 +83,7 @@
 <script setup>
 import { ref, onMounted, inject } from "vue";
 import { FilterMatchMode } from "primevue/api";
+import { useToast } from "primevue/usetoast";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
@@ -85,14 +91,10 @@ import SplitButton from "primevue/splitbutton";
 import InputText from "primevue/inputtext";
 import "primeicons/primeicons.css";
 import axios from "axios";
-import { useToast } from "primevue/usetoast";
-const toast = useToast();
-
-
-
 
 const swal = inject("$swal");
-
+const toast = useToast();
+const ikot = ref(true);
 const products = ref([]);
 
 onMounted(async () => {
@@ -110,12 +112,28 @@ onMounted(async () => {
 const showthis = async (filepath) => {
   try {
     const check = await window.LocalCivilApi.checkFile(filepath);
-    toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content', life: 3000 });
+    if (check) {
+      toast.add({
+        severity: "info",
+        summary: "Info",
+        detail: "Message Content",
+        life: 3000,
+      });
+    } else {
+      swal({
+        icon: "error",
+        title: "Opening Failed",
+        text: "File Not Existed",
+      });
+    }
   } catch (error) {
-    toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content', life: 3000 });
+    swal({
+      icon: "error",
+      title: "Opening Failed",
+      text: "File Not Existed",
+    });
   }
 };
-
 
 const items = [
   {
