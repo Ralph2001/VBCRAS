@@ -26,6 +26,9 @@ except Exception as e:
     print(f"Error connecting to the database: {str(e)}")
     exit(1)
     
+    
+    
+    
 @app.route('/scanned', methods=['GET', 'POST'])
 def scanned():
     scans = db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.id)).scalars()
@@ -40,32 +43,20 @@ def scanned():
         'scans': scans_list
     })
 
-# @app.route('/add', methods=['POST'])
-# def add():
-#     data = request.json
-
-#     if not data or not all(field in data for field in ['name', 'filepath', 'type']):
-#         return jsonify({'error': 'Missing required fields'}), 400
-
-#     new_document = ScannedDocuments(**data)
-#     db.session.add(new_document)
-#     db.session.commit()
-
-#     return jsonify({'message': 'Document added successfully', 'status': 'success'}), 201
-
 @app.route('/add', methods=['POST'])
-def add_scanned():
+def add():
     data = request.json
-    # scanned =  ScannedDocuments(
-    #     name = data["name"],
-    #     filepath = data["filepath"],
-    #     type = data["type"],
-    # )
-    # db.session.add(scanned)
-    # db.session.commit()
+
+    if not data or not all(field in data for field in ['name', 'filepath', 'type']):
+        return jsonify({'message': 'Missing Required Fields', 'status': 'required'}), 400
+  
     
-    return jsonify({'status': data})
-    
+    new_document = ScannedDocuments(**data)
+    db.session.add(new_document)
+    db.session.commit()
+
+    return jsonify({'message': 'Document added successfully', 'status': 'success'}), 201
+
 
 if __name__ == '__main__':
 

@@ -19,6 +19,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
     "axios": "^1.6.4",
     "datatables.net-dt": "^1.13.8",
     "datatables.net-vue3": "^2.1.3",
