@@ -16,7 +16,7 @@
         </p>
         <p class="text-lg text-gray-500 font-semibold">MUNICIPAL CIVIL REGISTRAR</p>
       </div>
-      <div class="mt-auto ">
+      <div class="mt-auto">
         <p class="text-md text-slate-800 font-bold text-nowrap">
           HON. MARY CLARE JUDITH PHYLLIS JOSE-QUIAMBAO
         </p>

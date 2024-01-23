@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="card">
     <DataTable
       :value="products"
@@ -9,7 +10,8 @@
       tableStyle="min-width: 50rem"
       v-model:filters="filters"
       :loading="loading"
-      :globalFilterFields="['name']"
+      :globalFilterFields="['name', 'type']"
+      dataKey="id"
     >
       <template #header>
         <div class="flex flex-row justify-end">
@@ -50,12 +52,13 @@
           </p>
         </template>
       </Column>
-      <Column
-        field="type"
-        sortable
-        header="Type"
-        style="width: 20%; max-width: 20%"
-      ></Column>
+
+      <Column field="type" sortable header="Type" style="width: 20%; max-width: 20%">
+        <template #body="{ data }">
+          <Tag :value="data.type" :severity="getSeverity(data.type)" />
+        </template>
+      </Column>
+
       <Column style="width: 10%; max-width: 10%">
         <template #header>
           <div class="flex flex-row w-full justify-center">
@@ -71,6 +74,9 @@
               :model="items"
               severity="success"
               size="small"
+              :pt="{
+                path: slotProps.data.filepath,
+              }"
               @click="showthis(slotProps.data.filepath)"
             />
           </div>
@@ -83,25 +89,28 @@
 <script setup>
 import { ref, onMounted, inject } from "vue";
 import { FilterMatchMode } from "primevue/api";
-import { useToast } from "primevue/usetoast";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
 import InputText from "primevue/inputtext";
 import "primeicons/primeicons.css";
 import axios from "axios";
-
+import Tag from "primevue/tag";
 const swal = inject("$swal");
+
+import { useToast } from "primevue/usetoast";
+import Toast from "primevue/toast";
+
 const toast = useToast();
+
 const ikot = ref(true);
 const products = ref([]);
+const open = ref("");
 
 onMounted(async () => {
   try {
     const response = await axios.get("http://127.0.0.1:1216/scanned");
     products.value = response.data.scans;
-    console.log(response.data.scans);
     loading.value = false;
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -114,42 +123,35 @@ const showthis = async (filepath) => {
     const check = await window.LocalCivilApi.checkFile(filepath);
     if (check) {
       toast.add({
-        severity: "info",
-        summary: "Info",
-        detail: "Message Content",
+        severity: "success",
+        summary: "Success",
+        detail: "File Found.",
         life: 3000,
       });
     } else {
-      swal({
-        icon: "error",
-        title: "Opening Failed",
-        text: "File Not Existed",
-      });
-    }
-  } catch (error) {
-    swal({
-      icon: "error",
-      title: "Opening Failed",
-      text: "File Not Existed",
-    });
-  }
-};
-
-const items = [
-  {
-    label: "Update",
-    icon: "pi pi-refresh",
-  },
-  {
-    label: "Open File Path",
-    icon: "pi pi-folder-open",
-    command: () => {
       toast.add({
         severity: "info",
         summary: "Info",
         detail: "Message Content",
         life: 3000,
       });
+    }
+  } catch (error) {
+    toast.add({
+      severity: "info",
+      summary: "Info",
+      detail: "Message Content",
+      life: 3000,
+    });
+  }
+};
+
+const items = [
+  {
+    label: "Open File Path",
+    icon: "pi pi-folder-open",
+    command: (path) => {
+      console.log(path);
     },
   },
   {
@@ -164,7 +166,27 @@ const items = [
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  type: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
+
+const getSeverity = (type) => {
+  switch (type) {
+    case "Birth":
+      return "success";
+
+    case "Death":
+      return "info";
+
+    case "Marriage":
+      return "danger";
+
+    case "Legal":
+      return "warning";
+
+    case "Other":
+      return null;
+  }
+};
 
 const loading = ref(true);
 </script>

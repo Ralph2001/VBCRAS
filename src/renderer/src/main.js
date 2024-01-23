@@ -36,7 +36,7 @@ const app = createApp(App);
 
 app.use(router)
 app.use(PrimeVue, { unstyled: true, pt: Lara })
-app.use(ToastService);
+app.use(ToastService)
 app.use(VueSweetalert2)
 app.mount('#app')
 

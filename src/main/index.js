@@ -85,10 +85,17 @@ ipcMain.handle('copy-file', async (event, { source, destination }) => {
 
 ipcMain.handle('open-file', async (event, source) => {
   try {
-    const open = await shell.openExternal(source);
-    return true
+    const win = new BrowserWindow({
+      webPreferences: {
+        plugins: true,
+        devTools: false
+      },
+      autoHideMenuBar: true,
+    });
+    win.loadURL(source);
+    return true;
   } catch (err) {
-    return false
+    return false;
   }
 });
 
@@ -111,7 +118,7 @@ function mainWindow() {
     }
   })
 
-  
+
 
 
 

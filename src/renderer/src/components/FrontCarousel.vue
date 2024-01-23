@@ -1,6 +1,6 @@
 <template>
-  <div id="default-carousel" class="relative w-full " data-carousel="slide">
-    <div class="relative md:h-96 w-full overflow-hidden rounded-lg ">
+  <div id="default-carousel" class="relative w-full" data-carousel="slide">
+    <div class="relative md:h-96 w-full overflow-hidden rounded-lg">
       <!-- Item 1 -->
       <div class="hidden duration-700 ease-in-out" data-carousel-item>
         <img
