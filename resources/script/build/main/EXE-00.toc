@@ -71,15 +71,11 @@
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
    'PYSOURCE'),
-  ('pyi_rth_pkgres',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgres.py',
-   'PYSOURCE'),
   ('main', 'D:\\Electron Vite\\LCRO\\resources\\script\\main.py', 'PYSOURCE')],
  [],
  False,
  False,
- 1705542095,
+ 1706078582,
  [('run.exe',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',

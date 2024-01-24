@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { PythonShell } from 'python-shell';
-import { spawn } from 'child_process';
+const { execFile } = require('child_process');
 
 
 const { dialog } = require('electron')
@@ -14,7 +14,7 @@ var child = require('child_process').execFile;
 const fs = require('fs-extra')
 
 
-let pythonProcess;
+let pythonprocess;
 let dialogOpen = false;
 
 
@@ -24,8 +24,7 @@ if (is.dev) {
   });
 
 } else {
-  child(join(__dirname, '../../resources/script/dist/main/main.exe'))
-  console.log('notmain');
+  pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
 }
 
 
@@ -162,6 +161,7 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    pythonprocess.kill('SIGTERM');
     app.quit()
   }
 })
