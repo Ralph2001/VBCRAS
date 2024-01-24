@@ -38,6 +38,12 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
       return true
     }
   },
+  openFilePath: async (source) => {
+    const result = await ipcRenderer.invoke('open-file-folder', source);
+    if (result) {
+      return true
+    }
+  },
 });
 
 

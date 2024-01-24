@@ -100,6 +100,16 @@ ipcMain.handle('open-file', async (event, source) => {
 });
 
 
+ipcMain.handle('open-file-folder', async (event, path) => {
+  try {
+    const filefolder = shell.showItemInFolder(path)
+    return true;
+  } catch (err) {
+    return false;
+  }
+});
+
+
 
 
 

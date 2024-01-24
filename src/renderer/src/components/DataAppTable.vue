@@ -59,7 +59,7 @@
         </template>
       </Column>
 
-      <Column style="width: 10%; max-width: 10%">
+      <Column style="width: 30%; max-width: 30%">
         <template #header>
           <div class="flex flex-row w-full justify-center">
             <p class="text-center">Action</p>
@@ -67,7 +67,7 @@
         </template>
         <template #body="slotProps">
           <div class="flex flex-row gap-1 items-center justify-center">
-            <SplitButton
+            <!-- <SplitButton
               label="Open"
               :loading="ikot"
               icon="pi pi-file-pdf"
@@ -77,8 +77,22 @@
               :pt="{
                 path: slotProps.data.filepath,
               }"
-              @click="showthis(slotProps.data.filepath)"
-            />
+              @click="openFile(slotProps.data.filepath)"
+            /> -->
+            <fwb-button
+              color="default"
+              class="rounded"
+              @click="openFile(slotProps.data.filepath)"
+              size="sm"
+              >Open</fwb-button
+            >
+            <fwb-button
+              color="light"
+              class="rounded"
+              size="sm"
+              @click="openPath(slotProps.data.filepath)"
+              >Open File Location</fwb-button
+            >
           </div>
         </template>
       </Column>
@@ -97,6 +111,7 @@ import "primeicons/primeicons.css";
 import axios from "axios";
 import Tag from "primevue/tag";
 const swal = inject("$swal");
+import { FwbButton } from "flowbite-vue";
 
 import { useToast } from "primevue/usetoast";
 import Toast from "primevue/toast";
@@ -118,7 +133,7 @@ onMounted(async () => {
   }
 });
 
-const showthis = async (filepath) => {
+const openFile = async (filepath) => {
   try {
     const check = await window.LocalCivilApi.checkFile(filepath);
     if (check) {
@@ -141,6 +156,33 @@ const showthis = async (filepath) => {
       severity: "info",
       summary: "Info",
       detail: "Message Content",
+      life: 3000,
+    });
+  }
+};
+
+const openPath = async (filepath) => {
+  try {
+    const check = await window.LocalCivilApi.openFilePath(filepath);
+    if (check) {
+      toast.add({
+        severity: "success",
+        summary: "Success",
+        life: 3000,
+      });
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Not Opening",
+        detail: "Something went wrong",
+        life: 3000,
+      });
+    }
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Not Opening",
+      detail: error,
       life: 3000,
     });
   }
