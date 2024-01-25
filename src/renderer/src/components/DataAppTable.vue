@@ -1,17 +1,18 @@
 <template>
   <Toast />
-  <div class="card">
+  <div class="h-[calc(100vh-135px)]">
     <DataTable
       :value="products"
       removableSort
       stripedRows
-      stateStorage="session"
-      stateKey="dt-state-demo-session"
       tableStyle="min-width: 50rem"
       v-model:filters="filters"
       :loading="loading"
       :globalFilterFields="['name', 'type']"
       dataKey="id"
+      scrollable
+      scrollHeight="flex"
+      filterDisplay="row"
     >
       <template #header>
         <div class="flex flex-row justify-end">
@@ -38,6 +39,13 @@
       <template #loading>
         <p class="text-md font-semibold text-center">Loading Data. Please wait...</p>
       </template>
+      <template #footer>
+        <div class="mr-5">
+          <p class="text-2xl text-end font-semibold text-gray-900">
+            Total Records: {{ totalResults }}
+          </p>
+        </div>
+      </template>
 
       <Column
         sortable
@@ -51,15 +59,46 @@
             {{ slotProps.data.name }}
           </p>
         </template>
-      </Column>
-
-      <Column field="type" sortable header="Type" style="width: 20%; max-width: 20%">
-        <template #body="{ data }">
-          <Tag :value="data.type" :severity="getSeverity(data.type)" />
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText
+            v-model="filterModel.value"
+            type="text"
+            @input="filterCallback()"
+            class="p-column-filter"
+            placeholder="Search By Name"
+          />
         </template>
       </Column>
 
-      <Column style="width: 30%; max-width: 30%">
+      <Column
+        field="type"
+        sortable
+        header="Type"
+        style="width: 2%; max-width: 2%"
+        :showFilterMenu="false"
+        :filterMenuStyle="{ width: '14rem' }"
+      >
+        <template #body="{ data }">
+          <Tag class="rounded" :value="data.type" :severity="getSeverity(data.type)" />
+        </template>
+        <template #filter="{ filterModel, filterCallback }">
+          <Dropdown
+            v-model="filterModel.value"
+            @change="filterCallback()"
+            :options="types"
+            placeholder="Select Type"
+            class="p-column-filter"
+            style="min-width: 12rem"
+            :showClear="true"
+          >
+            <template #option="slotProps">
+              <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+            </template>
+          </Dropdown>
+        </template>
+      </Column>
+
+      <Column style="width: 10%; max-width: 10%">
         <template #header>
           <div class="flex flex-row w-full justify-center">
             <p class="text-center">Action</p>
@@ -79,20 +118,21 @@
               }"
               @click="openFile(slotProps.data.filepath)"
             /> -->
-            <fwb-button
+            <!-- <fwb-button
               color="default"
               class="rounded"
               @click="openFile(slotProps.data.filepath)"
               size="sm"
               >Open</fwb-button
-            >
-            <fwb-button
+            > -->
+            <!-- <fwb-button
               color="light"
               class="rounded"
               size="sm"
               @click="openPath(slotProps.data.filepath)"
               >Open File Location</fwb-button
-            >
+            > -->
+            <EditBtn :filepath="slotProps.data.filepath" :id="slotProps.data.id" />
           </div>
         </template>
       </Column>
@@ -112,12 +152,14 @@ import axios from "axios";
 import Tag from "primevue/tag";
 const swal = inject("$swal");
 import { FwbButton } from "flowbite-vue";
-
 import { useToast } from "primevue/usetoast";
 import Toast from "primevue/toast";
+import EditBtn from "./ScanApp/EditBtn.vue";
+import Dropdown from "primevue/dropdown";
 
 const toast = useToast();
 
+const totalResults = ref("");
 const ikot = ref(true);
 const products = ref([]);
 const open = ref("");
@@ -126,67 +168,13 @@ onMounted(async () => {
   try {
     const response = await axios.get("http://127.0.0.1:1216/scanned");
     products.value = response.data.scans;
+    totalResults.value = response.data.scans.length;
     loading.value = false;
   } catch (error) {
     console.error("Error fetching products:", error);
     alert("Can't  Connect to the Serveeeeeeeer! ");
   }
 });
-
-const openFile = async (filepath) => {
-  try {
-    const check = await window.LocalCivilApi.checkFile(filepath);
-    if (check) {
-      toast.add({
-        severity: "success",
-        summary: "Success",
-        detail: "File Found.",
-        life: 3000,
-      });
-    } else {
-      toast.add({
-        severity: "info",
-        summary: "Info",
-        detail: "Message Content",
-        life: 3000,
-      });
-    }
-  } catch (error) {
-    toast.add({
-      severity: "info",
-      summary: "Info",
-      detail: "Message Content",
-      life: 3000,
-    });
-  }
-};
-
-const openPath = async (filepath) => {
-  try {
-    const check = await window.LocalCivilApi.openFilePath(filepath);
-    if (check) {
-      toast.add({
-        severity: "success",
-        summary: "Success",
-        life: 3000,
-      });
-    } else {
-      toast.add({
-        severity: "error",
-        summary: "Not Opening",
-        detail: "Something went wrong",
-        life: 3000,
-      });
-    }
-  } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Not Opening",
-      detail: error,
-      life: 3000,
-    });
-  }
-};
 
 const items = [
   {
@@ -204,6 +192,8 @@ const items = [
     },
   },
 ];
+
+const types = ref(["Birth", "Death", "Marriage", "Legal", "Other"]);
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },

@@ -160,8 +160,11 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
+
   if (process.platform !== 'darwin') {
-    pythonprocess.kill('SIGTERM');
+    if (pythonprocess) {
+      pythonprocess.kill('SIGTERM');
+    }
     app.quit()
   }
 })

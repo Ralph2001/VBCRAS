@@ -11,7 +11,7 @@
     <div class="flex flex-row justify-start p-2">
       <p class="text-2xl text-slate-800 text-wrap font-medium">Scanned Documents</p>
     </div>
-    <div class="mt-5 mb-5 h-max">
+    <div class="h-max">
       <DataAppTable />
     </div>
 
