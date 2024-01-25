@@ -8,10 +8,8 @@
       :isDropzoneVisible="isDropzoneVisible"
       v-if="isShowModal == false"
     />
-    <div class="flex flex-row justify-start p-2">
-      <p class="text-2xl text-slate-800 text-wrap font-medium">Scanned Documents</p>
-    </div>
-    <div class="h-max">
+
+    <div class="h-max mt-6">
       <DataAppTable />
     </div>
 

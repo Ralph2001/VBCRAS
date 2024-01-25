@@ -15,17 +15,21 @@
       filterDisplay="row"
     >
       <template #header>
-        <div class="flex flex-row justify-end">
-          <span class="relative">
-            <i
-              class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
-            />
-            <InputText
-              v-model="filters['global'].value"
-              placeholder="Keyword Search"
-              class="pl-10 font-normal"
-            />
-          </span>
+        <div class="flex flex-row justify-between items-center">
+          <p class="text-2xl font-medium text-slate-900">Scanned Documents</p>
+          <div class="flex flex-row gap-2">
+            <span class="relative">
+              <i
+                class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
+              />
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Keyword Search"
+                class="pl-10 font-normal"
+              />
+            </span>
+            <Button icon="pi pi-cog" text severity="secondary" rounded aria-label="Filter" />
+          </div>
         </div>
       </template>
       <template #empty>
@@ -156,6 +160,7 @@ import { useToast } from "primevue/usetoast";
 import Toast from "primevue/toast";
 import EditBtn from "./ScanApp/EditBtn.vue";
 import Dropdown from "primevue/dropdown";
+import Button from "primevue/button";
 
 const toast = useToast();
 
