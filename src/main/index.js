@@ -9,7 +9,7 @@ const { execFile } = require('child_process');
 const { dialog } = require('electron')
 const os = require('os');
 const username = os.userInfo().username;
-var child = require('child_process').execFile;
+
 
 const fs = require('fs-extra')
 
@@ -26,6 +26,7 @@ if (is.dev) {
 } else {
   pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
 }
+
 
 
 
@@ -116,18 +117,20 @@ ipcMain.handle('open-file-folder', async (event, path) => {
 //Main Window
 function mainWindow() {
   const mainWindow = new BrowserWindow({
-    width: 1070,
+    width: 1060,
     height: 670,
     show: false,
+
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-    }
-  })
+    },
+  }
+  )
 
-
+  mainWindow.setMinimumSize(1060, 670)
 
 
 

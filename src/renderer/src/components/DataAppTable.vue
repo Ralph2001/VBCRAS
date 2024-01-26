@@ -28,7 +28,13 @@
                 class="pl-10 font-normal"
               />
             </span>
-            <Button icon="pi pi-cog" text severity="secondary" rounded aria-label="Filter" />
+            <Button
+              icon="pi pi-cog"
+              text
+              severity="secondary"
+              rounded
+              aria-label="Filter"
+            />
           </div>
         </div>
       </template>
@@ -102,7 +108,7 @@
         </template>
       </Column>
 
-      <Column style="width: 10%; max-width: 10%">
+      <Column style="width: 20%; max-width: 20%">
         <template #header>
           <div class="flex flex-row w-full justify-center">
             <p class="text-center">Action</p>

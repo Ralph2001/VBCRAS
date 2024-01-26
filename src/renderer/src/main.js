@@ -9,6 +9,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import Start from './views/Start.vue';
 import Scanned from './views/Scanned.vue';
+import CCE from './views/CCE.vue'
+import Forms from './views/Forms.vue'
+import Collections from './views/Collections.vue'
+
+
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './assets/css/index.css'
@@ -23,6 +28,15 @@ const routes = [
     },
     {
         path: "/scanned", component: Scanned, name: "Scanned Documents"
+    },
+    {
+        path: "/cce", component: CCE, name: "CCE"
+    },
+    {
+        path: "/forms", component: Forms, name: "Forms"
+    },
+    {
+        path: "/collections", component: Collections, name: "Collections"
     }
 ]
 

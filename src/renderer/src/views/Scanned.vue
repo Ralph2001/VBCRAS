@@ -15,7 +15,14 @@
 
     <fwb-modal v-if="isShowModal" @close="closeModal" persistent class="rounded-sm z-50">
       <template #header>
-        <div class="flex items-center text-lg font-bold">Scanned Document</div>
+        <div class="flex flex-row items-center justify-between w-full">
+          <p class="text-lg font-bold">Scanned Document</p>
+          <div>
+            <button class="rounded-full border border-gray-100 px-3 py-2 hover:bg-gray-100" @click="closeModal" type="button">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        </div>
       </template>
       <template #body>
         <div class="p-4 md:p-5 space-y-4">
@@ -31,10 +38,13 @@
               <p class="text-md font-semibold text-slate-900 text-justify">
                 {{ filename }}
               </p>
-              <p class="text-sm text-slate-900 text-justify">{{ filesize }} MB</p>
+              <p class="text-sm text-slate-900 text-justify italic">{{ filesize }} MB</p>
             </div>
           </div>
-          <div>
+          <fwb-alert icon type="info" v-if="isAlertNameVisible">
+            Note: You can't rename multiple files
+          </fwb-alert>
+          <div v-if="isNameVisible">
             <DropInputField
               type="text"
               id="name"
@@ -128,7 +138,10 @@
             </div>
           </div>
           <div>
-            <div class="flex flex-col gap-2">
+            <fwb-alert class="mt-8" icon type="info" v-if="isTransferAlert">
+              Note: You can't transfer multiple files.
+            </fwb-alert>
+            <div class="flex flex-col gap-2" v-if="isTransferVisible">
               <label class="block text-sm font-medium text-gray-900 dark:text-white">
                 Transfer File?
               </label>
@@ -154,7 +167,10 @@
         </div>
       </template>
       <template #footer>
-        <div class="flex justify-between">
+        <fwb-alert class="mt-8" icon type="danger" v-if="isSaveAlert">
+          This feature is currently under development and will be available soon.
+        </fwb-alert>
+        <div class="flex justify-between" v-if="isSaveBtnVisible">
           <fwb-button @click="closeModal" color="alternative"> Cancel </fwb-button>
           <fwb-button @click="submitForm" color="blue"> Save </fwb-button>
         </div>
@@ -174,7 +190,7 @@ import axios from "axios";
 
 import { FwbButton, FwbModal } from "flowbite-vue";
 import DropInputField from "../components/ScanApp/DropInputField.vue";
-import { FwbRadio } from "flowbite-vue";
+import { FwbRadio, FwbAlert } from "flowbite-vue";
 import { reactive, computed } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
@@ -192,7 +208,13 @@ const swal = inject("$swal");
 const isShowModal = ref(false);
 const isDropzoneVisible = ref(false);
 const isTransfer = ref(false);
+const isNameVisible = ref(true);
+const isAlertNameVisible = ref(false);
+const isTransferVisible = ref(true);
+const isTransferAlert = ref(false);
 
+const isSaveBtnVisible = ref(true);
+const isSaveAlert = ref(false);
 // Text
 const filename = ref("");
 const filesize = ref("");
@@ -362,6 +384,13 @@ const closeModal = () => {
   formData.name_file = "";
   formData.target = "";
   isDropzoneVisible.value = false;
+  isNameVisible.value = true;
+  isAlertNameVisible.value = false;
+  isTransferVisible.value = true;
+  isTransferAlert.value = false;
+
+  isSaveBtnVisible.value = true;
+  isSaveAlert.value = false;
 };
 
 const showDropzone = () => {
@@ -373,26 +402,89 @@ const handleDragLeave = () => {
 };
 
 // Single File
+// const file = event.dataTransfer.files[0];
+
+// const handleDrop = (event) => {
+//   event.preventDefault();
+
+//   const file = event.dataTransfer.files[0];
+
+//   isDropzoneVisible.value = false;
+
+//   if (file && file.type === "application/pdf") {
+//     if (file > 1) {
+//       isShowModal.value = true;
+//       filename.value = "Multiple Files Uploaded";
+//       filesize.value = (file.size / (1024 * 1024)).toFixed(2);
+//     } else {
+//       isShowModal.value = true;
+//       filename.value = file.name;
+//       filesize.value = (file.size / (1024 * 1024)).toFixed(2);
+//       const filenameWithoutExtension = file.name.replace(/\.pdf$/i, "");
+//       filename.value = filenameWithoutExtension;
+//       formData.name_file = filenameWithoutExtension;
+//       formData.source = file.path;
+//       formData.target = "C:\\Users\\";
+//     }
+//   } else {
+//     swal({
+//       icon: "error",
+//       title: "Upload PDF only!",
+//       text: "File",
+//     });
+//   }
+// };
+
 const handleDrop = (event) => {
   event.preventDefault();
-  const file = event.dataTransfer.files[0];
+
+  const files = event.dataTransfer.files; // Access all dropped files
+
   isDropzoneVisible.value = false;
 
-  if (file && file.type === "application/pdf") {
-    isShowModal.value = true;
-    filename.value = file.name;
-    filesize.value = (file.size / (1024 * 1024)).toFixed(2);
-    const filenameWithoutExtension = file.name.replace(/\.pdf$/i, "");
-    filename.value = filenameWithoutExtension;
-    formData.name_file = filenameWithoutExtension;
-    formData.source = file.path;
-    formData.target = "C:\\Users\\";
-  } else {
-    swal({
-      icon: "error",
-      title: "Upload PDF only!",
-      text: "File",
-    });
+  if (files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      if (file.type === "application/pdf") {
+        isShowModal.value = true;
+
+        // Handle multiple files
+        if (files.length > 1) {
+          filename.value = "x" + files.length + " Uploaded ";
+          filesize.value = (files.length * (file.size / (1024 * 1024))).toFixed(2);
+          isNameVisible.value = false;
+          isAlertNameVisible.value = true;
+          isTransferVisible.value = false;
+          isTransferAlert.value = true;
+          isSaveBtnVisible.value = false;
+          isSaveAlert.value = true;
+        } else {
+          filename.value = file.name;
+          filesize.value = (file.size / (1024 * 1024)).toFixed(2);
+          const filenameWithoutExtension = file.name.replace(/\.pdf$/i, "");
+          filename.value = filenameWithoutExtension;
+          formData.name_file = filenameWithoutExtension;
+          formData.source = file.path;
+          formData.target = "C:\\Users\\";
+          isAlertNameVisible.value = false;
+
+          isTransferVisible.value = true;
+          isTransferAlert.value = false;
+
+          isSaveBtnVisible.value = true;
+          isSaveAlert.value = false;
+        }
+        // Process each file individually (e.g., upload using axios)
+        // ...
+      } else {
+        swal({
+          icon: "error",
+          title: "Upload PDF only!",
+          text: "File",
+        });
+      }
+    }
   }
 };
 
