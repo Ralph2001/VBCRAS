@@ -270,7 +270,7 @@ const submitForm = async () => {
     try {
       const submit = await axios
         .post(
-          "http://127.0.0.1:1216/add",
+          "http://127.0.0.1:1216/scanned/add",
           { name, filepath, type },
           {
             headers: {
@@ -329,7 +329,7 @@ const submitForm = async () => {
     try {
       const submit = await axios
         .post(
-          "http://127.0.0.1:1216/add",
+          "http://127.0.0.1:1216/scanned/add",
           { name, filepath, type },
           {
             headers: {

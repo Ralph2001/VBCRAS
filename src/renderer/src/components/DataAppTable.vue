@@ -169,40 +169,25 @@ import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
 
 const toast = useToast();
-
 const totalResults = ref("");
-const ikot = ref(true);
+
 const products = ref([]);
-const open = ref("");
 
 onMounted(async () => {
-  try {
-    const response = await axios.get("http://127.0.0.1:1216/scanned");
-    products.value = response.data.scans;
-    totalResults.value = response.data.scans.length;
-    loading.value = false;
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    alert("Can't  Connect to the Serveeeeeeeer! ");
-  }
-});
+  const connection = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:1216/scanned");
+      products.value = response.data.scans;
+      totalResults.value = response.data.scans.length;
+      loading.value = false;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      alert("Can't  Connect to the Serveeeeeeeer! ");
+    }
+  };
 
-const items = [
-  {
-    label: "Open File Path",
-    icon: "pi pi-folder-open",
-    command: (path) => {
-      console.log(path);
-    },
-  },
-  {
-    label: "Remove Record",
-    icon: "pi pi-ban",
-    command: () => {
-      alert("Remove Record");
-    },
-  },
-];
+  connection();
+});
 
 const types = ref(["Birth", "Death", "Marriage", "Legal", "Other"]);
 

@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, DateTime, func
 from sqlalchemy.orm import class_mapper
+from werkzeug.exceptions import NotFound
 
 app = Flask(__name__)
 
@@ -27,8 +28,6 @@ except Exception as e:
     exit(1)
     
     
-    
-    
 @app.route('/scanned', methods=['GET', 'POST'])
 def scanned():
     scans = db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.id)).scalars()
@@ -42,8 +41,9 @@ def scanned():
         'message': 'success',
         'scans': scans_list
     })
+    
 
-@app.route('/add', methods=['POST'])
+@app.route('/scanned/add', methods=['POST'])
 def add():
     data = request.json
 
@@ -58,7 +58,22 @@ def add():
     return jsonify({'message': 'Document added successfully', 'status': 'success'}), 201
 
 
+
+
+@app.route("/scanned/delete/<int:id>", methods=['DELETE'])
+def remove_scanned(id):
+    try:
+        scanned = db.get_or_404(ScannedDocuments, id)
+        db.session.delete(scanned)
+        db.session.commit()
+        return jsonify({'message': 'Document removed successfully', 'status': 'Success'}), 201
+    except NotFound:
+        return jsonify({'message': 'Document not found', 'status': 'Error'}), 404
+
+    
+    
+
 if __name__ == '__main__':
 
     CORS(app)
-    app.run(host="localhost", port=1216, debug=True)
+    app.run(host="0.0.0.0", port=1216, debug=True)
