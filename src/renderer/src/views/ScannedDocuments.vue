@@ -10,6 +10,7 @@
 
     <div class="h-max mt-6">
       <TableData
+       class=" scale-90"
         :data="Documents.scanned"
         :types="Documents.types"
         :isLoading="Documents.isLoading"
@@ -18,9 +19,14 @@
     </div>
   </div>
 
-  <button class="p-3 bg-blue-600 rounded-sm text-sm font-medium" >
-    Click Me
-  </button>
+  <div class="flex bottom-0 fixed w-full bg-gray-50 left-0 p-2 justify-end">
+    <p class="text-sm font-medium text-gray-900">
+      Total Records (<span class="text-blue-600">{{
+        Number(Documents.totalCount).toLocaleString()
+      }}</span
+      >)
+    </p>
+  </div>
 </template>
 
 <script setup>
@@ -36,5 +42,4 @@ const Documents = scannedDocuments();
 onMounted(() => {
   Documents.getScanned();
 });
-
 </script>
