@@ -1,14 +1,13 @@
 <template>
-  <Toast />
   <div class="h-[calc(100vh-135px)]">
     <DataTable
-      :value="products"
+      :value="data"
       removableSort
       stripedRows
       tableStyle="min-width: 50rem"
       v-model:filters="filters"
-      :loading="loading"
       :globalFilterFields="['name', 'type']"
+      :loading="isLoading"
       dataKey="id"
       scrollable
       scrollHeight="flex"
@@ -16,7 +15,7 @@
     >
       <template #header>
         <div class="flex flex-row justify-between items-center">
-          <p class="text-2xl font-medium text-slate-900">Scanned Documents</p>
+          <p class="text-2xl font-medium text-slate-900">{{ title }}</p>
           <div class="flex flex-row gap-2">
             <span class="relative">
               <i
@@ -36,24 +35,6 @@
               aria-label="Filter"
             />
           </div>
-        </div>
-      </template>
-      <template #empty>
-        <div class="flex flex-row justify-center items-center">
-          <img src="../assets/images/not found.png" alt="not found" class="h-48" />
-        </div>
-        <div class="flex flex-col items-center justify-center gap-1">
-          <p class="text-md uppercase text-gray-800 font-semibold">No Result</p>
-        </div>
-      </template>
-      <template #loading>
-        <p class="text-md font-semibold text-center">Loading Data. Please wait...</p>
-      </template>
-      <template #footer>
-        <div class="mr-5">
-          <p class="text-2xl text-end font-semibold text-gray-900">
-            Total Records: {{ totalResults }}
-          </p>
         </div>
       </template>
 
@@ -116,32 +97,6 @@
         </template>
         <template #body="slotProps">
           <div class="flex flex-row gap-1 items-center justify-center">
-            <!-- <SplitButton
-              label="Open"
-              :loading="ikot"
-              icon="pi pi-file-pdf"
-              :model="items"
-              severity="success"
-              size="small"
-              :pt="{
-                path: slotProps.data.filepath,
-              }"
-              @click="openFile(slotProps.data.filepath)"
-            /> -->
-            <!-- <fwb-button
-              color="default"
-              class="rounded"
-              @click="openFile(slotProps.data.filepath)"
-              size="sm"
-              >Open</fwb-button
-            > -->
-            <!-- <fwb-button
-              color="light"
-              class="rounded"
-              size="sm"
-              @click="openPath(slotProps.data.filepath)"
-              >Open File Location</fwb-button
-            > -->
             <EditBtn :filepath="slotProps.data.filepath" :id="slotProps.data.id" />
           </div>
         </template>
@@ -151,53 +106,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
+import { ref } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import SplitButton from "primevue/splitbutton";
 import InputText from "primevue/inputtext";
 import "primeicons/primeicons.css";
-import axios from "axios";
 import Tag from "primevue/tag";
-const swal = inject("$swal");
-import { FwbButton } from "flowbite-vue";
-import { useToast } from "primevue/usetoast";
-import Toast from "primevue/toast";
+
 import EditBtn from "./ScanApp/EditBtn.vue";
 import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
 
-const toast = useToast();
-const totalResults = ref("");
-
-const products = ref([]);
-
 const props = defineProps({
-  
+  data: {
+    type: Array,
+    required: true,
+  },
+  types: {
+    type: Array,
+    required: true,
+  },
+  isLoading: {
+    type: Boolean,
+    required: true,
+  },
+  title: {
+    type: String,
+  },
 });
-
-onMounted(async () => {
-  const connection = async () => {
-    try {
-      const response = await axios.get("http://127.0.0.1:1216/scanned");
-      products.value = response.data.scans;
-      totalResults.value = response.data.scans.length;
-      loading.value = false;
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      alert("Can't  Connect to the Serveeeeeeeer! ");
-    }
-  };
-
-  connection();
-});
-
-const types = ref(["Birth", "Death", "Marriage", "Legal", "Other"]);
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  name: { value: null, matchMode: FilterMatchMode.CONTAINS },
   type: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
@@ -219,6 +160,4 @@ const getSeverity = (type) => {
       return null;
   }
 };
-
-const loading = ref(true);
 </script>

@@ -24,8 +24,13 @@
 <script setup>
 import SplitButton from "primevue/splitbutton";
 import Toast from "primevue/toast";
-import { defineProps, ref } from "vue";
+import { defineProps, ref, inject } from "vue";
 import { useToast } from "primevue/usetoast";
+import axios from "axios";
+
+const swal = inject("$swal");
+
+const scannedId = ref("");
 
 const toast = useToast();
 const props = defineProps({
@@ -56,7 +61,9 @@ const items = [
     label: "Remove Record",
     icon: "pi pi-times",
 
-    command: () => {},
+    command: () => {
+      deleteScanned(props.id);
+    },
   },
 ];
 
@@ -111,5 +118,43 @@ const openPath = async (filepath) => {
       life: 3000,
     });
   }
+};
+
+const deleteScanned = (id) => {
+  swal
+    .fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+
+        remove(id);
+      }
+    });
+};
+
+const remove = async (id) => {
+  try {
+    axios
+      .delete(`http://127.0.0.1:1216/scanned/delete/${id}`)
+      .then((response) => {
+        console.log("Document deleted successfully!");
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error deleting document:", error);
+      });
+  } catch (error) {}
 };
 </script>
