@@ -10,7 +10,9 @@ export const scannedDocuments = defineStore('scanned', {
         types: ["Birth", "Death", "Marriage", "Legal", "Other"]
     }),
     getters: {
-
+        totalCount: (state) => {
+            return state.scanned.length + 1000000
+        }
     },
     actions: {
         async getScanned() {
