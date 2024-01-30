@@ -189,7 +189,7 @@ import { ref, inject } from "vue";
 import Toast from "primevue/toast";
 import DropZone from "../components/ScanApp/DropZone.vue";
 import DataAppTable from "../components/DataAppTable.vue";
-// import axios from "axios";
+import axios from "axios";
 
 import { FwbButton, FwbModal } from "flowbite-vue";
 import DropInputField from "../components/ScanApp/DropInputField.vue";
@@ -272,7 +272,7 @@ const submitForm = async () => {
     try {
       const submit = await axios
         .post(
-          "http://127.0.0.1:1216/scanned/add",
+          "http://0.0.0.0:1216/scanned/add",
           { name, filepath, type },
           {
             headers: {
