@@ -18,7 +18,11 @@
         <div class="flex flex-row items-center justify-between w-full">
           <p class="text-lg font-bold">Scanned Document</p>
           <div>
-            <button class="rounded-full border border-gray-100 px-3 py-2 hover:bg-gray-100" @click="closeModal" type="button">
+            <button
+              class="rounded-full border border-gray-100 px-3 py-2 hover:bg-gray-100"
+              @click="closeModal"
+              type="button"
+            >
               <i class="pi pi-times"></i>
             </button>
           </div>
@@ -183,10 +187,9 @@
 import { ref, inject } from "vue";
 
 import Toast from "primevue/toast";
-
 import DropZone from "../components/ScanApp/DropZone.vue";
 import DataAppTable from "../components/DataAppTable.vue";
-import axios from "axios";
+// import axios from "axios";
 
 import { FwbButton, FwbModal } from "flowbite-vue";
 import DropInputField from "../components/ScanApp/DropInputField.vue";
@@ -196,7 +199,6 @@ import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 import ToggleButton from "primevue/togglebutton";
-
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
