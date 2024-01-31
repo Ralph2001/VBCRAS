@@ -37,6 +37,11 @@
           </div>
         </div>
       </template>
+      <!-- <template #footer>
+        <div class="flex w-full justify-end items-center h-1">
+          <p class="text-sm font-medium text-gray-900">Total Records (<span class="text-blue-600">{{  Number(total).toLocaleString()  }}</span>)</p>
+        </div>
+      </template> -->
 
       <Column
         sortable
