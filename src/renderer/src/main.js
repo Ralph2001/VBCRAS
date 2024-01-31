@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, markRaw } from 'vue'
 import { createPinia } from 'pinia'
 import './axios'
 import App from './App.vue'
@@ -14,33 +14,22 @@ import PrimeVue from 'primevue/config';
 import Lara from './assets/presets/lara';
 
 
-
 import Start from './views/Start.vue';
-import Scanned from './views/Scanned.vue';
-import CCE from './views/CCE.vue'
-import Forms from './views/Forms.vue'
-import Collections from './views/Collections.vue'
-import Scannedv2 from './views/ScannedDocuments.vue';
+import Scanned from './views/ScannedDocuments.vue';
+import Login from './views/Login.vue';
+
 
 const routes = [
     {
         path: "/", component: Start, name: "Start"
     },
     {
+        path: "/login", component: Login, name: "Login"
+    },
+    {
         path: "/scanned", component: Scanned, name: "Scanned Documents"
     },
-    {
-        path: "/scannedv2", component: Scannedv2, name: "Scanned Documentsv2"
-    },
-    {
-        path: "/cce", component: CCE, name: "CCE"
-    },
-    {
-        path: "/forms", component: Forms, name: "Forms"
-    },
-    {
-        path: "/collections", component: Collections, name: "Collections"
-    }
+
 ]
 
 const router = createRouter({
@@ -50,6 +39,10 @@ const router = createRouter({
 
 
 const pinia = createPinia()
+
+pinia.use(({ store }) => {
+    store.router = markRaw(router)
+})
 const app = createApp(App);
 
 

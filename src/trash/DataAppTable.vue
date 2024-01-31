@@ -173,9 +173,7 @@ const totalResults = ref("");
 
 const products = ref([]);
 
-const props = defineProps({
-  
-});
+const props = defineProps({});
 
 onMounted(async () => {
   const connection = async () => {

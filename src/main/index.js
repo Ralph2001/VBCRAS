@@ -110,6 +110,11 @@ ipcMain.handle('open-file-folder', async (event, path) => {
 });
 
 
+ipcMain.handle('get-user', async (event) => {
+  return username;
+});
+
+
 
 
 

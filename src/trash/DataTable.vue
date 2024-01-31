@@ -6,8 +6,6 @@
         <th>File Path</th>
         <th>Status</th>
         <th>Action</th>
-
-
       </tr>
     </thead>
   </DataTable>
@@ -22,6 +20,4 @@ DataTable.use(DataTablesCore);
 
 <style>
 @import "datatables.net-dt";
-
-
 </style>

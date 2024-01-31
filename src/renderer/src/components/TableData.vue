@@ -12,6 +12,8 @@
       scrollable
       scrollHeight="flex"
       filterDisplay="row"
+      stateStorage="session"
+      stateKey="dt-state-demo-session"
     >
       <template #header>
         <div class="flex flex-row justify-between items-center">
@@ -23,26 +25,13 @@
               />
               <InputText
                 v-model="filters['global'].value"
-                placeholder="Keyword Search"
+                placeholder="Search"
                 class="pl-10 font-normal"
               />
             </span>
-            <Button
-              icon="pi pi-cog"
-              text
-              severity="secondary"
-              rounded
-              aria-label="Filter"
-            />
           </div>
         </div>
       </template>
-      <!-- <template #footer>
-        <div class="flex w-full justify-end items-center h-1">
-          <p class="text-sm font-medium text-gray-900">Total Records (<span class="text-blue-600">{{  Number(total).toLocaleString()  }}</span>)</p>
-        </div>
-      </template> -->
-
       <Column
         sortable
         field="name"
@@ -119,7 +108,7 @@ import InputText from "primevue/inputtext";
 import "primeicons/primeicons.css";
 import Tag from "primevue/tag";
 
-import EditBtn from "./ScanApp/EditBtn.vue";
+import EditBtn from "./EditBtn.vue";
 import Dropdown from "primevue/dropdown";
 import Button from "primevue/button";
 

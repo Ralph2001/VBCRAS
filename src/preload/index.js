@@ -16,6 +16,10 @@ if (process.contextIsolated) {
 }
 
 contextBridge.exposeInMainWorld('LocalCivilApi', {
+  getUser: async () => {
+    const result = await ipcRenderer.invoke('get-user');
+    return result
+  },
   selectFolder: async () => {
     const { canceled, filePaths } = await ipcRenderer.invoke('select-folder');
     return canceled ? null : filePaths[0];
