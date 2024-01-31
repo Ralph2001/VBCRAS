@@ -4,7 +4,6 @@
       v-if="isShowModal == false" />
 
     <div class="h-max mt-6">
-<<<<<<< HEAD
       <TableData class="scale-95" :data="Documents.scanned" :types="Documents.types" :isLoading="Documents.isLoading"
         :title="Documents.title" />
     </div>
@@ -134,24 +133,6 @@
       Total Records (<span class="text-blue-600">{{
         Number(Documents.totalCount).toLocaleString()
       }}</span>)
-=======
-      <TableData
-       class=" scale-90"
-        :data="Documents.scanned"
-        :types="Documents.types"
-        :isLoading="Documents.isLoading"
-        :title="Documents.title"
-      />
-    </div>
-  </div>
-
-  <div class="flex bottom-0 fixed w-full bg-gray-50 left-0 p-2 justify-end">
-    <p class="text-sm font-medium text-gray-900">
-      Total Records (<span class="text-blue-600">{{
-        Number(Documents.totalCount).toLocaleString()
-      }}</span
-      >)
->>>>>>> c1c51535f7d20cb8e725b0c6c09f7356f4152c7f
     </p>
   </div>
 </template>
@@ -188,7 +169,6 @@ const Toast = swal.mixin({
     toast.onmouseleave = swal.resumeTimer;
   },
 });
-<<<<<<< HEAD
 
 // Documents Data
 const Documents = scannedDocuments();
@@ -452,6 +432,4 @@ const submitForm = async () => {
     }
   }
 };
-=======
->>>>>>> c1c51535f7d20cb8e725b0c6c09f7356f4152c7f
 </script>

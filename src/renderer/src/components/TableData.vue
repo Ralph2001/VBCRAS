@@ -32,15 +32,6 @@
           </div>
         </div>
       </template>
-<<<<<<< HEAD
-=======
-      <!-- <template #footer>
-        <div class="flex w-full justify-end items-center h-1">
-          <p class="text-sm font-medium text-gray-900">Total Records (<span class="text-blue-600">{{  Number(total).toLocaleString()  }}</span>)</p>
-        </div>
-      </template> -->
-
->>>>>>> c1c51535f7d20cb8e725b0c6c09f7356f4152c7f
       <Column
         sortable
         field="name"
