@@ -14,7 +14,11 @@ export const scannedDocuments = defineStore('scanned', {
     }),
     getters: {
         totalCount: (state) => {
+<<<<<<< HEAD
             return state.scanned.length
+=======
+            return state.scanned.length + 1000000
+>>>>>>> c1c51535f7d20cb8e725b0c6c09f7356f4152c7f
         }
     },
     actions: {
