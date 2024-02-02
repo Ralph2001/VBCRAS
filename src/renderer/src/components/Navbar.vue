@@ -1,7 +1,7 @@
 <template>
   <nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 h-16">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-      <router-link to="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+      <router-link to="/Start" class="flex items-center space-x-3 rtl:space-x-reverse">
         <img src="../assets/logo.png" class="h-14" alt="System Logo" />
         <span class="self-center text-lg font-semibold whitespace-nowrap dark:text-white">Civil Registry Archive
           System</span>
@@ -31,12 +31,12 @@
           <li>
             <router-link
               active-class="text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
-              to="/"
+              to="/Start"
               class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
               Home
             </router-link>
           </li>
-          <li>
+          <!-- <li>
             <router-link
               active-class="text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
               to="/cce"
@@ -59,7 +59,7 @@
               class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
               Collections
             </router-link>
-          </li>
+          </li> -->
           <li>
             <router-link
               active-class="text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
@@ -85,25 +85,14 @@
               <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
                 <li>
 
-                  <router-link to="/login"
+                  <router-link to="/profile" v-if="Auth.isAuthenticated"
                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                    Login
+                    <span class="pi pi-user pr-1"></span> {{ Auth.user }}
                   </router-link>
-
-
-                </li>
-                <li>
-
-                  <router-link to="/signup"
-                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                    Sign Up
-                  </router-link>
-
-
                 </li>
               </ul>
               <div class="py-1">
-                <a href="#"
+                <a href="#" @click="Logout"
                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign
                   out</a>
               </div>
@@ -115,8 +104,24 @@
   </nav>
 </template>
 
-<script>
-export default {};
+<script setup>
+import { AuthStore } from '../stores/auth';
+import { useRouter } from "vue-router"
+
+import { onMounted } from 'vue';
+const router = useRouter();
+const Auth = AuthStore();
+
+const Logout = () => {
+  Auth.logout();
+  router.push('/login')
+}
+
+
+onMounted(() => {
+
+  Auth.Profile();
+});
 </script>
 
-<style lang="scss" scoped></style>
+

@@ -142,6 +142,7 @@ import { ref, inject, onMounted } from "vue";
 import { reactive, computed } from "vue";
 
 import { scannedDocuments } from "../stores/scanned";
+import { AuthStore } from "../stores/auth";
 import { ComputerName } from "../stores/user";
 import TableData from "../components/TableData.vue";
 import Dropzone from "../components/Dropzone.vue";
@@ -173,9 +174,11 @@ const Toast = swal.mixin({
 // Documents Data
 const Documents = scannedDocuments();
 const PCName = ComputerName();
+const Auth = AuthStore()
 onMounted(() => {
   Documents.getScanned();
   PCName.getUserName();
+  Auth.Profile();
 });
 
 const isShowModal = ref(false);
@@ -250,6 +253,7 @@ const handleDrop = (event) => {
           formData.source = file.path;
           formData.target = "C:\\";
           isAlertNameVisible.value = false;
+          formData.uploaded_by = Auth.user;
 
           isTransferVisible.value = true;
           isTransferAlert.value = false;
@@ -292,12 +296,15 @@ const move = async (source, filepath) => {
   }
 };
 
+
 // FormData
 const formData = reactive({
   name_file: "",
   target: "",
   source: "",
   type: "Other",
+  uploaded_by: ''
+
 });
 
 const rules = computed(() => {
@@ -306,6 +313,9 @@ const rules = computed(() => {
     target: { required },
     source: { required },
     type: { required },
+    uploaded_by: { required },
+
+
   };
 });
 
@@ -320,6 +330,7 @@ const submitForm = async () => {
   const name = formData.name_file;
   const type = formData.type;
   const source = formData.source;
+  const uploaded_by = formData.uploaded_by
 
   let filepath;
   if (isTransfer.value) {
@@ -339,97 +350,110 @@ const submitForm = async () => {
   }
 
   if (isTransfer.value) {
-    try {
-      const submit = await axios
-        .post(
-          "http://0.0.0.0:1216/scanned/add",
-          { name, filepath, type },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((response) => {
-          console.log(response);
-          if (response.status === 201) {
-            closeModal();
-            move();
-            if (move(source, filepath)) {
-              Toast.fire({
-                icon: "success",
-                title: "Success",
-                text: "Successfully Added and Transfer the file.",
-              });
-            } else {
-              Toast.fire({
-                icon: "warning",
-                title: "warning",
-                text:
-                  "Successfully Added and but can't Transfer the file. Make sure it's not open",
-              });
-            }
-          } else if (response.data.status == "required") {
-            Toast.fire({
-              icon: "error",
-              title: "Required Fields",
-            });
-          }
-        })
-        .catch((error) => {
-          closeModal();
-          Toast.fire({
-            icon: "error",
-            title: "Something went Wrong.",
-          });
-        });
-    } catch (error) {
-      Toast.fire({
-        icon: "error",
-        title: "Something went Wrong.",
-      });
-    }
+    // try {
+    //   const submit = await axios
+    //     .post(
+    //       "http://0.0.0.0:1216/scanned/add",
+    //       { name, filepath, type },
+    //       {
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //       }
+    //     )
+    //     .then((response) => {
+    //       console.log(response);
+    //       if (response.status === 201) {
+    //         closeModal();
+    //         move();
+    //         if (move(source, filepath)) {
+    //           Toast.fire({
+    //             icon: "success",
+    //             title: "Success",
+    //             text: "Successfully Added and Transfer the file.",
+    //           });
+    //         } else {
+    //           Toast.fire({
+    //             icon: "warning",
+    //             title: "warning",
+    //             text:
+    //               "Successfully Added and but can't Transfer the file. Make sure it's not open",
+    //           });
+    //         }
+    //       } else if (response.data.status == "required") {
+    //         Toast.fire({
+    //           icon: "error",
+    //           title: "Required Fields",
+    //         });
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       closeModal();
+    //       Toast.fire({
+    //         icon: "error",
+    //         title: "Something went Wrong.",
+    //       });
+    //     });
+    // } catch (error) {
+    //   Toast.fire({
+    //     icon: "error",
+    //     title: "Something went Wrong.",
+    //   });
+    // }
   } else {
+
     try {
-      const submit = await axios
-        .post(
-          "http://127.0.0.1:1216/scanned/add",
-          { name, filepath, type },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((response) => {
-          console.log(response);
-          if (response.status === 201) {
-            closeModal();
-            Toast.fire({
-              icon: "success",
-              title: "Successfully Added",
-            });
-            Documents.refresh();
-          } else if (response.data.status == "required") {
-            Toast.fire({
-              icon: "error",
-              title: "Required Fields",
-            });
-          }
-        })
-        .catch((error) => {
-          closeModal();
-          Toast.fire({
-            icon: "error",
-            title: "Something went Wrong.",
-          });
-        });
-    } catch (error) {
+      await Documents.addData(name, filepath, type, uploaded_by)
+      closeModal();
       Toast.fire({
-        icon: "error",
-        title: "Something went Wrong.",
+        icon: "success",
+        title: "Successfully Added",
       });
+      Documents.refresh();
+    } catch (error) {
+      console.log(error)
     }
+
+    // try {
+    //   const submit = await axios
+    //     .post(
+    //       "http://127.0.0.1:1216/scanned/add",
+    //       { name, filepath, type },
+    //       {
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //       }
+    //     )
+    //     .then((response) => {
+    //       console.log(response);
+    //       if (response.status === 201) {
+    //         closeModal();
+    //         Toast.fire({
+    //           icon: "success",
+    //           title: "Successfully Added",
+    //         });
+    //         Documents.refresh();
+    //       } else if (response.data.status == "required") {
+    //         Toast.fire({
+    //           icon: "error",
+    //           title: "Required Fields",
+    //         });
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       closeModal();
+    //       Toast.fire({
+    //         icon: "error",
+    //         title: "Something went Wrong.",
+    //       });
+    //     });
+    // } catch (error) {
+    //   Toast.fire({
+    //     icon: "error",
+    //     title: "Something went Wrong.",
+    //   });
+    // }
   }
 };
 </script>

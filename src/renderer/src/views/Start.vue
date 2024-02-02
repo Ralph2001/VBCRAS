@@ -33,8 +33,21 @@
 import { onMounted } from "vue";
 import FrontCarousel from "../components/FrontCarousel.vue";
 import { initFlowbite } from "flowbite";
+import { AuthStore } from "../stores/auth"
+import { useRouter } from "vue-router"
+
+const router = useRouter();
+
+
+const Auth = AuthStore();
+
 
 onMounted(() => {
   initFlowbite();
+  if (!Auth.isAuthenticated()) {
+    router.push('/login');
+  } else {
+    router.push('/Start')
+  }
 });
 </script>

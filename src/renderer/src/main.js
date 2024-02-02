@@ -13,24 +13,35 @@ import './assets/css/index.css'
 import PrimeVue from 'primevue/config';
 import Lara from './assets/presets/lara';
 
+import Layout from './views/Layout.vue';
 
 import Start from './views/Start.vue';
 import Scanned from './views/ScannedDocuments.vue';
 import Login from './views/Login.vue';
+import Signup from './views/Signup.vue';
+
+import Profile from './views/Profile.vue';
+
 
 
 const routes = [
     {
-        path: "/", component: Start, name: "Start"
+        path: "/",
+        component: Layout,
+        children: [
+            { path: "Start", component: Start, name: "Start" },
+            { path: "scanned", component: Scanned, name: "Scanned Documents" },
+        ],
     },
-    {
-        path: "/login", component: Login, name: "Login"
-    },
-    {
-        path: "/scanned", component: Scanned, name: "Scanned Documents"
-    },
+    { path: "/login", component: Login, name: "Login" },
+    { path: "/profile", component: Profile, name: "Profile" },
+    { path: "/Signup", component: Signup, name: "Signup" },
 
-]
+
+
+
+];
+
 
 const router = createRouter({
     history: createWebHistory(),

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -7,6 +9,7 @@ from werkzeug.exceptions import NotFound
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import current_user
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
@@ -17,7 +20,8 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///local.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["JWT_SECRET_KEY"] = "createdbyralph"  
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=8)
+app.config["JWT_SECRET_KEY"] = "createdby_villanuevaralph2001@gmail.com"  
 jwt = JWTManager(app)
 db = SQLAlchemy(app) 
 
@@ -26,6 +30,7 @@ class ScannedDocuments(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     filepath = db.Column(db.String, nullable=False) 
     type = db.Column(db.String, nullable=False)
+    uploaded_by = db.Column(db.String, nullable=False)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
@@ -49,6 +54,17 @@ except Exception as e:
     print(f"Error connecting to the database: {str(e)}")
     exit(1)
     
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user.id
+
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return User.query.filter_by(id=identity).one_or_none()
+
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -57,10 +73,20 @@ def login():
 
     user = User.query.filter_by(username=data['username']).first()
     if user and user.check_password(data['password']):
-        token = create_access_token(user.id)  
+        token = create_access_token(identity=user)  
         return jsonify({'token': token}), 200
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
+
+@app.route("/user", methods=["GET"])
+@jwt_required()
+def protected():
+  
+    return jsonify(
+        id=current_user.id,
+        username=current_user.username,
+    )
+
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -86,7 +112,6 @@ def signup():
 @jwt_required()
 def scanned():
     
-    current_user = get_jwt_identity()
     scans = db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.id)).scalars()
     scans_list = []
     
@@ -97,7 +122,6 @@ def scanned():
     return jsonify({
         'message': 'success',
         'scans': scans_list,
-        'login_as': current_user
     })
     
 
@@ -106,7 +130,7 @@ def scanned():
 def add():
     data = request.json
 
-    if not data or not all(field in data for field in ['name', 'filepath', 'type']):
+    if not data or not all(field in data for field in ['name', 'filepath', 'type', 'uploaded_by']):
         return jsonify({'message': 'Missing Required Fields', 'status': 'required'}), 400
   
     
