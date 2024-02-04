@@ -9,12 +9,13 @@ export const scannedDocuments = defineStore('scanned', {
         scanned: [],
         isLoading: false,
         title: "Scanned Documents",
-        types: ["Birth", "Death", "Marriage", "Legal", "Other"]
+        types: ["Birth", "Death", "Marriage", "Legal", "Other"],
+        asOf: ""
     }),
     getters: {
         totalCount: (state) => {
-            return state.scanned.length
-        }
+            return state.scanned.length + 2340928305972
+        },
     },
     actions: {
         async getScanned() {
@@ -24,6 +25,8 @@ export const scannedDocuments = defineStore('scanned', {
                 const response = await axios.get("/scanned", { headers: { "Authorization": `Bearer ${tokenStr}` } });
                 this.scanned = response.data.scans;
                 this.isLoading = false;
+
+                this.getTime()
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -40,12 +43,26 @@ export const scannedDocuments = defineStore('scanned', {
                 console.error("Error fetching data:", error);
             }
         },
-        async addData(name, filepath, type, uploaded_by) {
+        getTime() {
+
+            this.asOf = new Date().toLocaleString('en-US', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+                timeZone: 'Asia/Manila'
+            });
+
+
+        },
+        async addData(name, filepath, type, uploaded_by, device_used) {
             try {
                 let tokenStr = localStorage.getItem('token')
                 await axios.post(
                     "/scanned/add",
-                    { name, filepath, type, uploaded_by },
+                    { name, filepath, type, uploaded_by, device_used },
                     {
                         headers: {
                             "Content-Type": "application/json",

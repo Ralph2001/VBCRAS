@@ -12,7 +12,7 @@
   <fwb-modal v-if="isShowModal" @close="closeModal" persistent class="rounded-sm z-50">
     <template #header>
       <div class="flex flex-row items-center justify-between w-full">
-        <p class="text-lg font-bold">Scanned Document</p>
+        <p class="text-lg font-medium">Scanned Document</p>
         <div>
           <button class="rounded-full border border-gray-100 px-3 py-2 hover:bg-gray-100" @click="closeModal"
             type="button">
@@ -22,13 +22,9 @@
       </div>
     </template>
     <template #body>
-      <div class="p-4 md:p-5 space-y-4">
+      <div class=" space-y-3">
         <div class="flex flex-row justify-start items-center p-2 gap-1">
-          <div>
-            <img
-              src="https://png.pngtree.com/png-clipart/20220612/original/pngtree-pdf-file-icon-png-png-image_7965915.png"
-              class="h-12 max-w-xs" alt="" />
-          </div>
+          <span class="pi pi-file-pdf text-red-600 font-normal" style="font-size: 2rem"></span>
           <div>
             <p class="text-md font-semibold text-slate-900 text-justify">
               {{ filename }}
@@ -125,14 +121,15 @@
   <div class="flex flex-row bottom-0 fixed w-full bg-gray-50 left-0 p-2 justify-between items-center mx-auto">
     <div class="flex flex-row items-center gap-2">
       <Button icon="pi pi-cog" text severity="secondary" rounded aria-label="Filter" />
-      <p class="text-xs font-normal text-gray-400 italic">
-        <span class="pi pi-sitemap"></span> {{ PCName.user }}
+      <p class="text-sm font-normal text-gray-600 italic">
+        <span class="pi pi-desktop"></span> {{ PCName.user }}
       </p>
     </div>
-    <p class="text-sm font-medium text-gray-900">
-      Total Records (<span class="text-blue-600">{{
-        Number(Documents.totalCount).toLocaleString()
-      }}</span>)
+    <p class="text-sm font-medium text-gray-900 select-all">
+      <span class="italic font-normal text-gray-500">As of {{ Documents.asOf }},</span> Total Records (<span
+        class="text-blue-600">{{
+          Number(Documents.totalCount).toLocaleString()
+        }}</span>)
     </p>
   </div>
 </template>
@@ -254,6 +251,7 @@ const handleDrop = (event) => {
           formData.target = "C:\\";
           isAlertNameVisible.value = false;
           formData.uploaded_by = Auth.user;
+          formData.device_used = PCName.user;
 
           isTransferVisible.value = true;
           isTransferAlert.value = false;
@@ -261,8 +259,6 @@ const handleDrop = (event) => {
           isSaveBtnVisible.value = true;
           isSaveAlert.value = false;
         }
-        // Process each file individually (e.g., upload using axios)
-        // ...
       } else {
         swal({
           icon: "error",
@@ -303,7 +299,8 @@ const formData = reactive({
   target: "",
   source: "",
   type: "Other",
-  uploaded_by: ''
+  uploaded_by: '',
+  device_used: ''
 
 });
 
@@ -314,6 +311,7 @@ const rules = computed(() => {
     source: { required },
     type: { required },
     uploaded_by: { required },
+    device_used: { required }
 
 
   };
@@ -331,6 +329,7 @@ const submitForm = async () => {
   const type = formData.type;
   const source = formData.source;
   const uploaded_by = formData.uploaded_by
+  const device_used = formData.device_used
 
   let filepath;
   if (isTransfer.value) {
@@ -403,7 +402,7 @@ const submitForm = async () => {
   } else {
 
     try {
-      await Documents.addData(name, filepath, type, uploaded_by)
+      await Documents.addData(name, filepath, type, uploaded_by, device_used)
       closeModal();
       Toast.fire({
         icon: "success",

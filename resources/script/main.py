@@ -31,13 +31,34 @@ class ScannedDocuments(db.Model):
     filepath = db.Column(db.String, nullable=False) 
     type = db.Column(db.String, nullable=False)
     uploaded_by = db.Column(db.String, nullable=False)
+    device_used =  db.Column(db.String, nullable=False)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    
+class RestoreDocuments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    filepath = db.Column(db.String, nullable=False) 
+    type = db.Column(db.String, nullable=False)
+    deleted_by = db.Column(db.String, nullable=False)
+    device_used =  db.Column(db.String, nullable=False)
+    deleted_at = Column(DateTime, default=func.now())
+    
+class DocumentsLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    filepath = db.Column(db.String, nullable=False) 
+    type = db.Column(db.String, nullable=False)
+    action = db.Column(db.String, nullable=False)
+    action_by = db.Column(db.String, nullable=False)
+    device_used =  db.Column(db.String, nullable=False)
+    action_at = Column(DateTime, default=func.now())
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
+    # is_admin = db.Column(db.Boolean, default=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -130,7 +151,7 @@ def scanned():
 def add():
     data = request.json
 
-    if not data or not all(field in data for field in ['name', 'filepath', 'type', 'uploaded_by']):
+    if not data or not all(field in data for field in ['name', 'filepath', 'type', 'uploaded_by', 'device_used']):
         return jsonify({'message': 'Missing Required Fields', 'status': 'required'}), 400
   
     
@@ -147,12 +168,24 @@ def add():
 @jwt_required()
 def remove_scanned(id):
     try:
-        scanned = db.get_or_404(ScannedDocuments, id)
-        db.session.delete(scanned)
+        scanned = ScannedDocuments.query.get(id) 
+
+        restored_doc = RestoreDocuments(
+            name=scanned.name,
+            filepath=scanned.filepath,
+            type=scanned.type,
+            deleted_by=current_user.username,  
+        )
+
+        db.session.add(restored_doc)  
+        db.session.delete(scanned)   
         db.session.commit()
-        return jsonify({'message': 'Document removed successfully', 'status': 'Success'}), 201
+
+        return jsonify({'message': 'Document moved to RestoreDocuments', 'status': 'Success'}), 201
+
     except NotFound:
         return jsonify({'message': 'Document not found', 'status': 'Error'}), 404
+
 
     
     

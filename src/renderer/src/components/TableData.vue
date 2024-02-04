@@ -1,81 +1,42 @@
 <template>
   <div class="h-[calc(100vh-135px)]">
-    <DataTable
-      :value="data"
-      removableSort
-      stripedRows
-      tableStyle="min-width: 50rem"
-      v-model:filters="filters"
-      :globalFilterFields="['name', 'type']"
-      :loading="isLoading"
-      dataKey="id"
-      scrollable
-      scrollHeight="flex"
-      filterDisplay="row"
-      stateStorage="session"
-      stateKey="dt-state-demo-session"
-    >
+    <DataTable :value="data" showGridlines removableSort tableStyle="min-width: 50rem; "  v-model:filters="filters"
+      :globalFilterFields="['name', 'type']" :loading="isLoading" dataKey="id" scrollable scrollHeight="flex"
+      filterDisplay="row" stateStorage="session" stateKey="dt-state-demo-session">
       <template #header>
-        <div class="flex flex-row justify-between items-center">
-          <p class="text-2xl font-medium text-slate-900">{{ title }}</p>
+        <div class="flex flex-row justify-between items-center h-10 scale-95">
+          <p class="text-lg font-medium text-slate-900"><span class="pi pi-print"></span> {{ title }}</p>
           <div class="flex flex-row gap-2">
             <span class="relative">
-              <i
-                class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
-              />
-              <InputText
-                v-model="filters['global'].value"
-                placeholder="Search"
-                class="pl-10 font-normal"
-              />
+              <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+              <InputText v-model="filters['global'].value" placeholder="Search" class="pl-8 rounded-sm font-normal" />
             </span>
+            <!-- <Button icon="pi pi-refresh" rounded raised /> -->
           </div>
         </div>
       </template>
-      <Column
-        sortable
-        field="name"
-        header="Name"
-        class="overflow-ellipsis"
-        style="width: 50%"
-      >
+      <Column sortable field="name" header="Name" headerClass="text-sm " style="width: 60%;">
         <template #body="slotProps">
-          <p class="text-md text-slate-900 font-medium overflow-ellipsis">
+          <p class="text-md font-sans text-slate-900 font-medium w-[10rem] sm:w-[20rem] md:w-[35rem] truncate">
             {{ slotProps.data.name }}
           </p>
         </template>
         <template #filter="{ filterModel, filterCallback }">
-          <InputText
-            v-model="filterModel.value"
-            type="text"
-            @input="filterCallback()"
-            class="p-column-filter"
-            placeholder="Search By Name"
-          />
+          <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
+            class="p-column-filter font-normal text-sm uppercase rounded-sm" placeholder="Search By Name" />
         </template>
       </Column>
 
-      <Column
-        field="type"
-        sortable
-        header="Type"
-        style="width: 2%; max-width: 2%"
-        :showFilterMenu="false"
-        :filterMenuStyle="{ width: '14rem' }"
-      >
+      <Column field="type" sortable header="Type" headerClass="text-sm" style="width: 15%;" :showFilterMenu="false">
         <template #body="{ data }">
-          <Tag class="rounded" :value="data.type" :severity="getSeverity(data.type)" />
+          <div class="flex flex-row w-full justify-center">
+            <Tag class="rounded-sm" :value="data.type" :severity="getSeverity(data.type)" />
+          </div>
         </template>
+
         <template #filter="{ filterModel, filterCallback }">
-          <Dropdown
-            v-model="filterModel.value"
-            @change="filterCallback()"
-            :options="types"
-            placeholder="Select Type"
-            class="p-column-filter"
-            style="min-width: 12rem"
-            :showClear="true"
-          >
+          <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="types" placeholder="Select Type"
+            class="p-column-filter font-normal text-sm uppercase rounded-sm" style="width: 11rem;" :showClear="true">
             <template #option="slotProps">
               <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
             </template>
@@ -83,7 +44,7 @@
         </template>
       </Column>
 
-      <Column style="width: 20%; max-width: 20%">
+      <Column style="width: 25%;" headerClass="text-sm">
         <template #header>
           <div class="flex flex-row w-full justify-center">
             <p class="text-center">Action</p>

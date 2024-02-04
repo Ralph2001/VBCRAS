@@ -1,24 +1,18 @@
 <template>
   <Toast />
-  <SplitButton
-    label="Open File"
-    size="small"
-    :pt="{
-      button: {
-        root: {
-          class:
-            'text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100  focus:ring-gray-200 font-medium rounded-s text-sm p-2 pr-6 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700',
-        },
+  <SplitButton label="Open File" size="small" :pt="{
+    button: {
+      root: {
+        class:
+          'text-gray-900 bg-white text-sm border border-gray-300 focus:outline-none hover:bg-gray-100  focus:ring-gray-200 font-medium rounded-s text-sm p-2 pr-6 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700',
       },
-      menuButton: {
-        root: {
-          class: 'bg-gray-200 p-2  border border-gray-200 hover:bg-slate-400',
-        },
+    },
+    menuButton: {
+      root: {
+        class: 'bg-gray-200 p-2  border border-gray-200 hover:bg-slate-400 ',
       },
-    }"
-    @click="openFile(filepath)"
-    :model="items"
-  />
+    },
+  }" @click="openFile(filepath)" :model="items" />
 </template>
 
 <script setup>
@@ -55,7 +49,7 @@ const items = [
     label: "Update Record",
     icon: "pi pi-external-link",
 
-    command: () => {},
+    command: () => { },
   },
   {
     label: "Remove Record",
@@ -70,20 +64,6 @@ const items = [
 const openFile = async (filepath) => {
   try {
     const check = await window.LocalCivilApi.checkFile(filepath);
-    // if (check) {
-    //   toast.add({
-    //     severity: "success",
-    //     detail: "The file was found.",
-    //     life: 1000,
-    //   });
-    // } else {
-    //   toast.add({
-    //     severity: "info",
-    //     summary: "Info",
-    //     detail: "Message Content",
-    //     life: 3000,
-    //   });
-    // }
   } catch (error) {
     toast.add({
       severity: "info",
@@ -96,20 +76,6 @@ const openFile = async (filepath) => {
 const openPath = async (filepath) => {
   try {
     const check = await window.LocalCivilApi.openFilePath(filepath);
-    // if (check) {
-    //   toast.add({
-    //     severity: "success",
-    //     summary: "Success",
-    //     life: 3000,
-    //   });
-    // } else {
-    //   toast.add({
-    //     severity: "error",
-    //     summary: "Not Opening",
-    //     detail: "Something went wrong",
-    //     life: 3000,
-    //   });
-    // }
   } catch (error) {
     toast.add({
       severity: "error",
@@ -146,8 +112,11 @@ const deleteScanned = (id) => {
 
 const remove = async (id) => {
   try {
+    let tokenStr = localStorage.getItem('token')
     axios
-      .delete(`http://127.0.0.1:1216/scanned/delete/${id}`)
+      .delete(`/scanned/delete/${id}`, {
+        headers: { "Authorization": `Bearer ${tokenStr}` }
+      })
       .then((response) => {
         console.log("Document deleted successfully!");
         console.log(response.data);
@@ -155,6 +124,6 @@ const remove = async (id) => {
       .catch((error) => {
         console.error("Error deleting document:", error);
       });
-  } catch (error) {}
+  } catch (error) { }
 };
 </script>

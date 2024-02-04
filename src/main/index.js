@@ -135,9 +135,6 @@ function mainWindow() {
   }
   )
 
-  mainWindow.setMinimumSize(1060, 670)
-
-
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
