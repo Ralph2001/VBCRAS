@@ -92,7 +92,7 @@ ipcMain.handle('open-file', async (event, source) => {
       },
       autoHideMenuBar: true,
     });
-    win.loadURL(source);
+    win.loadURL('C:\\Users\\' + username + '\\' + source);
     return true;
   } catch (err) {
     return false;
@@ -102,7 +102,7 @@ ipcMain.handle('open-file', async (event, source) => {
 
 ipcMain.handle('open-file-folder', async (event, path) => {
   try {
-    const filefolder = shell.showItemInFolder(path)
+    const filefolder = shell.showItemInFolder('C:\\Users\\' + username + '\\' + path)
     return true;
   } catch (err) {
     return false;

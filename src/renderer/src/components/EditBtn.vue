@@ -18,13 +18,18 @@
 <script setup>
 import SplitButton from "primevue/splitbutton";
 import Toast from "primevue/toast";
-import { defineProps, ref, inject } from "vue";
+import { defineProps, ref, inject, onMounted } from "vue";
 import { useToast } from "primevue/usetoast";
 import axios from "axios";
-
+import { ComputerName } from "../stores/user";
 const swal = inject("$swal");
 
 const scannedId = ref("");
+
+const PCName = ComputerName();
+onMounted(() => {
+  PCName.getUserName();
+});
 
 const toast = useToast();
 const props = defineProps({
@@ -45,12 +50,12 @@ const items = [
       openPath(props.filepath);
     },
   },
-  {
-    label: "Update Record",
-    icon: "pi pi-external-link",
+  // {
+  //   label: "Update Record",
+  //   icon: "pi pi-external-link",
 
-    command: () => { },
-  },
+  //   command: () => { },
+  // },
   {
     label: "Remove Record",
     icon: "pi pi-times",
@@ -113,8 +118,9 @@ const deleteScanned = (id) => {
 const remove = async (id) => {
   try {
     let tokenStr = localStorage.getItem('token')
+    let device_used_to_delete = PCName.user
     axios
-      .delete(`/scanned/delete/${id}`, {
+      .delete(`/scanned/delete/${id}&${device_used_to_delete}`, {
         headers: { "Authorization": `Bearer ${tokenStr}` }
       })
       .then((response) => {

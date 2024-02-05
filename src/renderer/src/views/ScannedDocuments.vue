@@ -247,7 +247,10 @@ const handleDrop = (event) => {
           const filenameWithoutExtension = file.name.replace(/\.pdf$/i, "");
           filename.value = filenameWithoutExtension;
           formData.name_file = filenameWithoutExtension;
-          formData.source = file.path;
+
+
+          formData.source = file.path.replace('C:\\Users\\' + PCName.user + '\\', '')
+
           formData.target = "C:\\";
           isAlertNameVisible.value = false;
           formData.uploaded_by = Auth.user;
@@ -258,6 +261,7 @@ const handleDrop = (event) => {
 
           isSaveBtnVisible.value = true;
           isSaveAlert.value = false;
+
         }
       } else {
         swal({

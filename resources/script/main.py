@@ -21,7 +21,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///local.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=8)
-app.config["JWT_SECRET_KEY"] = "createdby_villanuevaralph2001@gmail.com"  
+app.config["JWT_SECRET_KEY"] = "created_by_villanuevaralph2001@gmail.com"  
 jwt = JWTManager(app)
 db = SQLAlchemy(app) 
 
@@ -37,18 +37,17 @@ class ScannedDocuments(db.Model):
     
 class RestoreDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
     filepath = db.Column(db.String, nullable=False) 
     type = db.Column(db.String, nullable=False)
-    deleted_by = db.Column(db.String, nullable=False)
     device_used =  db.Column(db.String, nullable=False)
+    deleted_by = db.Column(db.String, nullable=False)
+    device_used_to_delete =  db.Column(db.String, nullable=False)
     deleted_at = Column(DateTime, default=func.now())
     
 class DocumentsLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
-    filepath = db.Column(db.String, nullable=False) 
-    type = db.Column(db.String, nullable=False)
+    name = db.Column(db.String,  nullable=False)
     action = db.Column(db.String, nullable=False)
     action_by = db.Column(db.String, nullable=False)
     device_used =  db.Column(db.String, nullable=False)
@@ -99,6 +98,13 @@ def login():
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
 
+
+
+
+@app.route("/connect", methods=["GET"])
+def connect():
+    return jsonify({'status': 'connected'}), 201
+
 @app.route("/user", methods=["GET"])
 @jwt_required()
 def protected():
@@ -124,49 +130,57 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
-    token = create_access_token(new_user.id)  
-    return jsonify({'token': token}), 201
+    return jsonify({'status': 'success'}), 201
 
-   
    
 @app.route('/scanned', methods=['GET', 'POST'])
 @jwt_required()
 def scanned():
-    
-    scans = db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.id)).scalars()
-    scans_list = []
-    
-    for scan in scans:
-        mapped_scan = {column.key: getattr(scan, column.key) for column in class_mapper(ScannedDocuments).columns}
-        scans_list.append(mapped_scan)
-    
-    return jsonify({
-        'message': 'success',
-        'scans': scans_list,
-    })
+
+        scans = db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.id)).scalars()
+        scans_list = []
+        
+        for scan in scans:
+            mapped_scan = {column.key: getattr(scan, column.key) for column in class_mapper(ScannedDocuments).columns}
+            scans_list.append(mapped_scan)
+        
+        return jsonify({
+            'message': 'success',
+            'scans': scans_list,
+        })
+
     
 
 @app.route('/scanned/add', methods=['POST'])
 @jwt_required()
 def add():
-    data = request.json
+    try:
+        data = request.json
+        if not data or not all(field in data for field in ['name', 'filepath', 'type', 'uploaded_by', 'device_used']):
+            return jsonify({'message': 'Missing Required Fields', 'status': 'required'}), 400
 
-    if not data or not all(field in data for field in ['name', 'filepath', 'type', 'uploaded_by', 'device_used']):
-        return jsonify({'message': 'Missing Required Fields', 'status': 'required'}), 400
-  
-    
-    new_document = ScannedDocuments(**data)
-    db.session.add(new_document)
-    db.session.commit()
+        document_log = DocumentsLog(
+            name = data.get('name'),
+            action = "Added",
+            action_by = data.get('uploaded_by'),
+            device_used =  data.get('device_used'),
+        )
 
-    return jsonify({'message': 'Document added successfully', 'status': 'success'}), 201
+        new_document = ScannedDocuments(**data)
+        db.session.add(new_document)
+        db.session.add(document_log)
+        db.session.commit()
+        return jsonify({'message': 'Document added successfully', 'status': 'success'}), 201
+
+    except Exception as e:
+        return jsonify({'message': 'Something went wrong.', 'status': 'error'}), 500
 
 
 
 
-@app.route("/scanned/delete/<int:id>", methods=['DELETE'])
+@app.route("/scanned/delete/<int:id>&<string:device_used_to_delete>", methods=['DELETE'])
 @jwt_required()
-def remove_scanned(id):
+def remove_scanned(id, device_used_to_delete):
     try:
         scanned = ScannedDocuments.query.get(id) 
 
@@ -174,10 +188,18 @@ def remove_scanned(id):
             name=scanned.name,
             filepath=scanned.filepath,
             type=scanned.type,
-            deleted_by=current_user.username,  
+            device_used=scanned.device_used,
+            deleted_by=current_user.username,
+            device_used_to_delete=device_used_to_delete
         )
-
+        document_log = DocumentsLog(
+            name = scanned.name,
+            action = "Deleted",
+            action_by =current_user.username,
+            device_used =device_used_to_delete
+        )
         db.session.add(restored_doc)  
+        db.session.add(document_log)  
         db.session.delete(scanned)   
         db.session.commit()
 

@@ -19,7 +19,7 @@ import Start from './views/Start.vue';
 import Scanned from './views/ScannedDocuments.vue';
 import Login from './views/Login.vue';
 import Signup from './views/Signup.vue';
-
+import Connection from './views/Connection.vue';
 import Profile from './views/Profile.vue';
 
 
@@ -36,6 +36,8 @@ const routes = [
     { path: "/login", component: Login, name: "Login" },
     { path: "/profile", component: Profile, name: "Profile" },
     { path: "/Signup", component: Signup, name: "Signup" },
+    { path: "/connect", component: Connection, name: "Connection" },
+
 
 
 

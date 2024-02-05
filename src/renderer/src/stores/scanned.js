@@ -14,7 +14,7 @@ export const scannedDocuments = defineStore('scanned', {
     }),
     getters: {
         totalCount: (state) => {
-            return state.scanned.length + 2340928305972
+            return state.scanned.length 
         },
     },
     actions: {
