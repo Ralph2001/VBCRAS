@@ -18,16 +18,17 @@ let pythonprocess;
 let dialogOpen = false;
 
 
-if (is.dev) {
-  PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
-    console.log('finished');
-  });
+// if (is.dev) {
+//   PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
+//     console.log('finished');
+//   });
 
-} else {
-  pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
-}
+// } else {
+//   pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
+// }
 
 
+pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
 
 
 ipcMain.handle('select-folder', async (event) => {

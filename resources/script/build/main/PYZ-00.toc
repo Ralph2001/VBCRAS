@@ -560,6 +560,46 @@
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_cors\\version.py',
    'PYMODULE'),
+  ('flask_jwt_extended',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\__init__.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.config',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\config.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.default_callbacks',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\default_callbacks.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.exceptions',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\exceptions.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.internal_utils',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\internal_utils.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.jwt_manager',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\jwt_manager.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.tokens',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\tokens.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.typing',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\typing.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.utils',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\utils.py',
+   'PYMODULE'),
+  ('flask_jwt_extended.view_decorators',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_jwt_extended\\view_decorators.py',
+   'PYMODULE'),
   ('flask_sqlalchemy',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy\\__init__.py',
@@ -903,6 +943,50 @@
   ('json.scanner',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\json\\scanner.py',
+   'PYMODULE'),
+  ('jwt',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\__init__.py',
+   'PYMODULE'),
+  ('jwt.algorithms',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\algorithms.py',
+   'PYMODULE'),
+  ('jwt.api_jwk',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\api_jwk.py',
+   'PYMODULE'),
+  ('jwt.api_jws',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\api_jws.py',
+   'PYMODULE'),
+  ('jwt.api_jwt',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\api_jwt.py',
+   'PYMODULE'),
+  ('jwt.exceptions',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\exceptions.py',
+   'PYMODULE'),
+  ('jwt.jwk_set_cache',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\jwk_set_cache.py',
+   'PYMODULE'),
+  ('jwt.jwks_client',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\jwks_client.py',
+   'PYMODULE'),
+  ('jwt.types',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\types.py',
+   'PYMODULE'),
+  ('jwt.utils',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\utils.py',
+   'PYMODULE'),
+  ('jwt.warnings',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\jwt\\warnings.py',
    'PYMODULE'),
   ('logging',
    'C:\\Users\\Erika '

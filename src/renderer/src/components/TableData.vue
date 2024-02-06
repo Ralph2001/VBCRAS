@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100vh-135px)]">
+  <div class="h-[calc(100vh-150px)]">
     <DataTable :value="data" showGridlines removableSort tableStyle="min-width: 50rem; "  v-model:filters="filters"
       :globalFilterFields="['name', 'type']" :loading="isLoading" dataKey="id" scrollable scrollHeight="flex"
       filterDisplay="row" stateStorage="session" stateKey="dt-state-demo-session">

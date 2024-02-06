@@ -38,10 +38,6 @@ const routes = [
     { path: "/Signup", component: Signup, name: "Signup" },
     { path: "/connect", component: Connection, name: "Connection" },
 
-
-
-
-
 ];
 
 
@@ -65,6 +61,7 @@ app.use(ToastService)
 app.use(VueSweetalert2)
 app.use(pinia)
 app.mount('#app')
+router.push('/Start')
 
 
 

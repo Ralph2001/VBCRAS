@@ -44,26 +44,31 @@
                     class=" underline  text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                     Create an Account
                 </router-link>
-                <router-link to="/connect"
+                <!-- <router-link to="/connect"
                     class=" underline   text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                     Connection
-                </router-link>
+                </router-link> -->
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { reactive, computed } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 import { AuthStore } from '../stores/auth';
 import { useRouter } from "vue-router"
+import { ConnectionMode } from "../stores/connection";
+
 
 const router = useRouter();
-
-
 const Auth = AuthStore();
+const connection = ConnectionMode()
+
+onMounted(() => {
+    connection.checkConnection()
+})
 
 const formData = reactive({
     username: "",

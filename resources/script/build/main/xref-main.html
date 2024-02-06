@@ -25,6 +25,7 @@ imports:
  &#8226;   <a href="#collections">collections</a>
  &#8226;   <a href="#collections.abc">collections.abc</a>
  &#8226;   <a href="#copyreg">copyreg</a>
+ &#8226;   <a href="#datetime">datetime</a>
  &#8226;   <a href="#encodings">encodings</a>
  &#8226;   <a href="#encodings.aliases">encodings.aliases</a>
  &#8226;   <a href="#encodings.ascii">encodings.ascii</a>
@@ -150,6 +151,7 @@ imports:
  &#8226;   <a href="#enum">enum</a>
  &#8226;   <a href="#flask">flask</a>
  &#8226;   <a href="#flask_cors">flask_cors</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
  &#8226;   <a href="#flask_sqlalchemy">flask_sqlalchemy</a>
  &#8226;   <a href="#functools">functools</a>
  &#8226;   <a href="#genericpath">genericpath</a>
@@ -181,6 +183,8 @@ imports:
  &#8226;   <a href="#types">types</a>
  &#8226;   <a href="#warnings">warnings</a>
  &#8226;   <a href="#weakref">weakref</a>
+ &#8226;   <a href="#werkzeug.exceptions">werkzeug.exceptions</a>
+ &#8226;   <a href="#werkzeug.security">werkzeug.security</a>
 
   </div>
 
@@ -274,11 +278,24 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="'cryptography.exceptions'"></a>
+  <a target="code" href="" type="text/plain"><tt>'cryptography.exceptions'</tt></a>
+<span class="moduletype">MissingModule</span>  <div class="import">
+imported by:
+    <a href="#jwt.algorithms">jwt.algorithms</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="'cryptography.hazmat'"></a>
   <a target="code" href="" type="text/plain"><tt>'cryptography.hazmat'</tt></a>
 <span class="moduletype">MissingModule</span>  <div class="import">
 imported by:
-    <a href="#werkzeug.serving">werkzeug.serving</a>
+    <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
+ &#8226;   <a href="#werkzeug.serving">werkzeug.serving</a>
 
   </div>
 
@@ -402,6 +419,10 @@ imported by:
  &#8226;   <a href="#flask_sqlalchemy.table">flask_sqlalchemy.table</a>
  &#8226;   <a href="#flask_sqlalchemy.track_modifications">flask_sqlalchemy.track_modifications</a>
  &#8226;   <a href="#greenlet">greenlet</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
  &#8226;   <a href="#pydoc">pydoc</a>
  &#8226;   <a href="#sqlalchemy">sqlalchemy</a>
  &#8226;   <a href="#sqlalchemy.connectors.aioodbc">sqlalchemy.connectors.aioodbc</a>
@@ -1600,6 +1621,7 @@ imported by:
  &#8226;   <a href="#importlib.resources.abc">importlib.resources.abc</a>
  &#8226;   <a href="#inspect">inspect</a>
  &#8226;   <a href="#io">io</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
  &#8226;   <a href="#main.py">main.py</a>
  &#8226;   <a href="#multiprocessing.reduction">multiprocessing.reduction</a>
  &#8226;   <a href="#numbers">numbers</a>
@@ -2706,6 +2728,7 @@ imported by:
  &#8226;   <a href="#flask.json.tag">flask.json.tag</a>
  &#8226;   <a href="#http.server">http.server</a>
  &#8226;   <a href="#itsdangerous.encoding">itsdangerous.encoding</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
  &#8226;   <a href="#secrets">secrets</a>
  &#8226;   <a href="#sqlalchemy.util.compat">sqlalchemy.util.compat</a>
  &#8226;   <a href="#ssl">ssl</a>
@@ -2730,6 +2753,8 @@ imported by:
  &#8226;   <a href="#encodings.hex_codec">encodings.hex_codec</a>
  &#8226;   <a href="#encodings.uu_codec">encodings.uu_codec</a>
  &#8226;   <a href="#http.server">http.server</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
  &#8226;   <a href="#quopri">quopri</a>
  &#8226;   <a href="#werkzeug.datastructures.auth">werkzeug.datastructures.auth</a>
  &#8226;   <a href="#zipfile">zipfile</a>
@@ -2909,6 +2934,7 @@ imported by:
     <a href="#_strptime">_strptime</a>
  &#8226;   <a href="#email._parseaddr">email._parseaddr</a>
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
  &#8226;   <a href="#ssl">ssl</a>
 
   </div>
@@ -3726,6 +3752,7 @@ imported by:
  &#8226;   <a href="#jinja2.sandbox">jinja2.sandbox</a>
  &#8226;   <a href="#jinja2.tests">jinja2.tests</a>
  &#8226;   <a href="#jinja2.utils">jinja2.utils</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#main.py">main.py</a>
  &#8226;   <a href="#selectors">selectors</a>
@@ -4293,10 +4320,17 @@ imported by:
  &#8226;   <a href="#flask.sansio.app">flask.sansio.app</a>
  &#8226;   <a href="#flask.sessions">flask.sessions</a>
  &#8226;   <a href="#flask_cors.core">flask_cors.core</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
  &#8226;   <a href="#http.server">http.server</a>
  &#8226;   <a href="#itsdangerous.exc">itsdangerous.exc</a>
  &#8226;   <a href="#itsdangerous.timed">itsdangerous.timed</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+ &#8226;   <a href="#main.py">main.py</a>
  &#8226;   <a href="#sqlalchemy.dialects.mssql.base">sqlalchemy.dialects.mssql.base</a>
  &#8226;   <a href="#sqlalchemy.dialects.mssql.pyodbc">sqlalchemy.dialects.mssql.pyodbc</a>
  &#8226;   <a href="#sqlalchemy.dialects.mysql.types">sqlalchemy.dialects.mysql.types</a>
@@ -7539,6 +7573,12 @@ imported by:
  &#8226;   <a href="#flask_cors.core">flask_cors.core</a>
  &#8226;   <a href="#flask_cors.decorator">flask_cors.decorator</a>
  &#8226;   <a href="#flask_cors.extension">flask_cors.extension</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.default_callbacks">flask_jwt_extended.default_callbacks</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
  &#8226;   <a href="#flask_sqlalchemy.cli">flask_sqlalchemy.cli</a>
  &#8226;   <a href="#flask_sqlalchemy.extension">flask_sqlalchemy.extension</a>
  &#8226;   <a href="#flask_sqlalchemy.pagination">flask_sqlalchemy.pagination</a>
@@ -7874,6 +7914,7 @@ imports:
 imported by:
     <a href="#flask.json">flask.json</a>
  &#8226;   <a href="#flask.sansio.app">flask.sansio.app</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
 
   </div>
 
@@ -8180,6 +8221,7 @@ imported by:
  &#8226;   <a href="#flask.sansio.app">flask.sansio.app</a>
  &#8226;   <a href="#flask.sansio.blueprints">flask.sansio.blueprints</a>
  &#8226;   <a href="#flask.sansio.scaffold">flask.sansio.scaffold</a>
+ &#8226;   <a href="#flask_jwt_extended.default_callbacks">flask_jwt_extended.default_callbacks</a>
 
   </div>
 
@@ -8315,6 +8357,246 @@ imports:
   <div class="import">
 imported by:
     <a href="#flask_cors">flask_cors</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/__init__.py" type="text/plain"><tt>flask_jwt_extended</tt></a>
+<span class="moduletype">Package</span>  <div class="import">
+imports:
+    <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.default_callbacks">flask_jwt_extended.default_callbacks</a>
+ &#8226;   <a href="#flask_jwt_extended.exceptions">flask_jwt_extended.exceptions</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
+ &#8226;   <a href="#main.py">main.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.config"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/config.py" type="text/plain"><tt>flask_jwt_extended.config</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#flask">flask</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.default_callbacks">flask_jwt_extended.default_callbacks</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.default_callbacks"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/default_callbacks.py" type="text/plain"><tt>flask_jwt_extended.default_callbacks</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#flask">flask</a>
+ &#8226;   <a href="#flask.typing">flask.typing</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#http">http</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.exceptions"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/exceptions.py" type="text/plain"><tt>flask_jwt_extended.exceptions</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#flask_jwt_extended">flask_jwt_extended</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.internal_utils"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/internal_utils.py" type="text/plain"><tt>flask_jwt_extended.internal_utils</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#flask">flask</a>
+ &#8226;   <a href="#flask.json.provider">flask.json.provider</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.exceptions">flask_jwt_extended.exceptions</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.jwt_manager"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/jwt_manager.py" type="text/plain"><tt>flask_jwt_extended.jwt_manager</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#flask">flask</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.default_callbacks">flask_jwt_extended.default_callbacks</a>
+ &#8226;   <a href="#flask_jwt_extended.exceptions">flask_jwt_extended.exceptions</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended">flask_jwt_extended</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.tokens"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/tokens.py" type="text/plain"><tt>flask_jwt_extended.tokens</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.exceptions">flask_jwt_extended.exceptions</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
+ &#8226;   <a href="#hmac">hmac</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#uuid">uuid</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.typing"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/typing.py" type="text/plain"><tt>flask_jwt_extended.typing</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#typing_extensions">typing_extensions</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.utils"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/utils.py" type="text/plain"><tt>flask_jwt_extended.utils</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#flask">flask</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#werkzeug.local">werkzeug.local</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="flask_jwt_extended.view_decorators"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/flask_jwt_extended/view_decorators.py" type="text/plain"><tt>flask_jwt_extended.view_decorators</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#datetime">datetime</a>
+ &#8226;   <a href="#flask">flask</a>
+ &#8226;   <a href="#flask_jwt_extended">flask_jwt_extended</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.exceptions">flask_jwt_extended.exceptions</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#functools">functools</a>
+ &#8226;   <a href="#re">re</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#werkzeug.exceptions">werkzeug.exceptions</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended">flask_jwt_extended</a>
 
   </div>
 
@@ -8679,6 +8961,7 @@ imported by:
  &#8226;   <a href="#flask.sansio.blueprints">flask.sansio.blueprints</a>
  &#8226;   <a href="#flask.sansio.scaffold">flask.sansio.scaffold</a>
  &#8226;   <a href="#flask_cors.decorator">flask_cors.decorator</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
  &#8226;   <a href="#fnmatch">fnmatch</a>
  &#8226;   <a href="#fractions">fractions</a>
  &#8226;   <a href="#importlib.metadata">importlib.metadata</a>
@@ -8692,6 +8975,7 @@ imported by:
  &#8226;   <a href="#jinja2.compiler">jinja2.compiler</a>
  &#8226;   <a href="#jinja2.environment">jinja2.environment</a>
  &#8226;   <a href="#jinja2.runtime">jinja2.runtime</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
  &#8226;   <a href="#linecache">linecache</a>
  &#8226;   <a href="#locale">locale</a>
  &#8226;   <a href="#main.py">main.py</a>
@@ -8970,6 +9254,7 @@ imported by:
  &#8226;   <a href="#itsdangerous.signer">itsdangerous.signer</a>
  &#8226;   <a href="#jinja2.bccache">jinja2.bccache</a>
  &#8226;   <a href="#jinja2.loaders">jinja2.loaders</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
  &#8226;   <a href="#random">random</a>
  &#8226;   <a href="#sqlalchemy.util.compat">sqlalchemy.util.compat</a>
  &#8226;   <a href="#urllib.request">urllib.request</a>
@@ -9016,7 +9301,9 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#itsdangerous.signer">itsdangerous.signer</a>
+    <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#itsdangerous.signer">itsdangerous.signer</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
  &#8226;   <a href="#multiprocessing.connection">multiprocessing.connection</a>
  &#8226;   <a href="#secrets">secrets</a>
  &#8226;   <a href="#werkzeug.security">werkzeug.security</a>
@@ -9070,7 +9357,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#http.client">http.client</a>
+    <a href="#flask_jwt_extended.default_callbacks">flask_jwt_extended.default_callbacks</a>
+ &#8226;   <a href="#http.client">http.client</a>
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
  &#8226;   <a href="#http.server">http.server</a>
  &#8226;   <a href="#werkzeug.sansio.response">werkzeug.sansio.response</a>
@@ -10849,12 +11137,20 @@ imported by:
     <a href="#flask.config">flask.config</a>
  &#8226;   <a href="#flask.json">flask.json</a>
  &#8226;   <a href="#flask.json.provider">flask.json.provider</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
  &#8226;   <a href="#itsdangerous._json">itsdangerous._json</a>
  &#8226;   <a href="#itsdangerous.serializer">itsdangerous.serializer</a>
  &#8226;   <a href="#jinja2.utils">jinja2.utils</a>
  &#8226;   <a href="#json.decoder">json.decoder</a>
  &#8226;   <a href="#json.encoder">json.encoder</a>
  &#8226;   <a href="#json.scanner">json.scanner</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
  &#8226;   <a href="#sqlalchemy.dialects.postgresql.asyncpg">sqlalchemy.dialects.postgresql.asyncpg</a>
  &#8226;   <a href="#sqlalchemy.sql.sqltypes">sqlalchemy.sql.sqltypes</a>
  &#8226;   <a href="#werkzeug.debug">werkzeug.debug</a>
@@ -10918,6 +11214,274 @@ imports:
 imported by:
     <a href="#json">json</a>
  &#8226;   <a href="#json.decoder">json.decoder</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/__init__.py" type="text/plain"><tt>jwt</tt></a>
+<span class="moduletype">Package</span>  <div class="import">
+imports:
+    <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+ &#8226;   <a href="#jwt.exceptions">jwt.exceptions</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+ &#8226;   <a href="#jwt.exceptions">jwt.exceptions</a>
+ &#8226;   <a href="#jwt.jwk_set_cache">jwt.jwk_set_cache</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
+ &#8226;   <a href="#jwt.types">jwt.types</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
+ &#8226;   <a href="#jwt.warnings">jwt.warnings</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.algorithms"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/algorithms.py" type="text/plain"><tt>jwt.algorithms</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#'cryptography.exceptions'">'cryptography.exceptions'</a>
+ &#8226;   <a href="#'cryptography.hazmat'">'cryptography.hazmat'</a>
+ &#8226;   <a href="#__future__">__future__</a>
+ &#8226;   <a href="#abc">abc</a>
+ &#8226;   <a href="#hashlib">hashlib</a>
+ &#8226;   <a href="#hmac">hmac</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.exceptions">jwt.exceptions</a>
+ &#8226;   <a href="#jwt.types">jwt.types</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#typing_extensions">typing_extensions</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.api_jwk"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/api_jwk.py" type="text/plain"><tt>jwt.api_jwk</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#__future__">__future__</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.exceptions">jwt.exceptions</a>
+ &#8226;   <a href="#jwt.types">jwt.types</a>
+ &#8226;   <a href="#time">time</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.jwk_set_cache">jwt.jwk_set_cache</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.api_jws"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/api_jws.py" type="text/plain"><tt>jwt.api_jws</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#__future__">__future__</a>
+ &#8226;   <a href="#binascii">binascii</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.exceptions">jwt.exceptions</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
+ &#8226;   <a href="#jwt.warnings">jwt.warnings</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#warnings">warnings</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.api_jwt"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/api_jwt.py" type="text/plain"><tt>jwt.api_jwt</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#__future__">__future__</a>
+ &#8226;   <a href="#calendar">calendar</a>
+ &#8226;   <a href="#collections.abc">collections.abc</a>
+ &#8226;   <a href="#datetime">datetime</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.exceptions">jwt.exceptions</a>
+ &#8226;   <a href="#jwt.warnings">jwt.warnings</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#warnings">warnings</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.exceptions"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/exceptions.py" type="text/plain"><tt>jwt.exceptions</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#jwt">jwt</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.jwk_set_cache"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/jwk_set_cache.py" type="text/plain"><tt>jwt.jwk_set_cache</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#time">time</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt.jwks_client">jwt.jwks_client</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.jwks_client"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/jwks_client.py" type="text/plain"><tt>jwt.jwks_client</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#functools">functools</a>
+ &#8226;   <a href="#json">json</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+ &#8226;   <a href="#jwt.exceptions">jwt.exceptions</a>
+ &#8226;   <a href="#jwt.jwk_set_cache">jwt.jwk_set_cache</a>
+ &#8226;   <a href="#ssl">ssl</a>
+ &#8226;   <a href="#typing">typing</a>
+ &#8226;   <a href="#urllib.error">urllib.error</a>
+ &#8226;   <a href="#urllib.request">urllib.request</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt">jwt</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.types"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/types.py" type="text/plain"><tt>jwt.types</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#jwt">jwt</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.utils"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/utils.py" type="text/plain"><tt>jwt.utils</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#'cryptography.hazmat'">'cryptography.hazmat'</a>
+ &#8226;   <a href="#base64">base64</a>
+ &#8226;   <a href="#binascii">binascii</a>
+ &#8226;   <a href="#jwt">jwt</a>
+ &#8226;   <a href="#re">re</a>
+ &#8226;   <a href="#typing">typing</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="jwt.warnings"></a>
+  <a target="code" href="///C:/Users/Erika%20Joyce/AppData/Local/Programs/Python/Python312/Lib/site-packages/jwt/warnings.py" type="text/plain"><tt>jwt.warnings</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#jwt">jwt</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
 
   </div>
 
@@ -12915,6 +13479,7 @@ imported by:
  &#8226;   <a href="#encodings.idna">encodings.idna</a>
  &#8226;   <a href="#flask.cli">flask.cli</a>
  &#8226;   <a href="#flask_cors.core">flask_cors.core</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
  &#8226;   <a href="#flask_sqlalchemy.model">flask_sqlalchemy.model</a>
  &#8226;   <a href="#fnmatch">fnmatch</a>
  &#8226;   <a href="#fractions">fractions</a>
@@ -12937,6 +13502,7 @@ imported by:
  &#8226;   <a href="#json.decoder">json.decoder</a>
  &#8226;   <a href="#json.encoder">json.encoder</a>
  &#8226;   <a href="#json.scanner">json.scanner</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
  &#8226;   <a href="#locale">locale</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#main.py">main.py</a>
@@ -21474,6 +22040,7 @@ imported by:
  &#8226;   <a href="#flask.cli">flask.cli</a>
  &#8226;   <a href="#ftplib">ftplib</a>
  &#8226;   <a href="#http.client">http.client</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
  &#8226;   <a href="#urllib.request">urllib.request</a>
  &#8226;   <a href="#werkzeug.serving">werkzeug.serving</a>
 
@@ -21725,6 +22292,7 @@ imported by:
  &#8226;   <a href="#flask.logging">flask.logging</a>
  &#8226;   <a href="#flask.sansio.app">flask.sansio.app</a>
  &#8226;   <a href="#flask.sansio.scaffold">flask.sansio.scaffold</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
  &#8226;   <a href="#fractions">fractions</a>
  &#8226;   <a href="#ftplib">ftplib</a>
  &#8226;   <a href="#getopt">getopt</a>
@@ -21744,6 +22312,7 @@ imported by:
  &#8226;   <a href="#jinja2.lexer">jinja2.lexer</a>
  &#8226;   <a href="#jinja2.loaders">jinja2.loaders</a>
  &#8226;   <a href="#jinja2.runtime">jinja2.runtime</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
  &#8226;   <a href="#linecache">linecache</a>
  &#8226;   <a href="#locale">locale</a>
  &#8226;   <a href="#logging">logging</a>
@@ -22069,6 +22638,8 @@ imported by:
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
  &#8226;   <a href="#http.server">http.server</a>
  &#8226;   <a href="#itsdangerous.timed">itsdangerous.timed</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.jwk_set_cache">jwt.jwk_set_cache</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#multiprocessing.connection">multiprocessing.connection</a>
  &#8226;   <a href="#multiprocessing.managers">multiprocessing.managers</a>
@@ -22380,6 +22951,14 @@ imported by:
  &#8226;   <a href="#flask.testing">flask.testing</a>
  &#8226;   <a href="#flask.typing">flask.typing</a>
  &#8226;   <a href="#flask.wrappers">flask.wrappers</a>
+ &#8226;   <a href="#flask_jwt_extended.config">flask_jwt_extended.config</a>
+ &#8226;   <a href="#flask_jwt_extended.default_callbacks">flask_jwt_extended.default_callbacks</a>
+ &#8226;   <a href="#flask_jwt_extended.internal_utils">flask_jwt_extended.internal_utils</a>
+ &#8226;   <a href="#flask_jwt_extended.jwt_manager">flask_jwt_extended.jwt_manager</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
  &#8226;   <a href="#flask_sqlalchemy">flask_sqlalchemy</a>
  &#8226;   <a href="#flask_sqlalchemy.cli">flask_sqlalchemy.cli</a>
  &#8226;   <a href="#flask_sqlalchemy.extension">flask_sqlalchemy.extension</a>
@@ -22423,6 +23002,14 @@ imported by:
  &#8226;   <a href="#jinja2.tests">jinja2.tests</a>
  &#8226;   <a href="#jinja2.utils">jinja2.utils</a>
  &#8226;   <a href="#jinja2.visitor">jinja2.visitor</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
+ &#8226;   <a href="#jwt.api_jwk">jwt.api_jwk</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
+ &#8226;   <a href="#jwt.jwk_set_cache">jwt.jwk_set_cache</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
+ &#8226;   <a href="#jwt.types">jwt.types</a>
+ &#8226;   <a href="#jwt.utils">jwt.utils</a>
  &#8226;   <a href="#markupsafe">markupsafe</a>
  &#8226;   <a href="#markupsafe._native">markupsafe._native</a>
  &#8226;   <a href="#sqlalchemy">sqlalchemy</a>
@@ -22619,6 +23206,7 @@ imported by:
  &#8226;   <a href="#click.parser">click.parser</a>
  &#8226;   <a href="#click.types">click.types</a>
  &#8226;   <a href="#click.utils">click.utils</a>
+ &#8226;   <a href="#flask_jwt_extended.typing">flask_jwt_extended.typing</a>
  &#8226;   <a href="#itsdangerous.timed">itsdangerous.timed</a>
  &#8226;   <a href="#jinja2.bccache">jinja2.bccache</a>
  &#8226;   <a href="#jinja2.compiler">jinja2.compiler</a>
@@ -22632,6 +23220,7 @@ imported by:
  &#8226;   <a href="#jinja2.runtime">jinja2.runtime</a>
  &#8226;   <a href="#jinja2.utils">jinja2.utils</a>
  &#8226;   <a href="#jinja2.visitor">jinja2.visitor</a>
+ &#8226;   <a href="#jwt.algorithms">jwt.algorithms</a>
  &#8226;   <a href="#markupsafe">markupsafe</a>
  &#8226;   <a href="#sqlalchemy.util.typing">sqlalchemy.util.typing</a>
  &#8226;   <a href="#werkzeug.datastructures.auth">werkzeug.datastructures.auth</a>
@@ -22683,7 +23272,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#urllib.request">urllib.request</a>
+    <a href="#jwt.jwks_client">jwt.jwks_client</a>
+ &#8226;   <a href="#urllib.request">urllib.request</a>
 
   </div>
 
@@ -22781,6 +23371,7 @@ imports:
   <div class="import">
 imported by:
     <a href="#http.cookiejar">http.cookiejar</a>
+ &#8226;   <a href="#jwt.jwks_client">jwt.jwks_client</a>
  &#8226;   <a href="#werkzeug.http">werkzeug.http</a>
  &#8226;   <a href="#xml.sax.saxutils">xml.sax.saxutils</a>
 
@@ -22831,6 +23422,7 @@ imported by:
     <a href="#click.types">click.types</a>
  &#8226;   <a href="#flask.json.provider">flask.json.provider</a>
  &#8226;   <a href="#flask.json.tag">flask.json.tag</a>
+ &#8226;   <a href="#flask_jwt_extended.tokens">flask_jwt_extended.tokens</a>
  &#8226;   <a href="#sqlalchemy.dialects.mssql.base">sqlalchemy.dialects.mssql.base</a>
  &#8226;   <a href="#sqlalchemy.dialects.mysql.mariadbconnector">sqlalchemy.dialects.mysql.mariadbconnector</a>
  &#8226;   <a href="#sqlalchemy.dialects.postgresql.types">sqlalchemy.dialects.postgresql.types</a>
@@ -22903,6 +23495,8 @@ imported by:
  &#8226;   <a href="#importlib.metadata._adapters">importlib.metadata._adapters</a>
  &#8226;   <a href="#importlib.resources._common">importlib.resources._common</a>
  &#8226;   <a href="#importlib.resources._legacy">importlib.resources._legacy</a>
+ &#8226;   <a href="#jwt.api_jws">jwt.api_jws</a>
+ &#8226;   <a href="#jwt.api_jwt">jwt.api_jwt</a>
  &#8226;   <a href="#locale">locale</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#main.py">main.py</a>
@@ -23604,6 +24198,8 @@ imported by:
  &#8226;   <a href="#flask.sansio.app">flask.sansio.app</a>
  &#8226;   <a href="#flask.sansio.scaffold">flask.sansio.scaffold</a>
  &#8226;   <a href="#flask.wrappers">flask.wrappers</a>
+ &#8226;   <a href="#flask_jwt_extended.view_decorators">flask_jwt_extended.view_decorators</a>
+ &#8226;   <a href="#main.py">main.py</a>
  &#8226;   <a href="#werkzeug">werkzeug</a>
  &#8226;   <a href="#werkzeug.datastructures.headers">werkzeug.datastructures.headers</a>
  &#8226;   <a href="#werkzeug.datastructures.structures">werkzeug.datastructures.structures</a>
@@ -23723,6 +24319,7 @@ imports:
 imported by:
     <a href="#flask.globals">flask.globals</a>
  &#8226;   <a href="#flask.logging">flask.logging</a>
+ &#8226;   <a href="#flask_jwt_extended.utils">flask_jwt_extended.utils</a>
 
   </div>
 
@@ -24115,7 +24712,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#werkzeug.debug">werkzeug.debug</a>
+    <a href="#main.py">main.py</a>
+ &#8226;   <a href="#werkzeug.debug">werkzeug.debug</a>
  &#8226;   <a href="#werkzeug.middleware.shared_data">werkzeug.middleware.shared_data</a>
  &#8226;   <a href="#werkzeug.utils">werkzeug.utils</a>
 

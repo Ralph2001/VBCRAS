@@ -36,6 +36,8 @@
 ::-webkit-scrollbar {
     @apply w-1
 }
+
+
  
 /* Track */
 /* ::-webkit-scrollbar-track {
@@ -47,6 +49,9 @@
    @apply bg-gray-500 rounded
 }
  
+
+
+  
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
