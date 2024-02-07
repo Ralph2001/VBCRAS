@@ -1,23 +1,27 @@
 <template>
-  <div class="h-[calc(100vh-150px)]">
-    <DataTable :value="data" showGridlines removableSort tableStyle="min-width: 50rem; "  v-model:filters="filters"
-      :globalFilterFields="['name', 'type']" :loading="isLoading" dataKey="id" scrollable scrollHeight="flex"
-      filterDisplay="row" stateStorage="session" stateKey="dt-state-demo-session">
+  <div class="h-[calc(100vh-150px)] bg-teal-50/20 ">
+    <DataTable :value="data" showGridlines removableSort tableStyle="min-width: 50rem;" tableClass="bg-white" :pt="{
+      header: {
+        class: 'bg-green-100 p-4'
+      }
+    }" v-model:filters="filters" :globalFilterFields="['name', 'type']" :loading="isLoading" dataKey="id" scrollable
+      scrollHeight="flex" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50, 100]" filterDisplay="row"
+      stateStorage="session" stateKey="ScannedTable">
       <template #header>
         <div class="flex flex-row justify-between items-center h-10 scale-95">
-          <p class="text-lg font-medium text-slate-900"><span class="pi pi-print"></span> {{ title }}</p>
+          <p class="text-xl font-medium text-slate-900"><span class="pi pi-print"></span> {{ title }}</p>
           <div class="flex flex-row gap-2">
             <span class="relative">
-              <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+              <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600 " />
               <InputText v-model="filters['global'].value" placeholder="Search" class="pl-8 rounded-sm font-normal" />
             </span>
             <!-- <Button icon="pi pi-refresh" rounded raised /> -->
           </div>
         </div>
       </template>
-      <Column sortable field="name" header="Name" headerClass="text-sm " style="width: 60%;">
+      <Column sortable field="name" header="Name" headerClass="text-sm" bodyClass="bg-neutral-50 " style="width: 60%; ">
         <template #body="slotProps">
-          <p class="text-md font-sans text-slate-900 font-medium w-[10rem] sm:w-[20rem] md:w-[35rem] truncate">
+          <p class="text-md font-sans text-slate-900 font-medium w-[10rem] sm:w-[10rem] md:w-[35rem] truncate">
             {{ slotProps.data.name }}
           </p>
         </template>
@@ -29,8 +33,9 @@
 
       <Column field="type" sortable header="Type" headerClass="text-sm" style="width: 15%;" :showFilterMenu="false">
         <template #body="{ data }">
-          <div class="flex flex-row w-full justify-center">
-            <Tag class="rounded-sm" :value="data.type" :severity="getSeverity(data.type)" />
+          <div class="flex flex-row gap-1 w-full justify-center">
+            <!-- <Tag class="rounded" :value="data.type" :severity="getSeverity(data.type)" /> -->
+            <Tag :title="data.type" :class="getSeverity(data.type)" />
           </div>
         </template>
 
@@ -38,7 +43,8 @@
           <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="types" placeholder="Select Type"
             class="p-column-filter font-normal text-sm uppercase rounded-sm" style="width: 11rem;" :showClear="true">
             <template #option="slotProps">
-              <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+              <Tag :title="slotProps.option" :class="getSeverity(slotProps.option)" />
+              <!-- <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" /> -->
             </template>
           </Dropdown>
         </template>
@@ -51,7 +57,7 @@
           </div>
         </template>
         <template #body="slotProps">
-          <div class="flex flex-row gap-1 items-center justify-center">
+          <div class="flex items-center justify-center">
             <EditBtn :filepath="slotProps.data.filepath" :id="slotProps.data.id" />
           </div>
         </template>
@@ -67,7 +73,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import InputText from "primevue/inputtext";
 import "primeicons/primeicons.css";
-import Tag from "primevue/tag";
+import Tag from "./Tag.vue";
 
 import EditBtn from "./EditBtn.vue";
 import Dropdown from "primevue/dropdown";
@@ -100,19 +106,19 @@ const filters = ref({
 const getSeverity = (type) => {
   switch (type) {
     case "Birth":
-      return "success";
+      return "bg-green-100";
 
     case "Death":
-      return "info";
+      return "bg-blue-100";
 
     case "Marriage":
-      return "danger";
+      return "bg-red-100";
 
     case "Legal":
-      return "warning";
+      return "bg-yellow-50";
 
     case "Other":
-      return null;
+      return "bg-gray-100";
   }
 };
 </script>

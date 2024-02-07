@@ -23,9 +23,9 @@
         <p class="text-sm sm:text-xs text-yellow-400 font-semibold">MUNICIPAL MAYOR</p>
       </div>
     </div>
-    <div class="flex w-3/5 justify-center items-center">
+    <!-- <div class="flex w-3/5 justify-center items-center">
       <FrontCarousel />
-    </div>
+    </div> -->
   </div>
 </template>
 

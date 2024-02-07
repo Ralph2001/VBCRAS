@@ -23,8 +23,11 @@ import { useToast } from "primevue/usetoast";
 import axios from "axios";
 import { ComputerName } from "../stores/user";
 const swal = inject("$swal");
-
 const scannedId = ref("");
+
+import { scannedDocuments } from "../stores/scanned";
+const Documents = scannedDocuments();
+
 
 const PCName = ComputerName();
 onMounted(() => {
@@ -126,6 +129,7 @@ const remove = async (id) => {
       .then((response) => {
         console.log("Document deleted successfully!");
         console.log(response.data);
+        Documents.refresh()
       })
       .catch((error) => {
         console.error("Error deleting document:", error);

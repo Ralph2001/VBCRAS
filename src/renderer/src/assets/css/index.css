@@ -34,7 +34,7 @@
 
 /* width */
 ::-webkit-scrollbar {
-    @apply w-1
+    @apply w-2 !important
 }
 
 
@@ -46,7 +46,7 @@
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-   @apply bg-gray-500 rounded
+   @apply bg-gray-300 rounded-sm
 }
  
 

@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col h-[calc(100vh-92px)] py-3 relative" @dragenter="showDropzone">
+  <div class="flex flex-col h-[calc(100vh-92px)] py-3 relative justify-center" @dragenter="showDropzone">
     <Dropzone @dragleave="handleDragLeave" @drop="handleDrop" @dragover.prevent :isDropzoneVisible="isDropzoneVisible"
       v-if="isShowModal == false" />
 
-    <div class="h-max mt-6">
+    <div class="h-max ">
       <TableData class="scale-95" :data="Documents.scanned" :types="Documents.types" :isLoading="Documents.isLoading"
         :title="Documents.title" />
     </div>
@@ -235,7 +235,31 @@ const handleDragLeave = () => {
   isDropzoneVisible.value = false;
 };
 
+
 const handleDrop = (event) => {
+  event.preventDefault();
+  isDropzoneVisible.value = false;
+  const files = event.dataTransfer.files;
+  const uploaded_by = Auth.user;
+  const device_used = PCName.user;
+
+  const data = [];
+  for (const file of files) {
+    data.push({
+      name: file.name,
+      filepath: file.path.replace('C:\\Users\\' + PCName.user + '\\', ''),
+      type: 'Death',
+      uploaded_by: uploaded_by,
+      device_used: device_used
+    });
+  }
+  console.log(data)
+  Documents.multipleAdd(data)
+}
+
+
+
+const handleDrop2 = (event) => {
   event.preventDefault();
 
   const files = event.dataTransfer.files;

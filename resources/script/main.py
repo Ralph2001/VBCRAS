@@ -28,10 +28,10 @@ db = SQLAlchemy(app)
 class ScannedDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
-    filepath = db.Column(db.String, nullable=False) 
-    type = db.Column(db.String, nullable=False)
-    uploaded_by = db.Column(db.String, nullable=False)
-    device_used =  db.Column(db.String, nullable=False)
+    filepath = db.Column(db.String) 
+    type = db.Column(db.String)
+    uploaded_by = db.Column(db.String)
+    device_used =  db.Column(db.String)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     
@@ -155,25 +155,27 @@ def scanned():
 @jwt_required()
 def add():
     try:
-        data = request.json
-        if not data or not all(field in data for field in ['name', 'filepath', 'type', 'uploaded_by', 'device_used']):
-            return jsonify({'message': 'Missing Required Fields', 'status': 'required'}), 400
+        # Access the entire data array instead of just the first element
+        data = request.get_json()
 
-        document_log = DocumentsLog(
-            name = data.get('name'),
-            action = "Added",
-            action_by = data.get('uploaded_by'),
-            device_used =  data.get('device_used'),
-        )
+        # Validate and process each object in the array
+        for item in data:
+            if not all(field in item for field in ['name', 'filepath', 'type', 'uploaded_by', 'device_used']):
+                return jsonify({'message': 'Missing required field in object', 'status': 'required'}), 400
 
-        new_document = ScannedDocuments(**data)
-        db.session.add(new_document)
-        db.session.add(document_log)
+            # Create a new document for each item
+            new_document = ScannedDocuments(**item)
+            db.session.add(new_document)
+
+        # Commit changes to the database once all items are processed
         db.session.commit()
-        return jsonify({'message': 'Document added successfully', 'status': 'success'}), 201
+
+        return jsonify({'message': 'Documents added successfully', 'status': 'success'}), 201
 
     except Exception as e:
+        # Handle errors gracefully
         return jsonify({'message': 'Something went wrong.', 'status': 'error'}), 500
+
 
 
 

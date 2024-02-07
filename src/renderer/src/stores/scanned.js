@@ -14,7 +14,7 @@ export const scannedDocuments = defineStore('scanned', {
     }),
     getters: {
         totalCount: (state) => {
-            return state.scanned.length 
+            return state.scanned.length
         },
     },
     actions: {
@@ -70,6 +70,24 @@ export const scannedDocuments = defineStore('scanned', {
                         },
                     }
                 )
+            } catch (error) {
+
+            }
+        },
+        async multipleAdd(data) {
+
+            try {
+                let tokenStr = localStorage.getItem('token')
+                await axios.post(
+                    "/scanned/add", data, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${tokenStr}`,
+
+                    },
+                }
+                )
+                this.refresh()
             } catch (error) {
 
             }
