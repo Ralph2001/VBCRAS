@@ -85,6 +85,12 @@
               <fwb-radio v-model="formData.type" label="Other" value="Other" class="cursor-pointer" />
             </div>
           </div>
+
+          <div class="flex flex-col ">
+            <label for="month" class="block text-sm font-medium text-gray-900 dark:text-white">Month & Year</label>
+            <Calendar v-model="month" view="month" dateFormat="MM/yy" class="font-semibold" />
+          </div>
+
           <div>
             <fwb-alert class="mt-8" icon type="info" v-if="isTransferAlert">
               Note: You can't transfer multiple files.
@@ -171,6 +177,8 @@ import { required } from "@vuelidate/validators";
 
 import ToggleButton from "primevue/togglebutton";
 
+import Calendar from 'primevue/calendar';
+
 
 // SweetAlert
 const swal = inject("$swal");
@@ -206,6 +214,9 @@ const isTransferAlert = ref(false);
 
 const isSaveBtnVisible = ref(true);
 const isSaveAlert = ref(false);
+const month = ref();
+
+
 // Text
 const filename = ref("");
 const filesize = ref("");
@@ -245,17 +256,40 @@ const handleDrop = (event) => {
 
   const data = [];
   for (const file of files) {
+    if (file.type != "application/pdf") {
+      swal({
+        icon: "error",
+        title: "Upload PDF only!",
+        text: "File",
+      });
+      return;
+    }
+
+    // console.log(file.path.replace('C:\\Users\\' + PCName.user + '\\', ''))
+    // const path = file.path.replace('C:\\Users\\' + PCName.user + '\\', '');
+    // isShowModal.value = true;
+
     data.push({
       name: file.name,
       filepath: file.path.replace('C:\\Users\\' + PCName.user + '\\', ''),
       type: 'Death',
       uploaded_by: uploaded_by,
-      device_used: device_used
+      device_used: device_used,
+      year: '2024'
     });
+
+    // if (path.includes('october') && path.includes('birth')) {
+    //   month.value = "October"
+    //   formData.type = "Birth"
+
+    // }
+
   }
-  console.log(data)
+
+
+
   Documents.multipleAdd(data)
-}
+};
 
 
 

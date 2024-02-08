@@ -31,7 +31,7 @@
         </template>
       </Column>
 
-      <Column field="type" sortable header="Type" headerClass="text-sm" style="width: 15%;" :showFilterMenu="false">
+      <Column field="type" sortable header="Type" headerClass="text-sm" style="width: 10%;" :showFilterMenu="false">
         <template #body="{ data }">
           <div class="flex flex-row gap-1 w-full justify-center">
             <!-- <Tag class="rounded" :value="data.type" :severity="getSeverity(data.type)" /> -->
@@ -40,11 +40,28 @@
         </template>
 
         <template #filter="{ filterModel, filterCallback }">
-          <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="types" placeholder="Select Type"
-            class="p-column-filter font-normal text-sm uppercase rounded-sm" style="width: 11rem;" :showClear="true">
+          <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="types" placeholder="Type"
+            class="p-column-filter font-normal text-sm uppercase rounded-sm" style="width: 8rem;" :showClear="true">
             <template #option="slotProps">
               <Tag :title="slotProps.option" :class="getSeverity(slotProps.option)" />
               <!-- <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" /> -->
+            </template>
+          </Dropdown>
+        </template>
+      </Column>
+
+      <Column field="year" sortable header="Year" headerClass="text-sm" style="width: 10%;" :showFilterMenu="false">
+        <template #body="slotProps">
+          <div class="w-full flex justify-center">
+            <p class="text-md text-gray-900 font-bold">{{ slotProps.data.year }}</p>
+          </div>
+        </template>
+
+        <template #filter="{ filterModel, filterCallback }">
+          <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="year" placeholder="Year"
+            class="p-column-filter font-normal text-sm uppercase rounded-sm" style="width: 8rem;" :showClear="true">
+            <template #option="slotProps">
+              <p class="text-md text-gray-900 font-bold">{{ slotProps.option }}</p>
             </template>
           </Dropdown>
         </template>
@@ -96,11 +113,16 @@ const props = defineProps({
     type: String,
   },
 });
-
+const year = [
+  '2023',
+  '2024'
+]
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   name: { value: null, matchMode: FilterMatchMode.CONTAINS },
   type: { value: null, matchMode: FilterMatchMode.EQUALS },
+  year: { value: null, matchMode: FilterMatchMode.EQUALS },
+
 });
 
 const getSeverity = (type) => {

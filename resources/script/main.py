@@ -28,10 +28,11 @@ db = SQLAlchemy(app)
 class ScannedDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
-    filepath = db.Column(db.String) 
-    type = db.Column(db.String)
-    uploaded_by = db.Column(db.String)
-    device_used =  db.Column(db.String)
+    filepath = db.Column(db.String, nullable=False) 
+    type = db.Column(db.String, nullable=False)
+    year = db.Column(db.String, nullable=False)
+    uploaded_by = db.Column(db.String, nullable=False)
+    device_used =  db.Column(db.String, nullable=False)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     
@@ -160,7 +161,7 @@ def add():
 
         # Validate and process each object in the array
         for item in data:
-            if not all(field in item for field in ['name', 'filepath', 'type', 'uploaded_by', 'device_used']):
+            if not all(field in item for field in ['name', 'filepath', 'type', 'year', 'uploaded_by', 'device_used']):
                 return jsonify({'message': 'Missing required field in object', 'status': 'required'}), 400
 
             # Create a new document for each item
