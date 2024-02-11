@@ -36,6 +36,7 @@ export const AuthStore = defineStore('auth', {
                 this.error = null,
                 this.user = null,
                 localStorage.removeItem('token', this.token);
+
         },
         async Profile() {
             try {

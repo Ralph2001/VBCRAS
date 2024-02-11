@@ -1,10 +1,9 @@
 <template>
-  <Toast />
   <SplitButton label="Open File" size="small" :pt="{
     button: {
       root: {
         class:
-          'text-gray-900 bg-white text-sm border border-gray-300 focus:outline-none hover:bg-gray-100  focus:ring-gray-200 font-medium rounded-s text-sm p-2 pr-6 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700',
+          'text-gray-900 hover:text-blue-600 bg-white text-sm border border-gray-300 focus:outline-none hover:bg-gray-100  focus:ring-gray-200 font-medium rounded-s text-sm p-2 pr-6 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700',
       },
     },
     menuButton: {
@@ -17,9 +16,7 @@
 
 <script setup>
 import SplitButton from "primevue/splitbutton";
-import Toast from "primevue/toast";
 import { defineProps, ref, inject, onMounted } from "vue";
-import { useToast } from "primevue/usetoast";
 import axios from "axios";
 import { ComputerName } from "../stores/user";
 const swal = inject("$swal");
@@ -34,7 +31,7 @@ onMounted(() => {
   PCName.getUserName();
 });
 
-const toast = useToast();
+
 const props = defineProps({
   filepath: {
     required: true,
@@ -60,7 +57,7 @@ const items = [
   //   command: () => { },
   // },
   {
-    label: "Remove Record",
+    label: "Move to Trash",
     icon: "pi pi-times",
 
     command: () => {
@@ -72,25 +69,18 @@ const items = [
 const openFile = async (filepath) => {
   try {
     const check = await window.LocalCivilApi.checkFile(filepath);
+    if (!check) {
+
+    }
   } catch (error) {
-    toast.add({
-      severity: "info",
-      summary: "Info",
-      detail: "Message Content",
-      life: 3000,
-    });
+
   }
 };
 const openPath = async (filepath) => {
   try {
     const check = await window.LocalCivilApi.openFilePath(filepath);
   } catch (error) {
-    toast.add({
-      severity: "error",
-      summary: "Not Opening",
-      detail: error,
-      life: 3000,
-    });
+
   }
 };
 

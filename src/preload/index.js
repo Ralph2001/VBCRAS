@@ -16,6 +16,14 @@ if (process.contextIsolated) {
 }
 
 contextBridge.exposeInMainWorld('LocalCivilApi', {
+  StartServer: async () => {
+    const result = await ipcRenderer.invoke('start-server');
+    return result
+  },
+  StopServer: async () => {
+    const result = await ipcRenderer.invoke('stop-server');
+    return result
+  },
   getUser: async () => {
     const result = await ipcRenderer.invoke('get-user');
     return result

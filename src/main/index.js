@@ -1,33 +1,98 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, utilityProcess } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
-import { PythonShell } from 'python-shell';
+import message from '../renderer/src/assets/presets/lara/message';
+const { PythonShell } = require('python-shell');
+
 const { execFile } = require('child_process');
+const { spawn } = require('child_process');
 
 
 const { dialog } = require('electron')
 const os = require('os');
 const username = os.userInfo().username;
 
-
 const fs = require('fs-extra')
 
 
-let pythonprocess;
+
 let dialogOpen = false;
 
 
-if (is.dev) {
-  PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
-    console.log('finished');
-  });
+// if (is.dev) {
+//   PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
+//     console.log('finished');
+//   });
 
-} else {
-  pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
+// } else {
+//   pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
+// }
+
+
+
+// Error handling to ensure correct behavior in case of failure
+let pythonProcess = null;
+async function startServer() {
+  try {
+    pythonProcess = spawn('python', [join(__dirname, '../../resources/script/main.py')], {
+    
+    });
+
+    pythonProcess.on('error', (error) => {
+      console.error('Error starting Python process:', error);
+      pythonProcess = null;
+    });
+
+    pythonProcess.on('exit', (code, signal) => {
+      console.log(`Python process exited with code ${code} and signal ${signal}`);
+      pythonProcess = null;
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error starting server:', error);
+    return false;
+  }
 }
 
+ipcMain.handle('start-server', async (event) => {
+  try {
+    if (pythonProcess) {
+      console.warn('Server is already running, cannot start again.');
+      return false;
+    }
+    
+    const success = await startServer();
+    return success;
+  } catch (error) {
+    console.error('Error handling start-server request:', error);
+    return false;
+  }
+});
 
+ipcMain.handle('stop-server', async (event) => {
+  if (pythonProcess) {
+    try {
+      if (pythonProcess.connected) {
+        // Send SIGTERM to the process
+        pythonProcess.send('SIGTERM');
+        // Wait for a short timeout to allow for graceful shutdown
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      // If termination is unsuccessful or not supported, force kill
+      pythonProcess.kill();
+      pythonProcess = null;
+      return true;
+    } catch (error) {
+      console.error('Error stopping server:', error);
+      return false;
+    }
+  } else {
+    console.warn('Server is not running, cannot stop.');
+    return false;
+  }
+});
 
 
 ipcMain.handle('select-folder', async (event) => {
@@ -83,21 +148,24 @@ ipcMain.handle('copy-file', async (event, { source, destination }) => {
 });
 
 
-ipcMain.handle('open-file', async (event, source) => {
-  try {
-    const win = new BrowserWindow({
-      webPreferences: {
-        plugins: true,
-        devTools: false
-      },
-      autoHideMenuBar: true,
-    });
-    win.loadURL('C:\\Users\\' + username + '\\' + source);
-    return true;
-  } catch (err) {
-    return false;
+ipcMain.handle('open-file', (event, source) => {
+  const win = new BrowserWindow({
+    webPreferences: {
+      plugins: true,
+      devTools: false,
+    },
+    autoHideMenuBar: true,
+    show: false
+  });
+  win.loadURL('C:\\Users\\' + username + '\\' + source);
+  win.once('ready-to-show'), () => {
+    win.show()
+    return true
   }
+
 });
+
+
 
 
 ipcMain.handle('open-file-folder', async (event, path) => {
@@ -149,7 +217,7 @@ function mainWindow() {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: 'home' })
   }
 }
 
@@ -167,9 +235,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
 
   if (process.platform !== 'darwin') {
-    if (pythonprocess) {
-      pythonprocess.kill('SIGTERM');
-    }
     app.quit()
   }
 })

@@ -30,7 +30,6 @@ export const ConnectionMode = defineStore('connect', {
             } catch (error) {
                 this.error = error.message;
                 console.log(error)
-                // this.router.push('/connection')
                 return false;
             }
         },
@@ -41,7 +40,6 @@ export const ConnectionMode = defineStore('connect', {
                 if (connect) {
                     localStorage.setItem('host', host + ':1216');
                     this.host = host;
-                    this.router.push('/login')
                     return true
                 }
                 else {
@@ -54,35 +52,44 @@ export const ConnectionMode = defineStore('connect', {
 
         },
         async changeMode(newMode) {
-            if (newMode === 'Server' || newMode === 'Client') {
-                if (newMode === 'Server') {
-                    this.mode = newMode;
-                    localStorage.setItem('mode', newMode);
-                    this.assignHost('localhost');
-                }
+            if (newMode === 'Server') {
+                this.mode = newMode;
+                localStorage.setItem('mode', newMode);
+                this.router.push('/connection/server')
+            }
+            else if (newMode === 'Client') {
                 this.mode = newMode;
                 localStorage.setItem('mode', newMode);
                 localStorage.removeItem('host');
+                this.router.push('/connection/client')
             }
             else if (newMode === 'None') {
                 localStorage.removeItem('mode');
                 localStorage.removeItem('host');
 
                 this.mode = null
-                this.router.push('/connect')
+                this.router.push('/connection/mode')
             }
             else {
-                this.error = 'Invalid mode. ';
+                return 'Invalid Mode'
             }
         },
         async checkConnection() {
             if (!this.host) {
-                this.router.push('/connect')
+                this.router.push('/connection/mode')
                 return
             }
-
             const connection = await this.connectHost(this.host.replace(':1216', ''))
-            console.log(connection)
+        },
+        async checkMode() {
+            if (this.mode === 'Server') {
+                this.router.push('/connection/server')
+            }
+            else if (this.mode === 'Client') {
+                this.router.push('/connection/client')
+            } else {
+                this.router.push('/connection/mode')
+            }
         }
     },
 });

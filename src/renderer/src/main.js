@@ -3,8 +3,8 @@ import { createPinia } from 'pinia'
 import './axios'
 import App from './App.vue'
 import 'flowbite';
-import ToastService from 'primevue/toastservice';
-import { createRouter, createWebHistory } from 'vue-router';
+
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
@@ -19,7 +19,6 @@ import Start from './views/Start.vue';
 import Scanned from './views/ScannedDocuments.vue';
 import Login from './views/Login.vue';
 import Signup from './views/Signup.vue';
-import Connection from './views/Connection.vue';
 import Profile from './views/Profile.vue';
 
 
@@ -29,20 +28,28 @@ const routes = [
         path: "/",
         component: Layout,
         children: [
-            { path: "Start", component: Start, name: "Start" },
+            { path: "Start", component: Start, name: "home" },
             { path: "scanned", component: Scanned, name: "Scanned Documents" },
         ],
     },
     { path: "/login", component: Login, name: "Login" },
     { path: "/profile", component: Profile, name: "Profile" },
     { path: "/Signup", component: Signup, name: "Signup" },
-    { path: "/connect", component: Connection, name: "Connection" },
+    {
+        path: '/connection/',
+        children: [
+            { path: "mode", component: () => import('./views/connection/Mode.vue'), name: "mode" },
+            { path: "client", component: () => import('./views/connection/Client.vue'), name: "client" },
+            { path: "server", component: () => import('./views/connection/Admin.vue'), name: "server" },
+        ]
+    }
+
 
 ];
 
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes
 })
 
@@ -57,11 +64,11 @@ const app = createApp(App);
 
 app.use(router)
 app.use(PrimeVue, { unstyled: true, pt: Lara })
-app.use(ToastService)
 app.use(VueSweetalert2)
 app.use(pinia)
 app.mount('#app')
 router.push('/Start')
+
 
 
 

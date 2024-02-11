@@ -14,9 +14,14 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
 from werkzeug.security import generate_password_hash, check_password_hash
+import signal
 
 
 app = Flask(__name__)
+
+def handle_sigterm(sig, frame):
+    print("Received SIGTERM, shutting down Flask server...")
+    exit(0)  
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///local.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -109,7 +114,6 @@ def connect():
 @app.route("/user", methods=["GET"])
 @jwt_required()
 def protected():
-  
     return jsonify(
         id=current_user.id,
         username=current_user.username,
@@ -215,6 +219,6 @@ def remove_scanned(id, device_used_to_delete):
     
     
 if __name__ == '__main__':
-
+    signal.signal(signal.SIGTERM, handle_sigterm)
     CORS(app)
-    app.run(host="0.0.0.0", port=1216, debug=True)
+    app.run(host="0.0.0.0", port=1216)

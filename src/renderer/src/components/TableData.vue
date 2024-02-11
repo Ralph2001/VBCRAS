@@ -2,7 +2,7 @@
   <div class="h-[calc(100vh-150px)] bg-teal-50/20 ">
     <DataTable :value="data" showGridlines removableSort tableStyle="min-width: 50rem;" tableClass="bg-white" :pt="{
       header: {
-        class: 'bg-green-100 p-4'
+        class: 'bg-blue-300 p-4'
       }
     }" v-model:filters="filters" :globalFilterFields="['name', 'type']" :loading="isLoading" dataKey="id" scrollable
       scrollHeight="flex" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50, 100]" filterDisplay="row"
@@ -13,12 +13,13 @@
           <div class="flex flex-row gap-2">
             <span class="relative">
               <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600 " />
-              <InputText v-model="filters['global'].value" placeholder="Search" class="pl-8 rounded-sm font-normal" />
+              <InputText v-model="filters['global'].value" placeholder="Search" class="pl-8 rounded-sm font-normal " />
             </span>
             <!-- <Button icon="pi pi-refresh" rounded raised /> -->
           </div>
         </div>
       </template>
+
       <Column sortable field="name" header="Name" headerClass="text-sm" bodyClass="bg-neutral-50 " style="width: 60%; ">
         <template #body="slotProps">
           <p class="text-md font-sans text-slate-900 font-medium w-[10rem] sm:w-[10rem] md:w-[35rem] truncate">
@@ -84,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { FilterMatchMode } from "primevue/api";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -113,10 +114,13 @@ const props = defineProps({
     type: String,
   },
 });
-const year = [
-  '2023',
-  '2024'
-]
+
+const year = computed(() => {
+  return [...new Set(props.data.map(data => data.year))]
+    .sort((a, b) => a - b);
+});
+
+
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   name: { value: null, matchMode: FilterMatchMode.CONTAINS },

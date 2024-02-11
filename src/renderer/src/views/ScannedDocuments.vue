@@ -128,7 +128,7 @@
 
 
 
-  <div class="h-auto flex  flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
+  <div class="pr-10  h-auto flex  flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
     <div class="flex flex-row items-center gap-2">
       <Button icon="pi pi-cog" text severity="secondary" rounded aria-label="Filter" />
       <p class="text-sm font-normal text-gray-600 italic">
@@ -275,7 +275,7 @@ const handleDrop = (event) => {
       type: 'Death',
       uploaded_by: uploaded_by,
       device_used: device_used,
-      year: '2024'
+      year: '2000'
     });
 
     // if (path.includes('october') && path.includes('birth')) {
