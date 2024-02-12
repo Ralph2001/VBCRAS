@@ -2,7 +2,6 @@ import { app, shell, BrowserWindow, ipcMain, utilityProcess } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
-import message from '../renderer/src/assets/presets/lara/message';
 const { PythonShell } = require('python-shell');
 
 const { execFile } = require('child_process');
@@ -36,9 +35,8 @@ let pythonProcess = null;
 async function startServer() {
   try {
     pythonProcess = spawn('python', [join(__dirname, '../../resources/script/main.py')], {
-    
-    });
 
+    });
     pythonProcess.on('error', (error) => {
       console.error('Error starting Python process:', error);
       pythonProcess = null;
@@ -62,7 +60,7 @@ ipcMain.handle('start-server', async (event) => {
       console.warn('Server is already running, cannot start again.');
       return false;
     }
-    
+
     const success = await startServer();
     return success;
   } catch (error) {

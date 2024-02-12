@@ -90,6 +90,11 @@ export const ConnectionMode = defineStore('connect', {
             } else {
                 this.router.push('/connection/mode')
             }
+        }, resetMode() {
+            this.mode = null,
+                localStorage.removeItem('mode');
+            this.checkMode()
+
         }
     },
 });

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class=" mx-auto w-screen">
     <RouterView />
   </div>
 </template>

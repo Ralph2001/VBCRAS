@@ -272,10 +272,10 @@ const handleDrop = (event) => {
     data.push({
       name: file.name,
       filepath: file.path.replace('C:\\Users\\' + PCName.user + '\\', ''),
-      type: 'Death',
+      type: 'Birth',
       uploaded_by: uploaded_by,
       device_used: device_used,
-      year: '2000'
+      year: '2024'
     });
 
     // if (path.includes('october') && path.includes('birth')) {
