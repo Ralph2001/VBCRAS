@@ -63,22 +63,27 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
-    # is_admin = db.Column(db.Boolean, default=False)
-
+    is_admin = db.Column(db.Boolean, default=False)
+    user_information = db.relationship('User_Information', backref='user_info')
+        
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+     self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+class User_Information(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))
+    first = db.Column(db.String(255))
+    middle = db.Column(db.String(255))
+    last = db.Column(db.String(255))
 
 
-try:
     with app.app_context():
         db.create_all()
-        db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.name)).scalars()
-except Exception as e:
-    print(f"Error connecting to the database: {str(e)}")
-    exit(1)
+
+
     
 @jwt.user_identity_loader
 def user_identity_lookup(user):

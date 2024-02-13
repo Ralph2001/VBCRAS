@@ -4,8 +4,8 @@ import axios from 'axios'
 export const ServerStore = defineStore('server', {
     state: () => ({
         // active: null,
-        status: localStorage.getItem('status')
-
+        status: localStorage.getItem('status'),
+        hostAddress: ''
     }),
     getters: {
         getStatus(state) {
@@ -30,6 +30,7 @@ export const ServerStore = defineStore('server', {
                     const start_server = await window.LocalCivilApi.StartServer();
                     if (start_server) {
                         this.status = true
+                        this.hostAddress = start_server.addresses[0]
                         localStorage.setItem('status', true)
                     }
                 } catch (error) {

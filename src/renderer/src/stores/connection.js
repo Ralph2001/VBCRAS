@@ -40,6 +40,7 @@ export const ConnectionMode = defineStore('connect', {
                 if (connect) {
                     localStorage.setItem('host', host + ':1216');
                     this.host = host;
+                    this.router.push('/login')
                     return true
                 }
                 else {

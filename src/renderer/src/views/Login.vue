@@ -9,45 +9,41 @@
                 role="alert">
                 <span class="font-medium"> {{ Auth.error }}</span>
             </div>
+            <form @submit.prevent="submitForm()">
+                <div class="w-80">
+                    <label for="first_name"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                    <input type="text" autofocus v-model="formData.username"
+                        :class="{ 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500': v$.username.$error }"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        required>
+                    <span v-if="v$.username.$error" class=" mt-2 text-sm  dark:text-red-500 text-red-600">
+                        This field is required
+                    </span>
 
-            <div class="w-80">
-                <label for="first_name"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-                <input type="text" autofocus v-model="formData.username"
-                    :class="{ 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500': v$.username.$error }"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required>
-                <span v-if="v$.username.$error" class=" mt-2 text-sm  dark:text-red-500 text-red-600">
-                    This field is required
-                </span>
+                </div>
+                <div class="w-80 ">
+                    <label for="first_name"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                    <input type="password" v-model="formData.password"
+                        :class="{ 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500': v$.password.$error }"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        required>
+                    <span v-if="v$.password.$error" class="mt-2 text-sm  dark:text-red-500 text-red-600">
+                        This field is required
+                    </span>
 
-            </div>
-            <div class="w-80 ">
-                <label for="first_name"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                <input type="password" v-model="formData.password"
-                    :class="{ 'bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500': v$.password.$error }"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required>
-                <span v-if="v$.password.$error" class="mt-2 text-sm  dark:text-red-500 text-red-600">
-                    This field is required
-                </span>
-
-            </div>
-            <div class="ml-auto mt-3">
-                <button type="button" @click="submitForm()"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Login</button>
-            </div>
-
+                </div>
+                <div class="ml-auto mt-3">
+                    <button type="submit" @click="submitForm()"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Login</button>
+                </div>
+            </form>
             <div class="flex flex-row justify-between items-center mt-5 w-full">
                 <router-link to="/Signup"
                     class=" underline  text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                     Create an Account
                 </router-link>
-                <!-- <router-link to="/connect"
-                    class=" underline   text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                    Connection
-                </router-link> -->
             </div>
         </div>
     </div>

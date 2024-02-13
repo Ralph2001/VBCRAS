@@ -36,10 +36,15 @@ export const AuthStore = defineStore('auth', {
                 this.error = null,
                 this.user = null,
                 localStorage.removeItem('token', this.token);
+            this.router.push('/login')
 
         },
         async Profile() {
             try {
+                if (!this.token) {
+                    return
+                }
+
                 const tokenStr = this.token;
                 const user = await axios.get('/user', {
                     headers: { "Authorization": `Bearer ${tokenStr}` }

@@ -4,8 +4,8 @@
       header: {
         class: 'bg-blue-300 p-4'
       }
-    }" v-model:filters="filters" :globalFilterFields="['name', 'type']" :loading="isLoading" dataKey="id" scrollable
-      scrollHeight="flex" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50, 100]" filterDisplay="row"
+    }" v-model:filters="filters" :globalFilterFields="['name', 'type', 'filepath']" :loading="isLoading" dataKey="id"
+      scrollable scrollHeight="flex" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 50, 100]" filterDisplay="row"
       stateStorage="session" stateKey="ScannedTable">
       <template #header>
         <div class="flex flex-row justify-between items-center h-10 scale-95">

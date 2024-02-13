@@ -2,7 +2,6 @@ import { app, shell, BrowserWindow, ipcMain, utilityProcess } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
-const { PythonShell } = require('python-shell');
 
 const { execFile } = require('child_process');
 const { spawn } = require('child_process');
@@ -10,7 +9,20 @@ const { spawn } = require('child_process');
 
 const { dialog } = require('electron')
 const os = require('os');
+
 const username = os.userInfo().username;
+
+var interfaces = os.networkInterfaces();
+var addresses = [];
+for (var k in interfaces) {
+  for (var k2 in interfaces[k]) {
+    var address = interfaces[k][k2];
+    if (address.family === 'IPv4' && !address.internal) {
+      addresses.push(address.address);
+    }
+  }
+}
+
 
 const fs = require('fs-extra')
 
@@ -60,9 +72,8 @@ ipcMain.handle('start-server', async (event) => {
       console.warn('Server is already running, cannot start again.');
       return false;
     }
-
     const success = await startServer();
-    return success;
+    return { success, addresses };
   } catch (error) {
     console.error('Error handling start-server request:', error);
     return false;
@@ -73,12 +84,9 @@ ipcMain.handle('stop-server', async (event) => {
   if (pythonProcess) {
     try {
       if (pythonProcess.connected) {
-        // Send SIGTERM to the process
         pythonProcess.send('SIGTERM');
-        // Wait for a short timeout to allow for graceful shutdown
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
-      // If termination is unsuccessful or not supported, force kill
       pythonProcess.kill();
       pythonProcess = null;
       return true;

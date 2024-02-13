@@ -42,6 +42,13 @@ const routes = [
             { path: "client", component: () => import('./views/connection/Client.vue'), name: "client" },
             { path: "server", component: () => import('./views/connection/Admin.vue'), name: "server" },
         ]
+    },
+    {
+        path: '/admin/',
+        children: [
+            { path: "login", component: () => import('./views/admin/login.vue'), name: "login" },
+
+        ]
     }
 
 
