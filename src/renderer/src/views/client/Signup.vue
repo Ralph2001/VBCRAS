@@ -68,7 +68,7 @@
 import { reactive, computed } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, sameAs } from "@vuelidate/validators";
-import { AuthStore } from '../stores/auth';
+import { AuthStore } from '../../stores/auth';
 import { useRouter } from "vue-router"
 
 const router = useRouter();

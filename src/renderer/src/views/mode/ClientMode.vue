@@ -10,8 +10,7 @@
         <div class="flex flex-col bg-gray-100 h-full w-full justify-center items-center gap-4">
 
             <div class="flex flex-col gap-2 mt-auto h-44 items-center justify-center  ">
-                    <HostInput label="Host Address" :error="v$.hostAddress.$error" @hostInput="host"
-                        :errormessage="error" />
+                <HostInput label="Host Address" :error="v$.hostAddress.$error" @hostInput="host" :errormessage="error" />
             </div>
 
             <div class="flex flex-row gap-2 mt-auto items-center justify-center w-full p-4 ">

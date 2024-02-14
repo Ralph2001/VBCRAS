@@ -162,15 +162,15 @@
 import { ref, inject, onMounted } from "vue";
 import { reactive, computed } from "vue";
 
-import { scannedDocuments } from "../stores/scanned";
-import { AuthStore } from "../stores/auth";
-import { ComputerName } from "../stores/user";
-import TableData from "../components/TableData.vue";
-import Dropzone from "../components/Dropzone.vue";
+import { scannedDocuments } from "../../stores/scanned";
+import { AuthStore } from "../../stores/auth";
+import { ComputerName } from "../../stores/user";
+import TableData from "../../components/TableData.vue";
+import Dropzone from "../../components/Dropzone.vue";
 
 import Button from "primevue/button";
 import { FwbButton, FwbModal } from "flowbite-vue";
-import DropInputField from "../components/DropInputField.vue";
+import DropInputField from "../../components/DropInputField.vue";
 import { FwbRadio, FwbAlert } from "flowbite-vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";

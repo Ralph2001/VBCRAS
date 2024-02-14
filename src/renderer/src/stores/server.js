@@ -1,16 +1,19 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { ConnectionMode } from '../stores/connection'
+
 
 export const ServerStore = defineStore('server', {
     state: () => ({
         // active: null,
         status: localStorage.getItem('status'),
-        hostAddress: ''
+        hostAddress: null,
+        auto: localStorage.getItem('auto'),
     }),
     getters: {
         getStatus(state) {
             return state.status
-        }
+        },
     },
     actions: {
         async activate() {
@@ -38,6 +41,27 @@ export const ServerStore = defineStore('server', {
                 }
             }
         },
+        AutoStart() {
+            this.auto = !this.auto
+
+            if (this.auto) {
+                localStorage.setItem('auto', true)
+            } else {
+                localStorage.setItem('auto', false)
+            }
+        },
+        async checkAutoStart() {
+            if (this.auto) {
+                const start_server = await window.LocalCivilApi.StartServer();
+                if (start_server) {
+                    this.status = true
+                    this.hostAddress = start_server.addresses[0]
+                    localStorage.setItem('status', true)
+                }
+            }
+            return
+        }
+
 
     },
 });

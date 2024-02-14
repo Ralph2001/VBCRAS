@@ -31,9 +31,9 @@
 
 <script setup>
 import { onMounted } from "vue";
-import FrontCarousel from "../components/FrontCarousel.vue";
+// import FrontCarousel from "../components/FrontCarousel.vue";
 import { initFlowbite } from "flowbite";
-import { AuthStore } from "../stores/auth"
+import { AuthStore } from "../../stores/auth"
 import { useRouter } from "vue-router"
 
 const router = useRouter();

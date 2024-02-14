@@ -53,9 +53,9 @@
 import { reactive, computed, onMounted } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
-import { AuthStore } from '../stores/auth';
+import { AuthStore } from '../../stores/auth';
 import { useRouter } from "vue-router"
-import { ConnectionMode } from "../stores/connection";
+import { ConnectionMode } from "../../stores/connection";
 
 
 const router = useRouter();

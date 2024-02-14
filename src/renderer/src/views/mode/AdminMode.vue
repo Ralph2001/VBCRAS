@@ -25,8 +25,10 @@
                     Mode</button>
                 <button type="button" @click="autoStart()"
                     class="items-center flex py-2 px-4 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-gray-50  rounded border border-gray-300 hover:bg-gray-100 focus:z-10   dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Auto
-                    Start <span :class="{ 'text-green-500': auto }"
-                        class="ml-3 pi pi-circle-fill text-xs text-gray-400"></span></button>
+                    Start <span :class="{ 'text-green-500': server.auto }"
+                        class="ml-3 pi pi-circle-fill text-xs text-gray-400"></span>
+
+                </button>
                 <router-link to="/admin/login" v-if="server.getStatus"
                     class=" disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center py-2 px-8 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-gray-50 rounded-sm border border-gray-300 hover:bg-gray-100 focus:z-10   dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                     Dashboard
@@ -64,7 +66,8 @@ const mode = ConnectionMode();
 
 onMounted(() => {
     server.getStatus;
-    mode.checkMode()
+    mode.checkMode();
+    server.checkAutoStart();
 })
 
 const activate = async () => {
@@ -82,7 +85,7 @@ const resetMode = () => {
     mode.resetMode()
 }
 const autoStart = () => {
-    auto.value = !auto.value
+    server.AutoStart();
 }
 </script>
 

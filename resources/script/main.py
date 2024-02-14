@@ -64,25 +64,34 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
-    user_information = db.relationship('User_Information', backref='user_info')
-        
+
     def set_password(self, password):
      self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
-class User_Information(db.Model):
+
+class AdminCreated(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))
-    first = db.Column(db.String(255))
-    middle = db.Column(db.String(255))
-    last = db.Column(db.String(255))
+    created = db.Column(db.Boolean, default=False, unique=True)  
 
-
-    with app.app_context():
-        db.create_all()
-
+def create_admin_user():
+     if not AdminCreated.query.first():
+        admin = User(
+            username='admin', 
+            is_admin=True
+        )
+        admin.set_password('admin')
+        
+        db.session.add(admin)
+        db.session.add(AdminCreated(created=True))
+        db.session.commit()
+        
+with app.app_context():
+    db.create_all()
+    create_admin_user() 
+        
+        
 
     
 @jwt.user_identity_loader

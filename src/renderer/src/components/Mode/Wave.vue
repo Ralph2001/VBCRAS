@@ -1,7 +1,5 @@
 <template>
-    <div class="flex flex-col w-full bg-slate-100 h-screen justify-center p-4 items-center relative">
-
-
+    <div>
         <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
             viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
             <defs>
@@ -14,37 +12,14 @@
                 <use xlink:href="#gentle-wave" x="48" y="7" fill="#bfdbfe" />
             </g>
         </svg>
-
-
-        <p class="text-md uppercase text-gray-800 font-bold mb-10 font-mono antialiased">Connection Mode</p>
-        <div class="">
-            <div class="flex flex-row p-3 gap-5">
-                <ButtonMode title="Server" value="Server" @pressed="choose" />
-                <ButtonMode title="Client" value="Client" @pressed="choose" />
-            </div>
-        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { ConnectionMode } from '../../stores/connection';
-import ButtonMode from '../../components/connection/ButtonMode.vue';
-const Connect = ConnectionMode();
 
-const mode = ref('')
-
-const choose = async (chose) => {
-    mode.value = chose
-    await Connect.changeMode(mode.value)
-};
-
-onMounted(() => {
-    Connect.checkConnection()
-    Connect.checkMode()
-})
 </script>
-<style scoped>
+
+<style lang="scss" scoped>
 .waves {
     position: absolute;
     width: 100%;
