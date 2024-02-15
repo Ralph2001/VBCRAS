@@ -1,4 +1,3 @@
 import axios from "axios"
 
 axios.defaults.baseURL = "http://" + localStorage.getItem('host');
-// axios.defaults.headers.common['Authorization'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwNjY4NDgyNSwianRpIjoiZmE3NjNjMTAtMjM3OS00Mzk4LWE5YTktZGE0OWFiNDRhNTBjIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzA2Njg0ODI1LCJjc3JmIjoiNDZjNzM3OTMtMzc2My00NGE3LWEyMTQtZjg2NDY3ODYwZjNiIiwiZXhwIjoxNzA2Njg1NzI1fQ.Vggy_KS7ch5kOBapUQR3aKmdZuBSeQpsaAfio6n8xTk';

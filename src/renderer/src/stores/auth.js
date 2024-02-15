@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useRouter } from "vue-router"
+
+const router = useRouter();
+
 
 export const AuthStore = defineStore('auth', {
     state: () => ({
@@ -27,8 +31,11 @@ export const AuthStore = defineStore('auth', {
         },
         isAuthenticated() {
             if (this.token !== null) {
+                // this.router.push('/Start')
                 return true;
             }
+
+            this.router.push('/login')
             return false
         },
         logout() {
@@ -42,6 +49,7 @@ export const AuthStore = defineStore('auth', {
         async Profile() {
             try {
                 if (!this.token) {
+                    this.router.push('/login')
                     return
                 }
 

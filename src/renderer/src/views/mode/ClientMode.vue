@@ -8,22 +8,17 @@
         </div>
 
         <div class="flex flex-col bg-gray-100 h-full w-full justify-center items-center gap-4">
-
             <div class="flex flex-col gap-2 mt-auto h-44 items-center justify-center  ">
-                <HostInput label="Host Address" :error="v$.hostAddress.$error" @hostInput="host" :errormessage="error" />
+                <HostInput label="Host Address"  :error="v$.hostAddress.$error" @hostInput="host" :errormessage="error" />
             </div>
 
+            <!-- -->
             <div class="flex flex-row gap-2 mt-auto items-center justify-center w-full p-4 ">
-                <button @click="resetMode()" type="button"
-                    class="flex items-center py-2 px-4 me-2 mb-2 mr-auto text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-sm border border-gray-200 hover:bg-gray-300 focus:z-10   dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    <span class="me-2 pi pi-arrow-left"></span> Change
-                    Mode</button>
-                <button type="button"
-                    class="py-2 px-4 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-sm border border-gray-200 hover:bg-gray-300 focus:z-10   dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Auto
-                    Connect</button>
-                <SubmitBtn :label="label" :loading="loading" @click="connectToHost" />
-            </div>
+                <handleBtn label="Change Mode" @click="resetMode()" :addClass="changeMode" />
+                <handleBtn label="Auto Connect" :addClass="autoClass" @click="autoConnect()" />
 
+                <SubmitBtn :label="label" :loading="loading" @click="connectToHost" type="submit" />
+            </div>
         </div>
 
     </div>
@@ -36,9 +31,22 @@ import { required, ipAddress } from "@vuelidate/validators";
 import HostInput from "../../components/connection/HostInput.vue";
 import { ConnectionMode } from "../../stores/connection";
 import SubmitBtn from "../../components/connection/SubmitBtn.vue";
+import handleBtn from "../../components/connection/handleBtn.vue";
 
 
 const swal = inject("$swal");
+const con = ConnectionMode();
+
+const changeMode = ref('bg-white mr-auto')
+const autoClass = ref('bg-white hover:bg-green-600 hover:text-white')
+
+
+onMounted(() => {
+    con.checkMode();
+    // con.checkConnection()
+
+})
+
 const Toast = swal.mixin({
     toast: true,
     position: "top-end",
@@ -50,10 +58,6 @@ const Toast = swal.mixin({
         toast.onmouseleave = swal.resumeTimer;
     },
 });
-
-
-
-const Connect = ConnectionMode();
 
 const formData = reactive({
     hostAddress: null,
@@ -88,8 +92,7 @@ const connectToHost = async () => {
     try {
         loading.value = true;
         label.value = 'Connecting';
-        const connect = await Connect.assignHost(formData.hostAddress);
-        // console.log(connect)
+        const connect = await con.assignHost(formData.hostAddress);
         if (!connect) {
             loading.value = false;
             label.value = "Connect";
@@ -99,13 +102,19 @@ const connectToHost = async () => {
             });
         }
     } catch (error) {
-        // console.error("Connection error:", error);
+
         loading.value = false;
         label.value = "Connect";
     }
 };
 
 const resetMode = () => {
-    Connect.resetMode()
+    con.resetMode()
+}
+const autoConnect = () => {
+    Toast.fire({
+        icon: "success",
+        title: "Auto Connect",
+    });
 }
 </script>

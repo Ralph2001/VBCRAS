@@ -1,6 +1,6 @@
 <template>
     <Navbar />
-    <div class="container mx-auto w-screen">
+    <div class="container mx-auto w-screen max-w-screen-2xl px-5 ">
         <router-view />
     </div>
 </template>

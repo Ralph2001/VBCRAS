@@ -8,6 +8,7 @@ export const ConnectionMode = defineStore('connect', {
         mode: localStorage.getItem('mode'),
         host: localStorage.getItem('host'),
         error: null,
+        status: null
     }),
     getters: {
         // Add getters as needed
@@ -24,12 +25,14 @@ export const ConnectionMode = defineStore('connect', {
                 if (response.status === 201) {
                     return true;
                 } else {
+                    localStorage.removeItem('host');
                     this.error = 'Connection failed with status: '
                     return false;
                 }
             } catch (error) {
                 this.error = error.message;
                 console.log(error)
+                localStorage.removeItem('host');
                 return false;
             }
         },
@@ -77,10 +80,20 @@ export const ConnectionMode = defineStore('connect', {
         },
         async checkConnection() {
             if (!this.host) {
-                this.router.push('/connection/mode')
                 return
             }
-            const connection = await this.connectHost(this.host.replace(':1216', ''))
+            else {
+                const connection = await this.connectHost(this.host.replace(':1216', ''))
+                if (connection) {
+                    this.router.push('/login')
+                    return true
+                }
+                else {
+                    localStorage.removeItem('host');
+                    // this.router.push('/connection/mode')
+                    return
+                }
+            }
         },
         async checkMode() {
             if (this.mode === 'Server') {
@@ -96,6 +109,16 @@ export const ConnectionMode = defineStore('connect', {
                 localStorage.removeItem('mode');
             this.checkMode()
 
+        },
+        async connectionStatus() {
+            if (!this.host) {
+                return 'cancelled'
+            }
+            else {
+                await this.connectHost(this.host.replace(':1216', '')).then(function (response) {
+                    this.status = response
+                })
+            }
         }
     },
 });

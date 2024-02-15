@@ -14,10 +14,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { ConnectionMode } from '../stores/connection';
-import ButtonMode from '../components/connection/ButtonMode.vue';
+import ButtonMode from '../components/Mode/ButtonMode.vue';
 import Wave from '../components/Mode/Wave.vue';
 const con = ConnectionMode();
-
+    
 const mode = ref('')
 
 const choose = async (chose) => {
@@ -26,7 +26,7 @@ const choose = async (chose) => {
 };
 
 onMounted(() => {
-    con.checkConnection()
+    // con.checkConnection()
     con.checkMode()
 })
 </script>

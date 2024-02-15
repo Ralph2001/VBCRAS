@@ -3,7 +3,7 @@
         <button type="button" :value="value"
             class="text-sm font-semibold uppercase antialiased text-gray-800 button-10 w-[6rem] h-[5rem] border border-gray-300 rounded-lg bg-gray-100  hover:shadow-md transition-all"
             @click="pressed">
-            {{ title }}
+            {{ title }} 
         </button>
     </div>
 </template>

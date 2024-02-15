@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100vh-150px)] bg-teal-50/20 ">
+  <div class="h-[calc(100vh-90px)] bg-teal-50/20 ">
     <DataTable :value="data" showGridlines removableSort tableStyle="min-width: 50rem;" tableClass="bg-white" :pt="{
       header: {
         class: 'bg-blue-300 p-4'
