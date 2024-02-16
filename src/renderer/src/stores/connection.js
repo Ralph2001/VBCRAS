@@ -79,8 +79,11 @@ export const ConnectionMode = defineStore('connect', {
             }
         },
         async checkConnection() {
+
             if (!this.host) {
-                return
+                this.router.push('/connection/client')
+                console.log('Hi')
+                // return
             }
             else {
                 const connection = await this.connectHost(this.host.replace(':1216', ''))
@@ -90,10 +93,12 @@ export const ConnectionMode = defineStore('connect', {
                 }
                 else {
                     localStorage.removeItem('host');
-                    // this.router.push('/connection/mode')
+                    this.router.push('/connection/mode')
                     return
                 }
             }
+
+
         },
         async checkMode() {
             if (this.mode === 'Server') {

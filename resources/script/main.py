@@ -131,6 +131,7 @@ def protected():
     return jsonify(
         id=current_user.id,
         username=current_user.username,
+        id_admin = current_user.is_admin
     )
 
 

@@ -7,10 +7,12 @@
 
         </div>
         <div class="flex flex-col bg-gray-100 h-full w-full justify-center items-center gap-4">
-            <p class="text-sm text-gray-900 italic mt-auto" v-if="!server.getStatus">The server is currently not running.
+            <p class="text-sm text-gray-900 italic mt-auto" v-if="!server.getStatus">The
+                server is currently not running.
             </p>
-            <p class="text-sm text-gray-900 italic mt-auto" v-if="server.getStatus">The server is running. ( <span> {{
-                server.hostAddress }}</span> )</p>
+            <p class="text-sm text-gray-900 italic mt-auto" v-if="server.getStatus">The
+                server is running. ( <span> {{
+                    server.hostAddress }}</span> )</p>
 
             <button type="button"
                 :class="{ 'bg-red-500 text-white focus:ring-red-300 hover:bg-red-700 border-red-100': server.getStatus }"
@@ -24,9 +26,9 @@
                     <span class="me-2 pi pi-arrow-left"></span> Change
                     Mode</button>
                 <button type="button" @click="autoStart()"
+                    :class="{ 'bg-green-500 text-white hover:bg-green-600': server.auto }"
                     class="items-center flex py-2 px-4 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-gray-50  rounded border border-gray-300 hover:bg-gray-100 focus:z-10   dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Auto
-                    Start <span :class="{ 'text-green-500': server.auto }"
-                        class="ml-3 pi pi-circle-fill text-xs text-gray-400"></span>
+                    Start
 
                 </button>
                 <router-link to="/admin/login" v-if="server.getStatus"
@@ -68,6 +70,8 @@ onMounted(() => {
     server.getStatus;
     mode.checkMode();
     server.checkAutoStart();
+    server.checkStatus()
+
 })
 
 const activate = async () => {

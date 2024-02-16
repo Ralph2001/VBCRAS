@@ -1,4 +1,4 @@
-import { createApp, markRaw, onMounted } from 'vue'
+import { createApp, markRaw } from 'vue'
 import { createPinia } from 'pinia'
 import './axios'
 import App from './App.vue'
@@ -16,7 +16,7 @@ import Lara from './assets/presets/lara';
 import Layout from './views/Layout.vue';
 
 
-import { ConnectionMode } from "./stores/connection"
+// import { ConnectionMode } from "./stores/connection"
 
 
 
@@ -46,10 +46,9 @@ const routes = [
         path: '/admin/',
         children: [
             { path: "login", component: () => import('./views/admin/login.vue'), name: "login" },
-
         ]
-    }
-
+    },
+    { path: "/admin/panel", component: () => import('./views/admin/Panel.vue'), name: "panel" },
 ];
 
 const router = createRouter({
@@ -57,13 +56,13 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach(async (to, from) => {
-    const connectionStatus = con.status
+// router.beforeEach(async (to, from) => {
+//     const connectionStatus = con.status
 
-    if (to.name !== 'mode') {
-        console.log(connectionStatus)
-    }
-})
+//     if (to.name !== 'mode') {
+//         console.log(connectionStatus)
+//     }
+// })
 
 
 
@@ -82,12 +81,9 @@ app.use(PrimeVue, { unstyled: true, pt: Lara })
 app.use(VueSweetalert2)
 app.use(pinia)
 
-const con = ConnectionMode();
-onMounted(() => {
-    con.checkStatus()
-})
 app.mount('#app')
 router.push('/connection/mode')
+
 
 
 

@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
-import { ConnectionMode } from '../stores/connection'
 
+
+import { useRouter } from "vue-router"
+
+const router = useRouter();
 
 export const ServerStore = defineStore('server', {
     state: () => ({
-        // active: null,
         status: localStorage.getItem('status'),
         hostAddress: null,
         auto: localStorage.getItem('auto'),
@@ -23,6 +24,7 @@ export const ServerStore = defineStore('server', {
                     if (stop_server) {
                         this.status = false
                         localStorage.removeItem('status')
+                        localStorage.removeItem('host')
                     }
                 } catch (error) {
                     console.error('Error stopping server:', error);
@@ -35,31 +37,45 @@ export const ServerStore = defineStore('server', {
                         this.status = true
                         this.hostAddress = start_server.addresses[0]
                         localStorage.setItem('status', true)
+                        localStorage.setItem('host', '127.0.0.1:1216')
                     }
                 } catch (error) {
                     console.error('Error starting server:', error);
                 }
             }
         },
-        AutoStart() {
+        async AutoStart() {
             this.auto = !this.auto
 
             if (this.auto) {
                 localStorage.setItem('auto', true)
             } else {
-                localStorage.setItem('auto', false)
+                localStorage.removeItem('auto')
             }
         },
         async checkAutoStart() {
-            if (this.auto) {
-                const start_server = await window.LocalCivilApi.StartServer();
-                if (start_server) {
-                    this.status = true
-                    this.hostAddress = start_server.addresses[0]
-                    localStorage.setItem('status', true)
+            if (!this.status) {
+                if (this.auto) {
+                    const start_server = await window.LocalCivilApi.StartServer();
+                    if (start_server) {
+                        this.status = true
+                        this.hostAddress = start_server.addresses[0]
+                        localStorage.setItem('status', true)
+                    }
+                }
+                else {
+                    return
                 }
             }
-            return
+
+        },
+        async checkStatus() {
+            if (this.status) {
+                this.router.push('/admin/login')
+            }
+            else {
+                return
+            }
         }
 
 
