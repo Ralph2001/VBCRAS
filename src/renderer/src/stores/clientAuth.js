@@ -61,6 +61,7 @@ export const AuthStore = defineStore("auth", {
           const user = await axios.get("http://" + hostAddress + ":1216/user", {
             headers: { Authorization: `Bearer ${tokenStr}` },
           });
+          this.user = user.data.username;
           return true;
         } catch (error) {
           localStorage.removeItem("token");

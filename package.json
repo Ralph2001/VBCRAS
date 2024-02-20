@@ -37,7 +37,7 @@
     "mysql2": "^3.6.5",
     "pinia": "^2.1.7",
     "primeicons": "^6.0.1",
-    "primevue": "^3.46.0",
+    "primevue": "^3.48.1",
     "python-shell": "^5.0.0",
     "vue-router": "^4.2.5",
     "vue-sweetalert2": "^5.0.5"

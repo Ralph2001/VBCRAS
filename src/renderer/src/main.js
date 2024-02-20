@@ -6,6 +6,10 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 
+import PrimeVue from 'primevue/config';
+import Lara from './assets/presets/lara';
+
+
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
@@ -36,5 +40,6 @@ app.use(router);
 app.use(pinia);
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(VueSweetalert2);
+app.use(PrimeVue, { unstyled: true, pt: Lara })
 
 app.mount("#app");

@@ -51,9 +51,10 @@
                                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
                                     aria-labelledby="dropdownLargeButton">
                                     <li>
-                                        <a href="#"
-                                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                             </a>
+                                        <button
+                                            class="w-full text-left px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            {{ auth.user }}
+                                        </button>
                                     </li>
                                     <li>
                                         <a href="#"
@@ -90,6 +91,7 @@ const logout = () => {
 }
 onMounted(() => {
     initFlowbite();
+    auth.isAuthenticated();
 })
 </script>
 
