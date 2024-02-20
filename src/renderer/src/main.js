@@ -1,91 +1,40 @@
-import { createApp, markRaw } from 'vue'
-import { createPinia } from 'pinia'
-import './axios'
-import App from './App.vue'
-import 'flowbite';
 
-import { createRouter, createWebHashHistory } from 'vue-router';
+
+import { createApp, markRaw } from "vue";
+import { createPinia } from "pinia";
+
+import App from "./App.vue";
+import router from "./router";
 
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-import './assets/css/index.css'
-
-import PrimeVue from 'primevue/config';
-import Lara from './assets/presets/lara';
-
-import Layout from './views/Layout.vue';
 
 
-// import { ConnectionMode } from "./stores/connection"
+/* import the fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core'
 
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+/* import specific icons */
+import { faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear } from '@fortawesome/free-solid-svg-icons'
 
-const routes = [
-    {
-        path: "/",
-        component: Layout,
-        children: [
-            { path: "Start", component: () => import('./views/client/Start.vue'), name: "home" },
-            { path: "scanned", component: () => import('./views/client/ScannedDocuments.vue'), name: "Scanned Documents" },
-        ],
-    },
-    {
-        path: "/login", component: () => import('./views/client/Login.vue'), name: "Login"
-    },
-    { path: "/profile", component: () => import('./views/client/Profile.vue'), name: "Profile" },
-    { path: "/Signup", component: () => import('./views/client/Signup.vue'), name: "Signup" },
-    {
-        path: '/connection/',
-        children: [
-            { path: "mode", component: () => import('./views/Mode.vue'), name: "mode" },
-            { path: "client", component: () => import('./views/mode/ClientMode.vue'), name: "client" },
-            { path: "server", component: () => import('./views/mode/AdminMode.vue'), name: "server" },
-        ]
-    },
-    {
-        path: '/admin/',
-        children: [
-            { path: "login", component: () => import('./views/admin/login.vue'), name: "login" },
-        ]
-    },
-    { path: "/admin/panel", component: () => import('./views/admin/Panel.vue'), name: "panel" },
-];
+/* add icons to the library */
+library.add(faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear)
 
-const router = createRouter({
-    history: createWebHashHistory(),
-    routes
-})
+import "./assets/index.css";
+import 'flowbite';
+import "animate.css";
 
-// router.beforeEach(async (to, from) => {
-//     const connectionStatus = con.status
-
-//     if (to.name !== 'mode') {
-//         console.log(connectionStatus)
-//     }
-// })
-
-
-
-
-
-const pinia = createPinia()
+const app = createApp(App);
+const pinia = createPinia();
 
 pinia.use(({ store }) => {
-    store.router = markRaw(router)
-})
-const app = createApp(App);
+  store.router = markRaw(router);
+});
+app.use(router);
+app.use(pinia);
+app.component('font-awesome-icon', FontAwesomeIcon);
+app.use(VueSweetalert2);
 
-
-app.use(router)
-app.use(PrimeVue, { unstyled: true, pt: Lara })
-app.use(VueSweetalert2)
-app.use(pinia)
-
-app.mount('#app')
-router.push('/connection/mode')
-
-
-
-
-
-
+app.mount("#app");

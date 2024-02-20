@@ -1,33 +1,33 @@
 <template>
-    <div class="flex flex-col w-full bg-slate-100 h-screen justify-center p-4 items-center relative">
+    <div class="flex flex-col w-full bg-slate-100  min-h-screen  flex-grow justify-center p-4 items-center relative">
         <Wave />
         <p class="text-md uppercase text-gray-800 font-bold mb-10 font-mono antialiased">Connection Mode</p>
-        <div class="">
-            <div class="flex flex-row p-3 gap-5">
-                <ButtonMode title="Server" value="Server" @pressed="choose" />
-                <ButtonMode title="Client" value="Client" @pressed="choose" />
-            </div>
+        <!-- <p class="text-md uppercase text-gray-800 font-bold mb-10 font-mono antialiased">{{ mode.getMode() }}</p> -->
+        <div class="flex flex-row p-3 gap-5">
+            <ButtonMode title="Server" @click="serverMode()" />
+            <ButtonMode title="Client" @click="clientMode()" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { ConnectionMode } from '../stores/connection';
-import ButtonMode from '../components/Mode/ButtonMode.vue';
-import Wave from '../components/Mode/Wave.vue';
-const con = ConnectionMode();
-    
-const mode = ref('')
+import Wave from '../components/Wave.vue';
+import ButtonMode from '../components/mode/ButtonMode.vue';
+import { useModeStore } from '../stores/mode'
+import { onMounted } from 'vue';
 
-const choose = async (chose) => {
-    mode.value = chose
-    await con.changeMode(mode.value)
-};
 
+const mode = useModeStore()
 onMounted(() => {
-    // con.checkConnection()
-    con.checkMode()
+    // mode.checkMode()
 })
+
+const serverMode = () => {
+    mode.changeMode('server')
+}
+const clientMode = () => {
+    mode.changeMode('client')
+}
+
 </script>
 
