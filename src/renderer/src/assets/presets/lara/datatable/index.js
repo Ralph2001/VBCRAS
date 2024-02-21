@@ -44,6 +44,9 @@ export default {
     header: ({ props }) => ({
         class: [
             'font-bold',
+            'border-gray-300 border-b shadow-2xl',
+
+
 
             // Shape
             // props.showGridlines ? 'border-x border-t border-b-0' : 'border-y border-x-0',
@@ -59,7 +62,7 @@ export default {
         ]
     }),
     table: {
-        class: 'w-full border-spacing-0 border-separate'
+        class: 'w-full border-spacing-0 border-separate '
     },
     thead: ({ context }) => ({
         class: [
@@ -71,7 +74,7 @@ export default {
     tbody: ({ instance, context }) => ({
         class: [
             {
-                'sticky z-20': instance.frozenRow && context.scrollable
+                'sticky z-20 ': instance.frozenRow && context.scrollable
             }
         ]
     }),
@@ -101,7 +104,8 @@ export default {
     column: {
         headercell: ({ context, props }) => ({
             class: [
-                'font-semibold uppercase text-xs',
+                'font-semibold uppercase text-xs ',
+                'tabindex-[-1]',
 
                 // Position
                 { 'sticky z-20 border-b': props.frozen || props.frozen === '' },
@@ -113,11 +117,11 @@ export default {
 
                 // Shape
                 { 'first:border-l border-y border-r': context?.showGridlines },
-                'border-0 border-b border-solid',
+                // 'border-0 border-b border-solid',
 
                 // Spacing
                 // context?.size === 'small' ? 'p-2' : context?.size === 'large' ? 'p-5' : 'p-4',
-                'p-3',
+                'p-2 pl-4',
 
                 // Color
                 // (props.sortable === '' || props.sortable) && context.sorted ? 'bg-primary-50 text-primary-700' : 'bg-surface-50 text-surface-700',
@@ -127,7 +131,7 @@ export default {
                 'bg-blue-50/50',
 
                 // States
-                { 'hover:bg-surface-100 dark:hover:bg-surface-400/30': (props.sortable === '' || props.sortable) && !context?.sorted },
+                { 'hover:bg-blue-200/60 dark:hover:bg-surface-400/30': (props.sortable === '' || props.sortable) && !context?.sorted },
                 'focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring focus-visible:ring-inset focus-visible:ring-primary-400/50 dark:focus-visible:ring-primary-300/50',
 
                 // Transition
@@ -153,7 +157,7 @@ export default {
                 { 'sticky box-border border-b': props.frozen || props.frozen === '' },
 
                 // Alignment
-                'text-left',
+                'text-left ',
 
                 // Shape
                 'border-0 border-b border-solid',

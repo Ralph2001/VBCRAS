@@ -265,10 +265,6 @@ const handleDrop = (event) => {
       return;
     }
 
-    // console.log(file.path.replace('C:\\Users\\' + PCName.user + '\\', ''))
-    // const path = file.path.replace('C:\\Users\\' + PCName.user + '\\', '');
-    // isShowModal.value = true;
-
     data.push({
       name: file.name,
       filepath: file.path.replace('C:\\Users\\' + PCName.user + '\\', ''),
@@ -278,15 +274,7 @@ const handleDrop = (event) => {
       year: '2024'
     });
 
-    // if (path.includes('october') && path.includes('birth')) {
-    //   month.value = "October"
-    //   formData.type = "Birth"
-
-    // }
-
   }
-
-
 
   Documents.multipleAdd(data)
 };

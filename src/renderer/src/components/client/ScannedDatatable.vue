@@ -1,26 +1,28 @@
 <template>
-    <DataTable :value="data" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20, 100]" scrollable scrollHeight="flex"
-        removableSort stripedRows v-model:filters="filters" :globalFilterFields="['name', 'type', 'filepath']"
-        filterDisplay="row">
+    <DataTable :value="data" paginator :rows="10"  :rowsPerPageOptions="[10, 20, 30, 100,]"
+        scrollable scrollHeight="flex" removableSort stripedRows v-model:filters="filters"
+        :globalFilterFields="['name', 'type', 'filepath']" filterDisplay="row" >
 
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-md text-gray-800 antialiased dark:text-surface-0 font-bold">{{ title }}</span>
+                <span class="text-md flex items-center gap-2 text-gray-800 antialiased dark:text-surface-0 font-bold">
+
+                    <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-2xl text-gray-700" /> {{ title }}</span>
                 <div class="flex flex-row gap-2">
                     <span class="relative">
                         <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600 " />
                         <InputText v-model="filters['global'].value" placeholder="Search"
                             class="pl-2  rounded-sm font-normal " />
                     </span>
-                    <!-- <Button icon="pi pi-refresh" rounded raised /> -->
+
                 </div>
             </div>
         </template>
 
 
-        <Column field="name" header="Name" sortable :showFilterMenu="false" style="width: 70%;">
+        <Column field="name" header="Name" sortable :showFilterMenu="false" style="width: 65%;">
             <template #body="slotProps">
-                <p class="text-md font-sans text-slate-900 font-medium w-full truncate">
+                <p class="text-md font-sans flex items-center gap-2 text-slate-800 antialiased font-medium w-full truncate">
                     {{ slotProps.data.name }}
                 </p>
             </template>
@@ -30,7 +32,12 @@
             </template>
         </Column>
 
-        <Column field="type" header="Type" sortable :showFilterMenu="false" style="width: 10%;">
+        <Column field="type" sortable :showFilterMenu="false" style="width: 10%;">
+            <template #header>
+                <div class="flex flex-row w-full justify-center">
+                    <p class="text-center">Type</p>
+                </div>
+            </template>
             <template #body="{ data }">
                 <div class="flex flex-row gap-1 w-full justify-center">
                     <!-- <Tag class="rounded" :value="data.type" :severity="getSeverity(data.type)" /> -->
@@ -48,7 +55,13 @@
             </template>
         </Column>
 
-        <Column field="year" header="Year" sortable :showFilterMenu="false" style="width: 10%;">
+        <Column field="year" sortable :showFilterMenu="false" style="width: 10%;">
+            <template #header>
+                <div class="flex flex-row w-full justify-center">
+                    <p class="text-center">Year</p>
+                </div>
+            </template>
+
             <template #body="slotProps">
                 <div class="w-full flex justify-center">
                     <p class="text-md text-gray-900 font-bold">{{ slotProps.data.year }}</p>
@@ -66,10 +79,15 @@
             </template>
         </Column>
 
-        <Column header="Action" style="width: 10%;">
+        <Column style="width: 15%;">
+            <template #header>
+                <div class="flex flex-row w-full justify-center">
+                    <p class="text-center">Action</p>
+                </div>
+            </template>
             <template #body="slotProps">
                 <div class="flex items-center justify-center">
-                    +
+                    <EditBtn :filepath="slotProps.data.filepath" :id="slotProps.data.id" />
                 </div>
             </template>
         </Column>
@@ -86,6 +104,7 @@ import Dropdown from 'primevue/dropdown';
 import { FilterMatchMode } from "primevue/api";
 import Tag from './Tag.vue'
 import { ref, computed } from 'vue';
+import EditBtn from './EditBtn.vue';
 
 
 const props = defineProps({

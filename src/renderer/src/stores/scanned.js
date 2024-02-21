@@ -4,11 +4,12 @@ import axios from "axios";
 export const useScannedDocuments = defineStore('scanned', {
     state: () => ({
         scanned: [],
+        asOf: ""
     }),
     getters: {
-        // totalCount: (state) => {
-        //     return state.scanned.length
-        // },
+        totalCount: (state) => {
+            return state.scanned.length
+        },
     },
     actions: {
         async getScanned() {
@@ -23,5 +24,37 @@ export const useScannedDocuments = defineStore('scanned', {
                 this.router.push('/login')
             }
         },
+        async refresh() {
+            this.getScanned()
+        },
+        getTime() {
+            this.asOf = new Date().toLocaleString('en-US', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+                timeZone: 'Asia/Manila'
+            });
+        },
+        async multipleAdd(data) {
+
+            try {
+                const hostAdd = localStorage.getItem("host");
+                let tokenStr = localStorage.getItem('token')
+                await axios.post(
+                    `http://${hostAdd}:1216/scanned/add`, data, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${tokenStr}`,
+
+                    },
+                }
+                )
+                this.refresh()
+            } catch (error) {
+            }
+        }
     }
 })

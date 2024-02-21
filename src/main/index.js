@@ -153,22 +153,25 @@ ipcMain.handle('copy-file', async (event, { source, destination }) => {
   }
 });
 
+let win;
 
-ipcMain.handle('open-file', (event, source) => {
-  const win = new BrowserWindow({
-    webPreferences: {
-      plugins: true,
-      devTools: false,
-    },
-    autoHideMenuBar: true,
-    show: false
-  });
-  win.loadURL('C:\\Users\\' + username + '\\' + source);
-  win.once('ready-to-show'), () => {
-    win.show()
+ipcMain.handle('open-file', async (event, source) => {
+  try {
+    win = new BrowserWindow({
+      webPreferences: {
+        plugins: true,
+        devTools: false,
+      },
+      autoHideMenuBar: true,
+      show: true
+    });
+    const load = await win.loadURL('C:\\Users\\' + username + '\\' + source);
     return true
+  } catch (error) {
+      win.close()
+  
+    return false
   }
-
 });
 
 
