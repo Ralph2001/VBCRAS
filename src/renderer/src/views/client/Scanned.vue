@@ -1,17 +1,68 @@
+<style>
+.zoom_in-enter-active,
+.zoom_in-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.zoom_in-enter-from,
+.zoom_in-leave-to {
+    opacity: 0;
+}
+</style>
+
 <template>
     <div class="flex flex-col  py-3 relative justify-center" @dragenter="handleDragEnter()">
-        <div class="h-[calc(100vh-155px)]">
+        <div class="h-[calc(100vh-130px)]">
             <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned" />
         </div>
         <DropZone v-if="dropzone" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
 
 
-        <Dialog v-model:visible="visible" modal header="Scanned Document" :style="{ width: '30rem' }"
-            :breakpoints="{ '2000px': '75vw', '575px': '90vw' }">
-            <div class="flex flex-col gap-2 ">
-                <InputField label="Filename" :class="`w-full`" />
-            </div>
-        </Dialog>
+
+        <Transition mode="out-in" name="zoom_in">
+            <Modal label="Scanned Documents" v-if="modal">
+                <template v-slot:header>
+                    <button type="button" @click="close_modal"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        data-modal-hide="default-modal"><svg class="w-3 h-3" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+                        </svg><span class="sr-only">Close modal</span>
+                    </button>
+                </template>
+
+                <div class="flex flex-col gap-2 py-2">
+                    <p class="text-sm p-1 font-semibold antialiased mb-4"> <font-awesome-icon icon="fa-solid fa-file-pdf"
+                            class="text-2xl text-red-400 me-2" /> {{ data[0].name }}</p>
+
+                    <!-- <InputField label="Filename" :class="`w-full`" /> -->
+                    <p class="text-sm font-bold">Type</p>
+                    <div class="grid  md:grid-cols-5   gap-2 ">
+                        <TypeBox label="Birth" value="Birth" v-model="type" />
+                        <TypeBox label="Death" value="Death" v-model="type" />
+                        <TypeBox label="Marriage" value="Marriage" v-model="type" />
+                        <TypeBox label="Legal Instrument" value="Legal Instrument" v-model="type" />
+                        <TypeBox label="Other" value="Other" v-model="type" />
+                    </div>
+                    <div class="flex flex-col gap-2 mt-3 w-[15rem] ">
+                        <p class="text-sm font-bold">Year</p>
+                        <Calendar v-model="year" view="year" dateFormat="yy" />
+                        {{ year }}
+                    </div>
+                </div>
+
+                <template v-slot:footer>
+                    <button type="button" @click="submitScanned()"
+                        class="py-2 px-5 me-2 mb-2 text-sm font-medium text-white  bg-green-400 rounded-sm shadow-sm hover:bg-green-500 hover:text-white active:scale-95 focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Submit</button>
+                </template>
+            </Modal>
+        </Transition>
+
+
+
+
+
         <!-- Footer -->
         <div class="pr-10  h-auto flex  flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
             <div class="flex flex-row items-center gap-2">
@@ -35,21 +86,43 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, reactive, computed } from 'vue';
 import { useScannedDocuments } from '../../stores/scanned'
 import ScannedDatatable from '../../components/client/ScannedDatatable.vue';
 import { useComputerStore } from '../../stores/computer';
 import DropZone from '../../components/client/DropZone.vue'
 import { AuthStore } from '../../stores/clientAuth'
 import Dialog from 'primevue/dialog';
-import InputField from '../../components/client/InputField.vue';
+import TypeBox from '../../components/client/TypeBox.vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+import { useVuelidate } from '@vuelidate/core'
+import { required, sameAs } from '@vuelidate/validators'
+import Modal from '../../components/client/modal/Modal.vue'
+import Calendar from 'primevue/calendar'
+
+import Swal from 'sweetalert2'
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    }
+});
+
 
 const auth = AuthStore()
 const Documents = useScannedDocuments();
 const desktop = useComputerStore();
 
-const visible = ref(true)
+const modal = ref(false)
 const dropzone = ref(false)
+
 
 const types = ref([
     "Birth", "Death", "Marriage", "Legal", "Other"
@@ -59,13 +132,24 @@ onMounted(() => {
     Documents.getTime()
 })
 
-
 const handleDragEnter = () => {
     dropzone.value = true
 }
 const handleDragLeave = () => {
     dropzone.value = false
 }
+
+const type = ref('')
+const year = ref()
+const data = ref([])
+
+function close_modal() {
+    modal.value = false
+    data.value = []
+    dropzone.value = false
+}
+
+
 function handleDrop(event) {
     event.preventDefault();
     const files = event.dataTransfer.files;
@@ -73,10 +157,10 @@ function handleDrop(event) {
     const uploaded_by = auth.user;
     const device_used = desktop.desktop_name;
 
-    const data = [];
+
     for (const file of files) {
         if (file.type != "application/pdf") {
-            swal({
+            Swal({
                 icon: "error",
                 title: "Upload PDF only!",
                 text: "File",
@@ -84,21 +168,41 @@ function handleDrop(event) {
             return;
         }
 
-        data.push({
+        data.value.push({
             name: file.name,
             filepath: file.path.replace('C:\\Users\\' + desktop.desktop_name + '\\', ''),
-            type: 'Birth',
             uploaded_by: uploaded_by,
             device_used: device_used,
-            year: '2024'
         });
 
+        modal.value = true
+
+    }
+}
+
+
+const submitScanned = () => {
+
+    const updatedArray = [...data.value];
+
+    for (let item of updatedArray) {
+        item.type = type.value;
+        item.year = year.value;
     }
 
-    Documents.multipleAdd(data)
-    dropzone.value = false
+    data.value = updatedArray;
+
+
+    Documents.multipleAdd(data.value)
+    close_modal()
+    Toast.fire({
+        icon: "success",
+        title: "File Uploaded"
+    });
+
 
 }
+
 
 </script>
 

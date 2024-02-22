@@ -26,6 +26,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
+    "@vuepic/vue-datepicker": "^8.1.1",
     "animate.css": "^4.1.1",
     "axios": "^1.6.4",
     "datatables.net-dt": "^1.13.8",

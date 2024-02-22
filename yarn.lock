@@ -707,6 +707,13 @@
   dependencies:
     vue-demi "^0.13.11"
 
+"@vuepic/vue-datepicker@^8.1.1":
+  version "8.1.1"
+  resolved "https://registry.npmjs.org/@vuepic/vue-datepicker/-/vue-datepicker-8.1.1.tgz"
+  integrity sha512-/t9+dROb/hYN/DInff8ctIiVm5tVyuJdiWA+nWcjHOLjUhvAQ9vyJwhxAkoWX5o0EB5x5XeCME2cajfTPz86RA==
+  dependencies:
+    date-fns "^3.3.1"
+
 "@vueuse/core@9.3.0":
   version "9.3.0"
   resolved "https://registry.npmjs.org/@vueuse/core/-/core-9.3.0.tgz"
@@ -1256,6 +1263,11 @@ datatables.net@^1.13.1, datatables.net@>=1.13.4, datatables.net@1.13.8:
   integrity sha512-2pDamr+GUwPTby2OgriVB9dR9ftFKD2AQyiuCXzZIiG4d9KkKFQ7gqPfNmG7uj9Tc5kDf+rGj86do4LAb/V71g==
   dependencies:
     jquery ">=1.7"
+
+date-fns@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.npmjs.org/date-fns/-/date-fns-3.3.1.tgz"
+  integrity sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==
 
 debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@4:
   version "4.3.4"
@@ -3525,7 +3537,7 @@ vue-sweetalert2@^5.0.5:
   dependencies:
     sweetalert2 "11.x"
 
-vue@*, "vue@^2.0.0 || >=3.0.0", "vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.0.5, vue@^3.2.0, vue@^3.2.25, vue@^3.3.4, vue@^3.3.x, "vue@>= 3.0.0 < 4", vue@3.4.0:
+vue@*, "vue@^2.0.0 || >=3.0.0", "vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.0.5, vue@^3.2.0, vue@^3.2.25, vue@^3.3.4, vue@^3.3.x, "vue@>= 3.0.0 < 4", vue@>=3.2.0, vue@3.4.0:
   version "3.4.0"
   resolved "https://registry.npmjs.org/vue/-/vue-3.4.0.tgz"
   integrity sha512-iTE9Ve/7DO/H39+gXHrNkRdnh1jDwPe/fap4brbPKkp1APMkS03OiZ+UY0dwpqtRX0iPWQTkh8Fu3hKgLtaxfA==

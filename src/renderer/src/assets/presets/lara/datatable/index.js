@@ -75,7 +75,8 @@ export default {
         class: [
             {
                 'sticky z-20 ': instance.frozenRow && context.scrollable
-            }
+            },
+            'hover:bg-blue-50',
         ]
     }),
     tfoot: ({ context }) => ({
@@ -104,7 +105,7 @@ export default {
     column: {
         headercell: ({ context, props }) => ({
             class: [
-                'font-semibold uppercase text-xs ',
+                'font-semibold  text-xs ',
                 'tabindex-[-1]',
 
                 // Position
@@ -169,11 +170,13 @@ export default {
 
                 { 'p-2': context?.size === 'small' && !state['d_editing'] },
                 { 'p-5': context?.size === 'large' && !state['d_editing'] },
-                { 'p-4': context?.size !== 'large' && context?.size !== 'small' && !state['d_editing'] },
+                { 'p-[0.3rem]': context?.size !== 'large' && context?.size !== 'small' && !state['d_editing'] }, // p-4 yung default
                 { 'py-[0.6rem] px-2': state['d_editing'] },
 
                 // Color
-                'border-surface-200 dark:border-surface-700'
+                'border-surface-200 dark:border-surface-700',
+
+
             ]
         }),
         footercell: ({ context }) => ({

@@ -21,12 +21,11 @@ const props = defineProps({
     type: {
         type: String,
         default: 'text',
-        required: true
     },
     modelValue: {
         type: String,
         default: '',
-        required: true
+
     },
     error: {
         type: Boolean,

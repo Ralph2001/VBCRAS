@@ -1,14 +1,22 @@
 <template>
-    <DataTable :value="data" paginator :rows="10"  :rowsPerPageOptions="[10, 20, 30, 100,]"
-        scrollable scrollHeight="flex" removableSort stripedRows v-model:filters="filters"
-        :globalFilterFields="['name', 'type', 'filepath']" filterDisplay="row" >
+    <DataTable :value="data" paginator :rows="20" :rowsPerPageOptions="[10, 20, 30, 100,]" scrollable scrollHeight="flex"
+        removableSort  v-model:filters="filters" :globalFilterFields="['name', 'type', 'filepath']"
+        filterDisplay="row" selectionMode="single">
 
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <span class="text-md flex items-center gap-2 text-gray-800 antialiased dark:text-surface-0 font-bold">
 
                     <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-2xl text-gray-700" /> {{ title }}</span>
-                <div class="flex flex-row gap-2">
+                <div class="flex flex-row gap-4 items-center">
+                    <button @click="filterswitch()">
+
+                        <font-awesome-icon icon="fa-solid fa-filter"
+                            :class="{ 'text-blue-500': filtersBtn, 'text-gray-400': !filtersBtn }" />
+
+
+
+                    </button>
                     <span class="relative">
                         <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600 " />
                         <InputText v-model="filters['global'].value" placeholder="Search"
@@ -20,13 +28,13 @@
         </template>
 
 
-        <Column field="name" header="Name" sortable :showFilterMenu="false" style="width: 65%;">
+        <Column field="name" header="Name" sortable :showFilterMenu="false" style="width: 65%; " tabindex="-1">
             <template #body="slotProps">
                 <p class="text-md font-sans flex items-center gap-2 text-slate-800 antialiased font-medium w-full truncate">
                     {{ slotProps.data.name }}
                 </p>
             </template>
-            <template #filter="{ filterModel, filterCallback }">
+            <template #filter="{ filterModel, filterCallback }" v-if="filtersBtn">
                 <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
                     class="p-column-filter font-normal text-sm uppercase rounded-sm" placeholder="Search By Name" />
             </template>
@@ -45,7 +53,7 @@
                 </div>
             </template>
 
-            <template #filter="{ filterModel, filterCallback }">
+            <template #filter="{ filterModel, filterCallback }" v-if="filtersBtn">
                 <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="types" placeholder="Type"
                     class="p-column-filter font-normal text-sm uppercase rounded-sm" style="width: 8rem;" :showClear="true">
                     <template #option="slotProps">
@@ -64,11 +72,11 @@
 
             <template #body="slotProps">
                 <div class="w-full flex justify-center">
-                    <p class="text-md text-gray-900 font-bold">{{ slotProps.data.year }}</p>
+                    <p class="text-sm text-gray-900 font-bold">{{ slotProps.data.year }}</p>
                 </div>
             </template>
 
-            <template #filter="{ filterModel, filterCallback }">
+            <template #filter="{ filterModel, filterCallback }" v-if="filtersBtn">
                 <Dropdown v-model="filterModel.value" @change="filterCallback()" :options="year" placeholder="Year"
                     class="p-column-filter font-normal text-sm uppercase rounded-sm " style="width: 8rem;"
                     :showClear="true">
@@ -105,7 +113,15 @@ import { FilterMatchMode } from "primevue/api";
 import Tag from './Tag.vue'
 import { ref, computed } from 'vue';
 import EditBtn from './EditBtn.vue';
+import Swal from 'sweetalert2'
 
+
+const filtersBtn = ref(false)
+
+
+const filterswitch = () => {
+    filtersBtn.value = !filtersBtn.value
+}
 
 const props = defineProps({
     data: {
@@ -118,7 +134,7 @@ const props = defineProps({
     types: {
         type: Array,
         required: true,
-    },
+    }
 })
 
 const year = computed(() => {

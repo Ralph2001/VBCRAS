@@ -1,6 +1,6 @@
 
 <template>
-    <div class="h-screen mx-auto container " @keyup.ctrl.space="sayHi()">
+    <div class="h-screen container mx-auto" @keyup.ctrl.space="sayHi()">
         <NavBar />
         <router-view v-slot="{ Component }">
             <transition mode="out-in" name="slide">

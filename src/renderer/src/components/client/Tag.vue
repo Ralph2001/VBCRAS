@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="text-md font-bold p-1 px-2 w-auto text-center text-gray-900  rounded border-none" :class="class">{{ title
+    <p class="text-sm font-bold p-1 px-2 w-auto text-center text-gray-900  rounded border-none" :class="class">{{ title
     }}</p>
   </div>
 </template>

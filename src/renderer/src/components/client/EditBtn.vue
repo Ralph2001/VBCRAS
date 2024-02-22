@@ -14,13 +14,38 @@
       },
     }" @click="openFile(filepath)" :model="items" />
   </div>
-  <Dialog v-model:visible="visible" modal header="Can't Open the file" :style="{ width: '30rem' }"
+  <Dialog v-model:visible="visible" modal header="We couldn't open the file." :style="{ width: '50rem' }"
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-    <div class="p-4">
-      <span class="font-medium">Ensure that these requirements are met:</span>
-      <ul class="mt-1.5 list-disc list-inside">
-        <li>Files are sync</li>
-        <li>The file existed</li>
+    <div class="p-2">
+      <span class="font-medium ">It looks like we're having trouble accessing the file you requested. Here are a few
+        things
+        that might be the issue:</span>
+
+      <ul class="mt-4 mb-4 list-disc list-inside">
+        <li> <span class="font-bold">Shared Drive Connection:</span> Double-check that the shared drive where the file is
+          located is
+          properly connected
+          and
+          accessible.</li>
+        <li>
+          <span class="font-bold">File Synchronization:</span>
+          If the file is on a storage server, confirm that it's fully synced and available
+          locally.
+        </li>
+      </ul>
+
+      <span class="font-medium ">What you can do:</span>
+      <ul class="mt-2  list-disc list-inside">
+        <li> <span class="font-bold">Check your connection:</span> Verify the shared drive connection and internet access.
+        </li>
+        <li>
+          <span class="font-bold">Wait for synchronization:</span>
+          If using storage server, allow time for the file to fully synced.
+        </li>
+        <li>
+          <span class="font-bold">Try again:</span>
+          After addressing the potential issues, try opening the file again.
+        </li>
       </ul>
     </div>
   </Dialog>
