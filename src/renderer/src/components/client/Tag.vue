@@ -1,7 +1,8 @@
 <template>
   <div>
-    <p class="text-sm font-bold p-1 px-2 w-auto text-center text-gray-900  rounded border-none" :class="class">{{ title
-    }}</p>
+    <p class="text-sm font-bold py-1 px-2 w-auto text-center text-gray-900  rounded border-none shadow-sm  "
+      :class="class">{{ title
+      }}</p>
   </div>
 </template>
 

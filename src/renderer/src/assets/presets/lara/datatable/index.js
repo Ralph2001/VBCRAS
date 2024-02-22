@@ -76,7 +76,8 @@ export default {
             {
                 'sticky z-20 ': instance.frozenRow && context.scrollable
             },
-            'hover:bg-blue-50',
+            'hover:bg-blue-50 ',
+
         ]
     }),
     tfoot: ({ context }) => ({
@@ -177,6 +178,7 @@ export default {
                 'border-surface-200 dark:border-surface-700',
 
 
+
             ]
         }),
         footercell: ({ context }) => ({
@@ -223,7 +225,7 @@ export default {
             ]
         },
         columnfilter: {
-            class: 'inline-flex items-center ml-auto h-[2rem]'
+            class: 'inline-flex items-center h-[2rem] ',
         },
         filteroverlay: {
             class: [
@@ -279,7 +281,7 @@ export default {
             })
         },
         filterrowitems: {
-            class: 'm-0 p-0 py-3 list-none'
+            class: 'm-0 p-0 py-3 list-none '
         },
         filterrowitem: ({ context }) => ({
             class: [
@@ -999,14 +1001,15 @@ export default {
     bodyrow: ({ context, props }) => ({
         class: [
             // Color
-            'dark:text-white/80',
+            'dark:text-white/80 ',
             { 'bg-primary-50 text-primary-700 dark:bg-primary-400/30': context.selected },
             { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
             { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
             { 'odd:bg-surface-0 odd:text-surface-600 dark:odd:bg-surface-800 even:bg-surface-50 even:text-surface-600 dark:even:bg-surface-900/50': context.stripedRows },
 
             // State
-            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50 ring-inset dark:focus:ring-primary-300/50': context.selectable },
+            // { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-blue-400/50 ring-inset dark:focus:ring-primary-300/50': context.selectable },
+            { 'focus:outline-none focus:outline-offset-0 focus:bg-blue-300/50': context.selectable },
             { 'hover:bg-surface-300/20 hover:text-surface-600': props.selectionMode && !context.selected },
 
             // Transition

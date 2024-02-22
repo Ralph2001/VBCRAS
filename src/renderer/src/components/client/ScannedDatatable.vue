@@ -154,19 +154,19 @@ const filters = ref({
 const getSeverity = (type) => {
     switch (type) {
         case "Birth":
-            return "bg-green-100";
+            return "bg-green-200";
 
         case "Death":
-            return "bg-blue-100";
+            return "bg-blue-200";
 
         case "Marriage":
-            return "bg-red-100";
+            return "bg-red-200";
 
         case "Legal":
-            return "bg-yellow-50";
+            return "bg-yellow-200";
 
         case "Other":
-            return "bg-gray-100";
+            return "bg-gray-200";
     }
 };
 </script>
