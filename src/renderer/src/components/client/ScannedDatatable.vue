@@ -1,7 +1,7 @@
 <template>
     <DataTable :value="data" paginator :rows="20" :rowsPerPageOptions="[10, 20, 30, 100,]" scrollable scrollHeight="flex"
-        removableSort  v-model:filters="filters" :globalFilterFields="['name', 'type', 'filepath']"
-        filterDisplay="row" selectionMode="single">
+        removableSort v-model:filters="filters" :globalFilterFields="['name', 'type', 'filepath']" filterDisplay="row"
+        selectionMode="single">
 
         <template #header>
             <div class="flex flex-wrap items-center justify-between gap-2">
@@ -34,10 +34,13 @@
                     {{ slotProps.data.name }}
                 </p>
             </template>
+
             <template #filter="{ filterModel, filterCallback }" v-if="filtersBtn">
                 <InputText v-model="filterModel.value" type="text" @input="filterCallback()"
                     class="p-column-filter font-normal text-sm uppercase rounded-sm" placeholder="Search By Name" />
             </template>
+
+
         </Column>
 
         <Column field="type" sortable :showFilterMenu="false" style="width: 10%;">

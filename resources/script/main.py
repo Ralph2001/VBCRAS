@@ -32,9 +32,10 @@ db = SQLAlchemy(app)
 
 class ScannedDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
-    filepath = db.Column(db.String, nullable=False) 
+    name = db.Column(db.String, nullable=False)
+    filepath = db.Column(db.String, unique=True, nullable=False) 
     type = db.Column(db.String, nullable=False)
+    month = db.Column(db.String, nullable=False)
     year = db.Column(db.String, nullable=False)
     uploaded_by = db.Column(db.String, nullable=False)
     device_used =  db.Column(db.String, nullable=False)
@@ -44,7 +45,9 @@ class ScannedDocuments(db.Model):
 class RestoreDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    filepath = db.Column(db.String, nullable=False) 
+    filepath = db.Column(db.String, nullable=False)
+    month = db.Column(db.String, nullable=False)
+    year = db.Column(db.String, nullable=False)
     type = db.Column(db.String, nullable=False)
     device_used =  db.Column(db.String, nullable=False)
     deleted_by = db.Column(db.String, nullable=False)
@@ -175,25 +178,25 @@ def scanned():
 @jwt_required()
 def add():
     try:
-        # Access the entire data array instead of just the first element
+     
         data = request.get_json()
 
-        # Validate and process each object in the array
+     
         for item in data:
-            if not all(field in item for field in ['name', 'filepath', 'type', 'year', 'uploaded_by', 'device_used']):
+            if not all(field in item for field in ['name', 'filepath', 'type', 'month', 'year', 'uploaded_by', 'device_used']):
                 return jsonify({'message': 'Missing required field in object', 'status': 'required'}), 400
 
-            # Create a new document for each item
+           
             new_document = ScannedDocuments(**item)
             db.session.add(new_document)
 
-        # Commit changes to the database once all items are processed
+    
         db.session.commit()
 
         return jsonify({'message': 'Documents added successfully', 'status': 'success'}), 201
 
     except Exception as e:
-        # Handle errors gracefully
+      
         return jsonify({'message': 'Something went wrong.', 'status': 'error'}), 500
 
 
@@ -209,6 +212,8 @@ def remove_scanned(id, device_used_to_delete):
         restored_doc = RestoreDocuments(
             name=scanned.name,
             filepath=scanned.filepath,
+            month=scanned.month,
+            year=scanned.year,
             type=scanned.type,
             device_used=scanned.device_used,
             deleted_by=current_user.username,
@@ -229,7 +234,6 @@ def remove_scanned(id, device_used_to_delete):
 
     except NotFound:
         return jsonify({'message': 'Document not found', 'status': 'Error'}), 404
-
 
     
     

@@ -11,12 +11,21 @@
 </style>
 
 <template>
-    <div class="flex flex-col  py-3 relative justify-center" @dragenter="handleDragEnter()">
-        <div class="h-[calc(100vh-130px)]">
-            <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned" />
+    <div class="flex flex-col relative justify-center" @dragenter="handleDragEnter()">
+
+        <div class="w-max ml-auto mb-3">
+            <font-awesome-icon icon="fa-solid fa-bars-progress"
+                class="bg-gray-100 px-2 py-1 mr-2 rounded-sm hover:bg-gray-200 hover:cursor-pointer" @click="all = !all" />
+        </div>
+
+        <div class="h-[calc(100vh-170px)]">
+
+            <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned" v-if="all" />
+
+            <ExplorerView :data="Documents.scanned" v-if="!all" />
+
         </div>
         <DropZone v-if="dropzone" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
-
 
 
         <Transition mode="out-in" name="zoom_in">
@@ -45,10 +54,9 @@
                         <TypeBox label="Legal Instrument" value="Legal Instrument" v-model="type" />
                         <TypeBox label="Other" value="Other" v-model="type" />
                     </div>
-                    <div class="flex flex-col gap-2 mt-3 w-[15rem] ">
-                        <p class="text-sm font-bold">Year</p>
-                        <Calendar v-model="year" view="year" dateFormat="yy" />
-                        {{ year }}
+                    <div class="flex flex-row gap-2 mt-3 ">
+                        <InputField label="Month" :class="`w-full`" v-model="month" />
+                        <InputField label="Year" type="number" :class="`w-full`" v-model="year" />
                     </div>
                 </div>
 
@@ -58,7 +66,6 @@
                 </template>
             </Modal>
         </Transition>
-
 
 
 
@@ -88,6 +95,7 @@
 <script setup>
 import { onMounted, ref, reactive, computed } from 'vue';
 import { useScannedDocuments } from '../../stores/scanned'
+import ExplorerView from '../../components/client/ExplorerView.vue'
 import ScannedDatatable from '../../components/client/ScannedDatatable.vue';
 import { useComputerStore } from '../../stores/computer';
 import DropZone from '../../components/client/DropZone.vue'
@@ -100,8 +108,11 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, sameAs } from '@vuelidate/validators'
 import Modal from '../../components/client/modal/Modal.vue'
 import Calendar from 'primevue/calendar'
+import InputField from '../../components/client/InputField.vue'
 
 import Swal from 'sweetalert2'
+const all = ref(false)
+
 
 const Toast = Swal.mixin({
     toast: true,
@@ -141,6 +152,7 @@ const handleDragLeave = () => {
 
 const type = ref('')
 const year = ref()
+const month = ref()
 const data = ref([])
 
 function close_modal() {
@@ -187,6 +199,7 @@ const submitScanned = () => {
 
     for (let item of updatedArray) {
         item.type = type.value;
+        item.month = month.value;
         item.year = year.value;
     }
 

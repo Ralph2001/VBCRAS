@@ -2,20 +2,20 @@ import { useModeStore } from "../stores/mode";
 import { useHostStore } from "../stores/connection";
 import { AuthStore } from "../stores/clientAuth";
 
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createMemoryHistory} from "vue-router";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createMemoryHistory(),
   routes: [
     {
       path: "/",
-      name: "home",
+      name: "Home",
       component: () => import("../views/Mode.vue"),
       beforeEnter: (to, from) => {
         const mode = useModeStore();
         if (mode.checkMode()) {
           const storedMode = localStorage.getItem("mode");
-          return { name: storedMode }; // if (mode) { return to mode client || server } else { return to home }
+          return { name: storedMode }; // if (mode) { return to mode client || server } else { return to Home }
         }
         return true;
       },
@@ -36,7 +36,7 @@ const router = createRouter({
               // make sure
               return true;
             } else {
-              return { name: "home" };
+              return { name: "Home" };
             }
           },
         },
@@ -57,7 +57,7 @@ const router = createRouter({
                 return true;
               }
             } else {
-              return { name: "home" };
+              return { name: "Home" };
             }
           },
         },
@@ -108,7 +108,7 @@ const router = createRouter({
             return { name: "client" }; // isnotconnected go to connection
           }
         } else {
-          return { name: "home" }; // not client go to home
+          return { name: "Home" }; // not client go to Home
         }
       },
     },
@@ -129,7 +129,7 @@ const router = createRouter({
             return { name: "client" }; // isnotconnected go to connection
           }
         } else {
-          return { name: "home" }; // not client go to home
+          return { name: "Home" }; // not client go to Home
         }
       },
     },
