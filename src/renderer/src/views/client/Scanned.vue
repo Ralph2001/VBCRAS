@@ -13,12 +13,9 @@
 <template>
     <div class="flex flex-col relative justify-center" @dragenter="handleDragEnter()">
 
-        <div class="w-max ml-auto mb-3">
-            <font-awesome-icon icon="fa-solid fa-bars-progress"
-                class="bg-gray-100 px-2 py-1 mr-2 rounded-sm hover:bg-gray-200 hover:cursor-pointer" @click="all = !all" />
-        </div>
 
-        <div class="h-[calc(100vh-170px)]">
+
+        <div class="h-[calc(100vh-130px)]">
 
             <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned" v-if="all" />
 
@@ -73,7 +70,7 @@
         <!-- Footer -->
         <div class="pr-10  h-auto flex  flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
             <div class="flex flex-row items-center gap-2">
-                <button class="rounded-full py-2 px-3  active:bg-gray-200 hover:bg-gray-200 ">
+                <button class="rounded-full py-2 px-3  active:bg-gray-200 hover:bg-gray-200 " @click="all = !all">
                     <font-awesome-icon icon="fa-solid fa-gear" class="text-gray-400" />
                 </button>
 
