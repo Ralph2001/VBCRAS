@@ -178,25 +178,27 @@ def scanned():
 @jwt_required()
 def add():
     try:
-     
         data = request.get_json()
 
-     
+        # Check if all required fields are present
         for item in data:
             if not all(field in item for field in ['name', 'filepath', 'type', 'month', 'year', 'uploaded_by', 'device_used']):
                 return jsonify({'message': 'Missing required field in object', 'status': 'required'}), 400
 
-           
-            new_document = ScannedDocuments(**item)
-            db.session.add(new_document)
+        # Check if document with the same name already exists
+        existing_document = ScannedDocuments.query.filter_by(filepath=item['filepath']).first()
+        if existing_document:
+            return jsonify({'message': f"Data already exists", 'status': 'duplicate'}), 409  # Use 409 for Conflict status code
 
-    
+        # Create and add the new document
+        new_document = ScannedDocuments(**item)
+        db.session.add(new_document)
         db.session.commit()
 
         return jsonify({'message': 'Documents added successfully', 'status': 'success'}), 201
 
     except Exception as e:
-      
+        print(f"Unexpected error: {e}")  # Log the error for better debugging
         return jsonify({'message': 'Something went wrong.', 'status': 'error'}), 500
 
 

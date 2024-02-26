@@ -16,7 +16,7 @@
             <div class="mt-auto flex flex-row items-center w-full px-5 justify-between md:justify-normal">
                 <HandleButton title="Change Mode" @click="changeMode()" />
                 <div class="ml-none md:ml-auto flex flex-row ">
-                    <HandleButton title="Auto Connect" @click="server.autoServerSwitch()" :isActive="server.auto" />
+                    <!-- <HandleButton title="Auto Connect" @click="server.autoServerSwitch()" :isActive="server.auto" /> -->
                     <Transition name="switch" mode="in-out">
                         <HandleButton title="Dashboard" v-if="server.server" @click="goToDashboard()" />
                     </Transition>

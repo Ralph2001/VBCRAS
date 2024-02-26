@@ -155,7 +155,7 @@ export default {
         bodycell: ({ props, context, state, parent }) => ({
             class: [
                 //Position
-                { 'sticky box-border border-b': parent.instance.frozenRow },
+                { 'sticky box-border border-b ': parent.instance.frozenRow },
                 { 'sticky box-border border-b': props.frozen || props.frozen === '' },
 
                 // Alignment
@@ -176,6 +176,7 @@ export default {
 
                 // Color
                 'border-surface-200 dark:border-surface-700',
+                
 
 
 

@@ -4,7 +4,9 @@ import axios from "axios";
 export const useScannedDocuments = defineStore('scanned', {
     state: () => ({
         scanned: [],
-        asOf: ""
+        asOf: "",
+        viewMode: localStorage.getItem('SviewMode')
+
     }),
     getters: {
         totalCount: (state) => {
@@ -38,6 +40,16 @@ export const useScannedDocuments = defineStore('scanned', {
                 timeZone: 'Asia/Manila'
             });
         },
+        changeViewMode() {
+            if (this.viewMode) {
+                this.viewMode = false
+                localStorage.setItem('SviewMode', false)
+            }
+            else {
+                this.viewMode = true
+                localStorage.setItem('SviewMode', true)
+            }
+        },
         async multipleAdd(data) {
 
             try {
@@ -53,7 +65,11 @@ export const useScannedDocuments = defineStore('scanned', {
                 }
                 )
                 this.refresh()
+                const status = true
+                return { status }
             } catch (error) {
+                const status = false
+                return { error, status }
             }
         }
     }

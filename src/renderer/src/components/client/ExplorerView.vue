@@ -35,11 +35,12 @@
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ month }}
                 </li>
                 <li v-if="type && year && month && searchQuery == ''" v-for="file in files" :key="file"
-                    class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
-                    <div>
-                        <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" /> {{ file.name }}
+                    class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1   hover:bg-blue-100 hover:cursor-pointer rounded-sm">
+                    <div class="block w-[60%] overflow-hidden truncate">
+                        <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3 " /> {{ file.name }}
                     </div>
-                    <p class="text-sm italic text-gray-600 font-normal mr-2">{{ file.type }} {{ file.year }}</p>
+                    <p class="text-sm italic text-gray-600 font-normal mr-2">{{ file.type }} {{ file.month }} {{ file.year
+                    }}</p>
                 </li>
 
                 <li v-if="searchQuery != ''" v-for="search in searchData" tabindex="0"
@@ -73,25 +74,43 @@ const props = defineProps({
     },
 });
 
+// const searchData = computed(() => {
+//     const searchQueryLower = searchQuery.value.toLowerCase();
+
+//     if (type.value) {
+//         return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value).map(data => data))]
+//             .sort((a, b) => a - b)
+//     }
+//     else if (type.value && year.value) {
+//         return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value && data.year === year.value).map(data => data))]
+//             .sort((a, b) => a - b)
+//     }
+//     else if (type.value && year.value && month.value) {
+//         return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value && data.year === year.value && data.month === month.value).map(data => data))]
+//             .sort((a, b) => a - b)
+//     }
+
+//     return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower)).map(data => data))]
+//         .sort((a, b) => a - b)
+// })
+
+
 const searchData = computed(() => {
     const searchQueryLower = searchQuery.value.toLowerCase();
+    const filteredData = props.data.filter(
+        data => data.name.toLowerCase().includes(searchQueryLower)
+            && (
+                !type.value || data.type === type.value
+            ) && (
+                !type.value || !year.value || data.year === year.value
+            ) && (
+                !type.value || !year.value || !month.value || data.month === month.value
+            )
+    );
 
-    if (type.value) {
-        return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value).map(data => data))]
-            .sort((a, b) => a - b)
-    }
-    else if (type.value && year.value) {
-        return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value && data.year === year.value).map(data => data))]
-            .sort((a, b) => a - b)
-    }
-    else if (type.value && year.value && month.value) {
-        return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value && data.year === year.value && data.month === month.value).map(data => data))]
-            .sort((a, b) => a - b)
-    }
+    return [...new Set(filteredData.map(data => data))].sort((a, b) => a - b);
+});
 
-    return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower)).map(data => data))]
-        .sort((a, b) => a - b)
-})
 
 
 const goBack = () => {

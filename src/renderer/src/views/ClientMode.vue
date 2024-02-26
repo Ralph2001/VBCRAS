@@ -16,7 +16,7 @@
             <div class="mt-auto flex flex-row items-center w-full">
                 <HandleButton title="Change Mode" @click="changeMode()" />
                 <div class="ml-auto flex flex-row gap-3">
-                    <HandleButton title="Auto Connect" />
+                    <!-- <HandleButton title="Auto Connect" /> -->
                     <HandleButton :title="connectText" @click="connectToHost()" :isLoading="loading"
                         :isDisabled="isDisabled" />
                 </div>

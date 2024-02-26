@@ -1,8 +1,10 @@
 <template>
     <div>
-        <div class="flex items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border ">
+        <div :class="{ 'border-red-400 ': error }"
+            class="flex items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200">
             <fwb-radio :label="label" :value="value" :checked="isChecked" name="typeBox"
                 @input="emit('update:modelValue', $event.target.value)" class="cursor-pointer" />
+                
         </div>
     </div>
 </template>
@@ -26,6 +28,10 @@ const props = defineProps({
         type: String,
         default: '',
     },
+    error: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const isChecked = computed(() => props.value === props.modelValue);

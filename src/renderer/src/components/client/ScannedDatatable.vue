@@ -28,9 +28,9 @@
         </template>
 
 
-        <Column field="name" header="Name" sortable :showFilterMenu="false" style="width: 65%; " tabindex="-1">
+        <Column field="name" header="Name" sortable :showFilterMenu="false" bodyStyle="width: 10px; max-width: 10px"  tabindex="-1">
             <template #body="slotProps">
-                <p class="text-md font-sans flex items-center gap-2 text-slate-800 antialiased font-medium w-full truncate">
+                <p class="text-md font-sans flex items-center gap-2  text-slate-800 antialiased font-medium  truncate">
                     {{ slotProps.data.name }}
                 </p>
             </template>

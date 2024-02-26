@@ -13,15 +13,12 @@
 <template>
     <div class="flex flex-col relative justify-center" @dragenter="handleDragEnter()">
 
-
-
         <div class="h-[calc(100vh-130px)]">
-
-            <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned" v-if="all" />
-
-            <ExplorerView :data="Documents.scanned" v-if="!all" />
-
+            <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned"
+                v-if="Documents.viewMode" />
+            <ExplorerView :data="Documents.scanned" v-if="!Documents.viewMode" />
         </div>
+
         <DropZone v-if="dropzone" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
 
 
@@ -39,21 +36,27 @@
                 </template>
 
                 <div class="flex flex-col gap-2 py-2">
-                    <p class="text-sm p-1 font-semibold antialiased mb-4"> <font-awesome-icon icon="fa-solid fa-file-pdf"
-                            class="text-2xl text-red-400 me-2" /> {{ data[0].name }}</p>
 
-                    <!-- <InputField label="Filename" :class="`w-full`" /> -->
+                    <p class="text-sm p-1 font-semibold antialiased mb-4"> <font-awesome-icon icon="fa-solid fa-file-pdf"
+                            class="text-2xl text-red-400 me-2" /> {{ data[0].name }}
+                    </p>
+
+
+
                     <p class="text-sm font-bold">Type</p>
                     <div class="grid  md:grid-cols-5   gap-2 ">
-                        <TypeBox label="Birth" value="Birth" v-model="type" />
-                        <TypeBox label="Death" value="Death" v-model="type" />
-                        <TypeBox label="Marriage" value="Marriage" v-model="type" />
-                        <TypeBox label="Legal Instrument" value="Legal Instrument" v-model="type" />
-                        <TypeBox label="Other" value="Other" v-model="type" />
+                        <TypeBox label="Birth" value="Birth" v-model="scannedData.type" :error="v$.type.$error" />
+                        <TypeBox label="Death" value="Death" v-model="scannedData.type" :error="v$.type.$error" />
+                        <TypeBox label="Marriage" value="Marriage" v-model="scannedData.type" :error="v$.type.$error" />
+                        <TypeBox label="Legal Instrument" value="Legal Instrument" v-model="scannedData.type"
+                            :error="v$.type.$error" />
+                        <TypeBox label="Other" value="Other" v-model="scannedData.type" :error="v$.type.$error" />
                     </div>
-                    <div class="flex flex-row gap-2 mt-3 ">
-                        <InputField label="Month" :class="`w-full`" v-model="month" />
-                        <InputField label="Year" type="number" :class="`w-full`" v-model="year" />
+                    <div class="flex md:flex-row  flex-col gap-2 mt-3 ">
+
+                        <Dropdown label="Month" :optionData="months" v-model="scannedData.month" :error="v$.month.$error" />
+                        <Dropdown label="Year" :optionData="years" v-model="scannedData.year" :error="v$.year.$error" />
+
                     </div>
                 </div>
 
@@ -70,8 +73,9 @@
         <!-- Footer -->
         <div class="pr-10  h-auto flex  flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
             <div class="flex flex-row items-center gap-2">
-                <button class="rounded-full py-2 px-3  active:bg-gray-200 hover:bg-gray-200 " @click="all = !all">
-                    <font-awesome-icon icon="fa-solid fa-gear" class="text-gray-400" />
+                <button class="rounded-full py-2 px-3  active:bg-gray-200 hover:bg-gray-200 " @click="changeViewMode()"
+                    title="Change Mode">
+                    <font-awesome-icon icon="fa-solid fa-repeat" />
                 </button>
 
                 <p class="text-sm font-normal text-gray-400 italic">
@@ -97,18 +101,22 @@ import ScannedDatatable from '../../components/client/ScannedDatatable.vue';
 import { useComputerStore } from '../../stores/computer';
 import DropZone from '../../components/client/DropZone.vue'
 import { AuthStore } from '../../stores/clientAuth'
-import Dialog from 'primevue/dialog';
 import TypeBox from '../../components/client/TypeBox.vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useVuelidate } from '@vuelidate/core'
-import { required, sameAs } from '@vuelidate/validators'
+import { required } from '@vuelidate/validators'
 import Modal from '../../components/client/modal/Modal.vue'
-import Calendar from 'primevue/calendar'
-import InputField from '../../components/client/InputField.vue'
-
+import Dropdown from '../../components/client/inputs/Dropdown.vue';
 import Swal from 'sweetalert2'
-const all = ref(false)
+
+
+
+onMounted(() => {
+    Documents.getScanned()
+    Documents.getTime()
+    desktop.getUserName()
+
+})
 
 
 const Toast = Swal.mixin({
@@ -123,6 +131,28 @@ const Toast = Swal.mixin({
     }
 });
 
+const months = ([
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+])
+
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: currentYear - 1899 + 1 }, (_, index) => 1900 + index);
+
+
+const changeViewMode = () => {
+    Documents.changeViewMode()
+}
 
 const auth = AuthStore()
 const Documents = useScannedDocuments();
@@ -135,10 +165,8 @@ const dropzone = ref(false)
 const types = ref([
     "Birth", "Death", "Marriage", "Legal", "Other"
 ])
-onMounted(() => {
-    Documents.getScanned()
-    Documents.getTime()
-})
+
+
 
 const handleDragEnter = () => {
     dropzone.value = true
@@ -147,15 +175,13 @@ const handleDragLeave = () => {
     dropzone.value = false
 }
 
-const type = ref('')
-const year = ref()
-const month = ref()
 const data = ref([])
 
 function close_modal() {
     modal.value = false
     data.value = []
     dropzone.value = false
+
 }
 
 
@@ -189,26 +215,68 @@ function handleDrop(event) {
     }
 }
 
+const scannedData = reactive({
+    type: '',
+    month: '',
+    year: '',
 
-const submitScanned = () => {
+});
+
+const rules = computed(() => {
+    return {
+        type: { required },
+        month: { required },
+        year: { required },
+    };
+});
+
+const v$ = useVuelidate(rules, scannedData);
+
+
+const submitScanned = async () => {
+    v$.value.$touch();
+    if (v$.value.$error) {
+        console.log(v$)
+        return;
+    }
+
+
+    const type = scannedData.type
+    const month = scannedData.month
+    const year = scannedData.year
+
 
     const updatedArray = [...data.value];
 
     for (let item of updatedArray) {
-        item.type = type.value;
-        item.month = month.value;
-        item.year = year.value;
+        item.type = type;
+        item.month = month;
+        item.year = year;
     }
 
     data.value = updatedArray;
 
+    try {
+        const add = await Documents.multipleAdd(data.value)
+        if (add.status === true) {
+            close_modal()
+            Toast.fire({
+                icon: "success",
+                title: "File Uploaded"
+            });
+        }
+        if (add.status === false) {
+            Toast.fire({
+                icon: "error",
+                title: add.error.response.data.message
+            });
+        }
 
-    Documents.multipleAdd(data.value)
-    close_modal()
-    Toast.fire({
-        icon: "success",
-        title: "File Uploaded"
-    });
+
+
+    } catch (error) {
+        console.log(error)
+    }
 
 
 }
@@ -216,4 +284,3 @@ const submitScanned = () => {
 
 </script>
 
-<style lang="scss" scoped></style>
