@@ -33,10 +33,10 @@ db = SQLAlchemy(app)
 class ScannedDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    filepath = db.Column(db.String, unique=True, nullable=False) 
+    filepath = db.Column(db.String, nullable=False) 
     type = db.Column(db.String, nullable=False)
     month = db.Column(db.String, nullable=False)
-    year = db.Column(db.String, nullable=False)
+    year = db.Column(db.Integer, nullable=False)
     uploaded_by = db.Column(db.String, nullable=False)
     device_used =  db.Column(db.String, nullable=False)
     created_at = Column(DateTime, default=func.now())
@@ -178,30 +178,23 @@ def scanned():
 @jwt_required()
 def add():
     try:
+       
         data = request.get_json()
-
-        # Check if all required fields are present
+      
         for item in data:
-            if not all(field in item for field in ['name', 'filepath', 'type', 'month', 'year', 'uploaded_by', 'device_used']):
+            if not all(field in item for field in ['name', 'filepath', 'type', 'year', 'uploaded_by', 'device_used']):
                 return jsonify({'message': 'Missing required field in object', 'status': 'required'}), 400
-
-        # Check if document with the same name already exists
-        existing_document = ScannedDocuments.query.filter_by(filepath=item['filepath']).first()
-        if existing_document:
-            return jsonify({'message': f"Data already exists", 'status': 'duplicate'}), 409  # Use 409 for Conflict status code
-
-        # Create and add the new document
-        new_document = ScannedDocuments(**item)
-        db.session.add(new_document)
+           
+            existing_document = ScannedDocuments.query.filter_by(filepath=item['filepath']).first()
+            if existing_document:
+                    return jsonify({'message': f"Data already exists: {item['name']}", 'status': 'duplicate'}), 409  
+            new_document = ScannedDocuments(**item)
+            db.session.add(new_document)
+        
         db.session.commit()
-
         return jsonify({'message': 'Documents added successfully', 'status': 'success'}), 201
-
     except Exception as e:
-        print(f"Unexpected error: {e}")  # Log the error for better debugging
         return jsonify({'message': 'Something went wrong.', 'status': 'error'}), 500
-
-
 
 
 
@@ -242,4 +235,4 @@ def remove_scanned(id, device_used_to_delete):
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, handle_sigterm)
     CORS(app)
-    app.run(host="0.0.0.0", port=1216)
+    app.run(host="0.0.0.0", port=1216, debug=True)

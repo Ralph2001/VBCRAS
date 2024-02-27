@@ -38,7 +38,7 @@
                 <div class="flex flex-col gap-2 py-2">
 
                     <p class="text-sm p-1 font-semibold antialiased mb-4"> <font-awesome-icon icon="fa-solid fa-file-pdf"
-                            class="text-2xl text-red-400 me-2" /> {{ data[0].name }}
+                            class="text-2xl text-red-400 me-2" /> {{ data_name }}
                     </p>
 
 
@@ -176,6 +176,16 @@ const handleDragLeave = () => {
 }
 
 const data = ref([])
+const data_name = computed(() => {
+
+    if (data.value.length > 1) {
+        return data.value.length + " Files uploaded."
+    }
+    else {
+        return data.value[0].name
+    }
+})
+
 
 function close_modal() {
     modal.value = false

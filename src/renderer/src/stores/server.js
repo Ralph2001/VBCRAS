@@ -13,26 +13,31 @@ export const useServerStore = defineStore("server", {
       const start_server = await window.LocalCivilApi.StartServer();
       if (!start_server) {
         return true;
-      } else {
-        return false
       }
+      return false
+
     },
     isServerAutoStart() {
-      if (this.auto) {
-        if (this.isServerRunning()) {
-          return
-        } else {
-          console.log('staaart')
-          this.serverSwitch()
-        }
+      if (this.isServerRunning()) {
+        this.server = true
+        localStorage.setItem('server', true)
+        localStorage.setItem('host', '127.0.0.1:1216')
+        return true
+
+      } else {
+        this.serverSwitch()
       }
-      return
     },
     async serverSwitch() {
       if (this.server) {
         try {
           const stop_server = await window.LocalCivilApi.StopServer();
           if (stop_server) {
+            this.server = false
+            localStorage.removeItem('server')
+            localStorage.removeItem('host')
+          }
+          else if (!stop_server) {
             this.server = false
             localStorage.removeItem('server')
             localStorage.removeItem('host')
