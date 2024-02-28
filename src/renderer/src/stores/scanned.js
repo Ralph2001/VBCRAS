@@ -42,8 +42,8 @@ export const useScannedDocuments = defineStore('scanned', {
         },
         changeViewMode() {
             if (this.viewMode) {
-                this.viewMode = false
-                localStorage.setItem('SviewMode', false)
+                 this.viewMode = ''
+                localStorage.removeItem('SviewMode')
             }
             else {
                 this.viewMode = true

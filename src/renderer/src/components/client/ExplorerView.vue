@@ -7,6 +7,7 @@
                 <font-awesome-icon icon="fa-solid fa-magnifying-glass"
                     class="text-gray-300 pointer-events-none absolute mt-[0.80rem] ml-2" />
                 <SearchFilter v-model="searchQuery" />
+
             </div>
             <div>
                 <p class="text-xs font-mono text-gray-200">Created by Ralph</p>
@@ -19,11 +20,11 @@
                 <font-awesome-icon icon="fa-solid fa-circle-arrow-left" /></button>
 
 
-            <nav class="flex px-5 py-3 w-full  text-gray-700 border border-gray-200  bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+            <nav class="flex px-5 py-3 w-full  text-white rounded-lg shadow-sm  border border-gray-50    dark:bg-gray-800 dark:border-gray-700"
                 aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                     <li class="inline-flex items-center" disabled>
-                        <a href="#" @click="goBack()"
+                        <a href="#" @click="goHome()"
                             :class="{ 'pointer-events-none text-gray-400': !type, 'text-gray-700': type }"
                             class="inline-flex items-center text-sm font-medium  hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
                             <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +42,7 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="m1 9 4-4-4-4" />
                             </svg>
-                            <a href="#" @click="goBack()"
+                            <a href="#" @click="goYear()"
                                 :class="{ 'pointer-events-none text-gray-400': !year, 'text-gray-700': year }"
                                 class="ms-1 text-sm font-medium  hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">{{
                                     type }}</a>
@@ -54,12 +55,13 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="m1 9 4-4-4-4" />
                             </svg>
-                            <a href="#" @click="goBack()"
+                            <a href="#" @click="goMonth()"
                                 :class="{ 'pointer-events-none text-gray-400': !month, 'text-gray-700': month }"
                                 class="ms-1 text-sm font-medium  hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">{{
                                     year }}</a>
                         </div>
                     </li>
+                    <!-- Months -->
                     <li v-if="month">
                         <div class="flex items-center">
                             <svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
@@ -71,12 +73,19 @@
                             }}</span>
                         </div>
                     </li>
-                </ol>
-            </nav>
 
+                </ol>
+
+            </nav>
+            <div class=" flex flex-col p-1 items-center" v-if="type && year && month && searchQuery == ''">
+                <p class="text-sm font-mono text-gray-800 text-nowrap">Total Files</p>
+                <p class="text-sm font-mono text-gray-800">
+                    {{ files.length }}
+                </p>
+            </div>
         </div>
 
-        <div class="flex flex-col p-4  overflow-y-scroll">
+        <div class="flex flex-col p-4  overflow-y-scroll ">
             <ul class="w-full space-y-1 px-2 m list-none list-inside dark:text-gray-400">
                 <li v-if="!type && searchQuery == ''" v-for="type in types" :key="type" @click="selectType(type)"
                     class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
@@ -86,13 +95,19 @@
                     class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ year }}
                 </li>
+
+                <!-- Months -->
                 <li v-if="type && year && !month && searchQuery == ''" v-for="month in months" :key="month"
                     @click="selectMonth(month)"
                     class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ month }}
                 </li>
-                <li v-if="type && year && month && searchQuery == ''" v-for="file in files" :key="file"
+
+                <!-- Files -->
+                <li v-if="type && year && month && searchQuery == ''" v-for="file in files" :key="file.id"
+                    @click="openFile(file.filepath)"
                     class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1   hover:bg-blue-100 hover:cursor-pointer rounded-sm">
+
                     <div class="block w-[60%] overflow-hidden truncate">
                         <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3 " /> {{ file.name }}
                     </div>
@@ -100,14 +115,20 @@
                     }}</p>
                 </li>
 
-                <li v-if="searchQuery != ''" v-for="search in searchData" tabindex="0"
-                    class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
-                    <div>
-                        <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" /> {{ search.name }}
-                    </div>
-                    <p class="text-sm italic text-gray-600 font-normal mr-2">{{ search.type }} {{ search.month }} {{
-                        search.year }}</p>
-                </li>
+                <div class="h-[calc(100vh-316px)]" v-if="searchQuery != ''">
+                    <RecycleScroller v-if="searchQuery != ''" :items="searchData" class="h-full" :item-size="28"
+                        key-field="name" v-slot="{ item }">
+                        <li tabindex="0" @click="openFile(item.filepath)"
+                            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
+                            <div>
+                                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" /> {{
+                                    item.name }}
+                            </div>
+                            <p class="text-sm italic text-gray-600 font-normal mr-2">{{ item.type }} {{ item.month }} {{
+                                item.year }}</p>
+                        </li>
+                    </RecycleScroller>
+                </div>
 
             </ul>
         </div>
@@ -115,14 +136,30 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import SearchFilter from './SearchFilter.vue'
+
 
 const toggleBack = ref(false)
 const type = ref('');
 const year = ref('');
 const month = ref('');
 const searchQuery = ref('');
+
+
+const openFile = async (filepath) => {
+    try {
+        const check = await window.LocalCivilApi.checkFile(filepath);
+        if (!check) {
+            console.log('Cant Open')
+            visible.value = true
+        }
+    } catch (error) {
+        visible.value = true
+
+    }
+};
+
 
 const props = defineProps({
     data: {
@@ -184,6 +221,23 @@ const goBack = () => {
         toggleBack.value = false;
     }
 };
+
+const goHome = () => {
+    type.value = ''
+    month.value = ''
+    year.value = ''
+    toggleBack.value = false
+}
+const goYear = () => {
+    year.value = ''
+    month.value = ''
+    toggleBack.value = true
+}
+const goMonth = () => {
+    month.value = ''
+    toggleBack.value = true
+
+}
 
 const filteredData = computed(() => {
     let filtered = props.data.filter(item => {

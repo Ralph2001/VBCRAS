@@ -13,6 +13,7 @@ import Lara from './assets/presets/lara';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+import { RecycleScroller } from 'vue-virtual-scroller'
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -29,6 +30,7 @@ library.add(faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear, f
 import "./assets/index.css";
 import 'flowbite';
 import "animate.css";
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -38,6 +40,7 @@ pinia.use(({ store }) => {
 });
 app.use(router);
 app.use(pinia);
+app.component('RecycleScroller', RecycleScroller)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(VueSweetalert2);
 app.use(PrimeVue, { unstyled: true, pt: Lara })

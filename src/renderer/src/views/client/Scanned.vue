@@ -13,7 +13,7 @@
 <template>
     <div class="flex flex-col relative justify-center" @dragenter="handleDragEnter()">
 
-        <div class="h-[calc(100vh-130px)]">
+        <div class="h-[calc(100vh-130px)] ">
             <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned"
                 v-if="Documents.viewMode" />
             <ExplorerView :data="Documents.scanned" v-if="!Documents.viewMode" />
