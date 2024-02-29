@@ -1,6 +1,6 @@
 <template>
-    <input type="text" ref="input"
-        class=" placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-[27rem]"
+    <input type="text" ref="input" :class="{ 'border-green-500 border ring-1 ring-green-400': hasValue != '' }"
+        class=" placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-[27rem] select-none"
         placeholder="Search" :value="modelValue" @input="emit('update:modelValue', $event.target.value)">
 </template>
 
@@ -12,6 +12,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
     modelValue: String,
+    hasValue: String
 });
 
 const input = ref(null);

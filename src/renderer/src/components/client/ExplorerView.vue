@@ -6,7 +6,7 @@
             <div class="relative">
                 <font-awesome-icon icon="fa-solid fa-magnifying-glass"
                     class="text-gray-300 pointer-events-none absolute mt-[0.80rem] ml-2" />
-                <SearchFilter v-model="searchQuery" />
+                <SearchFilter v-model="searchQuery" :hasValue="searchQuery"  />
 
             </div>
             <div>
