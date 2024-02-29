@@ -14,14 +14,16 @@ export const useServerStore = defineStore("server", {
       if (!start_server) {
         return true;
       }
-      return false
+      else {
+        return false
+      }
 
     },
     isServerAutoStart() {
       if (this.isServerRunning()) {
         this.server = true
         localStorage.setItem('server', true)
-        localStorage.setItem('host', '127.0.0.1:1216')
+        localStorage.setItem('host', '127.0.0.1')
         return true
 
       } else {
@@ -53,7 +55,7 @@ export const useServerStore = defineStore("server", {
             this.server = true
             this.host = start_server.addresses[0]
             localStorage.setItem('server', true)
-            localStorage.setItem('host', '127.0.0.1:1216')
+            localStorage.setItem('host', '127.0.0.1')
           }
         } catch (error) {
           console.error('Error starting server:', error);

@@ -7,7 +7,7 @@
                 server is currently not running.
             </p>
             <p class="mt-auto text-sm text-gray-900 italic " v-if="server.server">The
-                server is running. </p>
+                server is running. <span class="text-md font-bold">({{ server.host }})</span></p>
 
             <button @click="switcher()" :class="{ 'bg-blue-400 ': !server.server, 'bg-red-400 ': server.server }"
                 class="switcher mt-2 px-7 py-8 antialiased   text-white text-base font-semibold whitespace-nowrap border border-slate-200 rounded-full">
@@ -17,9 +17,8 @@
                 <HandleButton title="Change Mode" @click="changeMode()" />
                 <div class="ml-none md:ml-auto flex flex-row ">
                     <!-- <HandleButton title="Auto Connect" @click="server.autoServerSwitch()" :isActive="server.auto" /> -->
-                    <Transition name="switch" mode="in-out">
-                        <HandleButton title="Dashboard" v-if="server.server" @click="goToDashboard()" />
-                    </Transition>
+                    <HandleButton title="Dashboard" v-if="server.server" :disabled="!server.server"
+                        @click="goToDashboard()" />
                 </div>
             </div>
         </div>
@@ -62,23 +61,3 @@ const goToDashboard = () => {
 }
 
 </script>
-<style>
-.switcher:hover {
-    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-    transition: all 0.1s ease-in-out;
-}
-
-.switcher:active {
-    scale: 0.95;
-}
-
-.switch-enter-active,
-.switch-leave-active {
-    transition: opacity 1s ease-in-out;
-}
-
-.switch-enter-from,
-.switch-leave-to {
-    opacity: 0;
-}
-</style>

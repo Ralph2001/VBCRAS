@@ -43,12 +43,40 @@ let dialogOpen = false;
 
 
 // Error handling to ensure correct behavior in case of failure
+
+
+// pythonProcess = spawn('python', [join(__dirname, '../../resources/script/main.py')], {
+// });
+
+// async function startServer() {
+//   try {
+
+//     pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
+
+//     pythonProcess.on('error', (error) => {
+//       console.error('Error starting Python process:', error);
+//       pythonProcess = null;
+//     });
+
+//     pythonProcess.on('exit', (code, signal) => {
+//       console.log(`Python process exited with code ${code} and signal ${signal}`);
+//       pythonProcess = null;
+//     });
+
+//     return true;
+//   } catch (error) {
+//     console.error('Error starting server:', error);
+//     return false;
+//   }
+// }
+
+
+
 let pythonProcess = null;
 async function startServer() {
   try {
-    pythonProcess = spawn('python', [join(__dirname, '../../resources/script/main.py')], {
 
-    });
+    pythonProcess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
     pythonProcess.on('error', (error) => {
       console.error('Error starting Python process:', error);
       pythonProcess = null;
@@ -58,6 +86,7 @@ async function startServer() {
       console.log(`Python process exited with code ${code} and signal ${signal}`);
       pythonProcess = null;
     });
+
 
     return true;
   } catch (error) {
@@ -168,8 +197,8 @@ ipcMain.handle('open-file', async (event, source) => {
     const load = await win.loadURL('C:\\Users\\' + username + '\\' + source);
     return true
   } catch (error) {
-      win.close()
-  
+    win.close()
+
     return false
   }
 });

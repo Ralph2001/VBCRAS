@@ -43,10 +43,6 @@
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\multiprocessing\\process.py',
    'PYMODULE'),
-  ('signal',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\signal.py',
-   'PYMODULE'),
   ('selectors',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\selectors.py',
@@ -647,13 +643,17 @@
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\tracemalloc.py',
    'PYMODULE'),
+  ('stringprep',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\stringprep.py',
+   'PYMODULE'),
   ('_py_abc',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_py_abc.py',
    'PYMODULE'),
-  ('stringprep',
+  ('signal',
    'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\stringprep.py',
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\signal.py',
    'PYMODULE'),
   ('werkzeug.security',
    'C:\\Users\\Erika '
@@ -2469,75 +2469,75 @@
  [('base_library.zip',
    'D:\\Electron Vite\\LCRO\\resources\\script\\build\\main\\base_library.zip',
    'DATA'),
-  ('flask-3.0.0.dist-info\\INSTALLER',
+  ('flask_sqlalchemy-3.1.1.dist-info\\LICENSE.rst',
    'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\INSTALLER',
-   'DATA'),
-  ('flask_sqlalchemy-3.1.1.dist-info\\RECORD',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\RECORD',
-   'DATA'),
-  ('flask_sqlalchemy-3.1.1.dist-info\\REQUESTED',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\REQUESTED',
-   'DATA'),
-  ('werkzeug-3.0.1.dist-info\\INSTALLER',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\INSTALLER',
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\LICENSE.rst',
    'DATA'),
   ('flask-3.0.0.dist-info\\entry_points.txt',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\entry_points.txt',
    'DATA'),
+  ('flask-3.0.0.dist-info\\INSTALLER',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\INSTALLER',
+   'DATA'),
   ('flask-3.0.0.dist-info\\REQUESTED',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\REQUESTED',
    'DATA'),
-  ('flask-3.0.0.dist-info\\WHEEL',
+  ('flask_sqlalchemy-3.1.1.dist-info\\REQUESTED',
    'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\WHEEL',
-   'DATA'),
-  ('flask_sqlalchemy-3.1.1.dist-info\\METADATA',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\METADATA',
-   'DATA'),
-  ('werkzeug-3.0.1.dist-info\\LICENSE.rst',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\LICENSE.rst',
-   'DATA'),
-  ('werkzeug-3.0.1.dist-info\\METADATA',
-   'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\METADATA',
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\REQUESTED',
    'DATA'),
   ('flask_sqlalchemy-3.1.1.dist-info\\INSTALLER',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\INSTALLER',
    'DATA'),
-  ('flask_sqlalchemy-3.1.1.dist-info\\LICENSE.rst',
+  ('flask-3.0.0.dist-info\\RECORD',
    'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\LICENSE.rst',
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\RECORD',
    'DATA'),
   ('werkzeug-3.0.1.dist-info\\WHEEL',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\WHEEL',
    'DATA'),
-  ('flask-3.0.0.dist-info\\RECORD',
+  ('flask-3.0.0.dist-info\\WHEEL',
    'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\RECORD',
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\WHEEL',
    'DATA'),
   ('flask-3.0.0.dist-info\\LICENSE.rst',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\LICENSE.rst',
    'DATA'),
-  ('werkzeug-3.0.1.dist-info\\RECORD',
+  ('flask_sqlalchemy-3.1.1.dist-info\\RECORD',
    'C:\\Users\\Erika '
-   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\RECORD',
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\RECORD',
+   'DATA'),
+  ('werkzeug-3.0.1.dist-info\\METADATA',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\METADATA',
    'DATA'),
   ('flask_sqlalchemy-3.1.1.dist-info\\WHEEL',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\WHEEL',
    'DATA'),
+  ('werkzeug-3.0.1.dist-info\\LICENSE.rst',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\LICENSE.rst',
+   'DATA'),
   ('flask-3.0.0.dist-info\\METADATA',
    'C:\\Users\\Erika '
    'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask-3.0.0.dist-info\\METADATA',
+   'DATA'),
+  ('werkzeug-3.0.1.dist-info\\INSTALLER',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\INSTALLER',
+   'DATA'),
+  ('werkzeug-3.0.1.dist-info\\RECORD',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\werkzeug-3.0.1.dist-info\\RECORD',
+   'DATA'),
+  ('flask_sqlalchemy-3.1.1.dist-info\\METADATA',
+   'C:\\Users\\Erika '
+   'Joyce\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\flask_sqlalchemy-3.1.1.dist-info\\METADATA',
    'DATA')])

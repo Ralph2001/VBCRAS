@@ -90,7 +90,11 @@
                 <li v-if="!type && searchQuery == ''" v-for="type in types" :key="type" @click="selectType(type)"
                     class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ type }}
+
                 </li>
+                <li v-if="!data.length && searchQuery == ''" class="text-center text-gray-600 font-italic">Empty Data.</li>
+
+
                 <li v-if="type && !year && searchQuery == ''" v-for="year in years" :key="year" @click="selectYear(year)"
                     class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ year }}
@@ -116,8 +120,20 @@
                 </li>
 
                 <div class="h-[calc(100vh-316px)]" v-if="searchQuery != ''">
-                    <RecycleScroller v-if="searchQuery != ''" :items="searchData" class="h-full" :item-size="28"
-                        key-field="name" v-slot="{ item }">
+
+                    <div v-if="!searchData.length && searchQuery != ''"
+                        class="flex flex-col items-center h-full gap-10 justify-center">
+                        <p class="text-center text-lg font-bold text-gray-600 font-italic">
+                            No files
+                            found.</p>
+
+                        <div>
+                            <img src="../../assets/no result.png" alt="" class="h-[15rem]" srcset="">
+                        </div>
+                    </div>
+
+                    <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
+                        :item-size="28" key-field="name" v-slot="{ item }">
                         <li tabindex="0" @click="openFile(item.filepath)"
                             class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                             <div>
@@ -128,7 +144,10 @@
                                 item.year }}</p>
                         </li>
                     </RecycleScroller>
+
                 </div>
+
+
 
             </ul>
         </div>
@@ -286,3 +305,5 @@ const selectMonth = (selectedMonth) => {
 
 
 </script>
+
+

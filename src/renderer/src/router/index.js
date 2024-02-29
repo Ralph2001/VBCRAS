@@ -1,8 +1,9 @@
 import { useModeStore } from "../stores/mode";
 import { useHostStore } from "../stores/connection";
 import { AuthStore } from "../stores/clientAuth";
+import { useServerAuthStore } from "../stores/ServerAuth";
 
-import { createRouter, createMemoryHistory} from "vue-router";
+import { createRouter, createMemoryHistory } from "vue-router";
 
 const router = createRouter({
   history: createMemoryHistory(),
@@ -30,6 +31,7 @@ const router = createRouter({
           name: "server",
           beforeEnter: (to, from) => {
             const mode = useModeStore();
+            const auth = useServerAuthStore()
 
             const storedMode = localStorage.getItem("mode");
             if (mode.checkMode() && storedMode == "server") {
@@ -67,21 +69,55 @@ const router = createRouter({
       path: "/server/login",
       name: "server_login",
       component: () => import("../views/Login.vue"),
+      beforeEnter: async (to, from) => {
+        const auth = useServerAuthStore()
+        const authenticated = await auth.isServerAuthenticated()
+        if (authenticated) {
+          console.log()
+          return { name: "server_dashboard" };
+        }
+        return true
+      }
     },
     {
       path: "/server/",
       name: "server_page",
       component: () => import("../layouts/Server.vue"),
+      beforeEnter: async (to, from) => {
+        const auth = useServerAuthStore()
+        const authenticated = await auth.isServerAuthenticated()
+        if (authenticated) {
+          return true
+        }
+        return { name: "server_login" };
+      },
       children: [
         {
           path: "dashboard",
           component: () => import("../views/server/Dashboard.vue"),
           name: "server_dashboard",
+          beforeEnter: async (to, from) => {
+            const auth = useServerAuthStore()
+            const authenticated = await auth.isServerAuthenticated()
+            if (authenticated) {
+              return true
+            }
+            return { name: "server_login" };
+          },
+
         },
         {
           path: "users",
           component: () => import("../views/server/Users.vue"),
           name: "server_users",
+          beforeEnter: async (to, from) => {
+            const auth = useServerAuthStore()
+            const authenticated = await auth.isServerAuthenticated()
+            if (authenticated) {
+              return true
+            }
+            return { name: "server_login" };
+          },
         },
       ],
     },

@@ -44,7 +44,11 @@
 
             </div>
         </div>
-        <KillSwitch @click="disconnect()" />
+        <KillSwitch @click="disconnect()">
+            <template #icon>
+                <font-awesome-icon icon="fa-solid fa-power-off" />
+            </template>
+        </KillSwitch>
 
     </div>
 </template>

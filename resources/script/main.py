@@ -235,4 +235,4 @@ def remove_scanned(id, device_used_to_delete):
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, handle_sigterm)
     CORS(app)
-    app.run(host="0.0.0.0", port=1216, debug=True)
+    app.run(host="0.0.0.0", port=1216)
