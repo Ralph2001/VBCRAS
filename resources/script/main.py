@@ -136,6 +136,26 @@ def protected():
         username=current_user.username,
         id_admin = current_user.is_admin
     )
+    
+@app.route('/users', methods=['GET', 'POST'])
+@jwt_required()
+def users():
+
+    users = User.query.filter_by(is_admin=False).all()
+    users_list = []
+
+    for user in users:
+        data = {
+            "id" : user.id,
+            "name": user.username,
+            "is_admin": user.is_admin,
+        }
+        users_list.append(data)
+
+    return jsonify({
+        'message': 'success',
+        'users': users_list,
+    })
 
 
 @app.route('/signup', methods=['POST'])
@@ -172,7 +192,41 @@ def scanned():
             'scans': scans_list,
         })
 
+@app.route('/scanned/log/add', methods=['GET', 'POST'])
+@jwt_required()
+def scanned_log_add():
+    try:
+            data = request.get_json()
+            
+            for item in data:
+                document_log = DocumentsLog(
+                    name=item['name'],
+                    action=item['action'],
+                    action_by=current_user.username,
+                    device_used=item['device_used']
+                )
+                db.session.add(document_log)
+            db.session.commit()
+            return jsonify({'message': 'Documents added successfully', 'status': 'success'}), 201
+    except Exception as e:
+            return jsonify({'message': 'Error Adding Log', 'status': 'error'}), 500
+
+
+@app.route('/scanned/log/view', methods=['GET', 'POST'])
+@jwt_required()
+def scanned_log_list():
     
+        scanned_logs = db.session.execute(db.select(DocumentsLog).order_by(DocumentsLog.id)).scalars()
+        scanned_list = []
+        
+        for scan in scanned_logs:
+            mapped_scan = {column.key: getattr(scan, column.key) for column in class_mapper(DocumentsLog).columns}
+            scanned_list.append(mapped_scan)
+        
+        return jsonify({
+            'message': 'success',
+            'scans': scanned_list,
+        })
 
 @app.route('/scanned/add', methods=['POST'])
 @jwt_required()
@@ -180,6 +234,7 @@ def add():
     try:
        
         data = request.get_json()
+      
       
         for item in data:
             if not all(field in item for field in ['name', 'filepath', 'type', 'year', 'uploaded_by', 'device_used']):

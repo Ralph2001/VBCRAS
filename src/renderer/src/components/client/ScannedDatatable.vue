@@ -27,11 +27,11 @@
             </div>
         </template>
 
-        <template #empty> 
-        <div class="flex items-center justify-center">
-            Empty Data.
-        </div>
-         </template>
+        <template #empty>
+            <div class="flex items-center justify-center">
+                Empty Data.
+            </div>
+        </template>
         <Column field="name" header="Name" sortable :showFilterMenu="false" bodyStyle="width: 10px; max-width: 10px"
             tabindex="-1">
             <template #body="slotProps">
@@ -103,7 +103,7 @@
             </template>
             <template #body="slotProps">
                 <div class="flex items-center justify-center">
-                    <EditBtn :filepath="slotProps.data.filepath" :id="slotProps.data.id" />
+                    <EditBtn :filepath="slotProps.data.filepath" :filename="slotProps.data.name" :id="slotProps.data.id" />
                 </div>
             </template>
         </Column>

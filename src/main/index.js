@@ -76,7 +76,12 @@ let pythonProcess = null;
 async function startServer() {
   try {
 
-    pythonProcess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
+    // pythonProcess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
+
+    pythonProcess = spawn('python', [join(__dirname, '../../resources/script/main.py')], {
+    });
+
+
     pythonProcess.on('error', (error) => {
       console.error('Error starting Python process:', error);
       pythonProcess = null;
@@ -239,8 +244,10 @@ function mainWindow() {
       sandbox: false
     },
   }
+
   )
 
+  mainWindow.setMinimumSize(860, 630)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()

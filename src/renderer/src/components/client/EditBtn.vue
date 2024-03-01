@@ -12,7 +12,7 @@
           class: 'bg-gray-200 p-2  border border-gray-200 hover:bg-slate-400 ',
         },
       },
-    }" @click="openFile(filepath)" :model="items" />
+    }" @click="openFile(filepath, filename)" :model="items" />
   </div>
   <Dialog v-model:visible="visible" modal header="We couldn't open the file." :style="{ width: '50rem' }"
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
@@ -81,6 +81,10 @@ const props = defineProps({
     requird: true,
     type: Number,
   },
+  filename: {
+    required: true,
+    type: String
+  }
 });
 
 const items = [
@@ -88,7 +92,7 @@ const items = [
     label: "Open File Path",
     icon: "pi pi-folder",
     command: () => {
-      openPath(props.filepath);
+      openPath(props.filepath, props.filename);
     },
   },
   {
@@ -101,21 +105,50 @@ const items = [
   },
 ];
 
-const openFile = async (filepath) => {
+const openFile = async (filepath, filename) => {
   try {
-    const check = await window.LocalCivilApi.checkFile(filepath);
-    if (!check) {
-      console.log('Cant Open')
-      visible.value = true
+    const device = PCName.desktop_name
+    const data = (
+      [{
+        name: filename,
+        device_used: device,
+        action: 'Opened'
+      }
+      ])
+
+    const add_log = await Documents.add_log(data)
+
+    if (add_log) {
+      const check = await window.LocalCivilApi.checkFile(filepath);
+      if (!check) {
+        console.log('Cant Open')
+        visible.value = true
+      }
     }
+
   } catch (error) {
+    // console.log(error)
     visible.value = true
 
   }
 };
-const openPath = async (filepath) => {
+const openPath = async (filepath, filename) => {
   try {
-    const check = await window.LocalCivilApi.openFilePath(filepath);
+    const device = PCName.desktop_name
+
+    const data = (
+      [{
+        name: filename,
+        device_used: device,
+        action: 'Opened Path'
+      }
+      ])
+
+    const add_log = await Documents.add_log(data)
+    if (add_log) {
+      const check = await window.LocalCivilApi.openFilePath(filepath);
+    }
+
   } catch (error) {
 
   }
@@ -149,7 +182,7 @@ const remove = async (id) => {
   try {
     let host = localStorage.getItem('host')
     let tokenStr = localStorage.getItem('token')
-    let device_used_to_delete = PCName.user
+    let device_used_to_delete = PCName.desktop_name
     axios
       .delete(`http://${host}:1216/scanned/delete/${id}&${device_used_to_delete}`, {
         headers: { "Authorization": `Bearer ${tokenStr}` }

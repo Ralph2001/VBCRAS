@@ -4,13 +4,15 @@
             <p class="text-md font-bold">Scanned Documents</p>
 
             <div class="relative">
+                <font-awesome-icon icon="fa-solid fa-xmark" v-if="searchQuery" @click="searchQuery = ''"
+                    class="absolute right-3 text-gray-500 hover:text-gray-700 cursor-pointer top-[0.80rem]" />
                 <font-awesome-icon icon="fa-solid fa-magnifying-glass"
                     class="text-gray-300 pointer-events-none absolute mt-[0.80rem] ml-2" />
-                <SearchFilter v-model="searchQuery" :hasValue="searchQuery"  />
+                <SearchFilter v-model="searchQuery" :hasValue="searchQuery" />
 
             </div>
             <div>
-                <p class="text-xs font-mono text-gray-200">Created by Ralph</p>
+                <p class="text-xs font-mono text-gray-200"></p>
             </div>
         </div>
         <div class="flex flex-row justify-center  h-16 items-center gap-2 mt-5 px-3 py-3 w-full  ">
@@ -77,9 +79,10 @@
                 </ol>
 
             </nav>
-            <div class=" flex flex-col p-1 items-center" v-if="type && year && month && searchQuery == ''">
-                <p class="text-sm font-mono text-gray-800 text-nowrap">Total Files</p>
-                <p class="text-sm font-mono text-gray-800">
+            <div class=" flex flex-row p-1 items-center gap-2 justify-center"
+                v-if="type && year && month && searchQuery == ''">
+                <p class="text-xs font-mono text-gray-800"> Files: </p>
+                <p class="text-xs font-mono text-gray-800">
                     {{ files.length }}
                 </p>
             </div>
@@ -109,15 +112,26 @@
 
                 <!-- Files -->
                 <li v-if="type && year && month && searchQuery == ''" v-for="file in files" :key="file.id"
-                    @click="openFile(file.filepath)"
-                    class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1   hover:bg-blue-100 hover:cursor-pointer rounded-sm">
+                    @click.right="showMenu()"
+                    class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1   hover:bg-blue-100 hover:cursor-pointer rounded-sm relative">
 
                     <div class="block w-[60%] overflow-hidden truncate">
-                        <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3 " /> {{ file.name }}
+                        <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3 " /> {{
+                            file.name.replace('.pdf', '') }}
                     </div>
                     <p class="text-sm italic text-gray-600 font-normal mr-2">{{ file.type }} {{ file.month }} {{ file.year
                     }}</p>
+
                 </li>
+
+                <!-- <div class="relative hidden">
+                    <div class="items-center p-2 h-[7rem] rounded-lg bg-blue-200 w-[10rem] z-10 absolute flex flex-col">
+                        <p>Open File</p>
+                        <p>Open Path</p>
+                        <p>Remove</p>
+                    </div>
+                </div> -->
+
 
                 <div class="h-[calc(100vh-316px)]" v-if="searchQuery != ''">
 
@@ -134,11 +148,11 @@
 
                     <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
                         :item-size="28" key-field="name" v-slot="{ item }">
-                        <li tabindex="0" @click="openFile(item.filepath)"
+                        <li tabindex="0" @click="openFile(item.filepath, item.name)"
                             class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                             <div>
                                 <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" /> {{
-                                    item.name }}
+                                    item.name.replace('.pdf', '') }}
                             </div>
                             <p class="text-sm italic text-gray-600 font-normal mr-2">{{ item.type }} {{ item.month }} {{
                                 item.year }}</p>
@@ -157,7 +171,15 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
 import SearchFilter from './SearchFilter.vue'
+import { useComputerStore } from '../../stores/computer';
+import { useScannedDocuments } from '../../stores/scanned';
 
+
+const computer = useComputerStore()
+const Documents = useScannedDocuments()
+onMounted(() => {
+    computer.getUserName()
+})
 
 const toggleBack = ref(false)
 const type = ref('');
@@ -166,13 +188,30 @@ const month = ref('');
 const searchQuery = ref('');
 
 
-const openFile = async (filepath) => {
+const openFile = async (filepath, filename) => {
     try {
-        const check = await window.LocalCivilApi.checkFile(filepath);
-        if (!check) {
-            console.log('Cant Open')
-            visible.value = true
+
+        const device = computer.desktop_name
+
+        const data = (
+            [{
+                name: filename,
+                device_used: device,
+                action: 'Opened'
+            }
+            ])
+
+        const add_log = await Documents.add_log(data)
+        if (add_log) {
+            const check = await window.LocalCivilApi.checkFile(filepath);
+            if (!check) {
+                console.log('Cant Open')
+                visible.value = true
+            }
         }
+
+
+
     } catch (error) {
         visible.value = true
 

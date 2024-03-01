@@ -73,8 +73,8 @@
         <!-- Footer -->
         <div class="pr-10  h-auto flex  flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
             <div class="flex flex-row items-center gap-2">
-                <button class="rounded-full py-2 px-3 text-gray-500 active:bg-gray-200 hover:bg-gray-200 " @click="changeViewMode()"
-                    title="Change Mode">
+                <button class="rounded-full py-2 px-3 text-gray-500 active:bg-gray-200 hover:bg-gray-200 "
+                    @click="changeViewMode()" title="Change Mode">
                     <font-awesome-icon icon="fa-solid fa-repeat" />
                 </button>
 
@@ -84,8 +84,11 @@
             </div>
 
             <p class="text-sm font-medium text-gray-900 select-all">
-                <span class="italic font-normal text-gray-500">As of {{ Documents.asOf }},</span> Total Records (<span
-                    class="text-blue-600">{{
+                <!-- <span class="italic font-normal text-gray-500">As of {{ Documents.asOf }},</span>  -->
+                
+                Total Records (<span
+                    class="text-blue-600">
+                    {{
                         Number(Documents.totalCount).toLocaleString()
                     }}</span>)
             </p>

@@ -71,6 +71,19 @@ export const useScannedDocuments = defineStore('scanned', {
                 const status = false
                 return { error, status }
             }
+        },
+        async add_log(data) {
+            const hostAdd = localStorage.getItem("host");
+            let tokenStr = localStorage.getItem('token')
+            const add_log = await axios.post(`http://${hostAdd}:1216/scanned/log/add`,
+                data,
+                { headers: { "Authorization": `Bearer ${tokenStr}` } });
+
+            console.log(add_log)
+            if (add_log) {
+                return true
+            }
+            return false
         }
     }
 })

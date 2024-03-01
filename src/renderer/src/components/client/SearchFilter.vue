@@ -1,5 +1,5 @@
 <template>
-    <input type="text" ref="input" :class="{ 'border-green-500 border ring-1 ring-green-400': hasValue != '' }"
+    <input type="text" ref="input" :class="{ 'border-blue-600 border ring-2 ring-blue-400': hasValue != '' }"
         class=" placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-[27rem] select-none"
         placeholder="Search" :value="modelValue" @input="emit('update:modelValue', $event.target.value)">
 </template>

@@ -16,7 +16,6 @@ export const useServerAuthStore = defineStore("ServerAuth", {
     actions: {
         async login(password) {
             try {
-                const host = useHostStore();
                 const hostAddress = localStorage.getItem('host')
                 const username = 'admin'
                 const response = await axios.post(
@@ -39,8 +38,7 @@ export const useServerAuthStore = defineStore("ServerAuth", {
         async isServerAuthenticated() {
             const token = localStorage.getItem("token");
             if (token) {
-                const host = useHostStore();
-                const hostAddress = host.host;
+                const hostAddress = localStorage.getItem('host')
                 const tokenStr = token;
                 try {
                     const user = await axios.get("http://" + hostAddress + ":1216/user", {
