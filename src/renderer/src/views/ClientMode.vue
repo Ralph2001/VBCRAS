@@ -1,8 +1,14 @@
 <template>
     <div class="h-full relative">
+
         <Sidebar header="Connect to Server" />
-        <div class="flex flex-col h-full justify-center items-center p-4  md:ml-[50%] lg:ml-[30%]">
+        <div class="flex flex-col h-full justify-center items-center p-4  md:ml-[50%] lg:ml-[30%] relative">
+            <Transition enter-active-class="animate__animated animate__fadeInDown"
+                leave-active-class="animate__animated animate__fadeOutUp">
+                <Alert v-if="error" message="Error: Unable to connect to host." error />
+            </Transition>
             <div class="mt-auto flex items-center flex-col gap-2 relative h-20">
+
                 <HostInput label="Host Address" v-model="formData.hostAddress" :error="v$.hostAddress.$error"
                     @keyup.enter="connectToHost()" :autofocus="true">
                     <p v-if="v$.hostAddress.$error" class="mt-2 text-sm text-red-600 dark:text-red-500"><span
@@ -36,6 +42,7 @@ import { useModeStore } from '../stores/mode'
 import { useHostStore } from '../stores/connection'
 import InfoMessage from '../components/client/InfoMessage.vue'
 import Swal from 'sweetalert2'
+import Alert from '../components/Alert.vue';
 // import KillSwitch from '../components/client/KillSwitch.vue';
 
 const connectText = ref('Connect')
@@ -97,22 +104,21 @@ const connectToHost = async () => {
             connectText.value = 'Connect';
             loading.value = false
             isDisabled.value = false
-            Toast.fire({
-                icon: "error",
-                title: "Can't Connect to the host."
-            });
             error.value = true
 
+            setTimeout(() => {
+                error.value = false
+            }, 5000);
         }
     } catch (error) {
         connectText.value = 'Connect';
         loading.value = false
         isDisabled.value = false
-        Toast.fire({
-            icon: "error",
-            title: "Can't Connect to the host."
-        });
         error.value = true
+
+        setTimeout(() => {
+            error.value = false
+        }, 5000);
 
     }
 }

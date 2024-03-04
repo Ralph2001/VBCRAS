@@ -203,7 +203,6 @@ ipcMain.handle('open-file', async (event, source) => {
     return true
   } catch (error) {
     win.close()
-
     return false
   }
 });

@@ -1,7 +1,11 @@
 <template>
-    <div class="flex flex-col h-full border rounded-lg ">
-        <div class="flex flex-row items-center justify-between px-3 py-3 border bg-gray-50/50">
-            <p class="text-md font-bold">Scanned Documents</p>
+    <div class="flex flex-col h-full border rounded-lg  relative">
+        <Transition enter-active-class="animate__animated animate__fadeInDown"
+            leave-active-class="animate__animated animate__fadeOutUp">
+            <Alert v-if="showAlert" message="Error: Unable to open the file." error />
+        </Transition>
+        <div class="grid grid-cols-3 items-center justify-between px-3 py-3  bg-gray-50/50">
+            <p class="text-lg font-semibold ms-3">Scanned Documents</p>
 
             <div class="relative">
                 <font-awesome-icon icon="fa-solid fa-xmark" v-if="searchQuery" @click="searchQuery = ''"
@@ -11,8 +15,9 @@
                 <SearchFilter v-model="searchQuery" :hasValue="searchQuery" />
 
             </div>
-            <div>
-                <p class="text-xs font-mono text-gray-200"></p>
+            <div class="flex justify-end items-center me-5">
+                <font-awesome-icon icon="fa-solid fa-circle-question"
+                    class="text-gray-400 hover:text-gray-600 cursor-pointer" />
             </div>
         </div>
         <div class="flex flex-row justify-center  h-16 items-center gap-2 mt-5 px-3 py-3 w-full  ">
@@ -41,26 +46,26 @@
                         <div class="flex items-center" v-if="type">
                             <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m1 9 4-4-4-4" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 9 4-4-4-4" />
                             </svg>
                             <a href="#" @click="goYear()"
                                 :class="{ 'pointer-events-none text-gray-400': !year, 'text-gray-700': year }"
                                 class="ms-1 text-sm font-medium  hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">{{
-                                    type }}</a>
+                type }}</a>
                         </div>
                     </li>
                     <li>
                         <div class="flex items-center" v-if="year">
                             <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m1 9 4-4-4-4" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 9 4-4-4-4" />
                             </svg>
                             <a href="#" @click="goMonth()"
                                 :class="{ 'pointer-events-none text-gray-400': !month, 'text-gray-700': month }"
                                 class="ms-1 text-sm font-medium  hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">{{
-                                    year }}</a>
+                year }}</a>
                         </div>
                     </li>
                     <!-- Months -->
@@ -68,11 +73,11 @@
                         <div class="flex items-center">
                             <svg class="rtl:rotate-180  w-3 h-3 mx-1 text-gray-400" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m1 9 4-4-4-4" />
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m1 9 4-4-4-4" />
                             </svg>
                             <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{{ month
-                            }}</span>
+                                }}</span>
                         </div>
                     </li>
 
@@ -95,10 +100,13 @@
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ type }}
 
                 </li>
-                <li v-if="!data.length && searchQuery == ''" class="text-center text-gray-600 font-italic">Empty Data.</li>
+                <li v-if="!data.length && searchQuery == ''" class="text-center text-gray-600 font-italic">Empty
+                    Data.
+                </li>
 
 
-                <li v-if="type && !year && searchQuery == ''" v-for="year in years" :key="year" @click="selectYear(year)"
+                <li v-if="type && !year && searchQuery == ''" v-for="year in years" :key="year"
+                    @click="selectYear(year)"
                     class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ year }}
                 </li>
@@ -111,26 +119,31 @@
                 </li>
 
                 <!-- Files -->
-                <li v-if="type && year && month && searchQuery == ''" v-for="file in files" :key="file.id"
-                    @click.right="showMenu()"
-                    class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1   hover:bg-blue-100 hover:cursor-pointer rounded-sm relative">
 
-                    <div class="block w-[60%] overflow-hidden truncate">
-                        <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3 " /> {{
-                            file.name.replace('.pdf', '') }}
-                    </div>
-                    <p class="text-sm italic text-gray-600 font-normal mr-2">{{ file.type }} {{ file.month }} {{ file.year
-                    }}</p>
+                <div class="h-[calc(100vh-316px)]" v-if="type && year && month && searchQuery == ''">
+                    <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full"
+                        :item-size="28" key-field="name" v-slot="{ item }">
 
-                </li>
+                        <li @dblclick.prevent="openFile(item.filepath, item.name)" tabindex="0"
+                            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1  hover:bg-blue-100 hover:cursor-pointer rounded-sm relative group">
 
-                <!-- <div class="relative hidden">
-                    <div class="items-center p-2 h-[7rem] rounded-lg bg-blue-200 w-[10rem] z-10 absolute flex flex-col">
-                        <p>Open File</p>
-                        <p>Open Path</p>
-                        <p>Remove</p>
-                    </div>
-                </div> -->
+                            <div class="block w-[60%] overflow-hidden truncate">
+                                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3 " /> {{
+                item.name.replace('.pdf', '') }}
+                            </div>
+                            <p class="text-sm italic text-gray-600 font-normal mr-2">{{ item.type }} {{ item.month
+                                }} {{
+                item.year
+            }} <font-awesome-icon @click="openPath(item.filepath, item.name)"
+                                    icon="fa-solid fa-folder-open" title="Open file path" class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block
+                        transition-all" />
+                            </p>
+
+                        </li>
+                    </RecycleScroller>
+                </div>
+
+
 
 
                 <div class="h-[calc(100vh-316px)]" v-if="searchQuery != ''">
@@ -148,14 +161,19 @@
 
                     <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
                         :item-size="28" key-field="name" v-slot="{ item }">
-                        <li tabindex="0" @click="openFile(item.filepath, item.name)"
-                            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
+                        <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
+                            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
                             <div>
                                 <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" /> {{
-                                    item.name.replace('.pdf', '') }}
+                item.name.replace('.pdf', '') }}
                             </div>
-                            <p class="text-sm italic text-gray-600 font-normal mr-2">{{ item.type }} {{ item.month }} {{
-                                item.year }}</p>
+                            <p class="text-sm italic text-gray-600 font-normal mr-2">{{ item.type }} {{ item.month
+                                }} {{
+                                item.year }}
+
+                                <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path" class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block
+                        transition-all" />
+                            </p>
                         </li>
                     </RecycleScroller>
 
@@ -173,6 +191,9 @@ import { computed, ref, onMounted } from 'vue';
 import SearchFilter from './SearchFilter.vue'
 import { useComputerStore } from '../../stores/computer';
 import { useScannedDocuments } from '../../stores/scanned';
+import Alert from '../Alert.vue';
+
+const showAlert = ref(false)
 
 
 const computer = useComputerStore()
@@ -192,7 +213,6 @@ const openFile = async (filepath, filename) => {
     try {
 
         const device = computer.desktop_name
-
         const data = (
             [{
                 name: filename,
@@ -205,18 +225,55 @@ const openFile = async (filepath, filename) => {
         if (add_log) {
             const check = await window.LocalCivilApi.checkFile(filepath);
             if (!check) {
-                console.log('Cant Open')
-                visible.value = true
+                showAlert.value = true
+
+                setTimeout(() => {
+                    showAlert.value = false
+                }, 3000);
             }
         }
 
-
-
     } catch (error) {
-        visible.value = true
+        showAlert.value = true
 
+        setTimeout(() => {
+            showAlert.value = false
+        }, 3000);
     }
 };
+
+const openPath = async (filepath, filename) => {
+    try {
+
+        const device = computer.desktop_name
+        const data = (
+            [{
+                name: filename,
+                device_used: device,
+                action: 'Opened'
+            }
+            ])
+
+        const add_log = await Documents.add_log(data)
+        if (add_log) {
+            const openpath = await window.LocalCivilApi.openFilePath(filepath);
+            if (!openpath) {
+                showAlert.value = true
+
+                setTimeout(() => {
+                    showAlert.value = false
+                }, 3000);
+            }
+        }
+
+    } catch (error) {
+        showAlert.value = true
+
+        setTimeout(() => {
+            showAlert.value = false
+        }, 3000);
+    }
+}
 
 
 const props = defineProps({
@@ -344,5 +401,3 @@ const selectMonth = (selectedMonth) => {
 
 
 </script>
-
-

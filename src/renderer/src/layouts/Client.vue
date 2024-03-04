@@ -1,6 +1,6 @@
 
 <template>
-    <div class="h-screen container mx-auto" @keyup.ctrl.space="sayHi()">
+    <div class="h-screen container mx-auto relative" @keyup.ctrl.space="sayHi()">
         <NavBar />
         <router-view v-slot="{ Component }">
             <transition mode="out-in" name="slide">
@@ -11,6 +11,19 @@
 </template>
   
 <style>
+.slide_down-enter-active,
+.slide_down-leave-active {
+    transition: animate__animated animate__fadeInDown
+}
+
+.slide_down-enter-from,
+.slide_down-leave-to {
+    opacity: 0;
+    /* transform: rotateX(-100px); */
+
+}
+
+
 .slide-enter-active,
 .slide-leave-active {
     transition: opacity 0.2s ease-in-out;
@@ -25,8 +38,14 @@
 </style>
 
 <script setup>
+import { ref } from 'vue';
 import NavBar from '../components/client/NavBar.vue'
 
+const showsuccess = ref(false)
+
+const show = () => {
+    showsuccess.value = !showsuccess.value
+}
 const sayHi = () => {
 
     console.log('Hi Ralph')

@@ -1,5 +1,8 @@
 <template>
-    <div class="flex flex-row p-2 h-[calc(100vh-80px)] ">
+    <div class="flex flex-row p-2 h-[calc(100vh-80px)] relative">
+
+
+
         <div class="flex flex-col justify-between gap-5 w-2/5">
             <div class="mb-auto"></div>
             <div>

@@ -1,5 +1,7 @@
 <template>
     <div class="flex flex-col h-full md:justify-center items-center  bg-gray-50 relative">
+
+
         <img src="../../assets/logo.png" class="h-20 mt-5 mb-5" alt="">
         <p class="text-2xl text-gray-900 font-medium uppercase">Civil Registry Archive
             System</p>
@@ -74,6 +76,7 @@ onMounted(() => {
 
 
 import { useHostStore } from '../../stores/connection'
+import Alert from "../../components/Alert.vue";
 
 const disconnect = () => {
     con.removeConnection()
