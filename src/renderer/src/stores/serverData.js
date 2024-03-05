@@ -9,7 +9,7 @@ const router = useRouter();
 export const useServerDataStore = defineStore("ServerData", {
     state: () => ({
         token: localStorage.getItem("token"),
-        users: []
+        scanned_logs: []
     }),
     getters: {},
     actions: {
@@ -23,6 +23,25 @@ export const useServerDataStore = defineStore("ServerData", {
                         headers: { Authorization: `Bearer ${tokenStr}` },
                     });
                     this.users = users.data.users
+                    return true;
+                } catch (error) {
+                    localStorage.removeItem("token");
+                    return false;
+                }
+            } else {
+                localStorage.removeItem("token");
+                return false;
+            }
+        }, async getScannedLog() {
+            const token = localStorage.getItem("token");
+            if (token) {
+                const hostAddress = localStorage.getItem('host');
+                const tokenStr = token;
+                try {
+                    const scanned_logs_data = await axios.get("http://" + hostAddress + ":1216/scanned/log/view", {
+                        headers: { Authorization: `Bearer ${tokenStr}` },
+                    });
+                    this.scanned_logs = scanned_logs_data.data.scans
                     return true;
                 } catch (error) {
                     localStorage.removeItem("token");
