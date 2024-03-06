@@ -6,73 +6,48 @@ export const useServerStore = defineStore("server", {
   state: () => ({
     server: localStorage.getItem("server"),
     auto: localStorage.getItem("auto"),
-    host: null
+    serverAddress: localStorage.getItem("serverAddress"),
   }),
   actions: {
     async isServerRunning() {
-      const start_server = await window.LocalCivilApi.StartServer();
-      if (!start_server) {
-        return true;
-      }
-      else {
-        return false
-      }
-
-    },
-    isServerAutoStart() {
-      if (this.isServerRunning()) {
-        this.server = true
-        localStorage.setItem('server', true)
+      const isit_running = await window.LocalCivilApi.IsServerRunning();
+      if (isit_running) {
         localStorage.setItem('host', '127.0.0.1')
         return true
-
-      } else {
-        this.serverSwitch()
       }
+      return false
     },
     async serverSwitch() {
-      if (this.server) {
-        try {
+      try {
+        const server_running = await this.isServerRunning()
+        if (server_running) {
           const stop_server = await window.LocalCivilApi.StopServer();
           if (stop_server) {
             this.server = false
+            localStorage.removeItem('serverAddress')
             localStorage.removeItem('server')
             localStorage.removeItem('host')
           }
-          else if (!stop_server) {
-            this.server = false
-            localStorage.removeItem('server')
-            localStorage.removeItem('host')
-          }
-        } catch (error) {
-          console.error('Error stopping server:', error);
-        }
-      }
-      else {
-        try {
+        } else {
           const start_server = await window.LocalCivilApi.StartServer();
           if (start_server) {
             this.server = true
-            this.host = start_server.addresses[0]
+            this.serverAddress = start_server.addresses[0]
+            localStorage.setItem('serverAddress', start_server.addresses[0])
             localStorage.setItem('server', true)
             localStorage.setItem('host', '127.0.0.1')
+
+            setTimeout(() => {
+              this.router.push('/server/login')
+            }, 3000);
+          } else {
+            this.server = true
           }
-        } catch (error) {
-          console.error('Error starting server:', error);
+
         }
+      } catch (error) {
+        console.log(error)
       }
-    },
-    autoServerSwitch() {
-      if (this.auto) {
-        this.auto = false;
-        localStorage.removeItem("auto");
-      } else {
-        this.auto = true;
-        localStorage.setItem("auto", true);
-      }
-    },
-    serverStatus() {
-      return this.server;
-    },
+    }
   },
 });

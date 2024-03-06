@@ -2,12 +2,13 @@ import { useModeStore } from "../stores/mode";
 import { useHostStore } from "../stores/connection";
 import { AuthStore } from "../stores/clientAuth";
 import { useServerAuthStore } from "../stores/ServerAuth";
+import { useServerStore } from "../stores/server";
 
 import { createRouter, createMemoryHistory } from "vue-router";
 
 const router = createRouter({
   history: createMemoryHistory(),
-  routes: [
+  _routes: [
     {
       path: "/",
       name: "Home",
@@ -29,13 +30,17 @@ const router = createRouter({
           path: "server",
           component: () => import("../views/ServerMode.vue"),
           name: "server",
-          beforeEnter: (to, from) => {
+          beforeEnter: async (to, from) => {
             const mode = useModeStore();
-            const auth = useServerAuthStore()
-
             const storedMode = localStorage.getItem("mode");
+            const server = useServerStore()
+
+            const is_server_running = await server.isServerRunning()
+
             if (mode.checkMode() && storedMode == "server") {
-              // make sure
+              if (is_server_running) {
+                return { name: "server_login" }
+              }
               return true;
             } else {
               return { name: "Home" };
@@ -50,7 +55,7 @@ const router = createRouter({
             const mode = useModeStore();
             const con = useHostStore();
             const storedMode = localStorage.getItem("mode");
-            const connection = await con.isConnected()
+            const connection = await con.isConnected();
 
             if (mode.checkMode() && storedMode == "client") {
               if (connection) {
@@ -70,24 +75,27 @@ const router = createRouter({
       name: "server_login",
       component: () => import("../views/Login.vue"),
       beforeEnter: async (to, from) => {
-        const auth = useServerAuthStore()
-        const authenticated = await auth.isServerAuthenticated()
+        const auth = useServerAuthStore();
+        const authenticated = await auth.isServerAuthenticated();
         if (authenticated) {
-          console.log()
           return { name: "server_dashboard" };
         }
-        return true
+        return true;
       }
     },
+
+    //////////////////////
+    // Server Page Here //
+    //////////////////////
     {
       path: "/server/",
       name: "server_page",
       component: () => import("../layouts/Server.vue"),
       beforeEnter: async (to, from) => {
-        const auth = useServerAuthStore()
-        const authenticated = await auth.isServerAuthenticated()
+        const auth = useServerAuthStore();
+        const authenticated = await auth.isServerAuthenticated();
         if (authenticated) {
-          return true
+          return true;
         }
         return { name: "server_login" };
       },
@@ -97,37 +105,36 @@ const router = createRouter({
           component: () => import("../views/server/Dashboard.vue"),
           name: "server_dashboard",
           beforeEnter: async (to, from) => {
-            const auth = useServerAuthStore()
-            const authenticated = await auth.isServerAuthenticated()
+            const auth = useServerAuthStore();
+            const authenticated = await auth.isServerAuthenticated();
             if (authenticated) {
-              return true
+              return true;
             }
             return { name: "server_login" };
           },
-
         },
         {
           path: "users",
           component: () => import("../views/server/Users.vue"),
           name: "server_users",
           beforeEnter: async (to, from) => {
-            const auth = useServerAuthStore()
-            const authenticated = await auth.isServerAuthenticated()
+            const auth = useServerAuthStore();
+            const authenticated = await auth.isServerAuthenticated();
             if (authenticated) {
-              return true
+              return true;
             }
             return { name: "server_login" };
           },
         },
         {
-          path: "users/:userID",
+          path: "users/profile",
           component: () => import("../views/server/users/profile.vue"),
           name: "check_users",
           beforeEnter: async (to, from) => {
-            const auth = useServerAuthStore()
-            const authenticated = await auth.isServerAuthenticated()
+            const auth = useServerAuthStore();
+            const authenticated = await auth.isServerAuthenticated();
             if (authenticated) {
-              return true
+              return true;
             }
             return { name: "server_login" };
           },
@@ -145,7 +152,7 @@ const router = createRouter({
         const con = useHostStore();
         const storedMode = localStorage.getItem("mode");
         const authKey = await auth.isAuthenticated();
-        const connection = await con.isConnected()
+        const connection = await con.isConnected();
 
         if (storedMode === "client") {
           if (connection) {
@@ -169,7 +176,7 @@ const router = createRouter({
 
         const con = useHostStore();
         const storedMode = localStorage.getItem("mode");
-        const connection = await con.isConnected()
+        const connection = await con.isConnected();
 
         if (storedMode === "client") {
           if (connection) {
@@ -190,12 +197,12 @@ const router = createRouter({
         const auth = AuthStore();
         const con = useHostStore();
         const authKey = await auth.isAuthenticated();
-        const connection = await con.isConnected()
+        const connection = await con.isConnected();
         if (connection) {
           if (authKey) {
             return true;
           }
-          return { name: "client" }
+          return { name: "client" };
         }
         return { name: "client" };
       },
@@ -208,12 +215,12 @@ const router = createRouter({
             const auth = AuthStore();
             const authKey = await auth.isAuthenticated();
             const con = useHostStore();
-            const connection = await con.isConnected()
+            const connection = await con.isConnected();
             if (connection) {
               if (authKey) {
                 return true;
               }
-              return { name: "client" }
+              return { name: "client" };
             }
             return { name: "client" };
           },
@@ -227,12 +234,12 @@ const router = createRouter({
             const auth = AuthStore();
             const authKey = await auth.isAuthenticated();
             const con = useHostStore();
-            const connection = await con.isConnected()
+            const connection = await con.isConnected();
             if (connection) {
               if (authKey) {
                 return true;
               }
-              return { name: "client" }
+              return { name: "client" };
             }
             return { name: "client" };
           },
@@ -240,6 +247,12 @@ const router = createRouter({
       ],
     },
   ],
+  get routes() {
+    return this._routes;
+  },
+  set routes(value) {
+    this._routes = value;
+  },
 });
 
 export default router;

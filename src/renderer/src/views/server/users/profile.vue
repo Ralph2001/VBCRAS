@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 h-screen  py-10 sm:ml-64 flex flex-col">
+    <div class="p-4 h-full overflow-y-scroll py-10 sm:ml-64 flex flex-col">
         <div class="flex">
             <router-link to="/server/users" class="active:scale-95">
                 <font-awesome-icon icon="fa-solid fa-circle-arrow-left"
@@ -53,9 +53,9 @@
 
         </div>
 
-        <div class="flex flex-col mt-2 bg-gray-50/50 p-10 w-full h-full">
-            <p class="text-lg font-semibold text-gray-800">
-                User Permissions
+        <div class="flex flex-col mt-2 bg-gray-50/50 p-10 w-full h-full ">
+            <p class="text-lg font-semibold text-gray-800 flex items-center">
+                <font-awesome-icon icon="fa-solid fa-user-check" class="me-1 text-sm text-gray-600" /> User Permissions
             </p>
 
             <div class="lg:flex lg:flex-row md:grid md:grid-cols-2 sm:grid sm:grid-cols-2 gap-2  mt-5">
@@ -72,7 +72,7 @@
                 <div
                     class="flex w-[13.5rem] bg-white gap-2 items-center px-5 py-2 rounded-lg h-[4rem] border hover:scale-[0.95] transition-all cursor-pointer">
                     <div>
-                        <input type="checkbox" class="border-gray-300 rounded-lg">
+                        <input type="checkbox" class="border-gray-300 rounded-lg" checked>
                     </div>
                     <div class="flex flex-col justify-start">
                         <p class="text-md ms-2 font-semibold text-gray-700">View Records</p>
@@ -100,14 +100,11 @@
                     </div>
                 </div>
             </div>
-
-
-
-            <p class="text-lg font-semibold text-gray-800 mt-5">
-                Activity
+            <p class="text-lg font-semibold text-blue-600 mt-10 flex items-center">
+                <font-awesome-icon icon="fa-solid fa-chart-line" class="me-1 text-sm text-blue-600 " /> Activity
             </p>
 
-            <div class="mt-6 h-full">
+            <div class="h-full mb-10 mt-5">
                 <TableDataStack :data="serverData.scanned_logs" />
             </div>
         </div>

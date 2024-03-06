@@ -31,47 +31,6 @@ const fs = require('fs-extra')
 let dialogOpen = false;
 
 
-// if (is.dev) {
-//   PythonShell.run(join(__dirname, '../../resources/script/main.py'), null).then(messages => {
-//     console.log('finished');
-//   });
-
-// } else {
-//   pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
-// }
-
-
-
-// Error handling to ensure correct behavior in case of failure
-
-
-// pythonProcess = spawn('python', [join(__dirname, '../../resources/script/main.py')], {
-// });
-
-// async function startServer() {
-//   try {
-
-//     pythonprocess = execFile(join(__dirname, '../../resources/script/dist/main/main.exe'));
-
-//     pythonProcess.on('error', (error) => {
-//       console.error('Error starting Python process:', error);
-//       pythonProcess = null;
-//     });
-
-//     pythonProcess.on('exit', (code, signal) => {
-//       console.log(`Python process exited with code ${code} and signal ${signal}`);
-//       pythonProcess = null;
-//     });
-
-//     return true;
-//   } catch (error) {
-//     console.error('Error starting server:', error);
-//     return false;
-//   }
-// }
-
-
-
 let pythonProcess = null;
 async function startServer() {
   try {
@@ -99,6 +58,19 @@ async function startServer() {
     return false;
   }
 }
+
+ipcMain.handle('is-server-running', async (event) => {
+  try {
+    if (pythonProcess) {
+      return true;
+    }
+    else {
+      return false
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 ipcMain.handle('start-server', async (event) => {
   try {
@@ -246,7 +218,7 @@ function mainWindow() {
 
   )
 
-  mainWindow.setMinimumSize(860, 630)
+  // mainWindow.setMinimumSize(860, 630)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()

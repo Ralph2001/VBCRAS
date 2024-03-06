@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 w-full  mt-20 items-center">
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-3 w-full  mt-20 items-center">
             <div v-for="user in data.users" :key="user.id"
                 class="flex flex-row justify-between border active:scale-90 rounded-md h-32 items-center p-2 hover:scale-95 transition-all cursor-pointer hover:shadow-sm">
                 <div class="grid grid-flow-col w-full  h-full" @click="userCheck(user.id)">
@@ -34,7 +34,7 @@
                             {{ user.name }}
                         </p>
                         <p class="text-xs italic text-gray-700 font-semibold truncate">
-                           Administrative Aide I
+                            Administrative Aide I
                         </p>
                     </div>
                 </div>
@@ -59,8 +59,7 @@ onMounted(() => {
 })
 
 
-const userCheck = (id) => {
-    const userId = id
-    router.push(`/server/users/${userId}`)
+const userCheck = () => {
+    router.push(`/server/users/profile`)
 }
 </script>

@@ -16,6 +16,10 @@ if (process.contextIsolated) {
 }
 
 contextBridge.exposeInMainWorld('LocalCivilApi', {
+  IsServerRunning: async () => {
+    const result = await ipcRenderer.invoke('is-server-running');
+    return result
+  },
   StartServer: async () => {
     const result = await ipcRenderer.invoke('start-server');
     return result
