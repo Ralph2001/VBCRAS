@@ -45,7 +45,7 @@ export const useServerAuthStore = defineStore("ServerAuth", {
                         headers: { Authorization: `Bearer ${tokenStr}` },
                     });
                     this.user = user.data.username;
-                    console.log(user)
+                   
                     return true;
                 } catch (error) {
                     localStorage.removeItem("token");
