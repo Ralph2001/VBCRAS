@@ -104,9 +104,7 @@
                 <p class="text-lg font-semibold text-blue-600  flex items-center ">
                     <font-awesome-icon icon="fa-solid fa-chart-line" class="me-1 text-sm text-blue-600" /> Activity
                 </p>
-                <!-- <TableDataStack :dataLogs="serverData.scanned_logs" /> -->
-                <TableDataAG :data="serverData.scanned_logs" :dataColumns="colDefs" />
-                <!-- {{ serverData.scanned_logs }} -->
+                <TableGrid :data="serverData.scanned_logs" :dataColumns="colDefs" />
             </div>
 
         </div>
@@ -119,6 +117,7 @@ import TableDataStack from '../../../components/server/TableDataStack.vue';
 import TableDataAG from '../../../components/server/TableDataAG.vue';
 import { useServerDataStore } from '../../../stores/serverData.js'
 import { format } from "date-fns";
+import TableGrid from '../../../components/TableGrid.vue';
 
 const serverData = useServerDataStore()
 
@@ -131,8 +130,6 @@ const colDefs = ref([
     { field: "device_used", flex: 1 },
     { field: "action_at", headerName: 'Time', flex: 1, valueFormatter: p => format(new Date(p.value), 'MMMM d, yyyy h:m a'), filter: true },
 ]);
-
-
 
 
 </script>

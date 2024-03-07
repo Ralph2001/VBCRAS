@@ -8,20 +8,28 @@
 .zoom_in-leave-to {
     opacity: 0;
 }
+
+.ag-theme-quartz {
+    --ag-range-selection-border-color: none;
+    --ag-range-selection-border-style: none;
+    --ag-range-selection-background-color: none;
+
+}
 </style>
 
 <template>
     <div class="flex flex-col relative justify-center" @dragenter="handleDragEnter()">
 
-        <div class="h-[calc(100vh-130px)] ">
-     
-            <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned"
-                v-if="Documents.viewMode" />
+        <div class="h-[calc(100vh-130px)] px-5">
+            <TableGrid :data="Documents.scanned" :dataColumns="colDefs" v-if="Documents.viewMode" />
+            <!-- <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned"
+                v-if="Documents.viewMode" /> -->
             <ExplorerView :data="Documents.scanned" v-if="!Documents.viewMode" />
         </div>
 
 
-        <DropZone v-if="dropzone && !auth.user_details.permissions.scanned_add" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
+        <DropZone v-if="dropzone && !auth.user_details.permissions.scanned_add" @dragleave="handleDragLeave()"
+            @drop="handleDrop" @dragover.prevent />
 
 
         <Transition mode="out-in" name="zoom_in">
@@ -39,8 +47,8 @@
 
                 <div class="flex flex-col gap-2 py-2">
 
-                    <p class="text-sm p-1 font-semibold antialiased mb-4"> <font-awesome-icon icon="fa-solid fa-file-pdf"
-                            class="text-2xl text-red-400 me-2" /> {{ data_name }}
+                    <p class="text-sm p-1 font-semibold antialiased mb-4"> <font-awesome-icon
+                            icon="fa-solid fa-file-pdf" class="text-2xl text-red-400 me-2" /> {{ data_name }}
                     </p>
 
 
@@ -56,7 +64,8 @@
                     </div>
                     <div class="flex md:flex-row  flex-col gap-2 mt-3 ">
 
-                        <Dropdown label="Month" :optionData="months" v-model="scannedData.month" :error="v$.month.$error" />
+                        <Dropdown label="Month" :optionData="months" v-model="scannedData.month"
+                            :error="v$.month.$error" />
                         <Dropdown label="Year" :optionData="years" v-model="scannedData.year" :error="v$.year.$error" />
 
                     </div>
@@ -85,13 +94,12 @@
                 </p>
             </div>
 
-            <p class="text-sm font-medium text-gray-900 select-all">
+            <p class="text-sm font-medium text-gray-900 select-all" v-if="!Documents.viewMode">
                 <!-- <span class="italic font-normal text-gray-500">As of {{ Documents.asOf }},</span>  -->
-                
-                Total Records (<span
-                    class="text-blue-600">
+
+                Total Records (<span class="text-blue-600">
                     {{
-                        Number(Documents.totalCount).toLocaleString()
+        Number(Documents.totalCount).toLocaleString()
                     }}</span>)
             </p>
         </div>
@@ -113,7 +121,8 @@ import { required } from '@vuelidate/validators'
 import Modal from '../../components/client/modal/Modal.vue'
 import Dropdown from '../../components/client/inputs/Dropdown.vue';
 import Swal from 'sweetalert2'
-
+import TableGrid from '../../components/TableGrid.vue';
+import ActionBtn from '../../components/ActionBtn.vue'
 
 
 onMounted(() => {
@@ -123,6 +132,13 @@ onMounted(() => {
     auth.isAuthenticated()
 })
 
+
+const colDefs = ref([
+    { field: "name", flex: 2, filter: true, floatingFilter: true },
+    { field: "type", flex: 1, filter: true },
+    { field: "year", flex: 1, filter: true },
+    { field: "action", flex: 1, cellRenderer: ActionBtn, cellClass: 'my-class' },
+]);
 
 const Toast = Swal.mixin({
     toast: true,
@@ -136,24 +152,6 @@ const Toast = Swal.mixin({
     }
 });
 
-const months = ([
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-])
-
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: currentYear - 1899 + 1 }, (_, index) => 1900 + index);
-
 
 const changeViewMode = () => {
     Documents.changeViewMode()
@@ -165,12 +163,6 @@ const desktop = useComputerStore();
 
 const modal = ref(false)
 const dropzone = ref(false)
-
-
-const types = ref([
-    "Birth", "Death", "Marriage", "Legal", "Other"
-])
-
 
 
 const handleDragEnter = () => {
@@ -298,4 +290,3 @@ const submitScanned = async () => {
 
 
 </script>
-

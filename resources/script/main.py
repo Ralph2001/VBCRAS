@@ -96,8 +96,17 @@ def create_admin_user():
         admin = User(
             username='admin',
             position= 'Admin',
-            is_admin=True
+            is_admin=True,
+            permissions=[
+            UserPermissions(
+                scanned=True, 
+                scanned_view=True,
+                scanned_add = True,
+                scanned_delete = True
+                ),  
+        ]
         )
+       
         admin.set_password('admin')
         
         db.session.add(admin)
