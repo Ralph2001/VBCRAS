@@ -795,6 +795,18 @@ acorn-jsx@^5.3.2:
   resolved "https://registry.npmjs.org/acorn/-/acorn-8.11.2.tgz"
   integrity sha512-nc0Axzp/0FILLEVsm4fNwLCwMttvhEI263QtVPQcbpfZZ3ts0hLsZGOpE6czNlid7CJ9MlyH8reXkpsf3YUY4w==
 
+ag-grid-community@31.1.1:
+  version "31.1.1"
+  resolved "https://registry.npmjs.org/ag-grid-community/-/ag-grid-community-31.1.1.tgz"
+  integrity sha512-tiQZ7VQ07yJScTMIQpaYoUMPgiyXMwYDcwTxe4riRrcYGTg0e258XEihoPUZFejR60P1fYWMxdJaR2JUnyhGrg==
+
+ag-grid-vue3@^31.1.1:
+  version "31.1.1"
+  resolved "https://registry.npmjs.org/ag-grid-vue3/-/ag-grid-vue3-31.1.1.tgz"
+  integrity sha512-GjR4/6JUWQ0VsdmcxSN5ks1vH+wB7lLjX1CbskPqNfD69/fb9l7Eg2oGAgqNJo8b87W87jzhg9RguOx5bDpsZQ==
+  dependencies:
+    ag-grid-community "31.1.1"
+
 agent-base@6:
   version "6.0.2"
   resolved "https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz"

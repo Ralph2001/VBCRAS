@@ -15,8 +15,7 @@
                 <tbody>
                     <tr v-for="row in table.getRowModel().rows" :key="row.id"
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 text-gray-800 font-semibold">
-                        <td v-for="cell in row.getVisibleCells()" :key="cell.id"
-                            :class="`w-[${cell.column.getSize()}%] `" class=" py-4 text-start ">
+                        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class=" py-4 text-start ">
                             <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                         </td>
                     </tr>
@@ -66,11 +65,10 @@
 import { ref, h } from 'vue';
 import { useVueTable, FlexRender, getCoreRowModel, getPaginationRowModel } from '@tanstack/vue-table'
 import { format } from "date-fns";
-import pdfIcon from '../icons/pdfIcon.vue'
 
 
 const props = defineProps({
-    data: {
+    dataLogs: {
         type: Array,
         required: true
     }
@@ -79,9 +77,9 @@ const props = defineProps({
 const columnsData = [
     {
         accessorKey: 'name',
-        header: 'Name',
+        header: () => 'Name',
         size: 25,
-        cell: (info) => ( info.getValue())
+        cell: (info) => (info.getValue())
 
 
     },
@@ -107,7 +105,7 @@ const columnsData = [
 ]
 
 const table = useVueTable({
-    data: props.data,
+    data: props.dataLogs,
     columns: columnsData,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

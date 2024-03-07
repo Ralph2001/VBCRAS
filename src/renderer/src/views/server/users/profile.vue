@@ -102,29 +102,37 @@
             </div>
             <div class="flex flex-col space-y-6">
                 <p class="text-lg font-semibold text-blue-600  flex items-center ">
-                    <font-awesome-icon icon="fa-solid fa-chart-line" class="me-1 text-sm text-blue-600" />Scanned
-                    Documents Activity
+                    <font-awesome-icon icon="fa-solid fa-chart-line" class="me-1 text-sm text-blue-600" /> Activity
                 </p>
-                <TableDataStack :data="serverData.scanned_logs" />
+                <!-- <TableDataStack :dataLogs="serverData.scanned_logs" /> -->
+                <TableDataAG :data="serverData.scanned_logs" :dataColumns="colDefs" />
+                <!-- {{ serverData.scanned_logs }} -->
             </div>
 
         </div>
-        <!-- 
-            <div class="h-full mb-10 mt-5">
-                <TableDataStack :data="serverData.scanned_logs" />
-            </div> -->
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import TableDataStack from '../../../components/server/TableDataStack.vue';
+import TableDataAG from '../../../components/server/TableDataAG.vue';
 import { useServerDataStore } from '../../../stores/serverData.js'
+import { format } from "date-fns";
 
 const serverData = useServerDataStore()
 
 onMounted(() => {
     serverData.getScannedLog()
-
 })
+const colDefs = ref([
+    { field: "name", flex: 2, filter: true, floatingFilter: true, cellRenderer: (params) => `<span class="text-gray-800 font-semibold text-sm">${params.value}</span>` },
+    { field: "action", flex: 1 },
+    { field: "device_used", flex: 1 },
+    { field: "action_at", headerName: 'Time', flex: 1, valueFormatter: p => format(new Date(p.value), 'MMMM d, yyyy h:m a'), filter: true },
+]);
+
+
+
+
 </script>

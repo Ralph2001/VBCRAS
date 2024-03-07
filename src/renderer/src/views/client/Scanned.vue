@@ -14,12 +14,14 @@
     <div class="flex flex-col relative justify-center" @dragenter="handleDragEnter()">
 
         <div class="h-[calc(100vh-130px)] ">
+     
             <ScannedDatatable title="Scanned Documents" :types="types" :data="Documents.scanned"
                 v-if="Documents.viewMode" />
             <ExplorerView :data="Documents.scanned" v-if="!Documents.viewMode" />
         </div>
 
-        <DropZone v-if="dropzone" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
+
+        <DropZone v-if="dropzone && !auth.user_details.permissions.scanned_add" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
 
 
         <Transition mode="out-in" name="zoom_in">
@@ -118,7 +120,7 @@ onMounted(() => {
     Documents.getScanned()
     Documents.getTime()
     desktop.getUserName()
-
+    auth.isAuthenticated()
 })
 
 

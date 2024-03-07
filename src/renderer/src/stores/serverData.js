@@ -11,7 +11,11 @@ export const useServerDataStore = defineStore("ServerData", {
         token: localStorage.getItem("token"),
         scanned_logs: []
     }),
-    getters: {},
+    getters: {
+        get_scanned(state) {
+            return state.scanned_logs
+        }
+    },
     actions: {
         async getAllUser() {
             const token = localStorage.getItem("token");

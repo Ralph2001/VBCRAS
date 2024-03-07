@@ -64,15 +64,28 @@ class DocumentsLog(db.Model):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    username = db.Column(db.String(400), unique=True, nullable=False)
+    position = db.Column(db.String(400), nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+    permissions = db.relationship('UserPermissions', backref='user', lazy='dynamic')
 
     def set_password(self, password):
-     self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password)  # Use a secure hashing library
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password_hash, password)  # Use a secure hashing library
+
+class UserPermissions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    scanned = db.Column(db.Boolean, default=True)
+    scanned_view = db.Column(db.Boolean, default=True)
+    scanned_add = db.Column(db.Boolean, default=False)
+    scanned_delete = db.Column(db.Boolean, default=False)
+    
+    
+    
 
 class AdminCreated(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -81,7 +94,8 @@ class AdminCreated(db.Model):
 def create_admin_user():
      if not AdminCreated.query.first():
         admin = User(
-            username='admin', 
+            username='admin',
+            position= 'Admin',
             is_admin=True
         )
         admin.set_password('admin')
@@ -128,14 +142,26 @@ def login():
 def connect():
     return jsonify({'status': 'connected'}), 201
 
+
 @app.route("/user", methods=["GET"])
 @jwt_required()
 def protected():
-    return jsonify(
-        id=current_user.id,
-        username=current_user.username,
-        id_admin = current_user.is_admin
-    )
+    current_user = get_jwt_identity()
+    user = db.session.execute(db.select(User).filter_by(id=current_user)).scalar_one()
+    permissions = db.session.execute(db.select(UserPermissions).filter_by(user_id=current_user)).scalar_one()
+    
+    serialized_user = {
+        'username': user.username,
+        'is_admin': user.is_admin,
+        'permissions': {
+            'scanned': permissions.scanned,
+            'scanned_add': permissions.scanned_add,
+            'scanned_view': permissions.scanned_view,
+            'scanned_delete': permissions.scanned_delete,
+        }
+    }
+    return jsonify(serialized_user)
+
     
 @app.route('/users', methods=['GET', 'POST'])
 @jwt_required()
@@ -158,22 +184,41 @@ def users():
     })
 
 
+
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    if not data or not 'username' in data or not 'password' in data:
-        return jsonify({'error': 'Invalid request'}), 400
+
+
+    if not data or not all(field in data for field in ['username', 'password', 'position']):
+        return jsonify({'error': 'Missing required fields: username, password, and position'}), 400
+
 
     existing_user = User.query.filter_by(username=data['username']).first()
     if existing_user:
         return jsonify({'error': 'Username already exists'}), 409
 
-    new_user = User(username=data['username'])
+ 
+    new_user = User(
+        username=data['username'],
+        position=data['position'],
+        permissions=[
+            UserPermissions(scanned=True),  
+          
+        ]
+    )
     new_user.set_password(data['password'])
-    db.session.add(new_user)
-    db.session.commit()
+
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as e:
+    
+        return jsonify({'error': 'Database integrity error: ' + str(e)}), 409
 
     return jsonify({'status': 'success'}), 201
+1
 
    
 @app.route('/scanned', methods=['GET', 'POST'])

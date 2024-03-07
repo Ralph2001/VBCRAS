@@ -26,6 +26,11 @@
                 <p v-if="v$.confirmPassword.$error" class="mt-2 text-sm text-red-600 dark:text-red-500"><span
                         class="font-medium">Error!</span> {{ v$.confirmPassword.$errors[0].$message }}</p>
             </InputField>
+            <InputField label="Position" type="text" v-model="formData.position"
+                :error="v$.position.$error" @keyup.enter="login()">
+                <p v-if="v$.position.$error" class="mt-2 text-sm text-red-600 dark:text-red-500"><span
+                        class="font-medium">Error!</span> {{ v$.position.$errors[0].$message }}</p>
+            </InputField>
 
             <div class="ml-auto flex items-end w-[20rem] justify-between mt-10">
                 <router-link to="/" class="text-gray-900 border-black h-6 hover:border-b-2">
@@ -81,13 +86,15 @@ onMounted(() => {
 const formData = reactive({
     username: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    position: ''
 });
 
 const rules = computed(() => {
     return {
         username: { required },
         password: { required },
+        position: { required },
         confirmPassword: { required, sameAsPassword: sameAs(formData.password) },
 
     };
@@ -103,9 +110,11 @@ const login = async () => {
 
     const username = formData.username;
     const password = formData.password;
+    const position = formData.position;
+
 
     try {
-        const signUp = auth.signUp(username, password)
+        const signUp = auth.signUp(username, password, position)
         if (signUp) {
         }
         else {
