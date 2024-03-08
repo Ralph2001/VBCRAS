@@ -104,7 +104,9 @@
                 <p class="text-lg font-semibold text-blue-600  flex items-center ">
                     <font-awesome-icon icon="fa-solid fa-chart-line" class="me-1 text-sm text-blue-600" /> Activity
                 </p>
-                <TableGrid :data="serverData.scanned_logs" :dataColumns="colDefs" />
+                <div class="h-[500px]">
+                    <TableGrid :data="serverData.scanned_logs" :dataColumns="colDefs" />
+                </div>
             </div>
 
         </div>

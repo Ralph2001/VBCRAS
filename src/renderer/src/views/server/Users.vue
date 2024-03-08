@@ -34,7 +34,7 @@
                             {{ user.name }}
                         </p>
                         <p class="text-xs italic text-gray-700 font-semibold truncate">
-                            Administrative Aide I
+                            {{ user.position }}
                         </p>
                     </div>
                 </div>

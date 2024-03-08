@@ -13,7 +13,8 @@
     --ag-range-selection-border-color: none;
     --ag-range-selection-border-style: none;
     --ag-range-selection-background-color: none;
-
+    --ag-row-border-width: 1px;
+    --ag-row-border-color: #F5F5F5;
 }
 </style>
 
@@ -54,7 +55,7 @@
 
 
                     <p class="text-sm font-bold">Type</p>
-                    <div class="grid  md:grid-cols-5   gap-2 ">
+                    <div class="flex flex-row flex-wrap gap-2 items-center justify-center">
                         <TypeBox label="Birth" value="Birth" v-model="scannedData.type" :error="v$.type.$error" />
                         <TypeBox label="Death" value="Death" v-model="scannedData.type" :error="v$.type.$error" />
                         <TypeBox label="Marriage" value="Marriage" v-model="scannedData.type" :error="v$.type.$error" />
@@ -123,6 +124,7 @@ import Dropdown from '../../components/client/inputs/Dropdown.vue';
 import Swal from 'sweetalert2'
 import TableGrid from '../../components/TableGrid.vue';
 import ActionBtn from '../../components/ActionBtn.vue'
+import Tag from '../../components/Tag.vue'
 
 
 onMounted(() => {
@@ -134,11 +136,32 @@ onMounted(() => {
 
 
 const colDefs = ref([
-    { field: "name", flex: 2, filter: true, floatingFilter: true },
-    { field: "type", flex: 1, filter: true },
-    { field: "year", flex: 1, filter: true },
-    { field: "action", flex: 1, cellRenderer: ActionBtn, cellClass: 'my-class' },
+    { field: "name", flex: 2, filter: true, floatingFilter: true, cellClass: 'font-semibold text-md' },
+    { field: "type", flex: 1, filter: true, cellRenderer: Tag, floatingFilter: true },
+    { field: "year", flex: 1, filter: true, cellClass: "font-semibold", floatingFilter: true },
+    { headerName: "Action", field: "filepath", flex: 1, cellRenderer: ActionBtn, cellClass: 'my-class' },
 ]);
+
+const months = [
+    "Janaury",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+]
+
+const years = computed(() => {
+    const year_S = new Date().getFullYear();
+    return Array.from({ length: year_S - 1900 }, (value, index) => year_S - index);
+});
+
 
 const Toast = Swal.mixin({
     toast: true,

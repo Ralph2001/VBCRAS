@@ -84,6 +84,20 @@ export const useScannedDocuments = defineStore('scanned', {
                 return true
             }
             return false
+        },
+        async deleteRecord(id, device_used) {
+
+            const valueID = id
+            const device_used_to_delete = device_used
+            let tokenStr = localStorage.getItem('token')
+            const host = localStorage.getItem("host");
+            axios
+                .delete(`http://${host}:1216/scanned/delete/${valueID}&${device_used_to_delete}`, {
+                    headers: { "Authorization": `Bearer ${tokenStr}` }
+                })
+                .then((response) => {
+                    this.refresh()
+                })
         }
     }
 })
