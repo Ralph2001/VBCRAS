@@ -129,7 +129,7 @@ onMounted(() => {
 const colDefs = ref([
     { field: "name", flex: 2, filter: true, floatingFilter: true, cellRenderer: (params) => `<span class="text-gray-800 font-semibold text-sm">${params.value}</span>` },
     { field: "action", flex: 1 },
-    { field: "device_used", flex: 1 },
+    { field: "device_used", headerName: "Device", flex: 1 },
     { field: "action_at", headerName: 'Time', flex: 1, valueFormatter: p => format(new Date(p.value), 'MMMM d, yyyy h:m a'), filter: true },
 ]);
 

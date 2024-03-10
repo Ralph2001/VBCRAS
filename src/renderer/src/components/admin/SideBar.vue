@@ -39,14 +39,15 @@
                         </li>
 
                         <li>
-                            <a href="#"
-                                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-gray-500 " />
+                            <router-link to="/server/scanned"
+                                active-class="text-white bg-blue-500 hover:text-white hover:bg-blue-600 group"
+                                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white  dark:hover:bg-gray-700 group">
+                                <font-awesome-icon icon="fa-solid fa-file-pdf"
+                                    class="text-gray-800 group-focus:text-white transition-all" />
                                 <span class="flex-1 ms-3 whitespace-nowrap">Scanned Documents</span>
-                                <!-- <span
-                                    class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> -->
-                            </a>
+                            </router-link>
                         </li>
+
                         <li>
                             <router-link to="/server/users"
                                 active-class="text-white bg-blue-500 hover:text-white hover:bg-blue-600 group"

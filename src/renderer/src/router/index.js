@@ -114,6 +114,19 @@ const router = createRouter({
           },
         },
         {
+          path: "scanned",
+          component: () => import("../views/server/Scanned.vue"),
+          name: "server_scanned",
+          beforeEnter: async (to, from) => {
+            const auth = useServerAuthStore();
+            const authenticated = await auth.isServerAuthenticated();
+            if (authenticated) {
+              return true;
+            }
+            return { name: "server_login" };
+          },
+        },
+        {
           path: "users",
           component: () => import("../views/server/Users.vue"),
           name: "server_users",
