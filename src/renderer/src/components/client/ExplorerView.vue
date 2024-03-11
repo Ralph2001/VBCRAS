@@ -304,20 +304,39 @@ const props = defineProps({
 // })
 
 
-const searchData = computed(() => {
-    const searchQueryLower = searchQuery.value.toLowerCase();
-    const filteredData = props.data.filter(
-        data => data.name.toLowerCase().includes(searchQueryLower)
-            && (
-                !type.value || data.type === type.value
-            ) && (
-                !type.value || !year.value || data.year === year.value
-            ) && (
-                !type.value || !year.value || !month.value || data.month === month.value
-            )
-    );
+// const searchData = computed(() => {
+//     const searchQueryLower = searchQuery.value.toLowerCase();
+//     const filteredData = props.data.filter(
+//         data => data.name.toLowerCase().includes(searchQueryLower)
+//             && (
+//                 !type.value || data.type === type.value
+//             ) && (
+//                 !type.value || !year.value || data.year === year.value
+//             ) && (
+//                 !type.value || !year.value || !month.value || data.month === month.value
+//             )
+//     );
 
-    return [...new Set(filteredData.map(data => data))].sort((a, b) => a - b);
+//     return [...new Set(filteredData.map(data => data))].sort((a, b) => a - b);
+// });
+
+
+const searchData =  computed(() => {
+  const searchQueryLower = searchQuery.value.toLowerCase();
+  const searchWords = searchQueryLower.split(/\s+/); // Split by whitespace
+
+  const filteredData = props.data.filter(
+    data => {
+      const nameLower = data.name.toLowerCase();
+
+      return searchWords.every(word => nameLower.includes(word)) &&
+        (!type.value || data.type === type.value) &&
+        (!year.value || data.year === year.value) &&
+        (!year.value || !month.value || data.month === month.value);
+    }
+  );
+
+  return [...new Set(filteredData.map(data => data))].sort((a, b) => a - b);
 });
 
 

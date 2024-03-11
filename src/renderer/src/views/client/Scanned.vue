@@ -125,7 +125,8 @@ import Swal from 'sweetalert2'
 import TableGrid from '../../components/TableGrid.vue';
 import ActionBtn from '../../components/ActionBtn.vue'
 import Tag from '../../components/Tag.vue'
-
+import TypeFilter from '../../components/TypeFilter.vue';
+// import Swal from 'sweetalert2'
 
 onMounted(() => {
     Documents.getScanned()
@@ -137,8 +138,8 @@ onMounted(() => {
 
 const colDefs = ref([
     { field: "name", flex: 2, filter: true, floatingFilter: true, cellClass: 'font-semibold text-md' },
-    { field: "type", flex: 1, filter: true, cellRenderer: Tag, floatingFilter: true },
-    { field: "year", flex: 1, filter: true, cellClass: "font-semibold", floatingFilter: true },
+    { field: "type", flex: 1, cellRenderer: Tag, filter: TypeFilter },
+    { field: "year", flex: 1, filter: true, cellClass: "font-semibold" },
     { headerName: "Action", field: "filepath", flex: 1, cellRenderer: ActionBtn, cellClass: 'my-class' },
 ]);
 
@@ -225,11 +226,12 @@ function handleDrop(event) {
 
     for (const file of files) {
         if (file.type != "application/pdf") {
-            Swal({
+            Swal.fire({
                 icon: "error",
                 title: "Upload PDF only!",
                 text: "File",
             });
+            close_modal()
             return;
         }
 

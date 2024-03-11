@@ -26,11 +26,20 @@
                 <p v-if="v$.confirmPassword.$error" class="mt-2 text-sm text-red-600 dark:text-red-500"><span
                         class="font-medium">Error!</span> {{ v$.confirmPassword.$errors[0].$message }}</p>
             </InputField>
-            <InputField label="Position" type="text" v-model="formData.position"
-                :error="v$.position.$error" @keyup.enter="login()">
+            <!-- <InputField label="Position" type="text" v-model="formData.position" :error="v$.position.$error"
+                @keyup.enter="login()">
                 <p v-if="v$.position.$error" class="mt-2 text-sm text-red-600 dark:text-red-500"><span
                         class="font-medium">Error!</span> {{ v$.position.$errors[0].$message }}</p>
-            </InputField>
+            </InputField> -->
+
+            <div class="flex flex-col w-[18rem]">
+                <label for="countries" class="block  text-sm font-medium text-gray-900 dark:text-white">Position</label>
+                <select id="countries" v-model="formData.position"
+                    class="bg-white border border-gray-300 text-gray-900 text-sm font-bold rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option selected disabled></option>
+                    <option v-for="position in positions" :key="position" :value="position">{{ position }}</option>
+                </select>
+            </div>
 
             <div class="ml-auto flex items-end w-[20rem] justify-between mt-10">
                 <router-link to="/" class="text-gray-900 border-black h-6 hover:border-b-2">
@@ -39,8 +48,9 @@
 
                 <button type="button" @click="login()"
                     class="text-white bg-blue-700 hover:bg-blue-800 flex items-center active:scale-95 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                    <svg v-if="loader" aria-hidden="true" role="status" class="inline w-4 h-4 me-2 text-white animate-spin"
-                        viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg v-if="loader" aria-hidden="true" role="status"
+                        class="inline w-4 h-4 me-2 text-white animate-spin" viewBox="0 0 100 101" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
                             fill="#E5E7EB" />
@@ -82,6 +92,16 @@ const auth = AuthStore()
 onMounted(() => {
     auth.error = null
 })
+
+
+const positions = ref([
+    'Administrative Aide I',
+    'Administrative Aide II',
+    'Administrative Aide III',
+    'Administrative Assistant I',
+    'Administrative Assistant II',
+    'Administrative Assistant III',
+])
 
 const formData = reactive({
     username: '',
