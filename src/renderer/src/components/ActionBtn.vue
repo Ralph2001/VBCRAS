@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center justify-center h-full gap-1 ">
+    <div class="flex items-center justify-center h-full gap-1 relative">
         <button type="button" @click="handleClick(props.params)" title="Open File"
             class="py-1 px-3   text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-sm border border-gray-200 active:border-none hover:border-gray-300  hover:text-blue-700 focus:z-10 ring-0 focus:right-0 active:scale-95 transition-all  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Open
             File</button>
@@ -22,13 +22,17 @@
                     fill="currentColor" />
             </svg>
         </button>
-        <!-- {{ props.data.id }} -->
+
         <button @click="deleteScanned(props.params.data.id)"
             class="text-gray-700 items-center flex justify-center hover:text-gray-800 h-10 active:scale-90 transition-all "
             type="button">
             <font-awesome-icon icon="fa-solid fa-trash"
                 class=" border px-[0.6rem] py-[0.5rem] hover:text-red-400 rounded-md hover:border-gray-300 bg-white" />
         </button>
+
+
+
+
 
     </div>
 </template>
@@ -40,6 +44,13 @@ const PCName = useComputerStore();
 import { useScannedDocuments } from "../stores/scanned";
 const Documents = useScannedDocuments();
 import Swal from 'sweetalert2'
+const flag = ref(false)
+
+
+const flagSwitch = () => {
+    flag.value = !flag.value
+}
+
 const props = defineProps({
     params: {
         type: Object,
@@ -69,7 +80,7 @@ const openFile = async (filepath, filename) => {
             [{
                 name: filename,
                 device_used: device,
-                action: 'Opened'
+                action: 'Open'
             }
             ])
 
@@ -108,7 +119,7 @@ const openPath = async (params) => {
             [{
                 name: filename,
                 device_used: device,
-                action: 'Opened Path'
+                action: 'Open Path'
             }
             ])
 

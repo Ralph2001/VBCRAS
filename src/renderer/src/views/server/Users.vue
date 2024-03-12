@@ -10,9 +10,9 @@
         </div>
         <div class="grid grid-cols-2 w-full items-center mt-10">
             <div class="">
-                <input type="text"
+                <!-- <input type="text"
                     class="border rounded-md border-gray-300 py-2 px-3 w-[15rem] font-semibold placeholder:text-xs text-gray-800"
-                    placeholder="Search">
+                    placeholder="Search"> -->
             </div>
             <div class="flex flex-row items-center justify-end px-10 gap-2 p-2">
                 <button type="button"

@@ -99,8 +99,6 @@ const positions = ref([
     'Administrative Aide II',
     'Administrative Aide III',
     'Administrative Assistant I',
-    'Administrative Assistant II',
-    'Administrative Assistant III',
 ])
 
 const formData = reactive({

@@ -1,6 +1,6 @@
 <template>
     <div class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+        <div class="p-4  rounded-lg dark:border-gray-700">
             <div class="grid grid-rows-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-4">
 
                 <div

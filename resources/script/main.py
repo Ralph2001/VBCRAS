@@ -176,14 +176,21 @@ def protected():
 @jwt_required()
 def users():
 
-    users = User.query.filter_by(is_admin=False).all()
+    # users = User.query.filter_by(is_admin=False).all()
+    users = db.session.execute(db.select(User).join(UserPermissions, User.id == UserPermissions.user_id))
     users_list = []
 
     for user in users:
         data = {
-            "id" : user.id,
-            "name": user.username,
-            "is_admin": user.is_admin,
+            "id" : user.User.id,
+            "name": user.User.username,
+            "position": user.User.position,
+            'permissions': {
+                'scanned': user.User,
+                # 'scanned_add': user.User.scanned_add,
+                # 'scanned_view': user.User.scanned_view,
+                # 'scanned_delete': user.User.scanned_delete,
+            }
         }
         users_list.append(data)
 
@@ -344,4 +351,4 @@ def remove_scanned(id, device_used_to_delete):
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, handle_sigterm)
     CORS(app)
-    app.run(host="0.0.0.0", port=1216)
+    app.run(host="0.0.0.0", port=1216, debug=True)
