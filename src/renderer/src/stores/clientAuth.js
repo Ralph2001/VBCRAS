@@ -80,5 +80,6 @@ export const AuthStore = defineStore("auth", {
       localStorage.removeItem("token");
       this.router.push('/client/login')
     }
+  
   },
 });

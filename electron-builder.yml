@@ -1,5 +1,5 @@
-appId: com.localcivilregistry.app
-productName: lcro
+appId: com.vbcras.app
+productName: Vital Bridge Civil Registry and Archive System (VBCRAS)
 directories:
   buildResources: build
 files:
@@ -11,7 +11,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: Local Civil Registry
+  executableName: VBCRAS
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

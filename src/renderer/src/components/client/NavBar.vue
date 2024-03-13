@@ -4,9 +4,8 @@
             <div class="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-4 relative ">
                 <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
                     <img src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" />
-                    <span class="self-center text-lg font-semibold whitespace-nowrap dark:text-white">Civil Registry
-                        Archive
-                        System</span>
+                    <span
+                        class="self-center text-lg text-gray-800 font-semibold whitespace-nowrap dark:text-white">VBCRAS</span>
                 </a>
                 <button data-collapse-toggle="navbar-dropdown" type="button"
                     class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"

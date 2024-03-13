@@ -22,19 +22,20 @@
                 <ul class="flex flex-wrap -mb-px">
                     <li class="me-2" @click="allbtn()">
                         <p :class="{ 'text-blue-600 border-b-2 border-blue-600': all }"
-                            class="inline-block p-4  rounded-t-lg cursor-pointer">All Scanned
+                            class="inline-block p-4  rounded-t-lg cursor-pointer"><font-awesome-icon
+                                icon="fa-solid fa-print" /> All Scanned
                             Documents</p>
                     </li>
                     <li class="me-2" @click="logsbtn()">
                         <p :class="{ 'text-blue-600 border-b-2 border-blue-600': logs }"
                             class="inline-block p-4  rounded-t-lg  cursor-pointer"><font-awesome-icon
-                                icon="fa-solid fa-info" />
+                                icon="fa-solid fa-info" /><font-awesome-icon icon="fa-solid fa-scroll" /> 
                             Logs</p>
                     </li>
                     <li class="me-2" @click="flagsbtn()">
                         <p :class="{ 'text-blue-600 border-b-2 border-blue-600': flags }"
                             class="inline-block p-4  rounded-t-lg cursor-pointer"><font-awesome-icon
-                                icon="fa-solid fa-flag" /> Flags</p>
+                                icon="fa-solid fa-flag" /> Report</p>
                     </li>
                     <li class="me-2" @click="recordbtn()">
                         <p :class="{ 'text-blue-600 border-b-2 border-blue-600': record }"
@@ -54,23 +55,28 @@
             </div>
             <div class="flex flex-col  items-center h-full" v-if="record">
                 <div class="grid grid-cols-5 w-full gap-2">
-                    <div class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
+                    <div
+                        class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
                         <p class="text-sm font-semibold uppercase ">Birth</p>
                         {{ birth }}
                     </div>
-                    <div class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
+                    <div
+                        class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
                         <p class="text-sm font-semibold uppercase ">Death</p>
                         {{ death }}
                     </div>
-                    <div class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
+                    <div
+                        class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
                         <p class="text-sm font-semibold uppercase ">Marriage</p>
                         {{ marriage }}
                     </div>
-                    <div class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
+                    <div
+                        class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
                         <p class="text-sm font-semibold uppercase ">Legal Instrument</p>
                         {{ legal_instrument }}
                     </div>
-                    <div class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
+                    <div
+                        class="flex flex-col items-center  p-2 justify-center border rounded-md hover:scale-95 transition-all hover:shadow">
                         <p class="text-sm font-semibold uppercase ">Others</p>
                         {{ others }}
                     </div>
@@ -171,7 +177,7 @@ const allDefs = ref([
     { field: "year", flex: 1, filter: true, cellClass: "font-semibold" },
     { field: "uploaded_by", headerName: 'Uploaded By', flex: 1, filter: true, cellClass: "font-semibold" },
     { field: "device_used", headerName: 'Device', flex: 1, filter: true, cellClass: "font-semibold" },
-    { field: "created_at", headerName: 'Created At', valueFormatter: p => format(new Date(p.value), 'MMMM d, yyyy h:m a'), flex: 1, filter: true, cellClass: "font-semibold" },
+    { field: "created_at", headerName: 'Created At', valueFormatter: p => format(new Date(p.value), 'MMM d, yyyy h:mm a'), flex: 1, filter: true, cellClass: "font-semibold" },
     { headerName: "Action", field: "filepath", flex: 1, cellRenderer: ActionBtn, cellClass: 'my-class', },
 ])
 
@@ -180,7 +186,7 @@ const colDefs = ref([
     { field: "action", flex: 1 },
     { field: "action_by", headerName: "User", flex: 1, filter: true, floatingFilter: true },
     { field: "device_used", headerName: "Device", flex: 1 },
-    { field: "action_at", headerName: 'Time', flex: 1, valueFormatter: p => format(new Date(p.value), 'MMMM d, yyyy h:m a'), filter: true },
+    { field: "action_at", headerName: 'Time', flex: 1, valueFormatter: p => format(new Date(p.value), 'MMM d, yyyy h:mm a'), filter: true },
 ]);
 
 

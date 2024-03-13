@@ -22,10 +22,10 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faTrash, faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear, faFilePdf, faDesktop, faFilter, faFolder, faBarsProgress, faMagnifyingGlass, faCircleArrowLeft, faRepeat, faArrowRotateLeft, faXmark, faFolderOpen, faChevronCircleRight, faCircleQuestion, faUserCheck, faChartLine, faFlag} from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear, faFilePdf, faDesktop, faFilter, faFolder, faBarsProgress, faMagnifyingGlass, faCircleArrowLeft, faRepeat, faArrowRotateLeft, faXmark, faFolderOpen, faChevronCircleRight, faCircleQuestion, faUserCheck, faChartLine, faFlag, faPrint, faScroll} from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
-library.add( faTrash, faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear, faFilePdf, faDesktop, faFilter, faFolder, faBarsProgress, faMagnifyingGlass, faCircleArrowLeft, faRepeat, faArrowRotateLeft, faXmark, faFolderOpen, faChevronCircleRight,faCircleQuestion, faUserCheck, faChartLine, faFlag )
+library.add( faTrash, faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear, faFilePdf, faDesktop, faFilter, faFolder, faBarsProgress, faMagnifyingGlass, faCircleArrowLeft, faRepeat, faArrowRotateLeft, faXmark, faFolderOpen, faChevronCircleRight,faCircleQuestion, faUserCheck, faChartLine, faFlag, faPrint, faScroll )
 
 import "./assets/index.css";
 import 'flowbite';

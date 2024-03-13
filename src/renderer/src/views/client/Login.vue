@@ -3,8 +3,7 @@
 
 
         <img src="../../assets/logo.png" class="h-20 mt-5 mb-5" alt="">
-        <p class="text-2xl text-gray-900 font-medium uppercase">Civil Registry Archive
-            System</p>
+        <p class="text-lg text-gray-900 font-medium uppercase">Vital Bridge Civil Registry and Archive System</p>
         <div class="w-[15rem] mb-5 mt-5">
             <div v-if="auth.error"
                 class="p-4 text-sm w-full text-red-800 rounded-sm bg-red-50 dark:bg-gray-800 dark:text-red-400"

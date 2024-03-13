@@ -22,10 +22,10 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-3 w-full  mt-20 items-center">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 w-full  mt-20 items-center">
             <div v-for="user in data.users" :key="user.id"
-                class="flex flex-row justify-between border active:scale-90 rounded-md h-32 items-center p-2 hover:scale-95 transition-all cursor-pointer hover:shadow-sm">
-                <div class="grid grid-flow-col w-full  h-full" @click="userCheck(user.id)">
+                class="flex flex-row justify-between border active:scale-90 rounded-md h-32 items-center p-2 hover:scale-95 transition-all cursor-pointer hover:shadow-sm" @click="userCheck(user.id)">
+                <div class="grid grid-flow-col w-full  h-full">
                     <div class="flex items-center justify-center w-[80%]  ">
                         <img src="../../assets/logo.png" class="h-16 rounded-full" alt="">
                     </div>
@@ -59,7 +59,9 @@ onMounted(() => {
 })
 
 
-const userCheck = () => {
-    router.push(`/server/users/profile`)
+
+const userCheck = (id) => {
+   
+    router.push(`/server/users/profile/${id}`)
 }
 </script>

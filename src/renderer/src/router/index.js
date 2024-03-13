@@ -3,6 +3,7 @@ import { useHostStore } from "../stores/connection";
 import { AuthStore } from "../stores/clientAuth";
 import { useServerAuthStore } from "../stores/ServerAuth";
 import { useServerStore } from "../stores/server";
+import { useUserData } from "../stores/clientData";
 
 import { createRouter, createMemoryHistory } from "vue-router";
 
@@ -140,10 +141,17 @@ const router = createRouter({
           },
         },
         {
-          path: "users/profile",
+          path: "users/profile/:id",
           component: () => import("../views/server/users/profile.vue"),
           name: "check_users",
           beforeEnter: async (to, from) => {
+            // console.log(to.params.id)
+            const user_data = useUserData()
+            const getUserData = await user_data.getUserData(to.params.id)
+            if (getUserData) {
+              user_data.getUserScannedLogs()
+            }
+
             const auth = useServerAuthStore();
             const authenticated = await auth.isServerAuthenticated();
             if (authenticated) {

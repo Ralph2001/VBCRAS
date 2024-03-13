@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, DateTime, func
+from sqlalchemy import desc
 from sqlalchemy.orm import class_mapper
 from werkzeug.exceptions import NotFound
 
@@ -156,28 +157,28 @@ def connect():
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
-    user = db.session.execute(db.select(User).filter_by(id=current_user)).scalar_one()
-    permissions = db.session.execute(db.select(UserPermissions).filter_by(user_id=current_user)).scalar_one()
+    user = db.session.execute(db.select(User).join(UserPermissions, User.id == UserPermissions.user_id).where(User.id == current_user)).scalar_one()
     
-    serialized_user = {
+    serialize = {
         'username': user.username,
         'is_admin': user.is_admin,
-        'permissions': {
-            'scanned': permissions.scanned,
-            'scanned_add': permissions.scanned_add,
-            'scanned_view': permissions.scanned_view,
-            'scanned_delete': permissions.scanned_delete,
+            'permissions': {
+                'scanned': user.permissions[0].scanned,
+                'scanned_add': user.permissions[0].scanned_add,
+                'scanned_view': user.permissions[0].scanned_view,
+                'scanned_delete': user.permissions[0].scanned_delete,
+         }
         }
-    }
-    return jsonify(serialized_user)
+        
+    return jsonify(serialize)
+
 
     
 @app.route('/users', methods=['GET', 'POST'])
 @jwt_required()
 def users():
 
-    # users = User.query.filter_by(is_admin=False).all()
-    users = db.session.execute(db.select(User).join(UserPermissions, User.id == UserPermissions.user_id))
+    users = db.session.execute(db.select(User).join(UserPermissions, User.id == UserPermissions.user_id).where(User.is_admin == False))
     users_list = []
 
     for user in users:
@@ -185,18 +186,44 @@ def users():
             "id" : user.User.id,
             "name": user.User.username,
             "position": user.User.position,
-            'permissions': {
-                'scanned': user.User,
-                # 'scanned_add': user.User.scanned_add,
-                # 'scanned_view': user.User.scanned_view,
-                # 'scanned_delete': user.User.scanned_delete,
+            "permission": {
+                "scanned": user.User.permissions[0].scanned,
+                'scanned': user.User.permissions[0].scanned,
+                'scanned_add': user.User.permissions[0].scanned_add,
+                'scanned_view': user.User.permissions[0].scanned_view,
+                'scanned_delete': user.User.permissions[0].scanned_delete,
+                
             }
         }
         users_list.append(data)
 
     return jsonify({
-        'message': 'success',
+
         'users': users_list,
+    })
+
+@app.route('/user/select/<int:id>', methods=['GET'])
+@jwt_required()
+def select_user(id):
+
+    user = db.session.execute(db.select(User).join(UserPermissions, User.id == UserPermissions.user_id).where(User.id == id)).scalar_one()
+
+    user_data = {
+        "id" : user.id,
+        "name": user.username,
+        "position": user.position,
+        "permission": {
+            "scanned": user.permissions[0].scanned,
+            'scanned': user.permissions[0].scanned,
+            'scanned_add': user.permissions[0].scanned_add,
+            'scanned_view': user.permissions[0].scanned_view,
+            'scanned_delete': user.permissions[0].scanned_delete,
+            
+        }
+    }
+       
+    return jsonify({
+        'user_data': user_data,
     })
 
 
@@ -241,7 +268,7 @@ def signup():
 @jwt_required()
 def scanned():
 
-        scans = db.session.execute(db.select(ScannedDocuments).order_by(ScannedDocuments.id)).scalars()
+        scans = db.session.execute(db.select(ScannedDocuments).order_by(desc(ScannedDocuments.id))).scalars()
         scans_list = []
         
         for scan in scans:
@@ -277,7 +304,7 @@ def scanned_log_add():
 @jwt_required()
 def scanned_log_list():
     
-        scanned_logs = db.session.execute(db.select(DocumentsLog).order_by(DocumentsLog.id)).scalars()
+        scanned_logs = db.session.execute(db.select(DocumentsLog).order_by(desc(DocumentsLog.id))).scalars()
         scanned_list = []
         
         for scan in scanned_logs:
@@ -288,6 +315,21 @@ def scanned_log_list():
             'message': 'success',
             'scans': scanned_list,
         })
+        
+@app.route('/scanned/log/view/<string:user_name>', methods=['GET'])
+@jwt_required()
+def scanned_log_by_user(user_name):
+    
+        scanned_logs = db.session.execute(db.select(DocumentsLog).order_by(desc(DocumentsLog.id)).where(DocumentsLog.action_by == user_name)).scalars()
+        scanned_list = []
+        
+        for scan in scanned_logs:
+            mapped_scan = {column.key: getattr(scan, column.key) for column in class_mapper(DocumentsLog).columns}
+            scanned_list.append(mapped_scan)
+        
+        return jsonify({
+            'logs': scanned_list,
+        })       
 
 @app.route('/scanned/add', methods=['POST'])
 @jwt_required()

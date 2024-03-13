@@ -10,10 +10,11 @@
                             Total Scanned Documents
                         </p>
                     </div>
-                    <div class="flex px-5 items-center w-full sm:justify-center md:justify-normal p-2 gap-2 mb-auto group">
+                    <div
+                        class="flex px-5 items-center w-full sm:justify-center md:justify-normal p-2 gap-2 mb-auto group">
                         <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 text-4xl ms-5 me-1" />
                         <span class="text-lg font-base font-medium truncate">{{ Documents.scanned.length
-                        }}</span>
+                            }}</span>
                     </div>
 
                 </div>

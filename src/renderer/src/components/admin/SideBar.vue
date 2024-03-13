@@ -18,7 +18,7 @@
             <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                 <a href="#" class="flex items-center ps-2.5 mb-5 mt-10">
                     <img src="../../assets/logo.png" class="md:h-12 me-3 sm:h-7" alt="Flowbite Logo" />
-                    <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">System</span>
+                    <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">VBCRAS</span>
                 </a>
                 <div class="flex flex-col justify-between h-[calc(100vh-140px)] ">
                     <ul class="space-y-2 font-medium ">
@@ -42,8 +42,7 @@
                             <router-link to="/server/scanned"
                                 active-class="text-white bg-blue-500 hover:text-white hover:bg-blue-600 group"
                                 class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white  dark:hover:bg-gray-700 group">
-                                <font-awesome-icon icon="fa-solid fa-file-pdf"
-                                    />
+                                <font-awesome-icon icon="fa-solid fa-file-pdf" />
                                 <span class="flex-1 ms-3 whitespace-nowrap">Scanned Documents</span>
                             </router-link>
                         </li>

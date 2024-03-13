@@ -1,6 +1,5 @@
-#  Civil Registry Archive System
+#  Vital Bridge Civil Registry and Archive System (VBCRAS)
 
-Gawa ko skl
 
 An Electron application with Vue
 

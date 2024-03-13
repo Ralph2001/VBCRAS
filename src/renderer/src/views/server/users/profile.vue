@@ -12,8 +12,8 @@
                     <img src="../../../assets/logo.png" class="h-9 " alt="">
                 </div>
                 <div class="flex flex-col ms-2">
-                    <p class="text-2xl font-bold text-gray-700">Ralph A. Villanueva</p>
-                    <p class="text-md italic text-gray-600">Adminstrative Aide I</p>
+                    <p class="text-2xl font-bold text-gray-700">{{ user.user_data.name }}</p>
+                    <p class="text-md italic text-gray-600">{{ user.user_data.position }}</p>
                 </div>
             </div>
             <div class="flex items-center justify-end  px-10">
@@ -62,7 +62,8 @@
                 <div
                     class="flex basis-[14rem] sm:flex-grow bg-white gap-2 items-center px-5 py-2 rounded-lg h-[4rem] border hover:shadow-sm transition-all cursor-pointer">
                     <div>
-                        <input type="checkbox" class="border-gray-300 rounded-full" checked>
+                        <input type="checkbox" class="border-gray-300 rounded-full"
+                            :checked="user.user_data.permission.scanned">
                     </div>
                     <div class="flex flex-col justify-start">
                         <p class="text-md ms-2 font-semibold text-gray-700">Access this App</p>
@@ -72,7 +73,8 @@
                 <div
                     class="flex  basis-[14rem] sm:flex-grow bg-white gap-2 items-center px-5 py-2 rounded-lg h-[4rem] border hover:shadow-sm transition-all cursor-pointer">
                     <div>
-                        <input type="checkbox" class="border-gray-300  rounded-full" checked>
+                        <input type="checkbox" class="border-gray-300  rounded-full"
+                            :checked="user.user_data.permission.scanned_view">
                     </div>
                     <div class="flex flex-col justify-start">
                         <p class="text-md ms-2 font-semibold text-gray-700">View Records</p>
@@ -82,7 +84,8 @@
                 <div
                     class="flex  basis-[14rem] sm:flex-grow bg-white gap-2 items-center px-5 py-2 rounded-lg h-[4rem] border hover:shadow-sm transition-all cursor-pointer">
                     <div>
-                        <input type="checkbox" class="border-gray-300  rounded-full">
+                        <input type="checkbox" class="border-gray-300  rounded-full"
+                            :checked="user.user_data.permission.scanned_add">
                     </div>
                     <div class="flex flex-col justify-start">
                         <p class="text-md ms-2 font-semibold text-gray-700">Add Records</p>
@@ -92,7 +95,8 @@
                 <div
                     class="flex basis-[14rem] sm:flex-grow bg-white gap-2 items-center px-5 py-2 rounded-lg h-[4rem] border hover:shadow-sm transition-all cursor-pointer">
                     <div>
-                        <input type="checkbox" class="border-gray-300  rounded-full">
+                        <input type="checkbox" class="border-gray-300  rounded-full"
+                            :checked="user.user_data.permission.scanned_delete">
                     </div>
                     <div class="flex flex-col justify-start">
                         <p class="text-md ms-2 font-semibold text-gray-700">Remove Records</p>
@@ -105,7 +109,7 @@
                     <font-awesome-icon icon="fa-solid fa-chart-line" class="me-1 text-sm text-blue-600" /> Activity
                 </p>
                 <div class="h-[500px]">
-                    <TableGrid :data="serverData.scanned_logs" :dataColumns="colDefs" />
+                    <TableGrid :data="user.scanned_logs" :dataColumns="colDefs" />
                 </div>
             </div>
 
@@ -120,17 +124,21 @@ import TableDataAG from '../../../components/server/TableDataAG.vue';
 import { useServerDataStore } from '../../../stores/serverData.js'
 import { format } from "date-fns";
 import TableGrid from '../../../components/TableGrid.vue';
+import { useRoute } from 'vue-router';
+import { useUserData } from '../../../stores/clientData.js';
 
+
+const user = useUserData()
+const route = useRoute()
 const serverData = useServerDataStore()
 
-onMounted(() => {
-    serverData.getScannedLog()
-})
+
+
 const colDefs = ref([
     { field: "name", flex: 2, filter: true, floatingFilter: true, cellRenderer: (params) => `<span class="text-gray-800 font-semibold text-sm">${params.value}</span>` },
     { field: "action", flex: 1 },
     { field: "device_used", headerName: "Device", flex: 1 },
-    { field: "action_at", headerName: 'Time', flex: 1, valueFormatter: p => format(new Date(p.value), 'MMMM d, yyyy h:m a'), filter: true },
+    { field: "action_at", headerName: 'Time', flex: 1, valueFormatter: p => format(new Date(p.value), 'MMM d, yyyy h:mm a'), filter: true },
 ]);
 
 
