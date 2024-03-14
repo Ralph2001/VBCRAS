@@ -1,6 +1,5 @@
-
 <template>
-    <div class="h-screen container mx-auto relative" @keyup.ctrl.space="sayHi()">
+    <div class="h-screen relative px-4" @keyup.ctrl.space="sayHi()">
         <NavBar />
         <router-view v-slot="{ Component }">
             <transition mode="out-in" name="slide">
@@ -9,7 +8,7 @@
         </router-view>
     </div>
 </template>
-  
+
 <style>
 .slide_down-enter-active,
 .slide_down-leave-active {

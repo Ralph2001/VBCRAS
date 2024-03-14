@@ -31,7 +31,7 @@ export default {
                 'Birth',
                 'Marriage',
                 'Death',
-                'Legal Instrument',
+                'Legal Instruments',
                 'Other'
             ]
 

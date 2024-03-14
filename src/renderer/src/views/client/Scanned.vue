@@ -54,14 +54,23 @@
 
 
 
-                    <p class="text-sm font-bold">Type</p>
-                    <div class="flex flex-row flex-wrap gap-2 items-center justify-center">
-                        <TypeBox label="Birth" value="Birth" v-model="scannedData.type" :error="v$.type.$error" />
-                        <TypeBox label="Death" value="Death" v-model="scannedData.type" :error="v$.type.$error" />
+
+                    <p class="text-sm font-bold">Type </p>
+                    <div class="flex flex-row justify-center items-center">
+                        <div class="flex flex-row gap-1">
+                            <div v-for="uri in type"
+                                class="flex w-[7.5rem] items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200 transition-all">
+                                <fwb-radio :label="uri" :value="uri" v-model="scannedData.type" name="typeBox"
+                                    class="cursor-pointer" />
+
+                            </div>
+                        </div>
+                        <!-- <TypeBox :options="type" v-model="scannedData.type" :error="v$.type.$error" :ischeck="scannedData.type" /> -->
+                        <!-- <TypeBox label="Death" value="Death" v-model="scannedData.type" :error="v$.type.$error" />
                         <TypeBox label="Marriage" value="Marriage" v-model="scannedData.type" :error="v$.type.$error" />
                         <TypeBox label="Legal Instrument" value="Legal Instrument" v-model="scannedData.type"
                             :error="v$.type.$error" />
-                        <TypeBox label="Other" value="Other" v-model="scannedData.type" :error="v$.type.$error" />
+                        <TypeBox label="Other" value="Other" v-model="scannedData.type" :error="v$.type.$error" /> -->
                     </div>
                     <div class="flex md:flex-row  flex-col gap-2 mt-3 ">
 
@@ -126,6 +135,8 @@ import TableGrid from '../../components/TableGrid.vue';
 import ActionBtn from '../../components/ActionBtn.vue'
 import Tag from '../../components/Tag.vue'
 import TypeFilter from '../../components/TypeFilter.vue';
+import { FwbRadio } from 'flowbite-vue';
+
 // import Swal from 'sweetalert2'
 
 onMounted(() => {
@@ -158,10 +169,21 @@ const months = [
     "December"
 ]
 
+const type = [
+    "Birth",
+    "Marriage",
+    "Death",
+    "Legal Instruments",
+    "Other"
+]
+
 const years = computed(() => {
     const year_S = new Date().getFullYear();
     return Array.from({ length: year_S - 1900 }, (value, index) => year_S - index);
 });
+
+const year = ref(years.value)
+
 
 
 const Toast = Swal.mixin({
@@ -212,6 +234,11 @@ function close_modal() {
     modal.value = false
     data.value = []
     dropzone.value = false
+    scannedData.type = ''
+    scannedData.year = ''
+    scannedData.month = ''
+
+
 
 }
 
@@ -225,6 +252,45 @@ function handleDrop(event) {
 
 
     for (const file of files) {
+
+        if (files[0]) {
+            const replica = file.path.replace('1946-2024', '').replace(/\\/g, ' ').replace('C:\\Users\\' + desktop.desktop_name + '\\', '').split(' ');
+
+            for (const rep of replica) {
+                const reptolower = rep.toLowerCase()
+                for (const inmonth of months) {
+                    const inmonthtolower = inmonth.toLowerCase()
+                    if (reptolower === inmonthtolower) {
+                        scannedData.month = inmonth
+                    }
+
+                }
+                for (const intype of type) {
+                    const intypetolower = intype.toLowerCase()
+                    if (reptolower === intypetolower) {
+                        scannedData.type = intype
+                    }
+                }
+
+            }
+            if (scannedData.type === '') {
+                scannedData.type = 'Other'
+            }
+
+            year.value.forEach((taon) => {
+                replica.forEach((rep) => {
+                    if (rep.includes(taon)) {
+                        scannedData.year = taon
+                    }
+                })
+            });
+            // console.log(replica)
+        }
+
+
+
+
+
         if (file.type != "application/pdf") {
             Swal.fire({
                 icon: "error",

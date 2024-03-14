@@ -6,7 +6,7 @@
       'bg-blue-200': params.data.type === 'Death',
       'bg-gray-200': params.data.type === 'Other',
       'bg-red-200': params.data.type === 'Marriage',
-      'bg-yellow-100': params.data.type === 'Legal Instrument',
+      'bg-yellow-100': params.data.type === 'Legal Instruments',
 
     }">
       {{ params.data.type }} </p>

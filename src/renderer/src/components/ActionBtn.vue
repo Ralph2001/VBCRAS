@@ -6,7 +6,7 @@
 
 
         <button @click="openPath(props.params)" title="Open Path" :disabled="openFolderLoader"
-            :class="{ ' cursor-not-allowed': openFolderLoader }"
+            v-if="user.user_details.permissions.scanned_delete" :class="{ ' cursor-not-allowed': openFolderLoader }"
             class="text-gray-700 items-center flex  justify-center  hover:text-gray-800 h-8 active:scale-90 transition-all border px-[0.6rem] py-[0.5rem] rounded-md hover:border-gray-300 bg-white"
             type="button">
 
@@ -23,12 +23,25 @@
             </svg>
         </button>
 
-        <button @click="deleteScanned(props.params.data.id)"
+        <button @click="deleteScanned(props.params.data.id)" v-if="user.user_details.permissions.scanned_delete"
             class="text-gray-700 items-center flex justify-center hover:text-gray-800 h-10 active:scale-90 transition-all "
             type="button">
             <font-awesome-icon icon="fa-solid fa-trash"
                 class=" border px-[0.6rem] py-[0.5rem] hover:text-red-400 rounded-md hover:border-gray-300 bg-white" />
         </button>
+
+        <!-- <div>
+            <button @click="flagSwitch()"
+                class="text-gray-700 items-center flex justify-center text-xs hover:text-gray-800 h-10 active:scale-90 transition-all "
+                type="button">
+                <font-awesome-icon icon="fa-solid fa-flag"
+                    class=" border px-[0.6rem] py-[0.5rem] hover:text-blue-400 rounded-md hover:border-gray-300 bg-white" />
+            </button>
+
+            <div class="absolute bottom-0 h-20 w-20 bg-white z-50" v-if="flag">
+                Hi
+            </div>
+        </div> -->
 
 
 
@@ -45,6 +58,10 @@ import { useScannedDocuments } from "../stores/scanned";
 const Documents = useScannedDocuments();
 import Swal from 'sweetalert2'
 const flag = ref(false)
+import { AuthStore } from '../stores/clientAuth'
+
+
+const user = AuthStore()
 
 
 const flagSwitch = () => {

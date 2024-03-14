@@ -1,7 +1,7 @@
 <template>
     <div>
         <nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 ">
-            <div class="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-4 relative ">
+            <div class="w-full flex flex-wrap items-center justify-between mx-auto p-4 relative ">
                 <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
                     <img src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" />
                     <span

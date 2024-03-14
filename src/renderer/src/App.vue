@@ -8,6 +8,16 @@
   </div>
 </template>
 
+<script setup>
+import { onKeyStroke } from '@vueuse/core'
+
+onKeyStroke('Alt', (e) => {
+  e.preventDefault()
+
+  console.log('Hi')
+})
+</script>
+
 <style>
 .slide-enter-active,
 .slide-leave-active {
