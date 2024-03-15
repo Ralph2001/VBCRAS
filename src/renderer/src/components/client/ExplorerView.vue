@@ -321,22 +321,22 @@ const props = defineProps({
 // });
 
 
-const searchData =  computed(() => {
-  const searchQueryLower = searchQuery.value.toLowerCase();
-  const searchWords = searchQueryLower.split(/\s+/); // Split by whitespace
+const searchData = computed(() => {
+    const searchQueryLower = searchQuery.value.toLowerCase();
+    const searchWords = searchQueryLower.split(/\s+/); // Split by whitespace
 
-  const filteredData = props.data.filter(
-    data => {
-      const nameLower = data.name.toLowerCase();
+    const filteredData = props.data.filter(
+        data => {
+            const nameLower = data.name.toLowerCase();
 
-      return searchWords.every(word => nameLower.includes(word)) &&
-        (!type.value || data.type === type.value) &&
-        (!year.value || data.year === year.value) &&
-        (!year.value || !month.value || data.month === month.value);
-    }
-  );
+            return searchWords.every(word => nameLower.includes(word)) &&
+                (!type.value || data.type === type.value) &&
+                (!year.value || data.year === year.value) &&
+                (!year.value || !month.value || data.month === month.value);
+        }
+    );
 
-  return [...new Set(filteredData.map(data => data))].sort((a, b) => a - b);
+    return [...new Set(filteredData.map(data => data))].sort((a, b) => a - b);
 });
 
 
@@ -393,8 +393,25 @@ const years = computed(() => {
 });
 
 const months = computed(() => {
-    return [...new Set(filteredData.value.map(data => data.month))].sort((a, b) => a - b);
+    // const uniqueMonths = [...new Set(filteredData.value.map(data => data.month.toLowerCase()))];
+    const monthIndex = {
+        January: 0,
+        February: 1,
+        March: 2,
+        April: 3,
+        May: 4,
+        June: 5,
+        July: 6,
+        August: 7,
+        September: 8,
+        October: 9,
+        November: 10,
+        December: 11
+    };
+
+    return [...new Set(filteredData.value.map(data => data.month))].sort((a, b) => monthIndex[a] - monthIndex[b]);
 });
+
 
 const files = computed(() => {
     return filteredData.value.map(data => data).sort((a, b) => a - b);

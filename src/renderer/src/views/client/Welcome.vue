@@ -1,8 +1,9 @@
 <template>
     <div class="flex h-[calc(100vh-80px)] relative w-full overflow-y-scroll ">
-        <div class="flex flex-col  gap-5 px-24 w-full h-[calc(100vh-139px)] overflow-y-scroll pb-[6rem]">
-            <div class="bg-gray-50/50 rounded-xl h-full flex flex-col p-4">
-
+        <div class="flex flex-col   gap-5 px-24 w-full h-[calc(100vh-139px)] overflow-y-scroll pb-[6rem]">
+            <div class="bg-gray-50/50 rounded-xl flex flex-col p-4 h-[calc(100vh-400px)]"
+                >
+                <!-- <img src="../../assets/desktop.jpg" class="h-full" alt="" srcset=""> -->
             </div>
             <div class="flex gap-2 flex-col mt-auto">
                 <div
