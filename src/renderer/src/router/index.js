@@ -265,6 +265,24 @@ const router = createRouter({
             return { name: "client" };
           },
         },
+        {
+          path: "cce",
+          name: "client_cce",
+          component: () => import("../views/client/CCE.vue"),
+          beforeEnter: async (to, from) => {
+            const auth = AuthStore();
+            const authKey = await auth.isAuthenticated();
+            const con = useHostStore();
+            const connection = await con.isConnected();
+            if (connection) {
+              if (authKey) {
+                return true;
+              }
+              return { name: "client" };
+            }
+            return { name: "client" };
+          },
+        },
       ],
     },
   ],

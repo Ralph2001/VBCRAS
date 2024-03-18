@@ -12,7 +12,15 @@
                     class="absolute right-3 text-gray-500 hover:text-gray-700 cursor-pointer top-[0.80rem]" />
                 <font-awesome-icon icon="fa-solid fa-magnifying-glass"
                     class="text-gray-300 pointer-events-none absolute mt-[0.80rem] ml-2" />
-                <SearchFilter v-model="searchQuery" :hasValue="searchQuery" />
+                <!-- <SearchFilter v-model="searchQuery" :hasValue="searchQuery" /> -->
+
+
+                <input type="text" ref="input" v-model="searchQuery"
+                    :class="{ 'border-blue-600 border ring-2 ring-blue-400': searchQuery != '' }"
+                    class=" placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-full select-none"
+                    placeholder="Search">
+
+
 
             </div>
             <div class="flex justify-end items-center me-5">
@@ -93,14 +101,17 @@
             </div>
         </div>
 
-        <div class="flex flex-col p-4  overflow-y-scroll ">
+        <div class="flex flex-col p-4  overflow-y-scroll relative h-full">
             <ul class="w-full space-y-1 px-2 m list-none list-inside dark:text-gray-400">
                 <li v-if="!type && searchQuery == ''" v-for="type in types" :key="type" @click="selectType(type)"
                     class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
                     <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" /> {{ type }}
 
                 </li>
-                <li v-if="!data.length && searchQuery == ''" class="text-center text-gray-600 font-italic">Empty
+
+
+                <li v-if="!data.length && searchQuery == '' && !props.loading"
+                    class="text-center text-gray-600 font-italic">Empty
                     Data.
                 </li>
 
@@ -192,8 +203,10 @@ import SearchFilter from './SearchFilter.vue'
 import { useComputerStore } from '../../stores/computer';
 import { useScannedDocuments } from '../../stores/scanned';
 import Alert from '../Alert.vue';
+import { watchDebounced, refDebounced, onStartTyping } from '@vueuse/core'
 
 const showAlert = ref(false)
+
 
 
 const computer = useComputerStore()
@@ -206,7 +219,16 @@ const toggleBack = ref(false)
 const type = ref('');
 const year = ref('');
 const month = ref('');
-const searchQuery = ref('');
+const searchQuery = ref('')
+const input = ref(null)
+const search = refDebounced(searchQuery, 1000)
+
+onStartTyping(() => {
+    if (!input.value.active)
+        input.value.focus()
+})
+
+
 
 
 const openFile = async (filepath, filename) => {
@@ -268,7 +290,7 @@ const openPath = async (filepath, filename) => {
 
     } catch (error) {
         showAlert.value = true
-
+        console.log("Error opening file path")
         setTimeout(() => {
             showAlert.value = false
         }, 3000);
@@ -280,50 +302,13 @@ const props = defineProps({
     data: {
         type: Array,
         required: true,
-    },
+    }
 });
-
-// const searchData = computed(() => {
-//     const searchQueryLower = searchQuery.value.toLowerCase();
-
-//     if (type.value) {
-//         return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value).map(data => data))]
-//             .sort((a, b) => a - b)
-//     }
-//     else if (type.value && year.value) {
-//         return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value && data.year === year.value).map(data => data))]
-//             .sort((a, b) => a - b)
-//     }
-//     else if (type.value && year.value && month.value) {
-//         return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower) && data.type === type.value && data.year === year.value && data.month === month.value).map(data => data))]
-//             .sort((a, b) => a - b)
-//     }
-
-//     return [...new Set(props.data.filter(data => data.name.toLowerCase().includes(searchQueryLower)).map(data => data))]
-//         .sort((a, b) => a - b)
-// })
-
-
-// const searchData = computed(() => {
-//     const searchQueryLower = searchQuery.value.toLowerCase();
-//     const filteredData = props.data.filter(
-//         data => data.name.toLowerCase().includes(searchQueryLower)
-//             && (
-//                 !type.value || data.type === type.value
-//             ) && (
-//                 !type.value || !year.value || data.year === year.value
-//             ) && (
-//                 !type.value || !year.value || !month.value || data.month === month.value
-//             )
-//     );
-
-//     return [...new Set(filteredData.map(data => data))].sort((a, b) => a - b);
-// });
 
 
 const searchData = computed(() => {
-    const searchQueryLower = searchQuery.value.toLowerCase();
-    const searchWords = searchQueryLower.split(/\s+/); // Split by whitespace
+    const searchQueryLower = search.value.toLowerCase();
+    const searchWords = searchQueryLower.split(/\s+/);
 
     const filteredData = props.data.filter(
         data => {

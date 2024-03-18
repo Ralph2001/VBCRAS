@@ -4,7 +4,8 @@ import axios from "axios";
 export const useScannedDocuments = defineStore('scanned', {
     state: () => ({
         scanned: [],
-        asOf: "",
+        loading: false,
+        isFetched: false,
         viewMode: localStorage.getItem('SviewMode')
 
     }),
@@ -16,10 +17,18 @@ export const useScannedDocuments = defineStore('scanned', {
     actions: {
         async getScanned() {
             try {
-                const hostAdd = localStorage.getItem("host");
-                let tokenStr = localStorage.getItem('token')
-                const response = await axios.get(`http://${hostAdd}:1216/scanned`, { headers: { "Authorization": `Bearer ${tokenStr}` } });
-                this.scanned = response.data.scans;
+                if (!this.isFetched) {
+                    const hostAdd = localStorage.getItem("host");
+                    let tokenStr = localStorage.getItem('token')
+                    this.loading = true
+                    const response = await axios.get(`http://${hostAdd}:1216/scanned`, { headers: { "Authorization": `Bearer ${tokenStr}` } });
+                    this.loading = false
+                    this.isFetched = true
+                    this.scanned = response.data.scans;
+                }
+                else {
+                    console.log('⚡')
+                }
 
             } catch (error) {
                 console.error("Error fetching data:", error);
