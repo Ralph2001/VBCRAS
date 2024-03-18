@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 
+html,
+body{
+    height: 100%;
+}
+
 :root {
     --primary-50: 236 253 245;
     --primary-100: 209 250 229;
