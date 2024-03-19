@@ -23,7 +23,7 @@
 
         <div class="h-[calc(100vh-130px)] px-5 relative">
 
-            <Transition  leave-active-class="animate__animated animate__fadeOut">
+            <Transition leave-active-class="animate__animated animate__fadeOut">
                 <div v-if="Documents.loading"
                     class="text-center text-gray-600 font-italic flex flex-col justify-center items-center right-0 left-0 absolute h-full  border z-50 bg-white">
                     <div class="flex flex-row items-center">
@@ -53,7 +53,7 @@
 
 
         <Transition mode="out-in" name="zoom_in">
-            <Modal label="Scanned Documents" v-if="modal">
+            <Modal label="Scanned Documents" v-if="modal" medium>
                 <template v-slot:header>
                     <button type="button" @click="close_modal"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"

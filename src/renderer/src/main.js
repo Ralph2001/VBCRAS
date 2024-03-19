@@ -13,6 +13,9 @@ import Lara from './assets/presets/lara';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+import Vueform from '@vueform/vueform'
+import vueformConfig from './../../../vueform.config'
+
 import { RecycleScroller } from 'vue-virtual-scroller'
 
 /* import the fontawesome core */
@@ -40,6 +43,7 @@ pinia.use(({ store }) => {
 });
 app.use(router);
 app.use(pinia);
+app.use(Vueform, vueformConfig)
 app.component('RecycleScroller', RecycleScroller)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(VueSweetalert2);
