@@ -1,8 +1,8 @@
 <template>
     <div :class="width"
-        class="relative mt-2 p-4 flex flex-wrap items-center  bg-white  rounded-lg border  transition-all ">
+        class="relative mt-2 p-4 flex flex-wrap items-center  bg-blue-50/10 border border-blue-100  rounded-lg  ">
         <p
-            class="z-10 -top-[0.75rem] text-gray-800 left-3 absolute bg-white leading-2 font-base italic text-sm tracking-wide">
+            class="z-10 px-1 -top-[0.75rem] text-gray-800 left-3 absolute bg-white leading-2 font-base italic text-sm tracking-wide">
             {{ title }}
         </p>
         <slot></slot>
