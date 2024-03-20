@@ -13,7 +13,7 @@
                     class="z-50 right-0 absolute border bg-white shadow-lg divide-y divide-gray-100 rounded-lg  w-44 dark:bg-gray-700">
                     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                         <li v-for="RA in RA" :key="RA">
-                            <a href="#"
+                            <a @click="modalOpener(RA)"
                                 class="block px-4 py-2 font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                 {{ RA }}</a>
                         </li>
@@ -28,9 +28,9 @@
         </div>
 
 
-        <Modal large label="Create Document">
+        <Modal large label="Create Document" v-if="RA9048">
             <template v-slot:header>
-                <button type="button" @click=""
+                <button type="button" @click="closeModal"
                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                     data-modal-hide="default-modal"><svg class="w-3 h-3" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -41,10 +41,10 @@
             </template>
 
             <div class="flex flex-col gap-5 overflow-y-scroll py-3">
-                <Box title="Document Type">
+                <Box title="Document">
                     <div class="flex flex-row p-2 gap-2">
-                        <Select :options="Type" label="Type" />
-                        <Select :options="DocumentType" label="Document Type" />
+                        <Select :options="Type" label="Type" v-model="formData.type" />
+                        <Select :options="DocumentType" label="Document Type" v-model="formData.document_type" />
                     </div>
                 </Box>
                 <div class="w-full flex item-center justify-center mb-2">
@@ -56,25 +56,25 @@
                 <div class="grid grid-cols-2 gap-4">
                     <Box title="Petition Details" width="w-full">
                         <div class="grid grid-cols-2 gap-2 w-full">
-                            <Input label="Petition Number" />
-                            <Input label="Petitioner Name" />
-                            <Input label="Nationality" />
+                            <Input label="Petition Number" v-model="formData.petition_number" />
+                            <Input label="Petitioner Name" v-model="formData.petitioner_name" />
+                            <Input label="Nationality" v-model="formData.nationality" />
                         </div>
                     </Box>
 
                     <Box title="Petitioner Complete Address" width="w-full">
                         <div class="grid grid-cols-2 w-full gap-2 ">
-                            <Input label="Country" />
-                            <Input label="Province" />
-                            <Input label="City/Municipality" />
+                            <Input label="Country" v-model="formData.petitioner_country" />
+                            <Input label="Province" v-model="formData.petitioner_province" />
+                            <Input label="City/Municipality" v-model="formData.petitioner_city" />
 
-                            <Input label="Barangay" />
+                            <Input label="Barangay" v-model="formData.petitioner_barangay" />
                         </div>
                     </Box>
 
                 </div>
-                <div class="flex flex-row flex-wrap gap-2 ">
-                    <div class="basis-3/12">
+                <div class="flex flex-row flex-wrap gap-4 items-stretch">
+                    <div class="basis-[35%]">
                         <Box title="seeking for correction of the clerical error in: " width="w-full">
                             <div class="grid grid-rows-2 gap-2 w-full">
                                 <div class="flex items-center">
@@ -143,21 +143,63 @@
                 <div class="flex flex-col flex-wrap gap-2">
                     <div class="grow">
                         <Box title="The clerical error(s) to be corrected is (are): " width="w-ful">
-                            <div class="flex flex-col w-full">
-                                <div class="grid grid-cols-4  w-full gap-2 text-center ">
-                                    <p class="text-sm">Item No.</p>
-                                    <p class="text-sm">Description</p>
-                                    <p class="text-sm">From</p>
-                                    <p class="text-sm">To</p>
-                                </div>
-                                <div class="grid grid-cols-4  w-full gap-2 items-center">
-                                    <p class="text-sm text-center">1</p>
-                                    <Input />
-                                    <Input />
-                                    <Input />
+
+                            <div class="flex flex-col gap-2 w-full font-bold">
+                                <div class="flex flex-row w-full items-center justify-center gap-2">
+                                    <div class="basis-[10%]">
+                                        <p class="text-sm text-center">Item No.</p>
+                                    </div>
+                                    <div class="grow">
+                                        <p class="text-sm text-center">Description</p>
+
+                                    </div>
+                                    <div class="grow">
+                                        <p class="text-sm text-center">From</p>
+
+                                    </div>
+                                    <div class="grow">
+                                        <p class="text-sm text-center">To</p>
+
+                                    </div>
+
+
                                 </div>
 
                             </div>
+
+                            <div class="flex flex-col gap-2 w-full">
+                                <div class="flex flex-row w-full items-center gap-2" v-for="(item, index) in items"
+                                    :key="index">
+                                    <div class="basis-[10%]">
+                                        <p class="text-sm text-center">{{ index + 1 }}</p>
+                                    </div>
+                                    <div class="grow">
+                                        <Input v-model="formData.description[index]" />
+                                    </div>
+                                    <div class="grow">
+                                        <Input v-model="formData.from[index]" />
+                                    </div>
+                                    <div class="grow">
+                                        <Input v-model="formData.to[index]" />
+                                    </div>
+
+
+                                </div>
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" @click="addItem()"
+                                        class="py-2 px-4  mb-2 text-sm font-medium text-white bg-green-400  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+
+                                        Add
+                                    </button>
+                                    <button type="button" @click="removeItem(items.value)"
+                                        class="py-2 px-4  mb-2 text-sm font-medium text-white bg-red-400  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+
+
                         </Box>
                     </div>
                     <div class="grow">
@@ -197,21 +239,12 @@
                         </Box>
                     </div>
                 </div>
+
             </div>
             <template v-slot:footer>
-                <button type="button" :disabled="isSubmitting"
-                    :class="{ 'bg-green-400  hover:bg-green-500 active:scale-95': !isSubmitting, 'bg-green-300   cursor-not-allowed': isSubmitting }"
-                    class="py-2 px-4  mb-2 text-sm font-medium text-white  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    <svg aria-hidden="true" v-if="isSubmitting" role="status"
-                        class="inline w-4 h-4 me-1 text-white animate-spin" viewBox="0 0 100 101" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                            fill="#E5E7EB" />
-                        <path
-                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                            fill="currentColor" />
-                    </svg>
+                <button type="button" @click="submitForm()"
+                    class="py-2 px-4  mb-2 text-sm font-medium text-white bg-green-400  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+
                     Submit
                 </button>
 
@@ -225,7 +258,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import TableGrid from '../../components/TableGrid.vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import { FwbRadio } from 'flowbite-vue';
@@ -234,8 +267,36 @@ import Box from '../../components/essentials/Box.vue';
 import Select from '../../components/essentials/inputs/Select.vue';
 import Input from '../../components/essentials/inputs/Input.vue';
 
+const RA9048 = ref(false)
+
+const modalOpener = (RA) => {
+    if (RA === 'R.A. 9048') {
+        RA9048.value = !RA9048.value
+    }
+    else {
+        console.log('is it')
+    }
+}
+
+function closeModal() {
+    RA9048.value = false
+}
+
+
 const dropdown = ref(false)
 onClickOutside(dropdown, event => dropdown.value = false)
+
+const items = ref([1])
+
+
+const addItem = () => {
+    items.value.push('');
+}
+const removeItem = (index) => {
+    if (index >= 0 && index < items.value.length) {
+        items.value.splice(index, 1);
+    }
+}
 
 
 const RA = ref([
@@ -264,8 +325,34 @@ const colDefs = ref([
 
 ]);
 
+const formData = reactive({
+    type: ' ',
+    document_type: ' ',
+    petition_number: ' ',
+    petitioner_name: ' ',
+    nationality: '',
+    petitioner_country: ' ',
+    petitioner_province: ' ',
+    petitioner_city: ' ',
+    petitioner_barangay: ' ',
+    description: [],
+    from: [],
+    to: []
+});
 
-const data = ref([
-    "Ralph"
-])
+const submitForm = () => {
+
+    console.log(formData)
+
+    create_document()
+
+
+}
+
+
+const create_document = () => {
+
+
+
+}
 </script>

@@ -2,6 +2,8 @@ import { app, shell, BrowserWindow, ipcMain, utilityProcess } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
+import { generate } from '../generator/clerical_error'
+
 
 const { execFile } = require('child_process');
 const { spawn } = require('child_process');
@@ -22,6 +24,7 @@ for (var k in interfaces) {
     }
   }
 }
+
 
 
 const fs = require('fs-extra')
@@ -239,6 +242,9 @@ function mainWindow() {
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.localcivilregistry.office');
+
+
+
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
