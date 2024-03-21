@@ -1,9 +1,10 @@
 <template>
+
+    <!-- jalbertrosky@hotmail.com:Superc0c0 -->
     <div class="flex flex-col relative justify-center w-full">
         <div class="flex flex-row items-center p-3 px-5 mb-2">
             <p class="text-md font-semibold tracking-tight">FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME
-                <span class="text-xs font-base tracking-wide">R.A. 9048 /
-                    R.A. 10172</span>
+
             </p>
             <div class="relative ml-auto">
                 <button type="button" @click="dropdown = !dropdown"
@@ -14,7 +15,7 @@
                     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                         <li v-for="RA in RA" :key="RA">
                             <a @click="modalOpener(RA)"
-                                class="block px-4 py-2 font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                class=" cursor-pointer block px-4 py-2 font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                 {{ RA }}</a>
                         </li>
 
@@ -30,30 +31,27 @@
 
         <Modal large label="Create Document" v-if="RA9048">
             <template v-slot:header>
-                <button type="button" @click="closeModal"
-                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                    data-modal-hide="default-modal"><svg class="w-3 h-3" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
-                    </svg><span class="sr-only">Close modal</span>
-                </button>
+                <ModalCloseButton @click="closeModal" />
             </template>
 
-            <div class="flex flex-col gap-5 overflow-y-scroll py-3">
-                <Box title="Document">
-                    <div class="flex flex-row p-2 gap-2">
+            <div>
+                <Box title="Document" width="w-fit">
+                    <div class="grid grid-cols-2 p-2 gap-3">
                         <Select :options="Type" label="Type" v-model="formData.type" />
                         <Select :options="DocumentType" label="Document Type" v-model="formData.document_type" />
                     </div>
                 </Box>
+            </div>
+
+            <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-10"
+                v-if="formData.type === 'CCE' && formData.document_type != ''">
                 <div class="w-full flex item-center justify-center mb-2">
                     <p class="text-lg uppercase font-semibold">PETITION FOR CORRECTION OF CLERICAL ERROR IN THE
-                        CERTIFICATE OF LIVE
-                        BIRTH
+                        CERTIFICATE OF {{ formData.document_type }}
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
+
                     <Box title="Petition Details" width="w-full">
                         <div class="grid grid-cols-2 gap-2 w-full">
                             <Input label="Petition Number" v-model="formData.petition_number" />
@@ -74,32 +72,17 @@
 
                 </div>
                 <div class="flex flex-row flex-wrap gap-4 items-stretch">
-                    <div class="basis-[35%]">
+                    <div class="basis-[35%]" v-if="formData.document_type === 'Birth'">
                         <Box title="seeking for correction of the clerical error in: " width="w-full">
                             <div class="grid grid-rows-2 gap-2 w-full">
-                                <div class="flex items-center">
-                                    <input id="default-radio-1" type="radio" value="" name="default-radio"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="default-radio-1"
-                                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">my
-                                        Certificate
-                                        of Live
-                                        Birth</label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input checked id="default-radio-2" type="radio" value="" name="default-radio"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="default-radio-2"
-                                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">the
-                                        Certificate of Live
-                                        Birth of</label>
-                                </div>
+                                <!-- <Radio :options="my_or" label="my Certificate of Live Birth" v-model="formData.my_or" /> -->
+
 
                             </div>
                         </Box>
                     </div>
 
-                    <div class="basis-2/5 grow">
+                    <div class="basis-[60%] grow">
                         <Box title="Document Owner & Relationship to the Owner" width="w-full">
                             <div class="flex flex-row w-full gap-2 ">
                                 <div class="basis-[70%]">
@@ -112,15 +95,16 @@
                         </Box>
                     </div>
 
-                    <div class="basis-[20%] ">
-                        <Box title="I/He/She was born on" width="w-full">
+                    <div class="basis-[20%]" v-if="formData.document_type === 'Birth'">
+                        <Box title="I/ He / She was born on " width="w-full">
                             <div class="grid grid-cols-1 w-full gap-2 ">
                                 <Input label="Date of Birth" />
                             </div>
                         </Box>
                     </div>
 
-                    <div class="basis-[70%]">
+
+                    <div class="basis-[50%]">
                         <Box title=", at" width="w-ful">
                             <div class="grid grid-cols-2  w-full gap-2 ">
                                 <Input label="Country" />
@@ -168,8 +152,9 @@
                             </div>
 
                             <div class="flex flex-col gap-2 w-full">
-                                <div class="flex flex-row w-full items-center gap-2" v-for="(item, index) in items"
-                                    :key="index">
+
+                                <div class="flex flex-row w-full items-center gap-2"
+                                    v-for="(   item, index   ) in    items   " :key="index">
                                     <div class="basis-[10%]">
                                         <p class="text-sm text-center">{{ index + 1 }}</p>
                                     </div>
@@ -185,13 +170,14 @@
 
 
                                 </div>
+
                                 <div class="flex justify-end gap-2">
                                     <button type="button" @click="addItem()"
                                         class="py-2 px-4  mb-2 text-sm font-medium text-white bg-green-400  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
 
                                         Add
                                     </button>
-                                    <button type="button" @click="removeItem(items.value)"
+                                    <button type="button" @click="removeItem()"
                                         class="py-2 px-4  mb-2 text-sm font-medium text-white bg-red-400  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
 
                                         Remove
@@ -240,6 +226,115 @@
                     </div>
                 </div>
 
+                <div class="flex flex-wrap flex-row gap-4">
+                    <div class="basis-[50%]">
+                        <Box title="VERIFICATION" width="w-ful">
+                            <div class="grid grid-cols-1  w-full gap-2 ">
+                                <Input label="Petitioner Name" />
+
+                            </div>
+                        </Box>
+                    </div>
+                    <div class="grow">
+                        <Box title="ADMINISTERING OFFICER" width="w-ful">
+                            <div class="grid grid-cols-1  w-full gap-2 ">
+                                <Input label="Name" />
+                                <Input label="Position" />
+
+                            </div>
+                        </Box>
+                    </div>
+                    <div class="grow">
+                        <Box title="SUBSCRIBE AND SWORN" width="w-ful">
+                            <div class="grid grid-cols-3  w-full gap-2 ">
+                                <Input label="Day" />
+                                <Input label="Month & Year" />
+                                <Input label="City/Municipality" />
+                                <Input label="Community Tax Certificate No." />
+                                <Input label="Issued at" />
+                                <Input label="Issued on" />
+                            </div>
+                        </Box>
+                    </div>
+
+                </div>
+
+
+                <div class="flex flex-row gap-2">
+                    <div class="basis-[40%]">
+                        <Box title="ACTION TAKEN BY THE C/MCR" width="w-ful">
+                            <div class="grid grid-cols-1  w-full gap-2 ">
+                                <div class="flex flex-row justify-evenly ">
+                                    <div class="flex items-center">
+                                        <input id="default-radio-1" type="radio" value=""
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="default-radio-1"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Granted</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input checked id="default-radio-2" type="radio" value=""
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="default-radio-2"
+                                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Denied
+                                            <span class="italic text-xs"> (Provide the
+                                                basis for denial)</span></label>
+                                    </div>
+                                </div>
+                                <Input label="Date" />
+                                <Input label="Municipal Civil Registrar" />
+                            </div>
+                        </Box>
+                    </div>
+                    <div class="grow">
+                        <Box title="Decision" width="w-ful">
+                            <div class="grid grid-cols-1  w-full gap-2 ">
+
+                                <textarea id="message" rows="6"
+                                    class="block p-2.5 text-justify font-semibold w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+
+                            </div>
+                        </Box>
+                    </div>
+                </div>
+
+                <div class="flex flex-row gap-2">
+                    <div class="basis-[35%]">
+                        <Box title="Payment of filing fee" width="w-ful">
+                            <div class="grid grid-cols-1  w-full gap-2 ">
+                                <Input label="O.R. No." />
+                                <Input label="Amount Paid" />
+                                <Input label="Date Paid" />
+
+                            </div>
+                        </Box>
+                    </div>
+                    <div class="grow">
+                        <Box title="DATE PREVIEW" width="w-ful">
+                            <div class="flex flex-col w-full gap-2 items-start">
+                                <div class="w-[50%]">
+                                    <Input label="Notice of Posting" />
+                                </div>
+                                <div class="flex flex-col items-center w-full ">
+                                    <p class=" font-bold text-center uppercase"> Certificate of Posting</p>
+                                    <div class="flex flex-row w-full justify-evenly">
+                                        <Input label="Start" />
+                                        <Input label="End" />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 mt-5 w-full gap-2">
+                                    <Input label="Date Issued" />
+                                    <Input label="Date Granted" />
+                                </div>
+
+
+
+
+
+                            </div>
+                        </Box>
+                    </div>
+                </div>
+
             </div>
             <template v-slot:footer>
                 <button type="button" @click="submitForm()"
@@ -266,8 +361,11 @@ import { onClickOutside } from '@vueuse/core'
 import Box from '../../components/essentials/Box.vue';
 import Select from '../../components/essentials/inputs/Select.vue';
 import Input from '../../components/essentials/inputs/Input.vue';
+import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
+import Radio from '../../components/essentials/inputs/Radio.vue';
 
 const RA9048 = ref(false)
+
 
 const modalOpener = (RA) => {
     if (RA === 'R.A. 9048') {
@@ -292,11 +390,13 @@ const items = ref([1])
 const addItem = () => {
     items.value.push('');
 }
-const removeItem = (index) => {
-    if (index >= 0 && index < items.value.length) {
-        items.value.splice(index, 1);
+const removeItem = () => {
+    if (items.value.length > 1) {
+        const indexToRemove = items.value.length - 1;
+        items.value.splice(indexToRemove, 1);
     }
-}
+
+};
 
 
 const RA = ref([
@@ -326,8 +426,8 @@ const colDefs = ref([
 ]);
 
 const formData = reactive({
-    type: ' ',
-    document_type: ' ',
+    type: 'CCE',
+    document_type: '',
     petition_number: ' ',
     petitioner_name: ' ',
     nationality: '',
@@ -337,7 +437,8 @@ const formData = reactive({
     petitioner_barangay: ' ',
     description: [],
     from: [],
-    to: []
+    to: [],
+    my_or: '',
 });
 
 const submitForm = () => {
