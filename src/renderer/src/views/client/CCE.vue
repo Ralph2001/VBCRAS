@@ -25,7 +25,8 @@
             </div>
         </div>
         <div class="h-[calc(100vh-170px)] px-5 relative">
-            <TableGrid :data="data" :dataColumns="colDefs" />
+
+            <!-- <TableGrid :data="data" :dataColumns="colDefs" /> -->
         </div>
 
 
@@ -47,26 +48,30 @@
                 v-if="formData.type === 'CCE' && formData.document_type != ''">
                 <div class="w-full flex item-center justify-center mb-2">
                     <p class="text-lg uppercase font-semibold">PETITION FOR CORRECTION OF CLERICAL ERROR IN THE
-                        CERTIFICATE OF {{ formData.document_type }}
+                        CERTIFICATE OF LIVE BIRTH
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
 
                     <Box title="Petition Details" width="w-full">
-                        <div class="grid grid-cols-2 gap-2 w-full">
+                        <div class="grid grid-cols-1 gap-2 w-full">
                             <Input label="Petition Number" v-model="formData.petition_number" />
                             <Input label="Petitioner Name" v-model="formData.petitioner_name" />
-                            <Input label="Nationality" v-model="formData.nationality" />
                         </div>
                     </Box>
 
-                    <Box title="Petitioner Complete Address" width="w-full">
+                    <Box title="Petitioner Nationality & Complete Address" width="w-full">
                         <div class="grid grid-cols-2 w-full gap-2 ">
-                            <Input label="Country" v-model="formData.petitioner_country" />
-                            <Input label="Province" v-model="formData.petitioner_province" />
-                            <Input label="City/Municipality" v-model="formData.petitioner_city" />
 
-                            <Input label="Barangay" v-model="formData.petitioner_barangay" />
+                            <Input label="Nationality" v-model="formData.nationality" />
+
+                            <selectLocation @change="formData.petitioner_city = ''" :options="provinces[0]"
+                                id="province" v-model="formData.petitioner_province" Province />
+                            <selectLocation :options="municipality[0]" v-model="formData.petitioner_city" City
+                                id="city" />
+                            <selectLocation :options="barangay[0]" v-model="formData.petitioner_barangay" Barangay
+                                id="barangay" />
+
                         </div>
                     </Box>
 
@@ -77,7 +82,6 @@
                             <div class="grid grid-rows-2 gap-2 w-full">
                                 <!-- <Radio :options="my_or" label="my Certificate of Live Birth" v-model="formData.my_or" /> -->
 
-
                             </div>
                         </Box>
                     </div>
@@ -86,10 +90,10 @@
                         <Box title="Document Owner & Relationship to the Owner" width="w-full">
                             <div class="flex flex-row w-full gap-2 ">
                                 <div class="basis-[70%]">
-                                    <Input label="Name of Owner" />
+                                    <Input label="Name of Owner" v-model="formData.name_owner" />
                                 </div>
                                 <div class="grow">
-                                    <Input label="Relation of Owner" />
+                                    <Input label="Relation of Owner" v-model="formData.relation_owner" />
                                 </div>
                             </div>
                         </Box>
@@ -98,7 +102,7 @@
                     <div class="basis-[20%]" v-if="formData.document_type === 'Birth'">
                         <Box title="I/ He / She was born on " width="w-full">
                             <div class="grid grid-cols-1 w-full gap-2 ">
-                                <Input label="Date of Birth" />
+                                <Input label="Date of Birth" v-model="formData.date_of_birth" />
                             </div>
                         </Box>
                     </div>
@@ -107,9 +111,11 @@
                     <div class="basis-[50%]">
                         <Box title=", at" width="w-ful">
                             <div class="grid grid-cols-2  w-full gap-2 ">
-                                <Input label="Country" />
-                                <Input label="Province" />
-                                <Input label="City/Municipality" />
+                                <Input label="Country" v-model="formData.at_country" readonly tabindex="-1" />
+
+                                <selectLocation @change="formData.at_city = ''" :options="at_province[0]"
+                                    id="at_province" v-model="formData.at_province" Province />
+                                <selectLocation :options="at_city[0]" v-model="formData.at_city" City id="at_city" />
 
                             </div>
                         </Box>
@@ -353,7 +359,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import TableGrid from '../../components/TableGrid.vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import { FwbRadio } from 'flowbite-vue';
@@ -363,8 +369,51 @@ import Select from '../../components/essentials/inputs/Select.vue';
 import Input from '../../components/essentials/inputs/Input.vue';
 import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
 import Radio from '../../components/essentials/inputs/Radio.vue';
+import philippines from '../../utils/philippines'
+import selectLocation from '../../components/essentials/inputs/select/select-location.vue';
+import { onKeyStroke } from '@vueuse/core'
+
+
+
+const address = philippines
+const region = ref("01")
+
 
 const RA9048 = ref(false)
+
+const provinces = computed(() => {
+    return [...new Set(address.map(data => data[region.value].province_list))].sort((a, b) => a - b);
+});
+
+const municipality = computed(() => {
+    const selectedProvince = formData.petitioner_province;
+    if (!selectedProvince) {
+        return [];
+    }
+    return [...new Set(address.map(data => data[region.value].province_list[selectedProvince].municipality_list))].sort((a, b) => a - b) || [];
+});
+
+const barangay = computed(() => {
+    const selectedProvince = formData.petitioner_province;
+    const selectedMunicipality = formData.petitioner_city;
+    if (!selectedProvince || !selectedMunicipality) {
+        return [];
+    }
+    return [...new Set(address.map(data => data[region.value].province_list[selectedProvince].municipality_list[selectedMunicipality].barangay_list))].sort((a, b) => a - b) || [];
+});
+
+
+const at_province = computed(() => {
+    return [...new Set(address.map(data => data[region.value].province_list))].sort((a, b) => a - b);
+});
+
+const at_city = computed(() => {
+    const selectedProvince = formData.at_province;
+    if (!selectedProvince) {
+        return [];
+    }
+    return [...new Set(address.map(data => data[region.value].province_list[selectedProvince].municipality_list))].sort((a, b) => a - b);
+});
 
 
 const modalOpener = (RA) => {
@@ -386,6 +435,13 @@ onClickOutside(dropdown, event => dropdown.value = false)
 
 const items = ref([1])
 
+// onKeyStroke(['Control', ' '], (e) => {
+//     e.preventDefault()
+
+//     if (formData.description.length === items.value.length) {
+//         addItem()
+//     }
+// })
 
 const addItem = () => {
     items.value.push('');
@@ -427,18 +483,27 @@ const colDefs = ref([
 
 const formData = reactive({
     type: 'CCE',
-    document_type: '',
-    petition_number: ' ',
-    petitioner_name: ' ',
-    nationality: '',
-    petitioner_country: ' ',
-    petitioner_province: ' ',
-    petitioner_city: ' ',
-    petitioner_barangay: ' ',
+    document_type: 'Birth',
+    petition_number: '',
+    petitioner_name: '',
+    nationality: 'Filipino',
+    petitioner_province: '',
+    petitioner_city: '',
+    petitioner_barangay: '',
     description: [],
     from: [],
     to: [],
     my_or: '',
+    name_owner: '',
+    relation_owner: '',
+    date_of_birth: '',
+    at_city: '',
+    at_province: '',
+    at_country: 'Philippines',
+    reason: '',
+    LCRO_city: '',
+    LCRO_province: '',
+
 });
 
 const submitForm = () => {
