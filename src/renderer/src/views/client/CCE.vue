@@ -58,7 +58,9 @@
                         <Box title="Petition Details" width="w-full">
                             <div class="grid grid-cols-1 gap-2 w-full">
                                 <InputFormatted label="Petition Number" v-model="formData.petition_number" />
-                                <Input label="Petitioner Name" v-model="formData.petitioner_name" />
+                                <Input label="Petitioner Name" v-model="formData.petitioner_name"
+                                    @input="formData.petitioner_name = $event.target.value.toUpperCase()" />
+
                             </div>
                         </Box>
 
@@ -92,7 +94,8 @@
                             <Box title="Document Owner & Relationship to the Owner" width="w-full">
                                 <div class="flex flex-row w-full gap-2 ">
                                     <div class="basis-[70%]">
-                                        <Input label="Name of Owner" v-model="formData.name_owner" />
+                                        <Input label="Name of Owner" v-model="formData.name_owner"
+                                            @input="formData.name_owner = $event.target.value.toUpperCase()" />
                                     </div>
                                     <div class="grow">
                                         <InputSuggestions label="Relation of Owner" v-model="formData.relation_owner"
@@ -185,10 +188,12 @@
 
                                         </div>
                                         <div class="grow">
-                                            <Input v-model="formData.from[index]" />
+                                            <Input v-model="formData.from[index]"
+                                                @input="formData.from[index] = $event.target.value.toUpperCase()" />
                                         </div>
                                         <div class="grow">
-                                            <Input v-model="formData.to[index]" />
+                                            <Input v-model="formData.to[index]"
+                                                @input="formData.to[index] = $event.target.value.toUpperCase()" />
                                         </div>
 
 
@@ -263,7 +268,7 @@
                     <!-- Page 2 -->
                     <!-- //////////// -->
 
-                    <div class="relative border-b-4 border-dashed flex items-center justify-center mt-10 mb-10">
+                    <div class="relative border-b-2 border-dashed flex items-center justify-center mt-10 mb-10">
                         <p class="absolute bg-white px-2 font-semibold italic text-gray-600"> PAGE 2</p>
                     </div>
 
@@ -276,6 +281,7 @@
                             <Box title="VERIFICATION" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
                                     <Input label="Petitioner Name" tabindex="-1" v-model="formData.petitioner_name"
+                                        @input="formData.petitioner_name = $event.target.value.toUpperCase()"
                                         readonly />
 
                                 </div>
@@ -284,7 +290,8 @@
                         <div class="grow">
                             <Box title="ADMINISTERING OFFICER" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
-                                    <Input label="Name" tabindex="-1" v-model="formData.administering_officer" />
+                                    <Input label="Name" tabindex="-1" v-model="formData.administering_officer"
+                                        @input="formData.administering_officer = $event.target.value.toUpperCase()" />
                                     <Input label="Position" tabindex="-1"
                                         v-model="formData.administering_officer_position" />
 
