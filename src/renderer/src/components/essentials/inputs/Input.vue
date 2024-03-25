@@ -3,7 +3,8 @@
         <label :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}</label>
         <input type="text" :id="label" :value="modelValue" @input="emit('update:modelValue', $event.target.value)"
             :tabindex="tabindex" :readonly="readonly"
-            class="bg-gray-50 read-only:bg-gray-100 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200  uppercase border   border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm rounded-sm block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" />
+            class="bg-gray-50 read-only:bg-gray-100 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200  border   border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm 
+            rounded-sm block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" />
     </div>
 </template>
 
@@ -12,9 +13,13 @@
 const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
-    label: String,
+    label: {
+        type: String,
+        default: '',
+        required: false
+    },
     modelValue: {
-        required: true,
+        required: false,
         type: [String, Number],
         default: ''
     },

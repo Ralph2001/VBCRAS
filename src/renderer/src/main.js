@@ -13,8 +13,8 @@ import Lara from './assets/presets/lara';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
-import Vueform from '@vueform/vueform'
-import vueformConfig from './../../../vueform.config'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 import { RecycleScroller } from 'vue-virtual-scroller'
 
@@ -43,10 +43,12 @@ pinia.use(({ store }) => {
 });
 app.use(router);
 app.use(pinia);
-app.use(Vueform, vueformConfig)
+
 app.component('RecycleScroller', RecycleScroller)
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(VueSweetalert2);
+app.component('VueDatePicker', VueDatePicker);
+
 app.use(PrimeVue, { unstyled: true, pt: Lara })
 
 app.mount("#app");
