@@ -47,8 +47,7 @@
                     </Box>
                 </div>
 
-                <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-10"
-                    v-if="formData.type === 'CCE' && formData.document_type != ''">
+                <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-10">
                     <div class="w-full flex item-center justify-center mb-2">
                         <p class="text-lg uppercase font-semibold">PETITION FOR CORRECTION OF CLERICAL ERROR IN THE
                             CERTIFICATE OF LIVE BIRTH
@@ -58,7 +57,9 @@
 
                         <Box title="Petition Details" width="w-full">
                             <div class="grid grid-cols-1 gap-2 w-full">
-                                <InputFormatted label="Petition Number" v-model="formData.petition_number" />
+                                <InputFormatted label="Petition Number"
+                                    :docType="formData.type === 'CCE' ? 'CCE' : 'CFN'"
+                                    v-model="formData.petition_number" />
                                 <Input label="Petitioner Name" v-model="formData.petitioner_name"
                                     @input="formData.petitioner_name = $event.target.value.toUpperCase()" />
                             </div>
@@ -316,7 +317,7 @@
                                     </div>
                                     <Input label="City/Municipality" tabindex="-1" v-model="formData.SwornCity" />
                                     <Input label="Community Tax Certificate No." v-model="formData.Ctc" />
-                                    <Input label="Issued at" v-mod el="formData.CtcIssuedAt" />
+                                    <Input label="Issued at" v-model="formData.CtcIssuedAt" />
                                     <div>
                                         <label
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Issued
@@ -424,26 +425,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="grid grid-cols-2 mt-5 w-full gap-2">
-                                        <div>
-                                            <label
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
-                                                Issued</label>
-                                            <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
-                                                input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                format="MMMM dd, yyyy">
-                                            </VueDatePicker>
-                                        </div>
-                                        <div>
-                                            <label 
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
-                                                Granted</label>
-                                            <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
-                                                input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                format="MMMM dd, yyyy">
-                                            </VueDatePicker>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </Box>
                         </div>
@@ -459,9 +440,6 @@
                 </template>
             </Modal>
         </Transition>
-
-
-
     </div>
 
 
@@ -518,7 +496,9 @@ const region = ref("01")
 
 const RA9048 = ref(false)
 
-
+const regions = computed(() => {
+    return [...new Set(address.map(data => data))].sort((a, b) => a - b);
+});
 
 
 const provinces = computed(() => {
@@ -701,9 +681,13 @@ const formData = reactive({
 
 const submitForm = () => {
 
-    console.log(formData)
+    const date = new Date()
+    const year = date.getFullYear()
 
-    create_document()
+    const petition_number = formData.type + '-' + formData.petition_number + '-' + year
+
+    console.log(petition_number)
+
 
 
 }
