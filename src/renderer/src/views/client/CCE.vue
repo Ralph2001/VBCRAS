@@ -40,6 +40,7 @@
                 <div>
                     <Box title="Document" width="w-fit">
                         <div class="grid grid-cols-2 p-2 gap-3">
+
                             <Select :options="Type" label="Type" v-model="formData.type" />
                             <Select :options="DocumentType" label="Document Type" v-model="formData.document_type" />
                         </div>
@@ -58,7 +59,8 @@
                         <Box title="Petition Details" width="w-full">
                             <div class="grid grid-cols-1 gap-2 w-full">
                                 <InputFormatted label="Petition Number" v-model="formData.petition_number" />
-                                <Input label="Petitioner Name" v-model="formData.petitioner_name" />
+                                <Input label="Petitioner Name" v-model="formData.petitioner_name"
+                                    @input="formData.petitioner_name = $event.target.value.toUpperCase()" />
                             </div>
                         </Box>
 
@@ -82,7 +84,7 @@
                         <div class="basis-[35%]" v-if="formData.document_type === 'Birth'">
                             <Box title="seeking for correction of the clerical error in: " width="w-full">
                                 <div class="grid grid-rows-2 gap-2 w-full">
-                                    <!-- <Radio :options="my_or" label="my Certificate of Live Birth" v-model="formData.my_or" /> -->
+                                    <Radio :options="seeking_options" v-model="formData.cce_in" name="cce_in" />
 
                                 </div>
                             </Box>
@@ -92,11 +94,18 @@
                             <Box title="Document Owner & Relationship to the Owner" width="w-full">
                                 <div class="flex flex-row w-full gap-2 ">
                                     <div class="basis-[70%]">
-                                        <Input label="Name of Owner" v-model="formData.name_owner" />
+                                        <Input label="Name of Owner" :modelValue="formData.cce_in === 'my' ? 'N/A' : ''"
+                                            :readonly="formData.cce_in === 'my' ? true : false"
+                                            :tabindex="formData.cce_in === 'my' ? '-1' : ''"
+                                            v-model="formData.name_owner"
+                                            @input="formData.name_owner = $event.target.value.toUpperCase()" />
                                     </div>
                                     <div class="grow">
-                                        <InputSuggestions label="Relation of Owner" v-model="formData.relation_owner"
-                                            :items="RelationSuggestion" />
+                                        <InputSuggestions label="Relation of Owner"
+                                            :modelValue="formData.cce_in === 'my' ? 'N/A' : ''"
+                                            :readonly="formData.cce_in === 'my' ? true : false"
+                                            :tabindex="formData.cce_in === 'my' ? '-1' : ''"
+                                            v-model="formData.relation_owner" :items="RelationSuggestion" />
                                     </div>
                                 </div>
                             </Box>
@@ -107,8 +116,8 @@
                                 <div class="grid grid-cols-1 w-full gap-2 ">
                                     <!-- <Input label="Date of Birth" v-model="formData.date_of_birth" /> -->
                                     <div>
-                                        <label :for="label"
-                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date of
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
+                                            of
                                             Birth</label>
                                         <VueDatePicker v-model="formData.date_of_birth" auto-apply text-input
                                             month-name-format="long"
@@ -138,7 +147,7 @@
                         <div class="grow">
                             <Box title="The birth was recorded under " width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
-                                    <Input label="Registry Number" />
+                                    <Input label="Registry Number" v-model="formData.registry_number" />
 
                                 </div>
                             </Box>
@@ -166,8 +175,6 @@
                                             <p class="text-sm text-center">To</p>
 
                                         </div>
-
-
                                     </div>
 
                                 </div>
@@ -185,10 +192,12 @@
 
                                         </div>
                                         <div class="grow">
-                                            <Input v-model="formData.from[index]" />
+                                            <Input v-model="formData.from[index]"
+                                                @input="formData.from[index] = $event.target.value.toUpperCase()" />
                                         </div>
                                         <div class="grow">
-                                            <Input v-model="formData.to[index]" />
+                                            <Input v-model="formData.to[index]"
+                                                @input="formData.to[index] = $event.target.value.toUpperCase()" />
                                         </div>
 
 
@@ -212,7 +221,6 @@
                         <div class="grow">
                             <Box title="The facts/reasons for filing this petition are the following. " width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
-
                                     <label for="message"
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Facts/Reasons</label>
                                     <textarea id="message" rows="4" v-model="formData.reason"
@@ -276,6 +284,7 @@
                             <Box title="VERIFICATION" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
                                     <Input label="Petitioner Name" tabindex="-1" v-model="formData.petitioner_name"
+                                        @input="formData.petitioner_name = $event.target.value.toUpperCase()"
                                         readonly />
 
                                 </div>
@@ -284,7 +293,8 @@
                         <div class="grow">
                             <Box title="ADMINISTERING OFFICER" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
-                                    <Input label="Name" tabindex="-1" v-model="formData.administering_officer" />
+                                    <Input label="Name" tabindex="-1" v-model="formData.administering_officer"
+                                        @input="formData.administering_officer = $event.target.value.toUpperCase()" />
                                     <Input label="Position" tabindex="-1"
                                         v-model="formData.administering_officer_position" />
 
@@ -297,8 +307,7 @@
                                     <div>
                                     </div>
                                     <div>
-                                        <label :for="label"
-                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                             Sworn</label>
                                         <VueDatePicker v-model="formData.SwornDate" auto-apply text-input
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
@@ -307,15 +316,15 @@
                                     </div>
                                     <Input label="City/Municipality" tabindex="-1" v-model="formData.SwornCity" />
                                     <Input label="Community Tax Certificate No." v-model="formData.Ctc" />
-                                    <Input label="Issued at" tabindex="-1" v-model="formData.CtcIssuedOn" />
+                                    <Input label="Issued at" v-mod el="formData.CtcIssuedAt" />
                                     <div>
-                                        <label :for="label"
+                                        <label
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Issued
                                             on</label>
-                                        <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
-                                            input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                            format="MMMM dd, yyyy">
-                                        </VueDatePicker>
+                                        <VueDatePicker v-model="formData.CtcIssuedOn" preserve auto-apply
+                                            format="MMMM dd, yyyy" text-input
+                                            input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50" />
+
                                     </div>
                                 </div>
                             </Box>
@@ -329,30 +338,19 @@
                             <Box title="ACTION TAKEN BY THE C/MCR" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
                                     <div class="flex flex-row justify-evenly ">
-                                        <div class="flex items-center">
-                                            <input id="default-radio-1" type="radio" value=""
-                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="default-radio-1"
-                                                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Granted</label>
-                                        </div>
-                                        <div class="flex items-center">
-                                            <input checked id="default-radio-2" type="radio" value=""
-                                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                            <label for="default-radio-2"
-                                                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Denied
-                                                <span class="italic text-xs"> (Provide the
-                                                    basis for denial)</span></label>
-                                        </div>
+
+                                        <Radio :options="action_options" v-model="formData.action" name="action" />
                                     </div>
                                     <div>
-                                        <label :for="label"
+                                        <label
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
-                                        <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
+                                        <VueDatePicker v-model="formData.ActionDate" auto-apply text-input
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                             format="MMMM dd, yyyy">
                                         </VueDatePicker>
                                     </div>
-                                    <Input label="Municipal Civil Registrar" />
+                                    <Input label="Municipal Civil Registrar" tabindex="-1" v-model="formData.mcr"
+                                        @input="formData.mcr = $event.target.value.toUpperCase()" />
                                 </div>
                             </Box>
                         </div>
@@ -360,8 +358,8 @@
                             <Box title="Decision" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
 
-                                    <textarea id="message" rows="6"
-                                        class="block p-2.5 text-justify font-semibold w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                                    <textarea id="message" rows="6" v-model="formData.decision"
+                                        class="block p-2.5 text-justify font-semibold px-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
 
                                 </div>
                             </Box>
@@ -372,13 +370,12 @@
                         <div class="basis-[35%]">
                             <Box title="Payment of filing fee" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
-                                    <Input label="O.R. No." />
-                                    <Input label="Amount Paid" />
+                                    <Input label="O.R. No." type="number" v-model="formData.or_number" />
+                                    <Input label="Amount Paid" v-model="formData.amount_paid" />
                                     <div>
-                                        <label :for="label"
-                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
+                                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                             Paid</label>
-                                        <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
+                                        <VueDatePicker v-model="formData.DatePaid" auto-apply text-input
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                             format="MMMM dd, yyyy">
                                         </VueDatePicker>
@@ -387,16 +384,18 @@
                                 </div>
                             </Box>
                         </div>
+
+
                         <div class="grow">
                             <Box title="DATE PREVIEW" width="w-ful">
                                 <div class="flex flex-col w-full gap-2 items-start">
                                     <div class="w-[50%]">
                                         <div>
-                                            <label :for="label"
+                                            <label
                                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notice
                                                 of
                                                 Posting</label>
-                                            <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
+                                            <VueDatePicker v-model="formData.notice_posting" auto-apply text-input
                                                 input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                                 format="MMMM dd, yyyy">
                                             </VueDatePicker>
@@ -406,26 +405,28 @@
                                         <p class=" font-bold text-center uppercase"> Certificate of Posting</p>
                                         <div class="flex flex-row w-full justify-evenly">
                                             <div>
-                                                <label :for="label"
+                                                <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start</label>
-                                                <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
+                                                <VueDatePicker v-model="formData.certificate_posting_start" auto-apply
+                                                    text-input
                                                     input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                                     format="MMMM dd, yyyy">
                                                 </VueDatePicker>
                                             </div>
                                             <div>
-                                                <label :for="label"
+                                                <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End</label>
-                                                <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
+                                                <VueDatePicker v-model="formData.certificate_posting_end" auto-apply
+                                                    text-input
                                                     input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                                     format="MMMM dd, yyyy">
                                                 </VueDatePicker>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="grid grid-cols-2 mt-5 w-full gap-2">
+                                    <!-- <div class="grid grid-cols-2 mt-5 w-full gap-2">
                                         <div>
-                                            <label :for="label"
+                                            <label
                                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                                 Issued</label>
                                             <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
@@ -434,7 +435,7 @@
                                             </VueDatePicker>
                                         </div>
                                         <div>
-                                            <label :for="label"
+                                            <label 
                                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                                 Granted</label>
                                             <VueDatePicker v-model="formData.CtcDate" auto-apply text-input
@@ -442,7 +443,7 @@
                                                 format="MMMM dd, yyyy">
                                             </VueDatePicker>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </Box>
                         </div>
@@ -452,46 +453,48 @@
                 <template v-slot:footer>
                     <button type="button" @click="submitForm()"
                         class="py-2 px-4  mb-2 text-sm font-medium text-white bg-green-400  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-
                         Submit
                     </button>
 
                 </template>
             </Modal>
         </Transition>
-    </div>
 
+
+
+    </div>
 
 
 
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
-import TableGrid from '../../components/TableGrid.vue';
-import Modal from '../../components/client/modal/Modal.vue';
+import { onKeyStroke } from '@vueuse/core'
 import { FwbRadio } from 'flowbite-vue';
+import TableGrid from '../../components/TableGrid.vue';
+import Radio from '../../components/essentials/inputs/Radio.vue';
+
+
+import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
+import { ref, reactive, computed } from 'vue';
+import Modal from '../../components/client/modal/Modal.vue';
 import { onClickOutside } from '@vueuse/core'
 import Box from '../../components/essentials/Box.vue';
 import Select from '../../components/essentials/inputs/Select.vue';
 import Input from '../../components/essentials/inputs/Input.vue';
-import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
-import Radio from '../../components/essentials/inputs/Radio.vue';
 import philippines from '../../utils/philippines'
 import selectLocation from '../../components/essentials/inputs/select/select-location.vue';
-import { onKeyStroke } from '@vueuse/core'
 import InputSuggestions from '../../components/essentials/inputs/InputSuggestions.vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
 import InputFormatted from '../../components/essentials/inputs/InputFormatted.vue'
+import '@vuepic/vue-datepicker/dist/main.css'
+
 
 const RelationSuggestion = ref([
-    'Owner',
     'Father',
     'Mother',
     'Brother',
     'Sister',
-
 ])
 
 const SupportingDocumentsSuggestions = ref([
@@ -514,6 +517,9 @@ const region = ref("01")
 
 
 const RA9048 = ref(false)
+
+
+
 
 const provinces = computed(() => {
     return [...new Set(address.map(data => data[region.value].province_list))].sort((a, b) => a - b);
@@ -593,6 +599,15 @@ const removeSupportItem = () => {
     }
 };
 
+const seeking_options = ref({
+    'my': 'my Certificate of Live Birth',
+    'the': 'the Certificate of Live Birth of',
+})
+const action_options = ref({
+    'Granted': 'Granted',
+    'Denied': 'Denied (Provide the basis for denial)',
+})
+
 
 
 const RA = ref([
@@ -630,27 +645,57 @@ const formData = reactive({
     petitioner_province: '',
     petitioner_city: '',
     petitioner_barangay: '',
-    description: [],
-    from: [],
-    to: [],
-    my_or: '',
+    cce_in: 'my', // 
+
     name_owner: '',
     relation_owner: '',
     date_of_birth: '',
-    SupportingDocuments: [],
     at_city: '',
-    administering_officer: 'ISMAEL D. MALICDEM, JR.',
-    administering_officer_position: 'Municipal Civil Registrar',
     at_province: '',
     at_country: 'Philippines',
+    registry_number: '',
+
+    description: [],
+    from: [],
+    to: [],
+
     reason: 'To correct',
+    SupportingDocuments: [],
     LCRO_city: 'Bayambang',
     LCRO_province: 'Pangasinan',
+
+    // Page 2
+
+
+    administering_officer: 'ISMAEL D. MALICDEM, JR.',
+    administering_officer_position: 'Municipal Civil Registrar',
+
+
     SwornDate: '',
     SwornCity: 'Bayambang, Pangasinan',
+
     Ctc: '',
     CtcIssuedOn: 'Bayambang, Pangasinan',
-    CtcDate: '',
+    CtcIssuedAt: '',
+
+
+    action: '',
+    ActionDate: '',
+    mcr: 'ISMAEL D. MALICDEM, JR.',
+    decision: '',
+
+
+    or_number: '',
+    amount_paid: '',
+    DatePaid: '',
+
+
+
+    notice_posting: '',
+    certificate_posting_start: '',
+    certificate_posting_end: '',
+
+
 
 });
 

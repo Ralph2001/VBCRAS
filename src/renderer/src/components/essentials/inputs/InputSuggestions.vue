@@ -1,9 +1,9 @@
 <template>
     <div class="relative w-full">
         <label :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}</label>
-        <input type="text" ref="input" :id="label" :value="modelValue" @input="onChange" :tabindex="tabindex"
-            @keydown.down="ArrowDown" @keydown.up="ArrowUp" @keydown.enter="Enter" @keydown.tab="Tab"
-            class="bg-gray-50 read-only:bg-gray-100  read-only:focus-within:bg-gray-100
+        <input type="text" :readonly="readonly" ref="input" :id="label" :value="modelValue" @input="onChange"
+            :tabindex="tabindex" @keydown.down="ArrowDown" @keydown.up="ArrowUp" @keydown.enter="Enter"
+            @keydown.tab="Tab" class="bg-gray-50 read-only:text-gray-400  read-only:bg-gray-100  read-only:focus-within:bg-gray-100
              read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200
                border   border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900
                 text-sm rounded-sm block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
@@ -77,6 +77,7 @@ const props = defineProps({
         required: false,
 
     },
+    readonly: Boolean,
     modelValue: {
         required: false,
         type: [String, Number],
@@ -87,7 +88,6 @@ const props = defineProps({
 
 
 function filterResults() {
-
     results.value = props.items.filter(item => item.toLowerCase().indexOf(props.modelValue.toLowerCase()) > -1);
 }
 
