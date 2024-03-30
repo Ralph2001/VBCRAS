@@ -24,7 +24,7 @@ const props = defineProps({
     id: String,
     options: {
         type: [Array, Object],
-        required: true
+        required: false
     },
     Province: {
         type: Boolean,
