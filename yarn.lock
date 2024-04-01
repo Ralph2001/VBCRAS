@@ -782,7 +782,7 @@
   dependencies:
     vue-demi "*"
 
-"@xmldom/xmldom@^0.8.8":
+"@xmldom/xmldom@^0.8.10", "@xmldom/xmldom@^0.8.8":
   version "0.8.10"
   resolved "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.8.10.tgz"
   integrity sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==
@@ -1438,6 +1438,13 @@ docx@^8.5.0:
     nanoid "^5.0.4"
     xml "^1.0.1"
     xml-js "^1.6.8"
+
+docxtemplater@^3.46.2:
+  version "3.46.2"
+  resolved "https://registry.npmjs.org/docxtemplater/-/docxtemplater-3.46.2.tgz"
+  integrity sha512-IG5o+675VzQDW6/saYmBP1aaJHJ78r846fVhTUOVjrcaqrj/mHIR7a43YSkDd5bxa+M76i0SdAIKfBnXC6bbTQ==
+  dependencies:
+    "@xmldom/xmldom" "^0.8.10"
 
 dotenv-expand@^5.1.0:
   version "5.1.0"
@@ -2850,6 +2857,11 @@ p-locate@^5.0.0:
   dependencies:
     p-limit "^3.0.2"
 
+pako@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/pako/-/pako-2.1.0.tgz"
+  integrity sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==
+
 pako@~1.0.2:
   version "1.0.11"
   resolved "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz"
@@ -2932,6 +2944,13 @@ pirates@^4.0.1:
   version "4.0.6"
   resolved "https://registry.npmjs.org/pirates/-/pirates-4.0.6.tgz"
   integrity sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==
+
+pizzip@^3.1.6:
+  version "3.1.6"
+  resolved "https://registry.npmjs.org/pizzip/-/pizzip-3.1.6.tgz"
+  integrity sha512-FCG2lSMVlrt2jB1iokujjXexanfszV/Y04t4mu1icdSEC/vb/2qDISr2kgENzdkThd1jkRNjvipWitU4gpbM/g==
+  dependencies:
+    pako "^2.1.0"
 
 plist@^3.0.4, plist@^3.0.5:
   version "3.1.0"

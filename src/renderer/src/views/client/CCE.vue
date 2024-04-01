@@ -40,9 +40,9 @@
                 <div>
                     <Box title="Document" width="w-fit">
                         <div class="grid grid-cols-2 p-2 gap-3">
-
-                            <Select :options="Type" label="Type" v-model="formData.type" />
-                            <Select :options="DocumentType" label="Document Type" v-model="formData.document_type" />
+                            <Select skip :options="Type" label="Type" v-model="formData.type" />
+                            <Select skip :options="DocumentType" label="Document Type"
+                                v-model="formData.document_type" />
                         </div>
                     </Box>
                 </div>
@@ -86,7 +86,6 @@
                             <Box title="seeking for correction of the clerical error in: " width="w-full">
                                 <div class="grid grid-rows-2 gap-2 w-full">
                                     <Radio :options="seeking_options" v-model="formData.cce_in" name="cce_in" />
-
                                 </div>
                             </Box>
                         </div>
@@ -97,15 +96,17 @@
                                     <div class="basis-[70%]">
                                         <Input label="Name of Owner" :modelValue="formData.cce_in === 'my' ? 'N/A' : ''"
                                             :readonly="formData.cce_in === 'my' ? true : false"
-                                            :tabindex="formData.cce_in === 'my' ? '-1' : ''"
+                                            :skip="formData.cce_in === 'my' ? true : false"
                                             v-model="formData.name_owner"
                                             @input="formData.name_owner = $event.target.value.toUpperCase()" />
+
+                                        {{ formData.name_owner }}
                                     </div>
                                     <div class="grow">
                                         <InputSuggestions label="Relation of Owner"
                                             :modelValue="formData.cce_in === 'my' ? 'N/A' : ''"
                                             :readonly="formData.cce_in === 'my' ? true : false"
-                                            :tabindex="formData.cce_in === 'my' ? '-1' : ''"
+                                            :skip="formData.cce_in === 'my' ? true : false"
                                             v-model="formData.relation_owner" :items="RelationSuggestion" />
                                     </div>
                                 </div>
@@ -121,7 +122,7 @@
                                             of
                                             Birth</label>
                                         <VueDatePicker v-model="formData.date_of_birth" auto-apply text-input
-                                            month-name-format="long"
+                                            :max-date="new Date()" month-name-format="long"
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                             format="MMMM dd, yyyy">
                                         </VueDatePicker>
@@ -135,7 +136,7 @@
                         <div class="basis-[47%]">
                             <Box title=", at" width="w-ful">
                                 <div class="grid grid-cols-2  w-full gap-2 ">
-                                    <Input label="Country" v-model="formData.at_country" readonly tabindex="-1" />
+                                    <Input label="Country" v-model="formData.at_country" readonly skip />
 
                                     <selectLocation @change="formData.at_city = ''" :options="at_province[0]"
                                         id="at_province" v-model="formData.at_province" Province />
@@ -182,7 +183,7 @@
 
                                 <div class="flex flex-col gap-2 w-full">
 
-                                    <div class="flex flex-row w-full items-center gap-2"
+                                    <!-- <div class="flex flex-row w-full items-center gap-2"
                                         v-for="(   item, index   ) in    items   " :key="index">
                                         <div class="basis-[10%]">
                                             <p class="text-sm text-center">{{ index + 1 }}</p>
@@ -202,8 +203,27 @@
                                         </div>
 
 
-                                    </div>
+                                    </div> -->
 
+                                    <div class="flex flex-row w-full items-center gap-2"
+                                        v-for="(   item, index   ) in    items   " :key="index">
+                                        <div class="basis-[10%]">
+                                            <p class="text-sm text-center">{{ index + 1 }}</p>
+                                        </div>
+                                        <div class="grow">
+                                            <InputSuggestions v-model="formData.clerical_errors.description[index]"
+                                                :items="DescriptionSuggestions" />
+
+                                        </div>
+                                        <div class="grow">
+                                            <Input v-model="formData.clerical_errors.from[index]" />
+                                        </div>
+                                        <div class="grow">
+                                            <Input v-model="formData.clerical_errors.to[index]" />
+                                        </div>
+
+
+                                    </div>
                                     <div class="flex justify-end gap-2">
                                         <button type="button" @click="addItem()"
                                             class="py-2 px-4  mb-2 text-sm font-medium text-white bg-green-400 rounded-full  shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
@@ -261,8 +281,8 @@
                         <div class="basis-[40%] h-max">
                             <Box title="filing this petition at the LCRO of " width="w-ful">
                                 <div class="flex flex-row justify-center gap-2 w-full">
-                                    <Input label="City/Municipality" tabindex="-1" v-model="formData.LCRO_city" />
-                                    <Input label="Province" tabindex="-1" v-model="formData.LCRO_province" />
+                                    <Input label="City/Municipality" skip v-model="formData.LCRO_city" />
+                                    <Input label="Province" skip v-model="formData.LCRO_province" />
                                 </div>
                             </Box>
                         </div>
@@ -284,7 +304,7 @@
                         <div class="basis-[50%]">
                             <Box title="VERIFICATION" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
-                                    <Input label="Petitioner Name" tabindex="-1" v-model="formData.petitioner_name"
+                                    <Input label="Petitioner Name" skip v-model="formData.petitioner_name"
                                         @input="formData.petitioner_name = $event.target.value.toUpperCase()"
                                         readonly />
 
@@ -294,10 +314,9 @@
                         <div class="grow">
                             <Box title="ADMINISTERING OFFICER" width="w-ful">
                                 <div class="grid grid-cols-1  w-full gap-2 ">
-                                    <Input label="Name" tabindex="-1" v-model="formData.administering_officer"
+                                    <Input label="Name" skip v-model="formData.administering_officer"
                                         @input="formData.administering_officer = $event.target.value.toUpperCase()" />
-                                    <Input label="Position" tabindex="-1"
-                                        v-model="formData.administering_officer_position" />
+                                    <Input label="Position" skip v-model="formData.administering_officer_position" />
 
                                 </div>
                             </Box>
@@ -310,12 +329,13 @@
                                     <div>
                                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                             Sworn</label>
-                                        <VueDatePicker v-model="formData.SwornDate" auto-apply text-input
+                                        <VueDatePicker :max-date="new Date()" v-model="formData.SwornDate" auto-apply
+                                            text-input
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                             format="MMMM dd, yyyy">
                                         </VueDatePicker>
                                     </div>
-                                    <Input label="City/Municipality" tabindex="-1" v-model="formData.SwornCity" />
+                                    <Input label="City/Municipality" skip v-model="formData.SwornCity" />
                                     <Input label="Community Tax Certificate No." v-model="formData.Ctc" />
                                     <Input label="Issued at" v-model="formData.CtcIssuedAt" />
                                     <div>
@@ -350,7 +370,7 @@
                                             format="MMMM dd, yyyy">
                                         </VueDatePicker>
                                     </div>
-                                    <Input label="Municipal Civil Registrar" tabindex="-1" v-model="formData.mcr"
+                                    <Input label="Municipal Civil Registrar" skip v-model="formData.mcr"
                                         @input="formData.mcr = $event.target.value.toUpperCase()" />
                                 </div>
                             </Box>
@@ -404,7 +424,7 @@
                                     </div>
                                     <div class="flex flex-col items-center w-full ">
                                         <p class=" font-bold text-center uppercase"> Certificate of Posting</p>
-                                        <div class="flex flex-row w-full justify-evenly">
+                                        <div class="flex flex-row w-full justify-evenly relative">
                                             <div>
                                                 <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start</label>
@@ -414,11 +434,37 @@
                                                     format="MMMM dd, yyyy">
                                                 </VueDatePicker>
                                             </div>
+                                            <p class="absolute top-10 font-bold text-xs ">TO</p>
                                             <div>
                                                 <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End</label>
                                                 <VueDatePicker v-model="formData.certificate_posting_end" auto-apply
                                                     text-input
+                                                    input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
+                                                    format="MMMM dd, yyyy">
+                                                </VueDatePicker>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col justify-start  gap-5 mt-10 items-start w-full ">
+                                        <div class="w-[50%]">
+                                            <div>
+                                                <label
+                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                    Date Issued</label>
+                                                <VueDatePicker v-model="formData.date_issued" auto-apply text-input
+                                                    input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
+                                                    format="MMMM dd, yyyy">
+                                                </VueDatePicker>
+                                            </div>
+                                        </div>
+                                        <div class="w-[50%]">
+                                            <div>
+                                                <label
+                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                    Date Granted</label>
+                                                <VueDatePicker v-model="formData.date_granted" auto-apply text-input
                                                     input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                                     format="MMMM dd, yyyy">
                                                 </VueDatePicker>
@@ -466,6 +512,8 @@ import InputSuggestions from '../../components/essentials/inputs/InputSuggestion
 import VueDatePicker from '@vuepic/vue-datepicker';
 import InputFormatted from '../../components/essentials/inputs/InputFormatted.vue'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 
 
 const RelationSuggestion = ref([
@@ -562,6 +610,9 @@ const removeItem = () => {
     if (items.value.length > 1) {
         const indexToRemove = items.value.length - 1;
         items.value.splice(indexToRemove, 1);
+        formData.clerical_errors.description.splice(indexToRemove, 1)
+        formData.clerical_errors.from.splice(indexToRemove, 1)
+        formData.clerical_errors.to.splice(indexToRemove, 1)
     }
 
 };
@@ -576,6 +627,7 @@ const removeSupportItem = () => {
     if (SupportItems.value.length > 1) {
         const indexToRemove = SupportItems.value.length - 1;
         SupportItems.value.splice(indexToRemove, 1);
+        formData.SupportingDocuments.splice(indexToRemove, 1)
     }
 };
 
@@ -616,6 +668,33 @@ const colDefs = ref([
 
 ]);
 
+const date_now = new Date()
+
+function add_date_notice() {
+    const newDate = new Date(date_now);
+    newDate.setDate(newDate.getDate() + 1);
+    return newDate;
+}
+
+function add_date_certificate_start() {
+    const newDate = new Date(add_date_notice());
+    newDate.setDate(newDate.getDate() + 1);
+    return newDate;
+}
+
+function add_date_certificate_end() {
+    const newDate = new Date(add_date_certificate_start());
+    newDate.setDate(newDate.getDate() + 10);
+    return newDate;
+}
+
+
+const date_notice = ref(add_date_notice())
+const date_certificate_start = ref(add_date_certificate_start())
+const date_certificate_end = ref(add_date_certificate_end())
+
+
+
 const formData = reactive({
     type: 'CCE',
     document_type: 'Birth',
@@ -635,6 +714,12 @@ const formData = reactive({
     at_country: 'Philippines',
     registry_number: '',
 
+    clerical_errors: {
+        description: [],
+        from: [],
+        to: []
+    },
+
     description: [],
     from: [],
     to: [],
@@ -651,7 +736,7 @@ const formData = reactive({
     administering_officer_position: 'Municipal Civil Registrar',
 
 
-    SwornDate: '',
+    SwornDate: date_now,
     SwornCity: 'Bayambang, Pangasinan',
 
     Ctc: '',
@@ -667,29 +752,73 @@ const formData = reactive({
 
     or_number: '',
     amount_paid: '',
-    DatePaid: '',
+    DatePaid: date_now,
 
 
 
-    notice_posting: '',
-    certificate_posting_start: '',
-    certificate_posting_end: '',
+    notice_posting: date_notice,
+    certificate_posting_start: date_certificate_start,
+    certificate_posting_end: date_certificate_end,
+
+
+    date_issued: '',
+    date_granted: ''
 
 
 
 });
 
+// const rules = computed(() => {
+//     return {
+//         type: { required },
+//         document_type: { required },
+//         petition_number: { required },
+//         petitioner_name: { required },
+//         nationality: { required },
+//         petitioner_province: { required },
+//         petitioner_city: { required },
+//         petitioner_barangay: { required },
+//         cce_in: { required }, // 
+//         name_owner: { required },
+//         relation_owner: { required },
+//         date_of_birth: { required },
+//         at_city: { required },
+//         at_province: { required },
+//         at_country: { required },
+//         registry_number: { required },
+//         reason: { required },
+//         LCRO_city: { required },
+//         LCRO_province: { required },
+//         // Page 2
+//         administering_officer: { required },
+//         administering_officer_position: { required },
+//         SwornDate: { required },
+//         SwornCity: { required },
+//         Ctc: { required },
+//         CtcIssuedOn: { required },
+//         CtcIssuedAt: { required },
+//         action: { required },
+//         ActionDate: { required },
+//         mcr: { required },
+//         decision: { required },
+//         or_number: { required },
+//         amount_paid: { required },
+//         DatePaid: { required },
+//         notice_posting: { required },
+//         certificate_posting_start: { required },
+//         certificate_posting_end: { required },
+//     };
+// });
+
+// const v$ = useVuelidate(rules, formData);
+
+
 const submitForm = () => {
-
-    const date = new Date()
-    const year = date.getFullYear()
-
-    const petition_number = formData.type + '-' + formData.petition_number + '-' + year
-
-    console.log(petition_number)
-
-
-
+    // v$.value.$touch();
+    // if (v$.value.$error) {
+    //     console.log(v$)
+    //     return;
+    // }
 }
 
 

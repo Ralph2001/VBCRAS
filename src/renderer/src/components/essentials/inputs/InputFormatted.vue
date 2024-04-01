@@ -3,7 +3,8 @@
         <label :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}</label>
         <input type="number" v-maska data-maska="####" :id="label" :value="modelValue"
             @input="emit('update:modelValue', $event.target.value)" :tabindex="tabindex" :readonly="readonly"
-            class=" relative items-center text-gray-900 bg-gray-50 read-only:bg-gray-100 pl-[2.6rem] read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200  border   border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50  text-sm 
+            :class="{ 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error, 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error }"
+            class=" relative items-center text-gray-900 bg-gray-50 read-only:bg-gray-100 pl-[2.6rem] read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200  border   border-gray-300 font-bold   text-sm 
             rounded-sm block w-full p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" />
 
         <p class="absolute top-[3.7rem] font-semibold text-sm left-6 text-gray-600 tracking-wider">{{ docType }}-</p>
@@ -38,6 +39,10 @@ const props = defineProps({
     },
     docType: {
         type: String
+    },
+    error: {
+        type: Boolean,
+        default: false
     }
 })
 </script>

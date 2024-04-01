@@ -2,7 +2,7 @@
     <div class="relative w-full">
         <label :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}</label>
         <input type="text" :readonly="readonly" ref="input" :id="label" :value="modelValue" @input="onChange"
-            :tabindex="tabindex" @keydown.down="ArrowDown" @keydown.up="ArrowUp" @keydown.enter="Enter"
+            :tabindex="skip ? '-1' : ''" @keydown.down="ArrowDown" @keydown.up="ArrowUp" @keydown.enter="Enter"
             @keydown.tab="Tab" class="bg-gray-50 read-only:text-gray-400  read-only:bg-gray-100  read-only:focus-within:bg-gray-100
              read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200
                border   border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900
@@ -68,9 +68,9 @@ const emit = defineEmits(['update:modelValue'])
 const props = defineProps({
     label: String,
     readonly: Boolean,
-    tabindex: {
-        type: [Number, String],
-        default: 0
+    skip: {
+        type: Boolean,
+        default: false
     },
     items: {
         type: Array,
