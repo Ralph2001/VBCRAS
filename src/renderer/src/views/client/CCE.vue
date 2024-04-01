@@ -292,7 +292,7 @@
                     <!-- Page 2 -->
                     <!-- //////////// -->
 
-                    <div class="relative border-b-4 border-dashed flex items-center justify-center mt-10 mb-10">
+                    <div class="relative border-b-2 border-dashed flex items-center justify-center mt-10 mb-10">
                         <p class="absolute bg-white px-2 font-semibold italic text-gray-600"> PAGE 2</p>
                     </div>
 
