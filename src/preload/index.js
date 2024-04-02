@@ -15,6 +15,16 @@ if (process.contextIsolated) {
   window.api = api
 }
 
+contextBridge.exposeInMainWorld('ClericalApi', {
+  PrintLiveBirth: async (formData) => {
+    const result = await ipcRenderer.invoke('printLiveBirth', formData);
+    if (result) {
+      return true
+    }
+  },
+})
+
+
 contextBridge.exposeInMainWorld('LocalCivilApi', {
   IsServerRunning: async () => {
     const result = await ipcRenderer.invoke('is-server-running');

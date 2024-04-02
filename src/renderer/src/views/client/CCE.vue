@@ -25,13 +25,10 @@
             </div>
         </div>
         <div class="h-[calc(100vh-170px)] px-5 relative">
-
             <!-- <TableGrid :data="data" :dataColumns="colDefs" /> -->
         </div>
 
 
-        <Transition enter-active-class="animate__animated animate__fadeIn"
-            leave-active-class="animate__animated animate__fadeOut">
             <Modal large label="Create Document" v-if="RA9048">
                 <template v-slot:header>
                     <ModalCloseButton @click="closeModal" />
@@ -68,7 +65,8 @@
                         <Box title="Petitioner Nationality & Complete Address" width="w-full">
                             <div class="grid grid-cols-2 w-full gap-2 ">
 
-                                <Input label="Nationality" v-model="formData.nationality" />
+                                <Input label="Nationality" v-model="formData.nationality" skip />
+                               
 
                                 <selectLocation @change="formData.petitioner_city = ''" :options="provinces[0]"
                                     id="province" v-model="formData.petitioner_province" Province />
@@ -100,7 +98,7 @@
                                             v-model="formData.name_owner"
                                             @input="formData.name_owner = $event.target.value.toUpperCase()" />
 
-                                        {{ formData.name_owner }}
+                            
                                     </div>
                                     <div class="grow">
                                         <InputSuggestions label="Relation of Owner"
@@ -116,16 +114,17 @@
                         <div class="basis-[23%]" v-if="formData.document_type === 'Birth'">
                             <Box title="I/ He / She was born on " width="w-full">
                                 <div class="grid grid-cols-1 w-full gap-2 ">
-                                    <!-- <Input label="Date of Birth" v-model="formData.date_of_birth" /> -->
+
                                     <div>
                                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                             of
                                             Birth</label>
-                                        <VueDatePicker v-model="formData.date_of_birth" auto-apply text-input
-                                            :max-date="new Date()" month-name-format="long"
+                                        <VueDatePicker :text-input="dateInputOptions" v-model="formData.date_of_birth"
+                                            auto-apply :max-date="new Date()"
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                            format="MMMM dd, yyyy">
-                                        </VueDatePicker>
+                                            format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                            :month-change-on-scroll="false" position="right" </VueDatePicker>
+
 
                                     </div>
                                 </div>
@@ -316,7 +315,7 @@
                                 <div class="grid grid-cols-1  w-full gap-2 ">
                                     <Input label="Name" skip v-model="formData.administering_officer"
                                         @input="formData.administering_officer = $event.target.value.toUpperCase()" />
-                                    <Input label="Position" skip v-model="formData.administering_officer_position" />
+                                    <Input label="Position" skip v-model="formData.administering_position" />
 
                                 </div>
                             </Box>
@@ -329,11 +328,14 @@
                                     <div>
                                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                             Sworn</label>
-                                        <VueDatePicker :max-date="new Date()" v-model="formData.SwornDate" auto-apply
-                                            text-input
+                                        <VueDatePicker :text-input="dateInputOptions" v-model="formData.SwornDate"
+                                            auto-apply :max-date="new Date()"
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                            format="MMMM dd, yyyy">
+                                            format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                            :month-change-on-scroll="false" position="right">
                                         </VueDatePicker>
+
+                         
                                     </div>
                                     <Input label="City/Municipality" skip v-model="formData.SwornCity" />
                                     <Input label="Community Tax Certificate No." v-model="formData.Ctc" />
@@ -342,9 +344,12 @@
                                         <label
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Issued
                                             on</label>
-                                        <VueDatePicker v-model="formData.CtcIssuedOn" preserve auto-apply
-                                            format="MMMM dd, yyyy" text-input
-                                            input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50" />
+                                        <VueDatePicker :text-input="dateInputOptions" v-model="formData.CtcIssuedOn"
+                                            auto-apply
+                                            input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
+                                            format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                            :month-change-on-scroll="false" position="right">
+                                        </VueDatePicker>
 
                                     </div>
                                 </div>
@@ -365,9 +370,11 @@
                                     <div>
                                         <label
                                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
-                                        <VueDatePicker v-model="formData.ActionDate" auto-apply text-input
+                                        <VueDatePicker :text-input="dateInputOptions" v-model="formData.ActionDate"
+                                            auto-apply
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                            format="MMMM dd, yyyy">
+                                            format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                            :month-change-on-scroll="false" position="right">
                                         </VueDatePicker>
                                     </div>
                                     <Input label="Municipal Civil Registrar" skip v-model="formData.mcr"
@@ -396,9 +403,11 @@
                                     <div>
                                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date
                                             Paid</label>
-                                        <VueDatePicker v-model="formData.DatePaid" auto-apply text-input
+                                        <VueDatePicker :text-input="dateInputOptions" v-model="formData.DatePaid"
+                                            auto-apply
                                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                            format="MMMM dd, yyyy">
+                                            format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                            :month-change-on-scroll="false" position="right">
                                         </VueDatePicker>
                                     </div>
 
@@ -416,9 +425,11 @@
                                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notice
                                                 of
                                                 Posting</label>
-                                            <VueDatePicker v-model="formData.notice_posting" auto-apply text-input
+                                            <VueDatePicker :text-input="dateInputOptions"
+                                                v-model="formData.notice_posting" auto-apply
                                                 input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                format="MMMM dd, yyyy">
+                                                format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                                :month-change-on-scroll="false" position="right">
                                             </VueDatePicker>
                                         </div>
                                     </div>
@@ -428,20 +439,22 @@
                                             <div>
                                                 <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start</label>
-                                                <VueDatePicker v-model="formData.certificate_posting_start" auto-apply
-                                                    text-input
+                                                <VueDatePicker :text-input="dateInputOptions"
+                                                    v-model="formData.certificate_posting_start" auto-apply
                                                     input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                    format="MMMM dd, yyyy">
+                                                    format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                                    :month-change-on-scroll="false" position="right">
                                                 </VueDatePicker>
                                             </div>
                                             <p class="absolute top-10 font-bold text-xs ">TO</p>
                                             <div>
                                                 <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End</label>
-                                                <VueDatePicker v-model="formData.certificate_posting_end" auto-apply
-                                                    text-input
+                                                <VueDatePicker :text-input="dateInputOptions"
+                                                    v-model="formData.certificate_posting_end" auto-apply
                                                     input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                    format="MMMM dd, yyyy">
+                                                    format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                                    :month-change-on-scroll="false" position="right">
                                                 </VueDatePicker>
                                             </div>
                                         </div>
@@ -453,9 +466,11 @@
                                                 <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                                     Date Issued</label>
-                                                <VueDatePicker v-model="formData.date_issued" auto-apply text-input
+                                                <VueDatePicker :text-input="dateInputOptions"
+                                                    v-model="formData.date_issued" auto-apply
                                                     input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                    format="MMMM dd, yyyy">
+                                                    format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                                    :month-change-on-scroll="false" position="right">
                                                 </VueDatePicker>
                                             </div>
                                         </div>
@@ -464,9 +479,11 @@
                                                 <label
                                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                                     Date Granted</label>
-                                                <VueDatePicker v-model="formData.date_granted" auto-apply text-input
+                                                <VueDatePicker :text-input="dateInputOptions"
+                                                    v-model="formData.date_granted" auto-apply
                                                     input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                    format="MMMM dd, yyyy">
+                                                    format="MMMM dd, yyyy" model-type="MMMM dd, yyyy"
+                                                    :month-change-on-scroll="false" position="right">
                                                 </VueDatePicker>
                                             </div>
                                         </div>
@@ -485,7 +502,24 @@
 
                 </template>
             </Modal>
-        </Transition>
+       
+
+
+
+<Modal small v-if="processing">
+
+    <template v-slot:footer>
+                    <button type="button" @click="processing = false"
+                        class="py-2 px-4  mb-2 text-sm font-medium text-white bg-green-400  rounded-sm shadow-sm  hover:text-white  focus:z-10  dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        Close
+                    </button>
+
+    </template>
+</Modal>
+
+
+
+
     </div>
 
 
@@ -500,7 +534,7 @@ import Radio from '../../components/essentials/inputs/Radio.vue';
 
 
 import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted, toRaw } from 'vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import { onClickOutside } from '@vueuse/core'
 import Box from '../../components/essentials/Box.vue';
@@ -514,6 +548,21 @@ import InputFormatted from '../../components/essentials/inputs/InputFormatted.vu
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
+import { useDateFormat, useNow } from '@vueuse/core'
+import { 
+    now_date, 
+    add_date_notice, 
+    add_date_certificate_start, 
+    add_date_certificate_end,
+    add_date_issued,
+    add_date_granted
+} from '../../utils/DayPosting.js'
+
+
+const processing = ref(false)
+const dateInputOptions = ref({
+    format: 'PP'
+})
 
 
 const RelationSuggestion = ref([
@@ -668,30 +717,13 @@ const colDefs = ref([
 
 ]);
 
-const date_now = new Date()
-
-function add_date_notice() {
-    const newDate = new Date(date_now);
-    newDate.setDate(newDate.getDate() + 1);
-    return newDate;
-}
-
-function add_date_certificate_start() {
-    const newDate = new Date(add_date_notice());
-    newDate.setDate(newDate.getDate() + 1);
-    return newDate;
-}
-
-function add_date_certificate_end() {
-    const newDate = new Date(add_date_certificate_start());
-    newDate.setDate(newDate.getDate() + 10);
-    return newDate;
-}
-
+const date_now = ref(now_date())
 
 const date_notice = ref(add_date_notice())
 const date_certificate_start = ref(add_date_certificate_start())
 const date_certificate_end = ref(add_date_certificate_end())
+const date_of_issued = ref(add_date_issued())
+const date_of_granted = ref(add_date_granted())
 
 
 
@@ -733,7 +765,7 @@ const formData = reactive({
 
 
     administering_officer: 'ISMAEL D. MALICDEM, JR.',
-    administering_officer_position: 'Municipal Civil Registrar',
+    administering_position: 'Municipal Civil Registrar',
 
 
     SwornDate: date_now,
@@ -761,70 +793,81 @@ const formData = reactive({
     certificate_posting_end: date_certificate_end,
 
 
-    date_issued: '',
-    date_granted: ''
-
-
+    date_issued: date_of_issued,
+    date_granted: date_of_granted
 
 });
 
-// const rules = computed(() => {
-//     return {
-//         type: { required },
-//         document_type: { required },
-//         petition_number: { required },
-//         petitioner_name: { required },
-//         nationality: { required },
-//         petitioner_province: { required },
-//         petitioner_city: { required },
-//         petitioner_barangay: { required },
-//         cce_in: { required }, // 
-//         name_owner: { required },
-//         relation_owner: { required },
-//         date_of_birth: { required },
-//         at_city: { required },
-//         at_province: { required },
-//         at_country: { required },
-//         registry_number: { required },
-//         reason: { required },
-//         LCRO_city: { required },
-//         LCRO_province: { required },
-//         // Page 2
-//         administering_officer: { required },
-//         administering_officer_position: { required },
-//         SwornDate: { required },
-//         SwornCity: { required },
-//         Ctc: { required },
-//         CtcIssuedOn: { required },
-//         CtcIssuedAt: { required },
-//         action: { required },
-//         ActionDate: { required },
-//         mcr: { required },
-//         decision: { required },
-//         or_number: { required },
-//         amount_paid: { required },
-//         DatePaid: { required },
-//         notice_posting: { required },
-//         certificate_posting_start: { required },
-//         certificate_posting_end: { required },
-//     };
-// });
-
-// const v$ = useVuelidate(rules, formData);
 
 
-const submitForm = () => {
-    // v$.value.$touch();
-    // if (v$.value.$error) {
-    //     console.log(v$)
-    //     return;
+const submitForm = async () => {
+    
+    closeModal()
+
+    processing.value = true
+    // const data = {
+
+    // type: formData.type,
+    // document_type: formData.document_type,
+    // petition_number: formData.petition_number,
+    // petitioner_name: formData.petitioner_name,
+    // nationality: formData.nationality,
+    // petitioner_province: formData.petitioner_province,
+
+    // petitioner_city: formData.petitioner_city,
+    // petitioner_barangay: formData.petitioner_barangay,
+    // cce_in: formData.cce_in, 
+
+    // name_owner: formData.name_owner,
+    // relation_owner: formData.relation_owner,
+    // date_of_birth: formData.date_of_birth,
+    // at_city: formData.at_city,
+    // at_province: formData.at_province,
+    // at_country: formData.at_country,
+    // registry_number: formData.registry_number,
+
+
+    // // clerical_errors: clerical, // Not Working
+
+
+    // reason: formData.reason,
+    // LCRO_city: formData.LCRO_city,
+    // LCRO_province: formData.LCRO_province,
+
+    // administering_officer: formData.administering_officer,
+    // administering_position: formData.administering_position,
+
+
+    // SwornDate: formData.SwornDate,
+    // SwornCity: formData.SwornCity,
+
+    // Ctc: formData.Ctc,
+    // CtcIssuedOn: formData.CtcIssuedOn,
+    // CtcIssuedAt: formData.CtcIssuedAt,
+
+
+    // action: formData.action,
+    // ActionDate: formData.ActionDate,
+    // mcr: formData.mcr,
+    // decision: formData.decision,
+
+
+    // or_number: formData.or_number,
+    // amount_paid: formData.amount_paid,
+    // DatePaid: formData.DatePaid,
+
+
+
+    // notice_posting: formData.notice_posting,
+    // certificate_posting_start: formData.certificate_posting_start,
+    // certificate_posting_end: formData.certificate_posting_end,
+
+
+    // date_issued: formData.date_issued,
+    // date_granted: formData.date_granted
+
     // }
+    // const check = await window.ClericalApi.PrintLiveBirth(data);
 }
 
-
-const create_document = () => {
-
-
-
-}
 </script>

@@ -5,10 +5,12 @@ import { useServerAuthStore } from "../stores/ServerAuth";
 import { useServerStore } from "../stores/server";
 import { useUserData } from "../stores/clientData";
 
-import { createRouter, createMemoryHistory } from "vue-router";
+import { createRouter, createMemoryHistory, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  // history: createMemoryHistory(),
+  history: createWebHashHistory(),
+
   _routes: [
     {
       path: "/",

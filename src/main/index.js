@@ -62,6 +62,20 @@ async function startServer() {
   }
 }
 
+
+ipcMain.handle('printLiveBirth', async (event, formData) => {
+  try {
+    const Generator = await generate(formData)
+    if (Generator) {
+      return true
+    }
+    return false
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+
 ipcMain.handle('is-server-running', async (event) => {
   try {
     if (pythonProcess) {
@@ -242,9 +256,6 @@ function mainWindow() {
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.localcivilregistry.office');
-
-
-
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
