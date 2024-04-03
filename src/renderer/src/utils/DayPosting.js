@@ -11,7 +11,7 @@ export function add_date_notice() {
     const today = useNow()
     //    Tue Apr 02 2024 11:21:39 GMT+0800 (Taipei Standard Time)
     const getNextDate = (date) => {
-        const newDate = new Date('Tue Apr 05 2024 11:21:39 GMT+0800 (Taipei Standard Time)');
+        const newDate = new Date(date);
         newDate.setDate(newDate.getDate() + 1);
         while (newDate.getDay() === 0 || newDate.getDay() === 6) {
             newDate.setDate(newDate.getDate() + 1);
