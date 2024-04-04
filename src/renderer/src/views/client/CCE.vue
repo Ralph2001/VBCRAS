@@ -344,6 +344,12 @@
                                                     index
                                                 ]
                                             "
+                                            @input="
+                                                formData.clerical_errors.from[
+                                                    index
+                                                ] =
+                                                    $event.target.value.toUpperCase()
+                                            "
                                         />
                                     </div>
                                     <div class="grow">
@@ -352,6 +358,12 @@
                                                 formData.clerical_errors.to[
                                                     index
                                                 ]
+                                            "
+                                            @input="
+                                                formData.clerical_errors.to[
+                                                    index
+                                                ] =
+                                                    $event.target.value.toUpperCase()
                                             "
                                         />
                                     </div>
@@ -621,9 +633,33 @@
                             </div>
                         </Box>
                     </div>
-                    <div class="grow">
-                        <Box title="Decision" width="w-ful">
+                    <div class="basis-[60%]">
+                        <Box title="Decision" width="full">
                             <div class="grid grid-cols-1 w-full gap-2">
+                                <!-- {{ formData.decision }}
+                                <Editor
+                                    v-model="formData.decision"
+                                    editorStyle="height: 220px;"
+                                    formats="rawXML"
+                                >
+                                    <template v-slot:toolbar>
+                                        <span class="ql-formats">
+                                            <button
+                                                v-tooltip.bottom="'Bold'"
+                                                class="ql-bold"
+                                            ></button>
+                                            <button
+                                                v-tooltip.bottom="'Italic'"
+                                                class="ql-italic"
+                                            ></button>
+                                            <button
+                                                v-tooltip.bottom="'Underline'"
+                                                class="ql-underline"
+                                            ></button>
+                                        </span>
+                                    </template>
+                                </Editor> -->
+
                                 <textarea
                                     id="message"
                                     rows="6"
@@ -644,10 +680,11 @@
                                     type="number"
                                     v-model="formData.or_number"
                                 />
-                                <Input
+                                <InputCurrency
                                     label="Amount Paid"
                                     v-model="formData.amount_paid"
                                 />
+
                                 <div>
                                     <label
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -846,21 +883,21 @@
 </template>
 
 <script setup>
-import Radio from '../../components/essentials/inputs/Radio.vue';
+import Radio from '../../components/essentials/inputs/Radio.vue'
 
-import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
-import { ref, reactive, computed } from 'vue';
-import Modal from '../../components/client/modal/Modal.vue';
-import { onClickOutside } from '@vueuse/core';
-import Box from '../../components/essentials/Box.vue';
-import Select from '../../components/essentials/inputs/Select.vue';
-import Input from '../../components/essentials/inputs/Input.vue';
-import philippines from '../../utils/philippines';
-import selectLocation from '../../components/essentials/inputs/select/select-location.vue';
-import InputSuggestions from '../../components/essentials/inputs/InputSuggestions.vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
-import InputFormatted from '../../components/essentials/inputs/InputFormatted.vue';
-import '@vuepic/vue-datepicker/dist/main.css';
+import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue'
+import { ref, reactive, computed } from 'vue'
+import Modal from '../../components/client/modal/Modal.vue'
+import { onClickOutside } from '@vueuse/core'
+import Box from '../../components/essentials/Box.vue'
+import Select from '../../components/essentials/inputs/Select.vue'
+import Input from '../../components/essentials/inputs/Input.vue'
+import philippines from '../../utils/philippines'
+import selectLocation from '../../components/essentials/inputs/select/select-location.vue'
+import InputSuggestions from '../../components/essentials/inputs/InputSuggestions.vue'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import InputFormatted from '../../components/essentials/inputs/InputFormatted.vue'
+import '@vuepic/vue-datepicker/dist/main.css'
 
 import {
     now_date,
@@ -869,31 +906,34 @@ import {
     add_date_certificate_end,
     add_date_issued,
     add_date_granted,
-} from '../../utils/DayPosting.js';
+} from '../../utils/DayPosting.js'
 
-import Loading from '../../components/essentials/others/Loading.vue';
-import LoadingBlock from '../../components/essentials/block/LoadingBlock.vue';
+import Loading from '../../components/essentials/others/Loading.vue'
+import LoadingBlock from '../../components/essentials/block/LoadingBlock.vue'
+import InputCurrency from '../../components/essentials/inputs/InputCurrency.vue'
+import TextEditor from '../../components/essentials/inputs/TextEditor.vue'
+import Editor from 'primevue/editor'
 
-const label_document_folder = ref('Creating Document Folder');
-const label_endorsement_letter = ref('Creating Endorsement Letter');
-const label_petition = ref('Creating Petition');
-const label_record_sheet = ref('Creating Record Sheet');
-const label_notice_posting = ref('Creating Notice of Posting');
-const label_certificate_posting = ref('Creating Certificate of Posting');
+const label_document_folder = ref('Creating Document Folder')
+const label_endorsement_letter = ref('Creating Endorsement Letter')
+const label_petition = ref('Creating Petition')
+const label_record_sheet = ref('Creating Record Sheet')
+const label_notice_posting = ref('Creating Notice of Posting')
+const label_certificate_posting = ref('Creating Certificate of Posting')
 
-const document_folder = ref(true);
-const endorsement_letter = ref(true);
-const petition = ref(true);
-const record_sheet = ref(true);
-const notice_posting = ref(true);
-const certificate_posting = ref(true);
+const document_folder = ref(true)
+const endorsement_letter = ref(true)
+const petition = ref(true)
+const record_sheet = ref(true)
+const notice_posting = ref(true)
+const certificate_posting = ref(true)
 
-const processing = ref(false);
+const processing = ref(false)
 const dateInputOptions = ref({
     format: 'PP',
-});
+})
 
-const RelationSuggestion = ref(['Father', 'Mother', 'Brother', 'Sister']);
+const RelationSuggestion = ref(['Father', 'Mother', 'Brother', 'Sister'])
 
 const SupportingDocumentsSuggestions = ref([
     'My Certificate of Live Birth',
@@ -902,33 +942,33 @@ const SupportingDocumentsSuggestions = ref([
     'My Postal ID',
     "My Voter's Certification",
     'My Community Tax Certificate',
-]);
+])
 
 const DescriptionSuggestions = ref([
     "Child's first name",
     "Child's middle name",
     "Child's last name",
-]);
+])
 
-const address = philippines;
-const region = ref('01');
+const address = philippines
+const region = ref('01')
 
-const RA9048 = ref(false);
+const RA9048 = ref(false)
 
 const regions = computed(() => {
-    return [...new Set(address.map((data) => data))].sort((a, b) => a - b);
-});
+    return [...new Set(address.map((data) => data))].sort((a, b) => a - b)
+})
 
 const provinces = computed(() => {
     return [
         ...new Set(address.map((data) => data[region.value].province_list)),
-    ].sort((a, b) => a - b);
-});
+    ].sort((a, b) => a - b)
+})
 
 const municipality = computed(() => {
-    const selectedProvince = formData.petitioner_province;
+    const selectedProvince = formData.petitioner_province
     if (!selectedProvince) {
-        return [];
+        return []
     }
     return (
         [
@@ -940,14 +980,14 @@ const municipality = computed(() => {
                 )
             ),
         ].sort((a, b) => a - b) || []
-    );
-});
+    )
+})
 
 const barangay = computed(() => {
-    const selectedProvince = formData.petitioner_province;
-    const selectedMunicipality = formData.petitioner_city;
+    const selectedProvince = formData.petitioner_province
+    const selectedMunicipality = formData.petitioner_city
     if (!selectedProvince || !selectedMunicipality) {
-        return [];
+        return []
     }
     return (
         [
@@ -960,19 +1000,19 @@ const barangay = computed(() => {
                 )
             ),
         ].sort((a, b) => a - b) || []
-    );
-});
+    )
+})
 
 const at_province = computed(() => {
     return [
         ...new Set(address.map((data) => data[region.value].province_list)),
-    ].sort((a, b) => a - b);
-});
+    ].sort((a, b) => a - b)
+})
 
 const at_city = computed(() => {
-    const selectedProvince = formData.at_province;
+    const selectedProvince = formData.at_province
     if (!selectedProvince) {
-        return [];
+        return []
     }
     return [
         ...new Set(
@@ -982,73 +1022,73 @@ const at_city = computed(() => {
                         .municipality_list
             )
         ),
-    ].sort((a, b) => a - b);
-});
+    ].sort((a, b) => a - b)
+})
 
 const modalOpener = (RA) => {
     if (RA === 'R.A. 9048') {
-        RA9048.value = !RA9048.value;
+        RA9048.value = !RA9048.value
     } else {
-        console.log('is it');
+        console.log('is it')
     }
-};
-
-function closeModal() {
-    RA9048.value = false;
 }
 
-const dropdown = ref(false);
-onClickOutside(dropdown, (event) => (dropdown.value = false));
+function closeModal() {
+    RA9048.value = false
+}
 
-const items = ref([1]);
+const dropdown = ref(false)
+onClickOutside(dropdown, (event) => (dropdown.value = false))
+
+const items = ref([1])
 
 const addItem = () => {
-    items.value.push('');
-};
+    items.value.push('')
+}
 const removeItem = () => {
     if (items.value.length > 1) {
-        const indexToRemove = items.value.length - 1;
-        items.value.splice(indexToRemove, 1);
-        formData.clerical_errors.description.splice(indexToRemove, 1);
-        formData.clerical_errors.from.splice(indexToRemove, 1);
-        formData.clerical_errors.to.splice(indexToRemove, 1);
+        const indexToRemove = items.value.length - 1
+        items.value.splice(indexToRemove, 1)
+        formData.clerical_errors.description.splice(indexToRemove, 1)
+        formData.clerical_errors.from.splice(indexToRemove, 1)
+        formData.clerical_errors.to.splice(indexToRemove, 1)
     }
-};
+}
 
-const SupportItems = ref([1]);
+const SupportItems = ref([1])
 
 const addSuppportItem = () => {
-    SupportItems.value.push('');
-};
+    SupportItems.value.push('')
+}
 const removeSupportItem = () => {
     if (SupportItems.value.length > 1) {
-        const indexToRemove = SupportItems.value.length - 1;
-        SupportItems.value.splice(indexToRemove, 1);
-        formData.SupportingDocuments.splice(indexToRemove, 1);
+        const indexToRemove = SupportItems.value.length - 1
+        SupportItems.value.splice(indexToRemove, 1)
+        formData.SupportingDocuments.splice(indexToRemove, 1)
     }
-};
+}
 
 const seeking_options = ref({
     my: 'my Certificate of Live Birth',
     the: 'the Certificate of Live Birth of',
-});
+})
 const action_options = ref({
     Granted: 'Granted',
     Denied: 'Denied (Provide the basis for denial)',
-});
+})
 
-const RA = ref(['R.A. 9048', 'R.A. 10172']);
+const RA = ref(['R.A. 9048', 'R.A. 10172'])
 
-const Type = ref(['CCE', 'CFN']);
-const DocumentType = ref(['Birth', 'Death', 'Marriage']);
+const Type = ref(['CCE', 'CFN'])
+const DocumentType = ref(['Birth', 'Death', 'Marriage'])
 
-const date_now = ref(now_date());
+const date_now = ref(now_date())
 
-const date_notice = ref(add_date_notice());
-const date_certificate_start = ref(add_date_certificate_start());
-const date_certificate_end = ref(add_date_certificate_end());
-const date_of_issued = ref(add_date_issued());
-const date_of_granted = ref(add_date_granted());
+const date_notice = ref(add_date_notice())
+const date_certificate_start = ref(add_date_certificate_start())
+const date_certificate_end = ref(add_date_certificate_end())
+const date_of_issued = ref(add_date_issued())
+const date_of_granted = ref(add_date_granted())
 
 const formData = reactive({
     type: 'CCE',
@@ -1107,23 +1147,69 @@ const formData = reactive({
 
     date_issued: date_of_issued,
     date_granted: date_of_granted,
-});
+})
 
 const submitForm = async () => {
-    closeModal();
+    closeModal()
     const clerical_errors = ref({
         description: formData.clerical_errors.description,
         from: formData.clerical_errors.from,
         to: formData.clerical_errors.to,
-    });
+    })
 
-    const errors = JSON.stringify(clerical_errors.value);
-    const supports = JSON.stringify(formData.SupportingDocuments);
+    const errors = JSON.stringify(clerical_errors.value)
+    const supports = JSON.stringify(formData.SupportingDocuments)
 
     if (formData.name_owner === '' && formData.relation_owner === '') {
-        formData.name_owner = 'N/A';
-        formData.relation_owner = 'N/A';
+        formData.name_owner = 'N/A'
+        formData.relation_owner = 'N/A'
     }
+
+    const decisionText = `${formData.decision}&#160;`
+    const fromText = `“${formData.clerical_errors.from}”&#160;`
+    const toText = `“${formData.clerical_errors.to}”`
+
+    const formattedDecision = ref(`
+<w:p>
+
+  <w:r>
+    <w:rPr>
+      <w:rFonts w:ascii="Arial"/>
+      <w:sz w:val="22"/>
+    </w:rPr>
+        <w:t>${decisionText}</w:t>
+  </w:r>
+
+  <w:r>
+    <w:rPr>
+      <w:rFonts w:ascii="Arial"/>
+      <w:sz w:val="22"/>
+      <w:b/>
+    </w:rPr>
+     <w:t>${fromText}&#160;</w:t>
+  </w:r>
+
+  <w:r>
+    <w:rPr>
+      <w:rFonts w:ascii="Arial"/>
+      <w:sz w:val="22"/>
+    </w:rPr>
+        <w:t> to &#160;</w:t>
+  </w:r>
+
+
+  <w:r>
+    <w:rPr>
+      <w:rFonts w:ascii="Arial"/>
+      <w:b/>
+      <w:sz w:val="22"/>
+    </w:rPr>
+        <w:t>${toText}</w:t>
+  </w:r>
+
+
+</w:p>
+`)
 
     const data = {
         type: formData.type,
@@ -1163,7 +1249,7 @@ const submitForm = async () => {
         action: formData.action,
         ActionDate: formData.ActionDate,
         mcr: formData.mcr,
-        decision: formData.decision,
+        decision: formattedDecision.value,
 
         or_number: formData.or_number,
         amount_paid: formData.amount_paid,
@@ -1175,41 +1261,41 @@ const submitForm = async () => {
 
         date_issued: formData.date_issued,
         date_granted: formData.date_granted,
-    };
+    }
 
-    console.log(data);
+    console.log(data)
 
-    processing.value = true;
+    processing.value = true
 
-    document_folder.value = true;
-    endorsement_letter.value = true;
-    petition.value = true;
-    record_sheet.value = true;
-    notice_posting.value = true;
-    certificate_posting.value = true;
+    document_folder.value = true
+    endorsement_letter.value = true
+    petition.value = true
+    record_sheet.value = true
+    notice_posting.value = true
+    certificate_posting.value = true
 
-    label_document_folder.value = 'Creating Document Folder';
-    label_endorsement_letter.value = 'Creating Endorsement Letter';
-    label_petition.value = 'Creating Petition';
-    label_record_sheet.value = 'Creating Record Sheet';
-    label_notice_posting.value = 'Creating Notice of Posting';
-    label_certificate_posting.value = 'Creating Certificate of Posting';
+    label_document_folder.value = 'Creating Document Folder'
+    label_endorsement_letter.value = 'Creating Endorsement Letter'
+    label_petition.value = 'Creating Petition'
+    label_record_sheet.value = 'Creating Record Sheet'
+    label_notice_posting.value = 'Creating Notice of Posting'
+    label_certificate_posting.value = 'Creating Certificate of Posting'
 
-    const check = await window.ClericalApi.PrintLiveBirth(data);
+    const check = await window.ClericalApi.PrintLiveBirth(data)
 
     if (check) {
-        document_folder.value = false;
-        label_document_folder.value = 'Document Folder';
-        endorsement_letter.value = false;
-        label_endorsement_letter.value = 'Endorsement Letter';
-        petition.value = false;
-        label_petition.value = 'Petition';
-        record_sheet.value = false;
-        label_record_sheet.value = 'Record Sheet';
-        notice_posting.value = false;
-        label_notice_posting.value = 'Notice of Posting';
-        certificate_posting.value = false;
-        label_certificate_posting.value = 'Certificate of Posting';
+        document_folder.value = false
+        label_document_folder.value = 'Document Folder'
+        endorsement_letter.value = false
+        label_endorsement_letter.value = 'Endorsement Letter'
+        petition.value = false
+        label_petition.value = 'Petition'
+        record_sheet.value = false
+        label_record_sheet.value = 'Record Sheet'
+        notice_posting.value = false
+        label_notice_posting.value = 'Notice of Posting'
+        certificate_posting.value = false
+        label_certificate_posting.value = 'Certificate of Posting'
     }
-};
+}
 </script>

@@ -1,19 +1,16 @@
+import { createApp, markRaw } from 'vue'
+import { createPinia } from 'pinia'
 
+import App from './App.vue'
+import router from './router'
 
-import { createApp, markRaw } from "vue";
-import { createPinia } from "pinia";
+import PrimeVue from 'primevue/config'
+import Lara from './assets/presets/lara'
 
-import App from "./App.vue";
-import router from "./router";
+import VueSweetalert2 from 'vue-sweetalert2'
+import 'sweetalert2/dist/sweetalert2.min.css'
 
-import PrimeVue from 'primevue/config';
-import Lara from './assets/presets/lara';
-
-
-import VueSweetalert2 from 'vue-sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
-
-import VueDatePicker from '@vuepic/vue-datepicker';
+import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -25,30 +22,80 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faTrash, faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear, faFilePdf, faDesktop, faFilter, faFolder, faBarsProgress, faMagnifyingGlass, faCircleArrowLeft, faRepeat, faArrowRotateLeft, faXmark, faFolderOpen, faChevronCircleRight, faCircleQuestion, faUserCheck, faChartLine, faFlag, faPrint, faScroll} from '@fortawesome/free-solid-svg-icons'
+import {
+    faTrash,
+    faUserSecret,
+    faPowerOff,
+    faCaretDown,
+    faRightFromBracket,
+    faGear,
+    faFilePdf,
+    faDesktop,
+    faFilter,
+    faFolder,
+    faBarsProgress,
+    faMagnifyingGlass,
+    faCircleArrowLeft,
+    faRepeat,
+    faArrowRotateLeft,
+    faXmark,
+    faFolderOpen,
+    faChevronCircleRight,
+    faCircleQuestion,
+    faUserCheck,
+    faChartLine,
+    faFlag,
+    faPrint,
+    faScroll,
+} from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
-library.add( faTrash, faUserSecret, faPowerOff, faCaretDown, faRightFromBracket, faGear, faFilePdf, faDesktop, faFilter, faFolder, faBarsProgress, faMagnifyingGlass, faCircleArrowLeft, faRepeat, faArrowRotateLeft, faXmark, faFolderOpen, faChevronCircleRight,faCircleQuestion, faUserCheck, faChartLine, faFlag, faPrint, faScroll )
+library.add(
+    faTrash,
+    faUserSecret,
+    faPowerOff,
+    faCaretDown,
+    faRightFromBracket,
+    faGear,
+    faFilePdf,
+    faDesktop,
+    faFilter,
+    faFolder,
+    faBarsProgress,
+    faMagnifyingGlass,
+    faCircleArrowLeft,
+    faRepeat,
+    faArrowRotateLeft,
+    faXmark,
+    faFolderOpen,
+    faChevronCircleRight,
+    faCircleQuestion,
+    faUserCheck,
+    faChartLine,
+    faFlag,
+    faPrint,
+    faScroll
+)
 
-import "./assets/index.css";
-import 'flowbite';
-import "animate.css";
+import './assets/index.css'
+import 'flowbite'
+import 'animate.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-const app = createApp(App);
-const pinia = createPinia();
+const app = createApp(App)
+const pinia = createPinia()
 
 pinia.use(({ store }) => {
-  store.router = markRaw(router);
-});
-app.use(router);
-app.use(pinia);
+    store.router = markRaw(router)
+})
+app.use(router)
+app.use(pinia)
 
 app.component('RecycleScroller', RecycleScroller)
-app.component('font-awesome-icon', FontAwesomeIcon);
-app.use(VueSweetalert2);
-app.component('VueDatePicker', VueDatePicker);
+app.component('font-awesome-icon', FontAwesomeIcon)
+app.use(VueSweetalert2)
+app.component('VueDatePicker', VueDatePicker)
 
 app.use(PrimeVue, { unstyled: true, pt: Lara })
 
-app.mount("#app");
+app.mount('#app')

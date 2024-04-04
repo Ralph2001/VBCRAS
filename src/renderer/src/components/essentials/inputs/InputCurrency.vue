@@ -8,8 +8,8 @@
         <input
             :type="type"
             :id="label"
-            :value="modelValue"
-            @input="emit('update:modelValue', $event.target.value)"
+            :value="formattedValue"
+            @change="handleInput($event.target.value)"
             :tabindex="skip ? '-1' : ''"
             :readonly="readonly"
             :class="{
@@ -24,7 +24,9 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['update:modelValue'])
+import { ref } from 'vue';
+
+const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
     label: {
@@ -33,13 +35,11 @@ const props = defineProps({
         required: false,
     },
     modelValue: {
-        required: false,
         type: [String, Number],
         default: '',
     },
     type: {
         type: String,
-        required: false,
         default: 'text',
     },
     readonly: Boolean,
@@ -51,7 +51,24 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-})
-</script>
+});
 
-<style lang="scss" scoped></style>
+const formattedValue = ref(formatCurrency(props.modelValue));
+
+function formatCurrency(value) {
+    const numberValue = parseFloat(value);
+    if (isNaN(numberValue)) {
+        return '';
+    }
+
+    return new Intl.NumberFormat('fil-PH', {
+        style: 'currency',
+        currency: 'PHP',
+    }).format(numberValue);
+}
+
+function handleInput(newValue) {
+    formattedValue.value = formatCurrency(newValue);
+    emit('update:modelValue', formattedValue.value);
+}
+</script>
