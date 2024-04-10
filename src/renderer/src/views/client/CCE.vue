@@ -1,5 +1,4 @@
 <template>
-    <!-- jalbertrosky@hotmail.com:Superc0c0 -->
     <div class="flex flex-col relative justify-center w-full">
         <div class="flex flex-row items-center p-3 px-5 mb-2">
             <p class="text-md font-semibold tracking-tight">
@@ -35,7 +34,7 @@
             </div>
         </div>
         <div class="h-[calc(100vh-170px)] px-5 relative">
-            <!-- <TableGrid :data="data" :dataColumns="colDefs" /> -->
+            <TableGrid :data="data" :dataColumns="colDefs" />
         </div>
 
         <Modal large label="Create Document" v-if="RA9048">
@@ -108,6 +107,7 @@
                                 v-model="formData.petitioner_province"
                                 Province
                             />
+
                             <selectLocation
                                 :options="municipality[0]"
                                 v-model="formData.petitioner_city"
@@ -296,28 +296,6 @@
                             </div>
 
                             <div class="flex flex-col gap-2 w-full">
-                                <!-- <div class="flex flex-row w-full items-center gap-2"
-                                        v-for="(   item, index   ) in    items   " :key="index">
-                                        <div class="basis-[10%]">
-                                            <p class="text-sm text-center">{{ index + 1 }}</p>
-                                        </div>
-                                        <div class="grow">
-                                            <InputSuggestions v-model="formData.description[index]"
-                                                :items="DescriptionSuggestions" />
-
-                                        </div>
-                                        <div class="grow">
-                                            <Input v-model="formData.from[index]"
-                                                @input="formData.from[index] = $event.target.value.toUpperCase()" />
-                                        </div>
-                                        <div class="grow">
-                                            <Input v-model="formData.to[index]"
-                                                @input="formData.to[index] = $event.target.value.toUpperCase()" />
-                                        </div>
-
-
-                                    </div> -->
-
                                 <div
                                     class="flex flex-row w-full items-center gap-2"
                                     v-for="(item, index) in items"
@@ -636,30 +614,6 @@
                     <div class="basis-[60%]">
                         <Box title="Decision" width="full">
                             <div class="grid grid-cols-1 w-full gap-2">
-                                <!-- {{ formData.decision }}
-                                <Editor
-                                    v-model="formData.decision"
-                                    editorStyle="height: 220px;"
-                                    formats="rawXML"
-                                >
-                                    <template v-slot:toolbar>
-                                        <span class="ql-formats">
-                                            <button
-                                                v-tooltip.bottom="'Bold'"
-                                                class="ql-bold"
-                                            ></button>
-                                            <button
-                                                v-tooltip.bottom="'Italic'"
-                                                class="ql-italic"
-                                            ></button>
-                                            <button
-                                                v-tooltip.bottom="'Underline'"
-                                                class="ql-underline"
-                                            ></button>
-                                        </span>
-                                    </template>
-                                </Editor> -->
-
                                 <textarea
                                     id="message"
                                     rows="6"
@@ -831,13 +785,15 @@
                 </div>
             </div>
             <template v-slot:footer>
-                <button
-                    type="button"
-                    @click="submitForm()"
-                    class="py-2 px-4 mb-2 text-sm font-medium text-white bg-green-400 rounded-sm shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                >
-                    Submit
-                </button>
+                <div class="h-full flex items-center justify-center border">
+                    <button
+                        type="button"
+                        @click="submitForm()"
+                        class="py-2 px-4 text-sm font-medium text-white bg-green-400 rounded-sm shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                    >
+                        Submit
+                    </button>
+                </div>
             </template>
         </Modal>
 
@@ -914,11 +870,43 @@ import InputCurrency from '../../components/essentials/inputs/InputCurrency.vue'
 import TextEditor from '../../components/essentials/inputs/TextEditor.vue'
 import Editor from 'primevue/editor'
 
+import { useAddress } from '../../composables/Address.js'
+import TableGrid from '../../components/TableGrid.vue'
+const colDefs = ref([
+    {
+        field: 'name',
+        headerName: 'Petitioner Number',
+        flex: 2,
+        filter: true,
+        pinned: 'left',
+        lockPinned: true,
+    },
+    { field: 'name', headerName: 'Petitioner Name', flex: 1, filter: true },
+    { field: 'name', headerName: 'Document Owner', flex: 1, filter: true },
+    { field: 'name', headerName: 'Relationship', flex: 1, filter: true },
+    { field: 'name', headerName: 'Date Filed', flex: 1, filter: true },
+    { field: 'name', headerName: 'Status', flex: 1, filter: true },
+    {
+        field: 'name',
+        headerName: 'Date Forwarded to CRG',
+        flex: 1,
+        filter: true,
+    },
+    {
+        headerName: 'Action',
+        flex: 1,
+        pinned: 'right',
+        lockPinned: true,
+        resizable: false,
+        sortable: false,
+    },
+])
+
 const label_document_folder = ref('Creating Document Folder')
 const label_endorsement_letter = ref('Creating Endorsement Letter')
 const label_petition = ref('Creating Petition')
 const label_record_sheet = ref('Creating Record Sheet')
-const label_notice_posting = ref('Creating Notice of Posting')
+const label_notice_posting = ref('Creating Notice    of Posting')
 const label_certificate_posting = ref('Creating Certificate of Posting')
 
 const document_folder = ref(true)
@@ -950,124 +938,6 @@ const DescriptionSuggestions = ref([
     "Child's last name",
 ])
 
-const address = philippines
-const region = ref('01')
-
-const RA9048 = ref(false)
-
-const regions = computed(() => {
-    return [...new Set(address.map((data) => data))].sort((a, b) => a - b)
-})
-
-const provinces = computed(() => {
-    return [
-        ...new Set(address.map((data) => data[region.value].province_list)),
-    ].sort((a, b) => a - b)
-})
-
-const municipality = computed(() => {
-    const selectedProvince = formData.petitioner_province
-    if (!selectedProvince) {
-        return []
-    }
-    return (
-        [
-            ...new Set(
-                address.map(
-                    (data) =>
-                        data[region.value].province_list[selectedProvince]
-                            .municipality_list
-                )
-            ),
-        ].sort((a, b) => a - b) || []
-    )
-})
-
-const barangay = computed(() => {
-    const selectedProvince = formData.petitioner_province
-    const selectedMunicipality = formData.petitioner_city
-    if (!selectedProvince || !selectedMunicipality) {
-        return []
-    }
-    return (
-        [
-            ...new Set(
-                address.map(
-                    (data) =>
-                        data[region.value].province_list[selectedProvince]
-                            .municipality_list[selectedMunicipality]
-                            .barangay_list
-                )
-            ),
-        ].sort((a, b) => a - b) || []
-    )
-})
-
-const at_province = computed(() => {
-    return [
-        ...new Set(address.map((data) => data[region.value].province_list)),
-    ].sort((a, b) => a - b)
-})
-
-const at_city = computed(() => {
-    const selectedProvince = formData.at_province
-    if (!selectedProvince) {
-        return []
-    }
-    return [
-        ...new Set(
-            address.map(
-                (data) =>
-                    data[region.value].province_list[selectedProvince]
-                        .municipality_list
-            )
-        ),
-    ].sort((a, b) => a - b)
-})
-
-const modalOpener = (RA) => {
-    if (RA === 'R.A. 9048') {
-        RA9048.value = !RA9048.value
-    } else {
-        console.log('is it')
-    }
-}
-
-function closeModal() {
-    RA9048.value = false
-}
-
-const dropdown = ref(false)
-onClickOutside(dropdown, (event) => (dropdown.value = false))
-
-const items = ref([1])
-
-const addItem = () => {
-    items.value.push('')
-}
-const removeItem = () => {
-    if (items.value.length > 1) {
-        const indexToRemove = items.value.length - 1
-        items.value.splice(indexToRemove, 1)
-        formData.clerical_errors.description.splice(indexToRemove, 1)
-        formData.clerical_errors.from.splice(indexToRemove, 1)
-        formData.clerical_errors.to.splice(indexToRemove, 1)
-    }
-}
-
-const SupportItems = ref([1])
-
-const addSuppportItem = () => {
-    SupportItems.value.push('')
-}
-const removeSupportItem = () => {
-    if (SupportItems.value.length > 1) {
-        const indexToRemove = SupportItems.value.length - 1
-        SupportItems.value.splice(indexToRemove, 1)
-        formData.SupportingDocuments.splice(indexToRemove, 1)
-    }
-}
-
 const seeking_options = ref({
     my: 'my Certificate of Live Birth',
     the: 'the Certificate of Live Birth of',
@@ -1078,12 +948,9 @@ const action_options = ref({
 })
 
 const RA = ref(['R.A. 9048', 'R.A. 10172'])
-
 const Type = ref(['CCE', 'CFN'])
 const DocumentType = ref(['Birth', 'Death', 'Marriage'])
-
 const date_now = ref(now_date())
-
 const date_notice = ref(add_date_notice())
 const date_certificate_start = ref(add_date_certificate_start())
 const date_certificate_end = ref(add_date_certificate_end())
@@ -1149,8 +1016,114 @@ const formData = reactive({
     date_granted: date_of_granted,
 })
 
+const { provinces, municipality, barangay } = useAddress(() => [
+    formData.petitioner_province,
+    formData.petitioner_city,
+])
+
+const { at_province, at_city } = useAddress(() => [formData.at_province])
+
+const RA9048 = ref(false)
+
+const modalOpener = (RA) => {
+    if (RA === 'R.A. 9048') {
+        RA9048.value = !RA9048.value
+    } else {
+        console.log('is it')
+    }
+}
+
+function closeModal() {
+    RA9048.value = false
+}
+const dropdown = ref(false)
+onClickOutside(dropdown, (event) => (dropdown.value = false))
+
+const items = ref([1])
+const addItem = () => {
+    items.value.push('')
+}
+const removeItem = () => {
+    if (items.value.length > 1) {
+        const indexToRemove = items.value.length - 1
+        items.value.splice(indexToRemove, 1)
+        formData.clerical_errors.description.splice(indexToRemove, 1)
+        formData.clerical_errors.from.splice(indexToRemove, 1)
+        formData.clerical_errors.to.splice(indexToRemove, 1)
+    }
+}
+
+const SupportItems = ref([1])
+const addSuppportItem = () => {
+    SupportItems.value.push('')
+}
+const removeSupportItem = () => {
+    if (SupportItems.value.length > 1) {
+        const indexToRemove = SupportItems.value.length - 1
+        SupportItems.value.splice(indexToRemove, 1)
+        formData.SupportingDocuments.splice(indexToRemove, 1)
+    }
+}
+
+const fromTextAndtoText = computed(() => {
+    const fromText = `“${formData.clerical_errors.from}”&#160;`
+    const toText = `“${formData.clerical_errors.to}”`
+
+    let text = `
+        <w:r>
+            <w:rPr>
+            <w:rFonts w:ascii="Arial"/>
+            <w:sz w:val="22"/>
+            <w:b/>
+            </w:rPr>
+            <w:t>${fromText}</w:t>
+        </w:r>
+
+        <w:r>
+            <w:rPr>
+            <w:rFonts w:ascii="Arial"/>
+            <w:sz w:val="22"/>
+            </w:rPr>
+                <w:t> to&#160;</w:t>
+        </w:r>
+
+        <w:r>
+            <w:rPr>
+            <w:rFonts w:ascii="Arial"/>
+            <w:b/>
+            <w:sz w:val="22"/>
+            </w:rPr>
+                <w:t>${toText}&#160;</w:t>
+        </w:r>`
+
+    return text
+})
+
+const formatted = computed(() => {
+    const words = formData.decision.split(' ')
+    let textFormatted = ''
+
+    words.forEach((word) => {
+        const formattedWord = `
+            <w:r><w:rPr><w:rFonts w:ascii="Arial"/><w:sz w:val="22"/></w:rPr><w:t>${word}&#160;</w:t></w:r>
+       `
+
+        textFormatted += formattedWord
+    })
+
+    return textFormatted
+})
+
+const ooxml = computed(() => {
+    let ooxml = formatted.value.replace(
+        `<w:r><w:rPr><w:rFonts w:ascii="Arial"/><w:sz w:val="22"/></w:rPr><w:t>@here&#160;</w:t></w:r>`,
+        fromTextAndtoText.value
+    )
+    return ooxml
+})
+
 const submitForm = async () => {
-    closeModal()
+    // closeModal()
     const clerical_errors = ref({
         description: formData.clerical_errors.description,
         from: formData.clerical_errors.from,
@@ -1158,58 +1131,14 @@ const submitForm = async () => {
     })
 
     const errors = JSON.stringify(clerical_errors.value)
-    const supports = JSON.stringify(formData.SupportingDocuments)
+    const supports = formData.SupportingDocuments
 
     if (formData.name_owner === '' && formData.relation_owner === '') {
         formData.name_owner = 'N/A'
         formData.relation_owner = 'N/A'
     }
 
-    const decisionText = `${formData.decision}&#160;`
-    const fromText = `“${formData.clerical_errors.from}”&#160;`
-    const toText = `“${formData.clerical_errors.to}”`
-
-    const formattedDecision = ref(`
-<w:p>
-
-  <w:r>
-    <w:rPr>
-      <w:rFonts w:ascii="Arial"/>
-      <w:sz w:val="22"/>
-    </w:rPr>
-        <w:t>${decisionText}</w:t>
-  </w:r>
-
-  <w:r>
-    <w:rPr>
-      <w:rFonts w:ascii="Arial"/>
-      <w:sz w:val="22"/>
-      <w:b/>
-    </w:rPr>
-     <w:t>${fromText}&#160;</w:t>
-  </w:r>
-
-  <w:r>
-    <w:rPr>
-      <w:rFonts w:ascii="Arial"/>
-      <w:sz w:val="22"/>
-    </w:rPr>
-        <w:t> to &#160;</w:t>
-  </w:r>
-
-
-  <w:r>
-    <w:rPr>
-      <w:rFonts w:ascii="Arial"/>
-      <w:b/>
-      <w:sz w:val="22"/>
-    </w:rPr>
-        <w:t>${toText}</w:t>
-  </w:r>
-
-
-</w:p>
-`)
+    const decisionFormatted = '<w:p>' + ooxml.value + '</w:p>'
 
     const data = {
         type: formData.type,
@@ -1231,7 +1160,7 @@ const submitForm = async () => {
         at_country: formData.at_country,
         registry_number: formData.registry_number,
         clerical_errors: errors, //  JSON
-        SupportingDocuments: supports, //JSON
+        supportingDocuments: supports,
         reason: formData.reason,
         LCRO_city: formData.LCRO_city,
         LCRO_province: formData.LCRO_province,
@@ -1249,7 +1178,7 @@ const submitForm = async () => {
         action: formData.action,
         ActionDate: formData.ActionDate,
         mcr: formData.mcr,
-        decision: formattedDecision.value,
+        decision: decisionFormatted,
 
         or_number: formData.or_number,
         amount_paid: formData.amount_paid,
@@ -1262,8 +1191,6 @@ const submitForm = async () => {
         date_issued: formData.date_issued,
         date_granted: formData.date_granted,
     }
-
-    console.log(data)
 
     processing.value = true
 

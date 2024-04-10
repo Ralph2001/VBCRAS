@@ -1,8 +1,79 @@
-<w:p>
-    <w:r>
-        <w:rPr>
-            <w:highlight w:val="cyan" />
-        </w:rPr>
-        <w:t>lol</w:t>
-    </w:r>
-</w:p>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>talaga&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>bang&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>napapalitan&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>na&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+        <w:b />
+    </w:rPr>
+    <w:t>“RALPH”&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t> to &#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:b />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>“RALPHVILLANUEVA”</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>,&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>is&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>hereby&#160;</w:t>
+</w:r>
+<w:r>
+    <w:rPr>
+        <w:rFonts w:ascii="Arial" />
+        <w:sz w:val="22" />
+    </w:rPr>
+    <w:t>corrected&#160;</w:t>
+</w:r>

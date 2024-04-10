@@ -57,7 +57,7 @@ async function petition(data) {
     const content = fs.readFileSync(
         path.resolve(
             __dirname,
-            '../../resources/documents/RA 9048 RA 10172/Live Birth/petition.docx'
+            '../../resources/documents/RA 9048 RA 10172/Live Birth/petitionDemo.docx'
         ),
         'binary'
     )
@@ -102,6 +102,8 @@ async function petition(data) {
         mcr: data.mcr,
         or_number: data.or_number,
         DatePaid: data.DatePaid,
+
+        tryAgain: data.supportingDocuments,
     })
 
     const buf = doc.getZip().generate({
