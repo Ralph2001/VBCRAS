@@ -10,7 +10,7 @@
                 ' max-w-[80rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
                 'max-w-2xl max-h-full': medium,
                 'max-w-lg': small,
-                'max-w-[35rem]': titleCard,
+                'max-w-[35rem] ': titleCard,
             }"
             class="relative p-4 w-full"
         >
@@ -18,8 +18,7 @@
                 class="relative bg-white h-full overflow-y-auto rounded-lg shadow dark:bg-gray-700"
             >
                 <div
-                    class="flex top-0 right-0 left-0 p-3"
-                    :class="{ 'border-b': !titleCard }"
+                    class="flex top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3"
                 >
                     <h3
                         class="text-xl font-semibold text-gray-900 dark:text-white"
@@ -30,7 +29,7 @@
                 </div>
                 <div
                     :class="{
-                        'h-[25rem]': titleCard,
+                        'h-[19rem]': titleCard,
                         'h-[calc(100vh-180px)]': !titleCard,
                     }"
                     class="p-3 md:p-4 overflow-y-scroll"
@@ -38,7 +37,7 @@
                     <slot> </slot>
                 </div>
                 <div
-                    :class="{ 'border-t': !titleCard }"
+                    :class="{ 'border-t': !titleCard, ' h-0': titileCard }"
                     class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600"
                 >
                     <slot name="footer"> </slot>

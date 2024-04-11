@@ -1,9 +1,10 @@
 <template>
     <div class="flex flex-row justify-between w-full h-[3rem] items-center p-1">
         <p
-            :class="{ 'font-semibold': isBold, ' font-normal': !isBold }"
-            class="antialiased"
+            :class="{ 'font-semibold': isBold, ' text-md font-normal ': !isBold }"
+            class="antialiased text-md tracking-wide"
         >
+            <slot></slot>
             {{ label }}
         </p>
         <div class="text-end flex items-center justify-center">

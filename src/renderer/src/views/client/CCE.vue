@@ -801,7 +801,7 @@
             <template v-slot:header>
                 <ModalCloseButton @click="processing = false" />
             </template>
-            <div class="flex flex-col w-full h-full p-2 justify-evenly">
+            <div class="flex flex-col w-full h-full justify-center gap-2 p-2">
                 <div class="">
                     <LoadingBlock
                         :label="label_document_folder"
@@ -809,10 +809,15 @@
                         isBold
                         :isLoading="document_folder"
                         :filepath="folderpath"
-                    />
+                    >
+                        <font-awesome-icon
+                            icon="fa-solid fa-folder"
+                            class="text-yellow-300 shadow-sm"
+                        />
+                    </LoadingBlock>
                 </div>
 
-                <div class="flex flex-col justify-evenly h-full pl-10">
+                <div class="flex flex-col justify-center gap-2 pl-5">
                     <LoadingBlock
                         :label="label_endorsement_letter"
                         :isLoading="endorsement_letter"
