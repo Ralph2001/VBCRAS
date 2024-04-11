@@ -808,6 +808,7 @@
                         isFolder
                         isBold
                         :isLoading="document_folder"
+                        :filepath="folderpath"
                     />
                 </div>
 
@@ -815,22 +816,22 @@
                     <LoadingBlock
                         :label="label_endorsement_letter"
                         :isLoading="endorsement_letter"
+                        :filepath="endorsement_letter_filepath"
                     />
                     <LoadingBlock
                         :label="label_petition"
                         :isLoading="petition"
+                        :filepath="petition_filepath"
                     />
                     <LoadingBlock
                         :label="label_record_sheet"
                         :isLoading="record_sheet"
+                        :filepath="record_sheet_filepath"
                     />
                     <LoadingBlock
                         :label="label_notice_posting"
                         :isLoading="notice_posting"
-                    />
-                    <LoadingBlock
-                        :label="label_certificate_posting"
-                        :isLoading="certificate_posting"
+                        :filepath="notice_and_certificate_posting_filepath"
                     />
                 </div>
             </div>
@@ -872,6 +873,7 @@ import Editor from 'primevue/editor'
 
 import { useAddress } from '../../composables/Address.js'
 import TableGrid from '../../components/TableGrid.vue'
+
 const colDefs = ref([
     {
         field: 'name',
@@ -906,15 +908,19 @@ const label_document_folder = ref('Creating Document Folder')
 const label_endorsement_letter = ref('Creating Endorsement Letter')
 const label_petition = ref('Creating Petition')
 const label_record_sheet = ref('Creating Record Sheet')
-const label_notice_posting = ref('Creating Notice    of Posting')
-const label_certificate_posting = ref('Creating Certificate of Posting')
+const label_notice_posting = ref('Creating Notice  of Posting')
 
 const document_folder = ref(true)
 const endorsement_letter = ref(true)
 const petition = ref(true)
 const record_sheet = ref(true)
 const notice_posting = ref(true)
-const certificate_posting = ref(true)
+
+const endorsement_letter_filepath = ref(null)
+const petition_filepath = ref(null)
+const record_sheet_filepath = ref(null)
+const notice_and_certificate_posting_filepath = ref(null)
+const folderpath = ref(null)
 
 const processing = ref(false)
 const dateInputOptions = ref({
@@ -971,9 +977,11 @@ const formData = reactive({
     name_owner: '',
     relation_owner: '',
     date_of_birth: '',
+
     at_city: '',
     at_province: '',
     at_country: 'Philippines',
+
     registry_number: '',
 
     clerical_errors: {
@@ -1123,7 +1131,7 @@ const ooxml = computed(() => {
 })
 
 const submitForm = async () => {
-    // closeModal()
+    closeModal()
     const clerical_errors = ref({
         description: formData.clerical_errors.description,
         from: formData.clerical_errors.from,
@@ -1131,7 +1139,7 @@ const submitForm = async () => {
     })
 
     const errors = JSON.stringify(clerical_errors.value)
-    const supports = formData.SupportingDocuments
+    const supports = JSON.stringify(formData.SupportingDocuments)
 
     if (formData.name_owner === '' && formData.relation_owner === '') {
         formData.name_owner = 'N/A'
@@ -1155,9 +1163,11 @@ const submitForm = async () => {
         name_owner: formData.name_owner,
         relation_owner: formData.relation_owner,
         date_of_birth: formData.date_of_birth,
+
         at_city: formData.at_city,
         at_province: formData.at_province,
         at_country: formData.at_country,
+
         registry_number: formData.registry_number,
         clerical_errors: errors, //  JSON
         supportingDocuments: supports,
@@ -1199,16 +1209,23 @@ const submitForm = async () => {
     petition.value = true
     record_sheet.value = true
     notice_posting.value = true
-    certificate_posting.value = true
 
     label_document_folder.value = 'Creating Document Folder'
     label_endorsement_letter.value = 'Creating Endorsement Letter'
     label_petition.value = 'Creating Petition'
     label_record_sheet.value = 'Creating Record Sheet'
-    label_notice_posting.value = 'Creating Notice of Posting'
-    label_certificate_posting.value = 'Creating Certificate of Posting'
+    label_notice_posting.value =
+        'Creating Notice of Posting and Certificate of Posting'
 
     const check = await window.ClericalApi.PrintLiveBirth(data)
+
+    folderpath.value = check.filepath
+    endorsement_letter_filepath.value =
+        check.filepath + 'Endorsement Letter.docx'
+    petition_filepath.value = check.filepath + 'Petition.docx'
+    record_sheet_filepath.value = check.filepath + 'Record Sheet.docx'
+    notice_and_certificate_posting_filepath.value =
+        check.filepath + 'Cert. of Posting and Notice of Posting.docx'
 
     if (check) {
         document_folder.value = false
@@ -1220,9 +1237,7 @@ const submitForm = async () => {
         record_sheet.value = false
         label_record_sheet.value = 'Record Sheet'
         notice_posting.value = false
-        label_notice_posting.value = 'Notice of Posting'
-        certificate_posting.value = false
-        label_certificate_posting.value = 'Certificate of Posting'
+        label_notice_posting.value = 'Notice and Certificate of Posting'
     }
 }
 </script>

@@ -39,11 +39,9 @@
                 </div>
                 <div
                     :class="{ 'border-t': !titleCard }"
-                    class="flex items-center justify-end  p-2 md:p-3 rounded-b dark:border-gray-600"
+                    class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600"
                 >
-                    <slot name="footer">
-                    
-                    </slot>
+                    <slot name="footer"> </slot>
                 </div>
             </div>
         </div>

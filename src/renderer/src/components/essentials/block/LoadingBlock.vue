@@ -12,14 +12,15 @@
                 :label="isFolder ? 'Open Folder' : 'Open'"
                 v-if="!isLoading"
                 :isFolder="props.isFolder"
+                @click="open(props.filepath)"
             />
         </div>
     </div>
 </template>
 
 <script setup>
-import OpenFile from '../buttons/OpenFile.vue';
-import Loading from '../others/Loading.vue';
+import OpenFile from '../buttons/OpenFile.vue'
+import Loading from '../others/Loading.vue'
 const props = defineProps({
     label: {
         type: String,
@@ -42,5 +43,13 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-});
+    filepath: {
+        type: String,
+        default: null,
+    },
+})
+
+const open = async (filepath) => {
+    const open = await window.ClericalApi.OpenClerical(filepath)
+}
 </script>

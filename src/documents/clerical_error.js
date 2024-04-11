@@ -3,17 +3,16 @@ const Docxtemplater = require('docxtemplater')
 
 const fs = require('fs')
 const path = require('path')
+const dateFns = require('date-fns')
 
 export async function generate(formData) {
     const folderCreation = await document_folder(formData)
     const petitionCreation = await petition(formData)
-
     const endorsement_letterCreation = await endorsement_letter(formData)
     const record_sheetCreation = await record_sheet(formData)
-    const notice_postingCreation = await notice_posting(formData)
-    const certificate_postingCreation = await certificate_posting(formData)
+    const notice_and_certificate_posting = await posting(formData)
 
-    return { success: true }
+    return { success: true, filepath: folderPath }
 }
 
 let folderPath
@@ -23,32 +22,95 @@ async function document_folder(data) {
     const doctype = data.type
     const petitioner_name = data.petitioner_name
 
-    var folderCreation = path.resolve(
-        __dirname,
-        `../../output/${
-            date_now.getFullYear() + ' ' + doctype + ' ' + petitioner_name
-        }`
-    )
+    var folderCreation = `C:/VBCRAS/${
+        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
+    }`
 
     if (!fs.existsSync(folderCreation)) {
         fs.mkdirSync(folderCreation, { recursive: true })
     }
 
-    folderPath = `../../output/${
-        date_now.getFullYear() + ' ' + doctype + ' ' + petitioner_name
+    folderPath = `C:/VBCRAS/${
+        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
     }/`
 
     return true
 }
 
 async function endorsement_letter(data) {
-    const status = true
+    const content = fs.readFileSync(
+        path.resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/endorsement.docx'
+        ),
+        'binary'
+    )
 
-    if (status) {
-        return true
+    const zip = new PizZip(content)
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+    })
+
+    let document_owner = ''
+    if ((data.name_owner = 'N/A')) {
+        document_owner = data.petitioner_name
+    } else {
+        document_owner = data.name_owner
     }
+
+    let type_of_document = ''
+    if (data.document_type === 'Birth') {
+        type_of_document = 'Certificate of Live Birth'
+    } else if (data.document_type === 'Marriage') {
+        type_of_document = 'Certificate of Marriage'
+    } else if (data.document_type === 'Death') {
+        type_of_document = 'Certificate of Death'
+    }
+
+    let type_of_petition = ''
+    if (data.type === 'CCE') {
+        type_of_petition = 'Correction of Clerical Error'
+    } else if (data.type === 'CFN') {
+        type_of_petition = 'Change of First Name'
+    }
+
+    const granted_date = dateFns.format(data.date_granted, 'dd MMMM yyyy')
+
+    doc.render({
+        date: granted_date,
+        petition_type: type_of_petition,
+        document_type: type_of_document,
+        document_owner: document_owner,
+        mcr: data.mcr,
+    })
+
+    const buf = doc.getZip().generate({
+        type: 'nodebuffer',
+        compression: 'DEFLATE',
+    })
+
+    fs.writeFileSync(`${folderPath + '/'}Endorsement Letter.docx`, buf)
+
+    return true
 }
 async function petition(data) {
+    const support = JSON.parse(data.supportingDocuments)
+    const supporting_documents = {
+        list: [...support].map((supportName) => ({
+            name: supportName,
+        })),
+    }
+
+    const clerical = JSON.parse(data.clerical_errors)
+    const clerical_errors = {
+        errors: clerical.description.map((description, index) => ({
+            description,
+            from: clerical.from[index],
+            to: clerical.to[index],
+        })),
+    }
+
     const date_now = new Date()
     const number =
         data.type + '-' + data.petition_number + '-' + date_now.getFullYear()
@@ -57,7 +119,7 @@ async function petition(data) {
     const content = fs.readFileSync(
         path.resolve(
             __dirname,
-            '../../resources/documents/RA 9048 RA 10172/Live Birth/petitionDemo.docx'
+            '../../resources/documents/RA 9048 RA 10172/Live Birth/petition.docx'
         ),
         'binary'
     )
@@ -70,8 +132,13 @@ async function petition(data) {
 
     const petitioner_name = data.petitioner_name
     const petitioner_number = number
-    const petitioner_address =
-        data.barangay + ', ' + data.city + ', ' + data.province
+
+    const petitioner_addressFormatted =
+        data.petitioner_barangay +
+        ', ' +
+        data.petitioner_city +
+        ', ' +
+        data.petitioner_province
 
     const rawXML = `'` + data.decision + `'`
 
@@ -79,13 +146,17 @@ async function petition(data) {
         petition_number: petitioner_number,
         petitioner_name: petitioner_name,
         nationality: data.nationality,
-        petitioner_address: petitioner_address,
+        petitioner_address: petitioner_addressFormatted,
         name_owner: data.name_owner,
         relation_owner: data.relation_owner,
         date_of_birth: data.date_of_birth,
-        at_city: data.at_city,
+        at_city: data.at_city, // at city
+        at_province: data.at_province,
+        at_country: data.at_country,
         registry_number: data.registry_number,
         reason: data.reason,
+        support: supporting_documents.list,
+        clerical: clerical_errors.errors,
         LCRO_city: data.LCRO_city,
         LCRO_province: data.LCRO_province,
 
@@ -100,6 +171,7 @@ async function petition(data) {
         decision: rawXML,
         ActionDate: data.ActionDate,
         mcr: data.mcr,
+        amount_paid: data.amount_paid,
         or_number: data.or_number,
         DatePaid: data.DatePaid,
 
@@ -111,34 +183,179 @@ async function petition(data) {
         compression: 'DEFLATE',
     })
 
-    fs.writeFileSync(
-        path.resolve(__dirname, `${folderPath + '/' + petitioner_name}.docx`),
-        buf
-    )
+    fs.writeFileSync(`${folderPath + '/'}Petition.docx`, buf)
 
     return true
 }
 
 async function record_sheet(data) {
-    const status = true
-
-    if (status) {
-        return true
+    const clerical = JSON.parse(data.clerical_errors)
+    const clerical_errors = {
+        errors: clerical.description.map((description, index) => ({
+            description,
+            from: clerical.from[index],
+            to: clerical.to[index],
+        })),
     }
+
+    const content = fs.readFileSync(
+        path.resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/record sheet.docx'
+        ),
+        'binary'
+    )
+
+    const zip = new PizZip(content)
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+    })
+
+    let document_owner = ''
+    if ((data.name_owner = 'N/A')) {
+        document_owner = data.petitioner_name
+    } else {
+        document_owner = data.name_owner
+    }
+
+    let type_of_document = ''
+    if (data.document_type === 'Birth') {
+        type_of_document = 'Certificate of Live Birth'
+    } else if (data.document_type === 'Marriage') {
+        type_of_document = 'Certificate of Marriage'
+    } else if (data.document_type === 'Death') {
+        type_of_document = 'Certificate of Death'
+    }
+
+    let type_of_petition = ''
+    if (data.type === 'CCE') {
+        type_of_petition = 'Correction of Clerical Error'
+    } else if (data.type === 'CFN') {
+        type_of_petition = 'Change of First Name'
+    }
+
+    const start_date_posting = dateFns.format(
+        data.certificate_posting_start,
+        'dd MMMM yyyy'
+    )
+    const end_date_posting = dateFns.format(
+        data.certificate_posting_end,
+        'dd MMMM yyyy'
+    )
+
+    const granted_date = dateFns.format(data.date_granted, 'dd MMMM yyyy')
+
+    doc.render({
+        petition_number: data.petition_number,
+        date_receipt: data.DatePaid,
+        petitioner_name: data.petitioner_name,
+        document_owner: document_owner,
+        type_document: type_of_document,
+        type_petition: type_of_petition,
+        start_date_posting: start_date_posting,
+        end_date_posting: end_date_posting,
+        clerical: clerical_errors.errors,
+        reg_num: data.registry_number,
+        date_rendered: granted_date,
+        mcr: data.mcr,
+    })
+
+    const buf = doc.getZip().generate({
+        type: 'nodebuffer',
+        compression: 'DEFLATE',
+    })
+
+    fs.writeFileSync(`${folderPath + '/'}Record Sheet.docx`, buf)
+
+    return true
 }
 
-async function notice_posting(data) {
-    const status = true
+async function posting(data) {
+    const content = fs.readFileSync(
+        path.resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/notice and certificate.docx'
+        ),
+        'binary'
+    )
 
-    if (status) {
-        return true
+    const zip = new PizZip(content)
+    const doc = new Docxtemplater(zip, {
+        paragraphLoop: true,
+        linebreaks: true,
+    })
+
+    let document_owner = ''
+    if ((data.name_owner = 'N/A')) {
+        document_owner = data.petitioner_name
+    } else {
+        document_owner = data.name_owner
     }
-}
 
-async function certificate_posting(data) {
-    const status = true
-
-    if (status) {
-        return true
+    let type_of_document = ''
+    if (data.document_type === 'Birth') {
+        type_of_document = 'Certificate of Live Birth'
+    } else if (data.document_type === 'Marriage') {
+        type_of_document = 'Certificate of Marriage'
+    } else if (data.document_type === 'Death') {
+        type_of_document = 'Certificate of Death'
     }
+
+    let type_of_petition = ''
+    if (data.type === 'CCE') {
+        type_of_petition = 'Correction of Clerical Error'
+    } else if (data.type === 'CFN') {
+        type_of_petition = 'Change of First Name'
+    }
+
+    const start_date_posting = dateFns.format(
+        data.certificate_posting_start,
+        'dd MMMM yyyy'
+    )
+
+    const date_filed = dateFns.format(
+        data.certificate_posting_end,
+        'dd MMMM yyyy'
+    )
+
+    const end_date_posting = dateFns.format(
+        data.certificate_posting_end,
+        'dd MMMM yyyy'
+    )
+
+    const issued_at_LCRO = data.LCRO_city + ', ' + data.LCRO_province
+    const day = dateFns.format(data.DatePaid, 'do')
+    const monthyear = dateFns.format(data.DatePaid, 'MMMM yyyy')
+
+    doc.render({
+        petition_number: data.petition_number,
+        date_filed: date_filed,
+        petitioner_name: data.petitioner_name,
+        reg_num: data.registry_number,
+        document_owner: document_owner,
+        type_document: type_of_document,
+        petition_type: type_of_petition,
+        mcr: data.mcr,
+        date_notice: data.notice_posting,
+
+        issued_at: issued_at_LCRO,
+        day: day,
+        monthyear: monthyear,
+
+        from: start_date_posting, // Posting
+        to: end_date_posting, // Posting
+    })
+
+    const buf = doc.getZip().generate({
+        type: 'nodebuffer',
+        compression: 'DEFLATE',
+    })
+
+    fs.writeFileSync(
+        `${folderPath + '/'}Cert. of Posting and Notice of Posting.docx`,
+        buf
+    )
+
+    return true
 }
