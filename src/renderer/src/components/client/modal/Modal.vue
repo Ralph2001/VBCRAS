@@ -10,38 +10,46 @@
                 ' max-w-[80rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
                 'max-w-2xl max-h-full': medium,
                 'max-w-lg': small,
+                
                 'max-w-[35rem] ': titleCard,
             }"
-            class="relative p-4 w-full"
-        >
-            <div
-                class="relative bg-white h-full overflow-y-auto rounded-lg shadow dark:bg-gray-700"
-            >
-                <div
-                    class="flex top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3"
-                >
-                    <h3
-                        class="text-xl font-semibold text-gray-900 dark:text-white"
-                    >
+            class="relative p-4 w-full ">
+            <div class="relative bg-white h-full overflow-y-auto rounded-lg shadow dark:bg-gray-700">
+                
+                <!-- Header -->
+                <div class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3 " >
+                    <h3  v-if="!titleCard"
+                        class="text-sm font-semibold text-gray-900 dark:text-white" >
                         {{ label }}
                     </h3>
+
+                    <div class="p-2 truncate overflow-ellipsis" v-if="titleCard"  >
+                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white tracking-wide truncate" >
+                            {{ first }}
+                        </h3>
+                        <h3 class="text-xs font-semibold pl-2 text-blue-500 dark:text-white tracking-wider"  >
+                            <span v-if="second !== ''">Document Owner: </span>
+                            <span class="text-gray-900">{{ second }}</span>
+                        </h3>
+                    </div>
+
                     <slot name="header"></slot>
                 </div>
-                <div
-                    :class="{
+
+                <!-- Main Body -->
+                <div :class="{
                         'h-[19rem]': titleCard,
-                        'h-[calc(100vh-180px)]': !titleCard,
-                    }"
-                    class="p-3 md:p-4 overflow-y-scroll"
-                >
+                        'h-[calc(100vh-180px)]': small || medium || large,
+                    }" class="p-3 md:p-4 overflow-y-scroll relative" >
                     <slot> </slot>
                 </div>
-                <div
-                    :class="{ 'border-t': !titleCard, ' h-0': titileCard }"
-                    class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600"
-                >
+
+                <!-- Footer -->
+                <div :class="{ 'border-t': !titleCard, ' h-0': titleCard }" class="flex items-center  justify-end p-2 md:p-3 rounded-b dark:border-gray-600" >
                     <slot name="footer"> </slot>
                 </div>
+
+
             </div>
         </div>
     </div>
@@ -55,6 +63,9 @@ const props = defineProps({
     large: Boolean,
     small: Boolean,
     titleCard: Boolean,
+    settings: Boolean,
     medium: Boolean,
+    first: String,
+    second: String,
 })
 </script>

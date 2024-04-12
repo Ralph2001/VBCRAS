@@ -24,9 +24,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
     label: {
@@ -51,24 +51,24 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-});
+})
 
-const formattedValue = ref(formatCurrency(props.modelValue));
+const formattedValue = ref(formatCurrency(props.modelValue))
 
 function formatCurrency(value) {
-    const numberValue = parseFloat(value);
+    const numberValue = parseFloat(value)
     if (isNaN(numberValue)) {
-        return '';
+        return ''
     }
 
     return new Intl.NumberFormat('fil-PH', {
         style: 'currency',
         currency: 'PHP',
-    }).format(numberValue);
+    }).format(numberValue)
 }
 
 function handleInput(newValue) {
-    formattedValue.value = formatCurrency(newValue);
-    emit('update:modelValue', formattedValue.value);
+    formattedValue.value = formatCurrency(newValue)
+    emit('update:modelValue', formattedValue.value)
 }
 </script>

@@ -1,38 +1,13 @@
 <template>
     <div class="flex flex-col relative justify-center w-full">
-        <div class="flex flex-row items-center p-3 px-5 mb-2">
-            <p class="text-md font-semibold tracking-tight">
-                FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME
-            </p>
-            <div class="relative ml-auto">
-                <button
-                    type="button"
-                    @click="dropdown = !dropdown"
-                    class="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-0 active:scale-95 transition-all focus:ring-blue-300 font-medium rounded shadow text-sm px-4 py-2 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                    Create
-                </button>
-
-                <div
-                    v-if="dropdown"
-                    class="z-50 right-0 absolute border bg-white shadow-lg divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700"
-                >
-                    <ul
-                        class="py-2 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownDefaultButton"
-                    >
-                        <li v-for="RA in RA" :key="RA">
-                            <a
-                                @click="modalOpener(RA)"
-                                class="cursor-pointer block px-4 py-2 font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                            >
-                                {{ RA }}</a
-                            >
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <Header
+            label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME"
+        >
+            <BtnDrop label="Create" :options="RA" @open-modal="modalOpener" />
+            <ButtonIcon @click="settings = true">
+                <font-awesome-icon icon="fa-solid fa-gear"
+            /></ButtonIcon>
+        </Header>
         <div class="h-[calc(100vh-170px)] px-5 relative">
             <TableGrid :data="data" :dataColumns="colDefs" />
         </div>
@@ -151,11 +126,6 @@
                                 <div class="basis-[70%]">
                                     <Input
                                         label="Name of Owner"
-                                        :modelValue="
-                                            formData.cce_in === 'my'
-                                                ? 'N/A'
-                                                : ''
-                                        "
                                         :readonly="
                                             formData.cce_in === 'my'
                                                 ? true
@@ -176,11 +146,6 @@
                                 <div class="grow">
                                     <InputSuggestions
                                         label="Relation of Owner"
-                                        :modelValue="
-                                            formData.cce_in === 'my'
-                                                ? 'N/A'
-                                                : ''
-                                        "
                                         :readonly="
                                             formData.cce_in === 'my'
                                                 ? true
@@ -797,7 +762,12 @@
             </template>
         </Modal>
 
-        <Modal titleCard v-if="processing">
+        <Modal
+            titleCard
+            v-if="processing"
+            :first="petition_details"
+            :second="petition_owner"
+        >
             <template v-slot:header>
                 <ModalCloseButton @click="processing = false" />
             </template>
@@ -841,6 +811,8 @@
                 </div>
             </div>
         </Modal>
+
+        <ClericalSettings v-if="settings" @close-modal="closePreference" />
     </div>
 </template>
 
@@ -848,9 +820,9 @@
 import Radio from '../../components/essentials/inputs/Radio.vue'
 
 import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue'
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import Modal from '../../components/client/modal/Modal.vue'
-import { onClickOutside } from '@vueuse/core'
+
 import Box from '../../components/essentials/Box.vue'
 import Select from '../../components/essentials/inputs/Select.vue'
 import Input from '../../components/essentials/inputs/Input.vue'
@@ -878,7 +850,15 @@ import Editor from 'primevue/editor'
 
 import { useAddress } from '../../composables/Address.js'
 import TableGrid from '../../components/TableGrid.vue'
+import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
+import Header from '../../components/essentials/header.vue'
+import ButtonIcon from '../../components/essentials/buttons/ButtonIcon.vue'
+import ClericalSettings from '../../components/essentials/settings/ClericalSettings.vue'
 
+const settings = ref(false)
+const closePreference = (event, value) => {
+    settings.value = false
+}
 const colDefs = ref([
     {
         field: 'name',
@@ -909,6 +889,8 @@ const colDefs = ref([
     },
 ])
 
+const petition_details = ref('')
+const petition_owner = ref('')
 const label_document_folder = ref('Creating Document Folder')
 const label_endorsement_letter = ref('Creating Endorsement Letter')
 const label_petition = ref('Creating Petition')
@@ -1038,8 +1020,8 @@ const { at_province, at_city } = useAddress(() => [formData.at_province])
 
 const RA9048 = ref(false)
 
-const modalOpener = (RA) => {
-    if (RA === 'R.A. 9048') {
+const modalOpener = (event, value) => {
+    if (event === 'R.A. 9048') {
         RA9048.value = !RA9048.value
     } else {
         console.log('is it')
@@ -1049,8 +1031,6 @@ const modalOpener = (RA) => {
 function closeModal() {
     RA9048.value = false
 }
-const dropdown = ref(false)
-onClickOutside(dropdown, (event) => (dropdown.value = false))
 
 const items = ref([1])
 const addItem = () => {
@@ -1232,7 +1212,23 @@ const submitForm = async () => {
     notice_and_certificate_posting_filepath.value =
         check.filepath + 'Cert. of Posting and Notice of Posting.docx'
 
+    let document_owner = ''
+
+    if (formData.name_owner === 'N/A') {
+        document_owner = formData.petitioner_name
+    } else {
+        document_owner = formData.name_owner
+    }
+
     if (check) {
+        petition_details.value =
+            formData.type +
+            ' ' +
+            formData.document_type +
+            ',  ' +
+            formData.petitioner_name
+
+        petition_owner.value = document_owner
         document_folder.value = false
         label_document_folder.value = 'Document Folder'
         endorsement_letter.value = false

@@ -1,7 +1,10 @@
 <template>
     <div class="flex flex-row justify-between w-full h-[3rem] items-center p-1">
         <p
-            :class="{ 'font-semibold': isBold, ' text-md font-normal ': !isBold }"
+            :class="{
+                'font-semibold': isBold,
+                ' text-md font-normal ': !isBold,
+            }"
             class="antialiased text-md tracking-wide"
         >
             <slot></slot>
@@ -10,6 +13,7 @@
         <div class="text-end flex items-center justify-center">
             <Loading v-if="isLoading" />
             <OpenFile
+                :isLoading="LoadingBtn"
                 :label="isFolder ? 'Open Folder' : 'Open'"
                 v-if="!isLoading"
                 :isFolder="props.isFolder"
@@ -22,6 +26,7 @@
 <script setup>
 import OpenFile from '../buttons/OpenFile.vue'
 import Loading from '../others/Loading.vue'
+import { ref } from 'vue'
 const props = defineProps({
     label: {
         type: String,
@@ -50,7 +55,13 @@ const props = defineProps({
     },
 })
 
+const LoadingBtn = ref()
+
 const open = async (filepath) => {
+    LoadingBtn.value = true
     const open = await window.ClericalApi.OpenClerical(filepath)
+    if (open) {
+        LoadingBtn.value = false
+    }
 }
 </script>

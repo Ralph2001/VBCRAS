@@ -72,7 +72,6 @@ ipcMain.handle('open-clerical', async (event, source) => {
     try {
         const filefolder = shell.openExternal(source)
         return true
-     
     } catch (error) {
         win.close()
         return false
