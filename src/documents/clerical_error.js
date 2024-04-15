@@ -112,8 +112,7 @@ async function petition(data) {
     }
 
     const date_now = new Date()
-    const number =
-        data.type + '-' + data.petition_number + '-' + date_now.getFullYear()
+    const number = data.petition_number
     const doctype = data.type
 
     const content = fs.readFileSync(
@@ -142,6 +141,9 @@ async function petition(data) {
 
     const rawXML = `'` + data.decision + `'`
 
+    const day_ss = dateFns.format(data.SwornDate, 'do')
+    const monthyear_ss = dateFns.format(data.SwornDate, 'MMMM yyyy')
+
     doc.render({
         petition_number: petitioner_number,
         petitioner_name: petitioner_name,
@@ -149,7 +151,7 @@ async function petition(data) {
         petitioner_address: petitioner_addressFormatted,
         name_owner: data.name_owner,
         relation_owner: data.relation_owner,
-        date_of_birth: data.date_of_birth,
+        date_of_birth: data.date_of,
         at_city: data.at_city, // at city
         at_province: data.at_province,
         at_country: data.at_country,
@@ -160,8 +162,8 @@ async function petition(data) {
         LCRO_city: data.LCRO_city,
         LCRO_province: data.LCRO_province,
 
-        day_ss: '',
-        monthyear_ss: '',
+        day_ss: day_ss,
+        monthyear_ss: monthyear_ss,
         place_ss: data.SwornCity,
         Ctc: data.Ctc,
         CtcIssuedAt: data.CtcIssuedAt,
@@ -325,8 +327,8 @@ async function posting(data) {
     )
 
     const issued_at_LCRO = data.LCRO_city + ', ' + data.LCRO_province
-    const day = dateFns.format(data.DatePaid, 'do')
-    const monthyear = dateFns.format(data.DatePaid, 'MMMM yyyy')
+    const day = dateFns.format(data.date_issued, 'do')
+    const monthyear = dateFns.format(data.date_issued, 'MMMM yyyy')
 
     doc.render({
         petition_number: data.petition_number,

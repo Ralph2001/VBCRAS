@@ -9,7 +9,7 @@
             /></ButtonIcon>
         </Header>
         <div class="h-[calc(100vh-170px)] px-5 relative">
-            <TableGrid :data="data" :dataColumns="colDefs" />
+            <TableGrid :data="petitions.petitions" :dataColumns="colDefs" />
         </div>
 
         <Modal large label="Create Document" v-if="RA9048">
@@ -45,14 +45,50 @@
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <Box title="Petition Details" width="w-full">
-                        <div class="grid grid-cols-1 gap-2 w-full">
+                        <div class="grid grid-cols-1 w-full">
+                            <label
+                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >Petitioner Number</label
+                            >
+                            <div
+                                class="flex flex-row gap-[4px] w-[50%] relative"
+                            >
+                                <div class="basis-[60%]">
+                                    <input
+                                        v-model="formData.type"
+                                        disabled
+                                        type="text"
+                                        class="bg-gray-50 border-s-gray-300 border-t-gray-300 border-b-gray-300 border-e-white font-bold text-gray-500 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    />
+                                </div>
+
+                                <div class="basis-[50%]">
+                                    <input
+                                        v-model="petition_number"
+                                        type="text"
+                                        class="bg-gray-50 border border-s-white border-e-white text-center border-gray-300 font-bold text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    />
+                                </div>
+
+                                <div class="basis-[60%]">
+                                    <input
+                                        v-model="year"
+                                        type="text"
+                                        tabindex="-1"
+                                        class="bg-gray-50 border-e-gray-300 border-t-gray-300 border-b-gray-300 border-s-white font-bold text-gray-500 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- 
                             <InputFormatted
                                 label="Petition Number"
                                 :docType="
                                     formData.type === 'CCE' ? 'CCE' : 'CFN'
                                 "
                                 v-model="formData.petition_number"
-                            />
+                            /> -->
+                            <!-- <CombineInputs v-model="formData.petition_number" /> -->
                             <Input
                                 label="Petitioner Name"
                                 v-model="formData.petitioner_name"
@@ -126,6 +162,7 @@
                                 <div class="basis-[70%]">
                                     <Input
                                         label="Name of Owner"
+                                        v-model="formData.name_owner"
                                         :readonly="
                                             formData.cce_in === 'my'
                                                 ? true
@@ -136,7 +173,6 @@
                                                 ? true
                                                 : false
                                         "
-                                        v-model="formData.name_owner"
                                         @input="
                                             formData.name_owner =
                                                 $event.target.value.toUpperCase()
@@ -177,7 +213,7 @@
                                     >
                                     <VueDatePicker
                                         :text-input="dateInputOptions"
-                                        v-model="formData.date_of_birth"
+                                        v-model="formData.date_of"
                                         auto-apply
                                         :max-date="new Date()"
                                         input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
@@ -554,7 +590,7 @@
                                     >
                                     <VueDatePicker
                                         :text-input="dateInputOptions"
-                                        v-model="formData.ActionDate"
+                                        v-model="formData.date_granted"
                                         auto-apply
                                         input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                                         format="MMMM dd, yyyy"
@@ -583,7 +619,7 @@
                                     id="message"
                                     rows="6"
                                     v-model="formData.decision"
-                                    class="block p-2.5 text-justify font-semibold px-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 ></textarea>
                             </div>
                         </Box>
@@ -647,7 +683,13 @@
                                         </VueDatePicker>
                                     </div>
                                 </div>
-                                <div class="flex flex-col items-center w-full">
+
+                                <div
+                                    class="flex flex-col items-center w-full gap-2 bg-yellow-100/20 mt-3"
+                                >
+                                    <div
+                                        class="border border-dashed border-yellow-400 w-full mb-5"
+                                    ></div>
                                     <p class="font-bold text-center uppercase">
                                         Certificate of Posting
                                     </p>
@@ -698,31 +740,43 @@
                                             </VueDatePicker>
                                         </div>
                                     </div>
+
+                                    <div class="flex items-center">
+                                        <div class="w-auto">
+                                            <div>
+                                                <label
+                                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                                >
+                                                    Date Issued</label
+                                                >
+                                                <VueDatePicker
+                                                    :text-input="
+                                                        dateInputOptions
+                                                    "
+                                                    v-model="
+                                                        formData.date_issued
+                                                    "
+                                                    auto-apply
+                                                    input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
+                                                    format="MMMM dd, yyyy"
+                                                    model-type="MMMM dd, yyyy"
+                                                    :month-change-on-scroll="
+                                                        false
+                                                    "
+                                                    position="right"
+                                                >
+                                                </VueDatePicker>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="border border-dashed border-yellow-400 w-full mt-5"
+                                    ></div>
                                 </div>
 
                                 <div
-                                    class="flex flex-col justify-start gap-5 mt-10 items-start w-full"
+                                    class="flex flex-col justify-start gap-5 mt-3 items-start w-full"
                                 >
-                                    <div class="w-[50%]">
-                                        <div>
-                                            <label
-                                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                            >
-                                                Date Issued</label
-                                            >
-                                            <VueDatePicker
-                                                :text-input="dateInputOptions"
-                                                v-model="formData.date_issued"
-                                                auto-apply
-                                                input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                                                format="MMMM dd, yyyy"
-                                                model-type="MMMM dd, yyyy"
-                                                :month-change-on-scroll="false"
-                                                position="right"
-                                            >
-                                            </VueDatePicker>
-                                        </div>
-                                    </div>
                                     <div class="w-[50%]">
                                         <div>
                                             <label
@@ -818,9 +872,9 @@
 
 <script setup>
 import Radio from '../../components/essentials/inputs/Radio.vue'
-
+import { usePetitions } from '../../stores/Petition/Petitions.js'
 import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue'
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import Modal from '../../components/client/modal/Modal.vue'
 
 import Box from '../../components/essentials/Box.vue'
@@ -832,6 +886,8 @@ import InputSuggestions from '../../components/essentials/inputs/InputSuggestion
 import VueDatePicker from '@vuepic/vue-datepicker'
 import InputFormatted from '../../components/essentials/inputs/InputFormatted.vue'
 import '@vuepic/vue-datepicker/dist/main.css'
+
+const decision = ref('')
 
 import {
     now_date,
@@ -854,37 +910,72 @@ import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
 import Header from '../../components/essentials/header.vue'
 import ButtonIcon from '../../components/essentials/buttons/ButtonIcon.vue'
 import ClericalSettings from '../../components/essentials/settings/ClericalSettings.vue'
+import CombineInputs from '../../components/essentials/inputs/CombineInputs.vue'
+
+const date = new Date()
+
+const type = ref('')
+const petition_number = ref('0000')
+const year = ref(date.getFullYear())
+
+const petitioner_number = computed(() => {
+    let combined =
+        formData.type + '-' + petition_number.value + '-' + year.value
+    return combined
+})
 
 const settings = ref(false)
 const closePreference = (event, value) => {
     settings.value = false
 }
+
+const petitions = usePetitions()
+onMounted(() => {
+    petitions.getPetitions()
+})
+
 const colDefs = ref([
     {
-        field: 'name',
+        field: 'petition_number',
         headerName: 'Petitioner Number',
         flex: 2,
         filter: true,
         pinned: 'left',
         lockPinned: true,
     },
-    { field: 'name', headerName: 'Petitioner Name', flex: 1, filter: true },
-    { field: 'name', headerName: 'Document Owner', flex: 1, filter: true },
-    { field: 'name', headerName: 'Relationship', flex: 1, filter: true },
-    { field: 'name', headerName: 'Date Filed', flex: 1, filter: true },
-    { field: 'name', headerName: 'Status', flex: 1, filter: true },
     {
-        field: 'name',
-        headerName: 'Date Forwarded to CRG',
+        field: 'petitioner_name',
+        headerName: 'Petitioner Name',
         flex: 1,
         filter: true,
     },
     {
-        headerName: 'Action',
+        field: 'petitioner_name',
+        headerName: 'Document Owner',
+        flex: 1,
+        filter: true,
+    },
+    {
+        field: 'relation_owner',
+        headerName: 'Relationship',
+        flex: 1,
+        filter: true,
+    },
+    { field: 'DatePaid', headerName: 'Date Filed', flex: 1, filter: true },
+    {
+        headerName: 'Status',
         flex: 1,
         pinned: 'right',
         lockPinned: true,
         resizable: false,
+        sortable: false,
+    },
+    {
+        headerName: 'Action',
+
+        pinned: 'right',
+        lockPinned: true,
+        resizable: true,
         sortable: false,
     },
 ])
@@ -953,7 +1044,7 @@ const date_of_granted = ref(add_date_granted())
 const formData = reactive({
     type: 'CCE',
     document_type: 'Birth',
-    petition_number: '',
+    petition_number: petitioner_number,
     petitioner_name: '',
     nationality: 'Filipino',
     petitioner_province: '',
@@ -963,7 +1054,7 @@ const formData = reactive({
 
     name_owner: '',
     relation_owner: '',
-    date_of_birth: '',
+    date_of: '',
 
     at_city: '',
     at_province: '',
@@ -997,7 +1088,8 @@ const formData = reactive({
     action: '',
     ActionDate: '',
     mcr: 'ISMAEL D. MALICDEM, JR.',
-    decision: '',
+    decision:
+        'Finding the petition sufficient in form and substance, the same is hereby GRANTED, ',
 
     or_number: '',
     amount_paid: '',
@@ -1147,15 +1239,17 @@ const submitForm = async () => {
 
         name_owner: formData.name_owner,
         relation_owner: formData.relation_owner,
-        date_of_birth: formData.date_of_birth,
+        date_of: formData.date_of,
 
         at_city: formData.at_city,
         at_province: formData.at_province,
         at_country: formData.at_country,
 
         registry_number: formData.registry_number,
-        clerical_errors: errors, //  JSON
+
+        clerical_errors: errors,
         supportingDocuments: supports,
+
         reason: formData.reason,
         LCRO_city: formData.LCRO_city,
         LCRO_province: formData.LCRO_province,
@@ -1203,6 +1297,8 @@ const submitForm = async () => {
         'Creating Notice of Posting and Certificate of Posting'
 
     const check = await window.ClericalApi.PrintLiveBirth(data)
+
+    petitions.addPetition(data)
 
     folderpath.value = check.filepath
     endorsement_letter_filepath.value =
