@@ -9,7 +9,11 @@
             /></ButtonIcon>
         </Header>
         <div class="h-[calc(100vh-170px)] px-5 relative">
-            <TableGrid :data="petitions.petitions" :dataColumns="colDefs" />
+            <TableGrid
+                :data="petitions.petitions"
+                :dataColumns="colDefs"
+                :suppressRowTransform="true"
+            />
         </div>
 
         <Modal large label="Create Document" v-if="RA9048">
@@ -40,7 +44,8 @@
                 <div class="w-full flex item-center justify-center mb-2">
                     <p class="text-lg uppercase font-semibold">
                         PETITION FOR CORRECTION OF CLERICAL ERROR IN THE
-                        CERTIFICATE OF LIVE BIRTH
+                        CERTIFICATE OF
+                        {{ documentTypeLabel }}
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -48,47 +53,47 @@
                         <div class="grid grid-cols-1 w-full">
                             <label
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >Petitioner Number</label
+                                >Petition Number</label
                             >
-                            <div
-                                class="flex flex-row gap-[4px] w-[50%] relative"
-                            >
-                                <div class="basis-[60%]">
-                                    <input
-                                        v-model="formData.type"
-                                        disabled
-                                        type="text"
-                                        class="bg-gray-50 border-s-gray-300 border-t-gray-300 border-b-gray-300 border-e-white font-bold text-gray-500 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                    />
-                                </div>
+                            <div class="flex flex-row items-center gap-2">
+                                <div
+                                    class="flex flex-row gap-[4px] w-[50%] relative"
+                                >
+                                    <div class="basis-[60%]">
+                                        <input
+                                            v-model="formData.type"
+                                            disabled
+                                            type="text"
+                                            class="bg-gray-50 border-s-gray-300 border-t-gray-300 border-b-gray-300 border-e-white font-bold text-gray-500 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                        />
+                                    </div>
 
-                                <div class="basis-[50%]">
-                                    <input
-                                        v-model="petition_number"
-                                        type="text"
-                                        class="bg-gray-50 border border-s-white border-e-white text-center border-gray-300 font-bold text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                    />
-                                </div>
+                                    <div class="basis-[50%]">
+                                        <input
+                                            v-model="petition_number"
+                                            type="text"
+                                            class="bg-gray-50 border border-s-white border-e-white text-center border-gray-300 font-bold text-gray-900 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                        />
+                                    </div>
 
-                                <div class="basis-[60%]">
-                                    <input
-                                        v-model="year"
-                                        type="text"
-                                        tabindex="-1"
-                                        class="bg-gray-50 border-e-gray-300 border-t-gray-300 border-b-gray-300 border-s-white font-bold text-gray-500 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                    />
+                                    <div class="basis-[60%]">
+                                        <input
+                                            v-model="year"
+                                            type="text"
+                                            tabindex="-1"
+                                            class="bg-gray-50 border-e-gray-300 border-t-gray-300 border-b-gray-300 border-s-white font-bold text-gray-500 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <ButtonIcon>
+                                        <font-awesome-icon
+                                            icon="fa-solid fa-rotate-right"
+                                        />
+                                    </ButtonIcon>
                                 </div>
                             </div>
 
-                            <!-- 
-                            <InputFormatted
-                                label="Petition Number"
-                                :docType="
-                                    formData.type === 'CCE' ? 'CCE' : 'CFN'
-                                "
-                                v-model="formData.petition_number"
-                            /> -->
-                            <!-- <CombineInputs v-model="formData.petition_number" /> -->
                             <Input
                                 label="Petitioner Name"
                                 v-model="formData.petitioner_name"
@@ -137,7 +142,10 @@
                 <div class="flex flex-row flex-wrap gap-4 items-stretch">
                     <div
                         class="basis-[35%]"
-                        v-if="formData.document_type === 'Birth'"
+                        v-if="
+                            formData.document_type === 'Birth' ||
+                            formData.document_type === 'Marriage'
+                        "
                     >
                         <Box
                             title="seeking for correction of the clerical error in: "
@@ -153,6 +161,8 @@
                         </Box>
                     </div>
 
+                    <!-- Need to Fix -->
+
                     <div class="basis-[60%] grow">
                         <Box
                             title="Document Owner & Relationship to the Owner"
@@ -161,15 +171,23 @@
                             <div class="flex flex-row w-full gap-2">
                                 <div class="basis-[70%]">
                                     <Input
-                                        label="Name of Owner"
+                                        :label="
+                                            formData.document_type ===
+                                            'Marriage'
+                                                ? 'Complete Name of Spouse'
+                                                : 'Document Owner'
+                                        "
                                         v-model="formData.name_owner"
+                                        :value="`Hi`"
                                         :readonly="
-                                            formData.cce_in === 'my'
+                                            formData.cce_in === 'my' &&
+                                            formData.document_type === 'Birth'
                                                 ? true
                                                 : false
                                         "
                                         :skip="
-                                            formData.cce_in === 'my'
+                                            formData.cce_in === 'my' &&
+                                            formData.document_type === 'Birth'
                                                 ? true
                                                 : false
                                         "
@@ -183,12 +201,14 @@
                                     <InputSuggestions
                                         label="Relation of Owner"
                                         :readonly="
-                                            formData.cce_in === 'my'
+                                            formData.cce_in === 'my' &&
+                                            formData.document_type === 'Birth'
                                                 ? true
                                                 : false
                                         "
                                         :skip="
-                                            formData.cce_in === 'my'
+                                            formData.cce_in === 'my' &&
+                                            formData.document_type === 'Birth'
                                                 ? true
                                                 : false
                                         "
@@ -200,16 +220,15 @@
                         </Box>
                     </div>
 
-                    <div
-                        class="basis-[23%]"
-                        v-if="formData.document_type === 'Birth'"
-                    >
-                        <Box title="I/ He / She was born on " width="w-full">
+                    <!-- Need to Fix -->
+
+                    <div class="basis-[23%]">
+                        <Box :title="IHeSheLabel" width="w-full">
                             <div class="grid grid-cols-1 w-full gap-2">
                                 <div>
                                     <label
                                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                        >Date of Birth</label
+                                        >{{ date_of_label }}</label
                                     >
                                     <VueDatePicker
                                         :text-input="dateInputOptions"
@@ -255,7 +274,7 @@
                     </div>
                     <div class="grow">
                         <Box
-                            title="The birth was recorded under "
+                            :title="`The ${registry_label} was recorded under`"
                             width="w-ful"
                         >
                             <div class="grid grid-cols-1 w-full gap-2">
@@ -874,7 +893,7 @@
 import Radio from '../../components/essentials/inputs/Radio.vue'
 import { usePetitions } from '../../stores/Petition/Petitions.js'
 import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue'
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import Modal from '../../components/client/modal/Modal.vue'
 
 import Box from '../../components/essentials/Box.vue'
@@ -911,10 +930,12 @@ import Header from '../../components/essentials/header.vue'
 import ButtonIcon from '../../components/essentials/buttons/ButtonIcon.vue'
 import ClericalSettings from '../../components/essentials/settings/ClericalSettings.vue'
 import CombineInputs from '../../components/essentials/inputs/CombineInputs.vue'
+import MultiButton from '../../components/essentials/buttons/table/multiButton.vue'
+import ViewBTn from '../../components/essentials/buttons/table/viewBTn.vue'
 
 const date = new Date()
 
-const type = ref('')
+const document_owner = ref('')
 const petition_number = ref('0000')
 const year = ref(date.getFullYear())
 
@@ -941,42 +962,68 @@ const colDefs = ref([
         flex: 2,
         filter: true,
         pinned: 'left',
+        cellClass: 'font-semibold tracking-wider w-full text-center',
         lockPinned: true,
     },
     {
         field: 'petitioner_name',
         headerName: 'Petitioner Name',
         flex: 1,
+        cellClass: 'font-medium tracking-wider w-full text-gray-600',
         filter: true,
     },
     {
         field: 'petitioner_name',
+        cellClass: 'font-medium tracking-wider w-full text-gray-900',
+
         headerName: 'Document Owner',
         flex: 1,
         filter: true,
     },
     {
+        field: 'document_type',
+        cellClass: 'font-medium tracking-wider w-full text-gray-600',
+        headerName: 'Document Type',
+        flex: 1,
+        filter: true,
+    },
+    {
         field: 'relation_owner',
+        cellClass: 'font-medium tracking-wider w-full text-gray-600',
+
         headerName: 'Relationship',
         flex: 1,
         filter: true,
     },
-    { field: 'DatePaid', headerName: 'Date Filed', flex: 1, filter: true },
+    {
+        field: 'DatePaid',
+        headerName: 'Date Filed',
+        flex: 1,
+
+        filter: true,
+        cellClass: 'font-medium tracking-wider w-full text-gray-600',
+    },
     {
         headerName: 'Status',
         flex: 1,
         pinned: 'right',
         lockPinned: true,
+
         resizable: false,
+        cellRenderer: MultiButton,
+
+        cellStyle: { overflow: 'visible', border: 'none' },
         sortable: false,
     },
     {
         headerName: 'Action',
-
+        cellStyle: { border: 'none' },
         pinned: 'right',
+        width: 100,
         lockPinned: true,
         resizable: true,
         sortable: false,
+        cellRenderer: ViewBTn,
     },
 ])
 
@@ -1005,6 +1052,71 @@ const dateInputOptions = ref({
     format: 'PP',
 })
 
+const Type = ref(['CCE', 'CFN'])
+
+const DocumentType = computed(() => {
+    switch (formData.type) {
+        case 'CCE':
+            return ['Birth', 'Death', 'Marriage']
+        case 'CFN':
+            return ['Birth']
+        default:
+            return ''
+    }
+})
+
+const documentTypeLabel = computed(() => {
+    switch (formData.document_type) {
+        case 'Birth':
+            return 'Live Birth'
+        case 'Death':
+            return 'Death'
+        case 'Marriage':
+            return 'Marriage'
+        default:
+            return ''
+    }
+})
+
+const IHeSheLabel = computed(() => {
+    switch (formData.document_type) {
+        case 'Birth':
+            return 'I/He/She was born on'
+        case 'Death':
+            return 'He/She was died on'
+        case 'Marriage':
+            return 'I/He/She contracted marriage on'
+        default:
+            return ''
+    }
+})
+
+const date_of_label = computed(() => {
+    switch (formData.document_type) {
+        case 'Birth':
+            return 'Date of Birth'
+        case 'Death':
+            return 'Date of Death'
+        case 'Marriage':
+            return 'Date of Marriage'
+        default:
+            return ''
+    }
+})
+
+const registry_label = computed(() => {
+    switch (formData.document_type) {
+        case 'Birth':
+            return 'birth'
+        case 'Death':
+            return 'death'
+        case 'Marriage':
+            return 'marriage'
+        default:
+            return ''
+    }
+})
+
 const RelationSuggestion = ref(['Father', 'Mother', 'Brother', 'Sister'])
 
 const SupportingDocumentsSuggestions = ref([
@@ -1022,18 +1134,36 @@ const DescriptionSuggestions = ref([
     "Child's last name",
 ])
 
-const seeking_options = ref({
-    my: 'my Certificate of Live Birth',
-    the: 'the Certificate of Live Birth of',
+const seeking_options = computed(() => {
+    switch (formData.document_type) {
+        case 'Birth':
+            return {
+                my: 'my Certificate of Live Birth',
+                the: 'the Certificate of Live Birth of',
+            }
+        case 'Death':
+            return null
+        case 'Marriage':
+            return {
+                my: 'my Certificate of Marriage entered into with',
+                the: 'the Certificate of Marriage of',
+            }
+        default:
+            return ''
+    }
 })
+
+// const seeking_options = ref({
+//     my: 'my Certificate of Live Birth',
+//     the: 'the Certificate of Live Birth of',
+// })
 const action_options = ref({
     Granted: 'Granted',
     Denied: 'Denied (Provide the basis for denial)',
 })
 
 const RA = ref(['R.A. 9048', 'R.A. 10172'])
-const Type = ref(['CCE', 'CFN'])
-const DocumentType = ref(['Birth', 'Death', 'Marriage'])
+
 const date_now = ref(now_date())
 const date_notice = ref(add_date_notice())
 const date_certificate_start = ref(add_date_certificate_start())

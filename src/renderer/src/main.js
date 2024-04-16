@@ -47,6 +47,8 @@ import {
     faFlag,
     faPrint,
     faScroll,
+    faAngleDown,
+    faRotateRight
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -74,7 +76,10 @@ library.add(
     faChartLine,
     faFlag,
     faPrint,
-    faScroll
+    faScroll,
+    faAngleDown,
+    faRotateRight
+
 )
 
 import './assets/index.css'
