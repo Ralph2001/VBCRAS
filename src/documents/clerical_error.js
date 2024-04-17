@@ -15,7 +15,32 @@ export async function generate(formData) {
     return { success: true, filepath: folderPath }
 }
 
+const LIVEBIRTH_PATH = path.resolve(
+    __dirname,
+    '../../resources/documents/RA 9048 RA 10172/Live Birth/petition.docx'
+)
+const DEATH_PATH = path.resolve(
+    __dirname,
+    '../../resources/documents/RA 9048 RA 10172/Death/petition.docx'
+)
+const MARRIAGE_PATH = path.resolve(
+    __dirname,
+    '../../resources/documents/RA 9048 RA 10172/Marriage/petition.docx'
+)
+
 let folderPath
+
+async function PetitionFile(type, document_type) {
+    let content = ''
+    if ((type === 'CCE') & (document_type === 'Birth')) {
+        content = fs.readFileSync(LIVEBIRTH_PATH, 'binary')
+    } else if ((type === 'CCE') & (document_type === 'Marriage')) {
+        content = fs.readFileSync(MARRIAGE_PATH, 'binary')
+    } else if ((type === 'CCE') & (document_type === 'Death')) {
+        content = fs.readFileSync(DEATH_PATH, 'binary')
+    }
+    return content
+}
 
 async function document_folder(data) {
     const date_now = new Date()
@@ -95,6 +120,8 @@ async function endorsement_letter(data) {
     return true
 }
 async function petition(data) {
+    const content = await PetitionFile(data.type, data.document_type)
+
     const support = JSON.parse(data.supportingDocuments)
     const supporting_documents = {
         list: [...support].map((supportName) => ({
@@ -114,14 +141,6 @@ async function petition(data) {
     const date_now = new Date()
     const number = data.petition_number
     const doctype = data.type
-
-    const content = fs.readFileSync(
-        path.resolve(
-            __dirname,
-            '../../resources/documents/RA 9048 RA 10172/Live Birth/petition.docx'
-        ),
-        'binary'
-    )
 
     const zip = new PizZip(content)
     const doc = new Docxtemplater(zip, {

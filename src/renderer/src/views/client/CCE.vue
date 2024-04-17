@@ -16,14 +16,20 @@
             />
         </div>
 
-        <Modal large label="Create Document" v-if="RA9048">
+        <Modal large label="Create a new Document" v-if="RA9048">
             <template v-slot:header>
                 <ModalCloseButton @click="closeModal" />
             </template>
 
             <div>
                 <Box title="Document" width="w-fit">
-                    <div class="grid grid-cols-2 p-2 gap-3">
+                    <div class="grid grid-cols-3 p-2 gap-3">
+                        <Select
+                            skip
+                            :options="RepublicAct"
+                            v-model="formData.ra"
+                            label="Republic Act"
+                        />
                         <Select
                             skip
                             :options="Type"
@@ -40,12 +46,18 @@
                 </Box>
             </div>
 
-            <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-10">
+            <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-5">
                 <div class="w-full flex item-center justify-center mb-2">
-                    <p class="text-lg uppercase font-semibold">
+                    <p
+                        class="text-lg uppercase font-semibold"
+                        v-if="formData.type === 'CCE'"
+                    >
                         PETITION FOR CORRECTION OF CLERICAL ERROR IN THE
                         CERTIFICATE OF
                         {{ documentTypeLabel }}
+                    </p>
+                    <p class="text-lg uppercase font-semibold" v-else>
+                        PETITION FOR CHANGE OF FIRST NAME
                     </p>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -81,17 +93,37 @@
                                             v-model="year"
                                             type="text"
                                             tabindex="-1"
-                                            class="bg-gray-50 border-e-gray-300 border-t-gray-300 border-b-gray-300 border-s-white font-bold text-gray-500 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                            :class="{
+                                                'border-e-gray-300':
+                                                    formData.ra === '9048',
+                                                'border-e-0':
+                                                    formData.ra === '10172',
+                                            }"
+                                            class="bg-gray-50 border-t-gray-300 border-b-gray-300 border-s-white font-bold text-gray-500 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                         />
                                     </div>
                                 </div>
-                                <div>
+                                <div class="w-[7rem]">
+                                    <div
+                                        class="basis-[20%]"
+                                        v-if="formData.ra === '10172'"
+                                    >
+                                        <input
+                                            value="R.A 10172"
+                                            type="text"
+                                            disabled
+                                            tabindex="-1"
+                                            class="bg-gray-50 border-e-gray-300 text-center border-t-gray-300 border-b-gray-300 border-s-white font-bold text-gray-500 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                        />
+                                    </div>
+                                </div>
+                                <!-- <div>
                                     <ButtonIcon>
                                         <font-awesome-icon
                                             icon="fa-solid fa-rotate-right"
                                         />
                                     </ButtonIcon>
-                                </div>
+                                </div> -->
                             </div>
 
                             <Input
@@ -144,7 +176,8 @@
                         class="basis-[35%]"
                         v-if="
                             formData.document_type === 'Birth' ||
-                            formData.document_type === 'Marriage'
+                            formData.document_type === 'Marriage' ||
+                            formData.document_type !== 'Death'
                         "
                     >
                         <Box
@@ -161,7 +194,7 @@
                         </Box>
                     </div>
 
-                    <!-- Need to Fix -->
+                    <!--Fixed -->
 
                     <div class="basis-[60%] grow">
                         <Box
@@ -169,11 +202,23 @@
                             width="w-full"
                         >
                             <div class="flex flex-row w-full gap-2">
-                                <div class="basis-[70%]">
+                                <div
+                                    :class="{
+                                        grow:
+                                            (formData.document_type ===
+                                                'Marriage' &&
+                                                formData.cce_in === 'my') ||
+                                            (formData.document_type ===
+                                                'Marriage' &&
+                                                formData.cce_in === ''),
+                                    }"
+                                    class="basis-[70%]"
+                                >
                                     <Input
                                         :label="
                                             formData.document_type ===
-                                            'Marriage'
+                                                'Marriage' &&
+                                            formData.cce_in === 'my'
                                                 ? 'Complete Name of Spouse'
                                                 : 'Document Owner'
                                         "
@@ -183,13 +228,15 @@
                                             formData.cce_in === 'my' &&
                                             formData.document_type === 'Birth'
                                                 ? true
-                                                : false
+                                                : false ||
+                                                  formData.cce_in === ''
                                         "
                                         :skip="
                                             formData.cce_in === 'my' &&
                                             formData.document_type === 'Birth'
                                                 ? true
-                                                : false
+                                                : false ||
+                                                  formData.cce_in === ''
                                         "
                                         @input="
                                             formData.name_owner =
@@ -197,20 +244,31 @@
                                         "
                                     />
                                 </div>
-                                <div class="grow">
+                                <div
+                                    class="grow"
+                                    v-if="
+                                        formData.document_type === 'Birth' ||
+                                        formData.document_type === 'Death' ||
+                                        (formData.document_type ===
+                                            'Marriage' &&
+                                            formData.cce_in === 'the')
+                                    "
+                                >
                                     <InputSuggestions
                                         label="Relation of Owner"
                                         :readonly="
                                             formData.cce_in === 'my' &&
                                             formData.document_type === 'Birth'
                                                 ? true
-                                                : false
+                                                : false ||
+                                                  formData.cce_in === ''
                                         "
                                         :skip="
                                             formData.cce_in === 'my' &&
                                             formData.document_type === 'Birth'
                                                 ? true
-                                                : false
+                                                : false ||
+                                                  formData.cce_in === ''
                                         "
                                         v-model="formData.relation_owner"
                                         :items="RelationSuggestion"
@@ -220,7 +278,7 @@
                         </Box>
                     </div>
 
-                    <!-- Need to Fix -->
+                    <!-- Fixed -->
 
                     <div class="basis-[23%]">
                         <Box :title="IHeSheLabel" width="w-full">
@@ -286,8 +344,8 @@
                         </Box>
                     </div>
                 </div>
-                <div class="flex flex-col flex-wrap gap-2">
-                    <div class="grow">
+                <div class="flex flex-row flex-wrap gap-5">
+                    <div class="grow" v-if="formData.type === 'CCE'">
                         <Box
                             title="The clerical error(s) to be corrected is (are): "
                             width="w-ful"
@@ -386,7 +444,26 @@
                             </div>
                         </Box>
                     </div>
-                    <div class="grow">
+                    <div class="basis-[60%]" v-if="formData.type === 'CFN'">
+                        <Box
+                            title="The first name to be change  "
+                            width="w-full"
+                        >
+                            <div class="grid grid-cols-2 gap-2 w-full">
+                                <Input
+                                    label="From"
+                                    v-model="formData.registry_number"
+                                />
+                                <Input
+                                    label="To"
+                                    v-model="formData.registry_number"
+                                />
+                            </div>
+                        </Box>
+                    </div>
+                    <!-- <GroundBlock /> -->
+
+                    <div class="basis-[100%]">
                         <Box
                             title="The facts/reasons for filing this petition are the following. "
                             width="w-ful"
@@ -932,8 +1009,10 @@ import ClericalSettings from '../../components/essentials/settings/ClericalSetti
 import CombineInputs from '../../components/essentials/inputs/CombineInputs.vue'
 import MultiButton from '../../components/essentials/buttons/table/multiButton.vue'
 import ViewBTn from '../../components/essentials/buttons/table/viewBTn.vue'
+import GroundBlock from '../../components/essentials/block/GroundBlock.vue'
 
 const date = new Date()
+const RepublicAct = ref(['9048', '10172'])
 
 const document_owner = ref('')
 const petition_number = ref('0000')
@@ -1172,6 +1251,7 @@ const date_of_issued = ref(add_date_issued())
 const date_of_granted = ref(add_date_granted())
 
 const formData = reactive({
+    ra: '9048',
     type: 'CCE',
     document_type: 'Birth',
     petition_number: petitioner_number,
@@ -1180,7 +1260,7 @@ const formData = reactive({
     petitioner_province: '',
     petitioner_city: '',
     petitioner_barangay: '',
-    cce_in: 'my', //
+    cce_in: '', //
 
     name_owner: '',
     relation_owner: '',
@@ -1196,6 +1276,15 @@ const formData = reactive({
         description: [],
         from: [],
         to: [],
+    },
+
+    grounds: {
+        a: false,
+        b: true,
+        c: false,
+        d: false,
+        e: false,
+        f: false,
     },
 
     reason: 'To correct',
@@ -1232,6 +1321,45 @@ const formData = reactive({
     date_issued: date_of_issued,
     date_granted: date_of_granted,
 })
+
+watch(
+    () => formData.cce_in,
+    (cce_in) => {
+        if (cce_in === 'my' && formData.document_type === 'Birth') {
+            formData.name_owner = 'N/A'
+            formData.relation_owner = 'N/A'
+        } else {
+            formData.name_owner = ''
+            formData.relation_owner = ''
+        }
+    }
+)
+
+watch(
+    () => formData.type,
+    (type) => {
+        if (type === 'CFN') {
+            formData.document_type = 'Birth'
+        }
+    }
+)
+
+watch(
+    () => formData.document_type,
+    (document_type) => {
+        if (document_type === 'Birth') {
+            formData.name_owner = 'N/A'
+            formData.relation_owner = 'N/A'
+            formData.cce_in = 'my'
+        } else if (document_type === 'Death') {
+            formData.cce_in = 'the'
+        } else {
+            formData.cce_in = ''
+            formData.name_owner = ''
+            formData.relation_owner = ''
+        }
+    }
+)
 
 const { provinces, municipality, barangay } = useAddress(() => [
     formData.petitioner_province,
