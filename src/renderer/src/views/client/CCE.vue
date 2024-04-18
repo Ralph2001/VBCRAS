@@ -3,7 +3,13 @@
         <Header
             label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME"
         >
-            <BtnDrop label="Create" :options="RA" @open-modal="modalOpener" />
+            <!-- <BtnDrop label="Create" :options="RA" @open-modal="modalOpener" /> -->
+            <Button
+                label="Create"
+                isActive
+                :class="`rounded-sm`"
+                @click="modalOpener"
+            />
             <ButtonIcon @click="settings = true">
                 <font-awesome-icon icon="fa-solid fa-gear"
             /></ButtonIcon>
@@ -16,7 +22,7 @@
             />
         </div>
 
-        <Modal large label="Create a new Document" v-if="RA9048">
+        <Modal large label="Create a new Document" v-if="document">
             <template v-slot:header>
                 <ModalCloseButton @click="closeModal" />
             </template>
@@ -46,7 +52,7 @@
                 </Box>
             </div>
 
-            <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-5">
+            <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
                 <div class="w-full flex item-center justify-center mb-2">
                     <p
                         class="text-lg uppercase font-semibold"
@@ -63,6 +69,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <Box title="Petition Details" width="w-full">
                         <div class="grid grid-cols-1 w-full">
+                            <!-- {{ formData.petition_number }} -->
                             <label
                                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >Petition Number</label
@@ -461,14 +468,26 @@
                             </div>
                         </Box>
                     </div>
-                    <!-- <GroundBlock /> -->
+                    <GroundBlock
+                        v-if="
+                            formData.type === 'CFN' &&
+                            formData.document_type === 'Birth'
+                        "
+                    />
 
                     <div class="basis-[100%]">
                         <Box
                             title="The facts/reasons for filing this petition are the following. "
                             width="w-ful"
                         >
-                            <div class="grid grid-cols-1 w-full gap-2">
+                            <div
+                                class="grid grid-cols-1 w-full gap-2"
+                                v-if="
+                                    formData.type === 'CCE' &&
+                                    formData.document_type === 'Birth' &&
+                                    !formData.ra === '10172'
+                                "
+                            >
                                 <label
                                     for="message"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -480,6 +499,36 @@
                                     v-model="formData.reason"
                                     class="block py-6 px-6 text-justify font-bold w-full text-md text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 ></textarea>
+                            </div>
+
+                            <div
+                                class="flex flex-col w-full"
+                                v-if="
+                                    formData.type === 'CCE' &&
+                                    formData.document_type === 'Birth' &&
+                                    formData.ra === '10172'
+                                "
+                            >
+                                <div
+                                    class="flex flex-row w-full p-2"
+                                    v-for="(item, index) in items"
+                                    :key="index"
+                                >
+                                    <div class="basis-[20%] px-8 text-end">
+                                        <p
+                                            class="text-md font-bold tracking-wide"
+                                        >
+                                            For error No. {{ index + 1 }}:
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-col grow">
+                                        <textarea
+                                            id="message"
+                                            rows="3"
+                                            class="block py-3 px-6 text-justify font-bold w-full text-md text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        ></textarea>
+                                    </div>
+                                </div>
                             </div>
                         </Box>
                     </div>
@@ -1010,7 +1059,8 @@ import CombineInputs from '../../components/essentials/inputs/CombineInputs.vue'
 import MultiButton from '../../components/essentials/buttons/table/multiButton.vue'
 import ViewBTn from '../../components/essentials/buttons/table/viewBTn.vue'
 import GroundBlock from '../../components/essentials/block/GroundBlock.vue'
-
+import Button from '../../components/essentials/buttons/Button.vue'
+const document = ref(false) // Modal
 const date = new Date()
 const RepublicAct = ref(['9048', '10172'])
 
@@ -1370,16 +1420,12 @@ const { at_province, at_city } = useAddress(() => [formData.at_province])
 
 const RA9048 = ref(false)
 
-const modalOpener = (event, value) => {
-    if (event === 'R.A. 9048') {
-        RA9048.value = !RA9048.value
-    } else {
-        console.log('is it')
-    }
+const modalOpener = () => {
+    document.value = !document.value
 }
 
 function closeModal() {
-    RA9048.value = false
+    document.value = false
 }
 
 const items = ref([1])

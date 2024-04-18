@@ -7,7 +7,7 @@
     >
         <div
             :class="{
-                ' max-w-[80rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
+                ' max-w-[90rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
                 'max-w-2xl max-h-full': medium,
                 'max-w-lg': small,
                 

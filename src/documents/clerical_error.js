@@ -163,21 +163,52 @@ async function petition(data) {
     const day_ss = dateFns.format(data.SwornDate, 'do')
     const monthyear_ss = dateFns.format(data.SwornDate, 'MMMM yyyy')
 
+    let spouse_name =
+        data.cce_in === 'my' && data.document_type === 'Marriage'
+            ? data.name_owner
+            : 'N/A'
+
+    let name_owner =
+        data.cce_in === 'my' && data.document_type === 'Marriage'
+            ? 'N/A'
+            : data.name_owner
+
+    let relation_owner =
+        data.cce_in === 'my' && data.document_type === 'Marriage'
+            ? 'N/A'
+            : data.relation_owner
+
+    let error_in_my = data.cce_in === 'my' ? true : false
+    let error_in_the = data.cce_in === 'the' ? true : false
+
     doc.render({
         petition_number: petitioner_number,
         petitioner_name: petitioner_name,
         nationality: data.nationality,
         petitioner_address: petitioner_addressFormatted,
-        name_owner: data.name_owner,
-        relation_owner: data.relation_owner,
-        date_of_birth: data.date_of,
+
+        // For Birth Certificate
+        my: error_in_my,
+        the: error_in_the,
+
+        // Working Marriage and Birth
+        name_spouse: spouse_name,
+        name_owner: name_owner,
+        relation_owner: relation_owner,
+        // Working Marriage and Birth
+
+        date_of: data.date_of,
         at_city: data.at_city, // at city
         at_province: data.at_province,
         at_country: data.at_country,
         registry_number: data.registry_number,
         reason: data.reason,
-        support: supporting_documents.list,
+
+        // Errors Table
         clerical: clerical_errors.errors,
+        // Supporting Documents Table
+        support: supporting_documents.list,
+
         LCRO_city: data.LCRO_city,
         LCRO_province: data.LCRO_province,
 
@@ -196,7 +227,12 @@ async function petition(data) {
         or_number: data.or_number,
         DatePaid: data.DatePaid,
 
-        tryAgain: data.supportingDocuments,
+        // Change First Name Tags
+
+        from: data.from,
+        to: data.to,
+        firstname: data.firstname,
+        specify: data.specify,
     })
 
     const buf = doc.getZip().generate({
