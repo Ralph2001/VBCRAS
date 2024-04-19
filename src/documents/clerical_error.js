@@ -27,6 +27,10 @@ const MARRIAGE_PATH = path.resolve(
     __dirname,
     '../../resources/documents/RA 9048 RA 10172/Marriage/petition.docx'
 )
+const CFN_PATH = path.resolve(
+    __dirname,
+    '../../resources/documents/RA 9048 RA 10172/Change First Name/petition.docx'
+)
 
 let folderPath
 
@@ -38,6 +42,8 @@ async function PetitionFile(type, document_type) {
         content = fs.readFileSync(MARRIAGE_PATH, 'binary')
     } else if ((type === 'CCE') & (document_type === 'Death')) {
         content = fs.readFileSync(DEATH_PATH, 'binary')
+    } else if ((type === 'CFN') & (document_type === 'Birth')) {
+        content = fs.readFileSync(CFN_PATH, 'binary')
     }
     return content
 }
@@ -138,6 +144,25 @@ async function petition(data) {
         })),
     }
 
+    const grounds_filing = JSON.parse(data.grounds)
+    const grounds = {
+        a: grounds_filing.a,
+        b: grounds_filing.b,
+        c: grounds_filing.c,
+        d: grounds_filing.d,
+        e: grounds_filing.e,
+        f: grounds_filing.f,
+    }
+
+    let a = grounds_filing.a ? true : false
+    let b = grounds_filing.b ? true : false
+    let c = grounds_filing.c ? true : false
+    let d = grounds_filing.d ? true : false
+    let e = grounds_filing.e ? true : false
+    let f = grounds_filing.f ? true : false
+
+    console.log(a, b, c, d, e, f)
+
     const date_now = new Date()
     const number = data.petition_number
     const doctype = data.type
@@ -191,11 +216,11 @@ async function petition(data) {
         my: error_in_my,
         the: error_in_the,
 
-        // Working Marriage and Birth
+        // Working Marriage, Death and Birth
         name_spouse: spouse_name,
         name_owner: name_owner,
         relation_owner: relation_owner,
-        // Working Marriage and Birth
+        // Working Marriage, Death  and Birth
 
         date_of: data.date_of,
         at_city: data.at_city, // at city
@@ -228,11 +253,20 @@ async function petition(data) {
         DatePaid: data.DatePaid,
 
         // Change First Name Tags
-
         from: data.from,
         to: data.to,
-        firstname: data.firstname,
-        specify: data.specify,
+        firstname: data.ground_b,
+        specify: data.ground_f,
+
+        // Grounds
+        a: a,
+        b: b,
+        c: c,
+        d: d,
+        e: e,
+        f: f,
+
+        // Change First Name Tags
     })
 
     const buf = doc.getZip().generate({
