@@ -1,58 +1,5 @@
 <template>
   <div class="flex flex-col relative justify-center w-full">
-    <Transition
-      enter-active-class="animate__animated animate__fadeInDown"
-      leave-active-class="animate__animated animate__fadeOutUp"
-    >
-      <div
-        v-if="notification"
-        class="flex flex-col absolute rounded-xl h-[auto] top-0 right-5 border bg-white z-50 w-[30rem] p-4 shadow-md"
-      >
-        <p class="text-md font-semibold tracking-widest p-2">
-          Approved <span class="font-normal text-xs italic">on April 19, 2024</span>
-        </p>
-        <div class="h-full flex flex-col justify-center items-start py-2 px-3">
-          <div class="flex flex-row w-full p-1">
-            <p class="basis-[38%] italic font-normal text-gray-900 tracking-wide">
-              Petition Number:
-            </p>
-            <p class="font-medium text-gray-900 tracking-wide truncate">CCE-1216-2024</p>
-          </div>
-          <div class="flex flex-row w-full p-1">
-            <p class="basis-[38%] italic font-normal text-gray-900 tracking-wide">
-              Petitioner Name:
-            </p>
-            <p class="font-medium text-gray-900 tracking-wide truncate">
-              RALPH ADVINCULA VILLANUEVA
-            </p>
-          </div>
-          <div class="flex flex-row w-full p-1">
-            <p class="basis-[38%] italic font-normal text-gray-900 tracking-wide">
-              Document Owner:
-            </p>
-            <p class="font-medium text-gray-900 tracking-wide truncate">
-              RALPH ADVINCULA VILLANUEVA
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-2 flex-row justify-end">
-          <button
-            type="button"
-            class="px-3 py-2 text-xs tracking-widest font-medium text-center text-white bg-blue-700 rounded-sm hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Open Finality
-          </button>
-          <button
-            type="button"
-            @click="notification = false"
-            class="px-3 py-2 text-xs tracking-widest font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-sm hover:bg-red-500 hover:text-white"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </Transition>
-
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded-sm`" @click="modalOpener" />
       <ButtonIcon @click="notification = true">
@@ -81,13 +28,21 @@
               :options="RepublicAct"
               v-model="formData.ra"
               label="Republic Act"
+              :error="v$.ra.$error"
             />
-            <Select skip :options="Type" label="Type" v-model="formData.type" />
+            <Select
+              skip
+              :options="Type"
+              label="Type"
+              :error="v$.type.$error"
+              v-model="formData.type"
+            />
             <Select
               skip
               :options="DocumentType"
               label="Document Type"
               v-model="formData.document_type"
+              :error="v$.document_type.$error"
             />
           </div>
         </Box>
@@ -121,8 +76,8 @@
                   <div class="flex flex-row gap-[4px] w-[50%] relative">
                     <div class="basis-[60%]">
                       <input
-                        v-model="formData.type"
                         disabled
+                        v-model="formData.type"
                         type="text"
                         class="bg-gray-50 border-s-gray-300 border-t-gray-300 border-b-gray-300 border-e-white font-bold text-gray-500 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                       />
@@ -131,6 +86,7 @@
                     <div class="basis-[50%]">
                       <input
                         v-model="petition_number"
+                        v-maska data-maska="####"
                         type="text"
                         class="bg-gray-50 border border-s-white border-e-white text-center border-gray-300 font-bold text-gray-900 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                       />
@@ -164,6 +120,7 @@
               </div>
               <Input
                 label="Petitioner Name"
+                :error="v$.petitioner_name.$error"
                 v-model="formData.petitioner_name"
                 @input="formData.petitioner_name = $event.target.value.toUpperCase()"
               />
@@ -172,11 +129,17 @@
 
           <Box title="Petitioner Nationality & Complete Address" width="w-full">
             <div class="grid grid-cols-2 w-full gap-2">
-              <Input label="Nationality" v-model="formData.nationality" skip />
+              <Input
+                label="Nationality"
+                :error="v$.nationality.$error"
+                v-model="formData.nationality"
+                skip
+              />
 
               <selectLocation
                 @change="formData.petitioner_city = ''"
                 :options="provinces[0]"
+                :error="v$.petitioner_province.$error"
                 id="province"
                 v-model="formData.petitioner_province"
                 Province
@@ -184,12 +147,14 @@
 
               <selectLocation
                 :options="municipality[0]"
+                :error="v$.petitioner_city.$error"
                 v-model="formData.petitioner_city"
                 City
                 id="city"
               />
               <selectLocation
                 :options="barangay[0]"
+                :error="v$.petitioner_barangay.$error"
                 v-model="formData.petitioner_barangay"
                 Barangay
                 id="barangay"
@@ -211,6 +176,7 @@
                 <Radio
                   :options="seeking_options"
                   v-model="formData.cce_in"
+                  :error="v$.cce_in.$error"
                   name="cce_in"
                 />
               </div>
@@ -230,6 +196,7 @@
                   class="basis-[70%]"
                 >
                   <Input
+                    :error="v$.name_owner.$error"
                     :label="
                       formData.document_type === 'Marriage' && formData.cce_in === 'my'
                         ? 'Complete Name of Spouse'
@@ -259,6 +226,7 @@
                   "
                 >
                   <InputSuggestions
+                    :error="v$.relation_owner.$error"
                     label="Relation of Owner"
                     :readonly="
                       formData.cce_in === 'my' && formData.document_type === 'Birth'
@@ -302,21 +270,29 @@
             </Box>
           </div>
 
-          <div class="basis-[45%]">
+          <div class="basis-[40%]">
             <Box title=", at" width="w-ful">
               <div class="grid grid-cols-2 w-full gap-2">
-                <Input label="Country" v-model="formData.at_country" readonly skip />
+                <Input
+                  label="Country"
+                  v-model="formData.at_country"
+                  readonly
+                  skip
+                  :error="v$.at_country.$error"
+                />
 
                 <selectLocation
                   @change="formData.at_city = ''"
                   :options="at_province[0]"
                   id="at_province"
                   v-model="formData.at_province"
+                  :error="v$.at_province.$error"
                   Province
                 />
                 <selectLocation
                   :options="at_city[0]"
                   v-model="formData.at_city"
+                  :error="v$.at_city.$error"
                   City
                   id="at_city"
                 />
@@ -326,7 +302,11 @@
           <div class="grow">
             <Box :title="`The ${registry_label} was recorded under`" width="w-ful">
               <div class="grid grid-cols-1 w-full gap-2">
-                <Input label="Registry Number" v-model="formData.registry_number" />
+                <Input
+                  label="Registry Number"
+                  v-model="formData.registry_number"
+                  :error="v$.registry_number.$error"
+                />
               </div>
             </Box>
           </div>
@@ -623,6 +603,7 @@
                 <Input
                   label="Petitioner Name"
                   skip
+                  :error="v$.petitioner_name.$error"
                   v-model="formData.petitioner_name"
                   @input="formData.petitioner_name = $event.target.value.toUpperCase()"
                   readonly
@@ -637,12 +618,18 @@
                 <Input
                   label="Name"
                   skip
+                  :error="v$.administering_officer.$error"
                   v-model="formData.administering_officer"
                   @input="
                     formData.administering_officer = $event.target.value.toUpperCase()
                   "
                 />
-                <Input label="Position" skip v-model="formData.administering_position" />
+                <Input
+                  label="Position"
+                  :error="v$.administering_position.$error"
+                  skip
+                  v-model="formData.administering_position"
+                />
               </div>
             </Box>
           </div>
@@ -669,9 +656,22 @@
                   >
                   </VueDatePicker>
                 </div>
-                <Input label="City/Municipality" skip v-model="formData.SwornCity" />
-                <Input label="Community Tax Certificate No." v-model="formData.Ctc" />
-                <Input label="Issued at" v-model="formData.CtcIssuedAt" />
+                <Input
+                  label="City/Municipality"
+                  :error="v$.SwornCity.$error"
+                  skip
+                  v-model="formData.SwornCity"
+                />
+                <Input
+                  label="Community Tax Certificate No."
+                  :error="v$.Ctc.$error"
+                  v-model="formData.Ctc"
+                />
+                <Input
+                  label="Issued at"
+                  :error="v$.CtcIssuedAt.$error"
+                  v-model="formData.CtcIssuedAt"
+                />
                 <div>
                   <label
                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -700,6 +700,7 @@
               <div class="grid grid-cols-1 w-full gap-2">
                 <div class="flex flex-row justify-evenly" v-if="formData.ra !== '10172'">
                   <Radio
+                    :error="v$.action.$error"
                     :options="action_options"
                     v-model="formData.action"
                     name="action"
@@ -726,6 +727,7 @@
                   label="Municipal Civil Registrar"
                   skip
                   v-model="formData.mcr"
+                  :error="v$.mcr.$error"
                   @input="formData.mcr = $event.target.value.toUpperCase()"
                 />
               </div>
@@ -778,6 +780,7 @@
                     <Radio
                       :options="action_options"
                       v-model="formData.action"
+                      :error="v$.action.$error"
                       name="action"
                     />
                   </div>
@@ -801,6 +804,7 @@
                   <Input
                     label="Municipal Civil Registrar"
                     skip
+                    :error="v$.mcr.$error"
                     v-model="formData.mcr"
                     @input="formData.mcr = $event.target.value.toUpperCase()"
                   />
@@ -825,8 +829,17 @@
           <div class="basis-[35%]">
             <Box title="Payment of filing fee" width="w-ful">
               <div class="grid grid-cols-1 w-full gap-2">
-                <Input label="O.R. No." type="number" v-model="formData.or_number" />
-                <InputCurrency label="Amount Paid" v-model="formData.amount_paid" />
+                <Input
+                  label="O.R. No."
+                  :error="v$.or_number.$error"
+                  type="number"
+                  v-model="formData.or_number"
+                />
+                <InputCurrency
+                  label="Amount Paid"
+                  :error="v$.amount_paid.$error"
+                  v-model="formData.amount_paid"
+                />
 
                 <div>
                   <label
@@ -1076,6 +1089,12 @@ import ViewBTn from "../../components/essentials/buttons/table/viewBTn.vue";
 import GroundBlock from "../../components/essentials/block/GroundBlock.vue";
 import Button from "../../components/essentials/buttons/Button.vue";
 import CheckBox from "../../components/essentials/buttons/CheckBox.vue";
+
+import { useVuelidate } from "@vuelidate/core";
+import { required, requiredIf } from "@vuelidate/validators";
+
+import { vMaska } from "maska"
+
 const document = ref(false); // Modal
 const date = new Date();
 const RepublicAct = ref(["9048", "10172"]);
@@ -1416,12 +1435,33 @@ watch(
 );
 
 watch(
+  () => formData.ra,
+  (RA) => {
+    if (RA === "9048") {
+      Type.value = ["CCE", "CFN"];
+      DocumentType.value = ["Birth", "Death", "Marriage"];
+    } else if (RA === "10172") {
+      Type.value = ["CCE"];
+      DocumentType.value = ["Birth"];
+
+      formData.cce_in = "";
+      formData.document_type = "Birth";
+      formData.name_owner = "";
+      formData.relation_owner = "";
+      formData.type = "CCE";
+    }
+  }
+);
+
+watch(
   () => formData.type,
   (type) => {
     if (type === "CFN") {
       formData.document_type = "Birth";
+      formData.cce_in = "";
       DocumentType.value = ["Birth"];
     } else {
+      formData.cce_in = "";
       DocumentType.value = ["Birth", "Death", "Marriage"];
     }
   }
@@ -1433,33 +1473,10 @@ watch(
     if (document_type === "Birth") {
       formData.name_owner = "N/A";
       formData.relation_owner = "N/A";
-      formData.cce_in = "my";
+      formData.cce_in = "";
     } else if (document_type === "Death") {
       formData.cce_in = "the";
     } else {
-      formData.cce_in = "";
-      formData.name_owner = "";
-      formData.relation_owner = "";
-    }
-  }
-);
-
-watch(
-  () => formData.ra,
-  (RepublicAct) => {
-    if (RepublicAct === "10172") {
-      Type.value = ["CCE"];
-      DocumentType.value = ["Birth"];
-      formData.cce_in = "";
-      formData.document_type = "Birth";
-      formData.name_owner = "";
-      formData.relation_owner = "";
-      formData.type = "CCE";
-    } else {
-      formData.type = "CCE";
-
-      Type.value = ["CCE", "CFN"];
-      DocumentType.value = ["Birth", "Death", "Marriage"];
       formData.cce_in = "";
       formData.name_owner = "";
       formData.relation_owner = "";
@@ -1567,7 +1584,75 @@ const ooxml = computed(() => {
   return ooxml;
 });
 
+const validate = computed(() => {
+  return {
+    ra: { required },
+    type: { required },
+    document_type: { required },
+    petition_number: { required },
+    petitioner_name: { required },
+    nationality: { required },
+    petitioner_province: { required },
+    petitioner_city: { required },
+    petitioner_barangay: { required },
+    cce_in: { required },
+
+    name_owner: { required },
+    relation_owner: { required },
+
+    // date_of: { required },
+    at_city: { required },
+    at_province: { required },
+    at_country: { required },
+    registry_number: { required },
+
+    // clerical_errors: {
+    //   description: requiredIf(clerical_description()),
+    //   from: requiredIf(clerical_from()),
+    //   to: requiredIf(clerical_to()),
+    // },
+
+    // required  if
+    // from: { required },
+    // to: { required },
+    // ground_b: { required },
+    // ground_f: { required },
+
+    // reason: { required },
+    // LCRO_city: { required },
+    // LCRO_province: { required },
+
+    administering_officer: { required },
+    administering_position: { required },
+    SwornDate: { required },
+    SwornCity: { required },
+    Ctc: { required },
+    CtcIssuedOn: { required },
+    CtcIssuedAt: { required },
+    action: { required },
+
+    mcr: { required },
+    decision: { required },
+    or_number: { required },
+    amount_paid: { required },
+    DatePaid: { required },
+    notice_posting: { required },
+    certificate_posting_start: { required },
+    certificate_posting_end: { required },
+    date_issued: { required },
+    date_granted: { required },
+  };
+});
+
+const v$ = useVuelidate(validate, formData);
+
 const submitForm = async () => {
+  v$.value.$touch();
+  if (v$.value.$error) {
+    console.log(v$.value);
+    return;
+  }
+
   closeModal();
   const clerical_errors = ref({
     description: formData.clerical_errors.description,
