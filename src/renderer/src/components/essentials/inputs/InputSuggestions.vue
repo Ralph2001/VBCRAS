@@ -2,6 +2,7 @@
   <div class="relative w-full">
     <label
       :for="label"
+      v-if="!nolabel"
       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
       >{{ label }} <span v-if="error" class="text-red-600">*</span></label
     >
@@ -100,6 +101,10 @@ const props = defineProps({
     default: "",
   },
   error: Boolean,
+  nolabel: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 function filterResults() {

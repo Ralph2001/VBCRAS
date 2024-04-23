@@ -1,6 +1,7 @@
 <template>
   <div class="w-[10rem]">
     <label
+      v-if="!nolabel"
       for="countries"
       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
       >{{ label }} <span v-if="error" class="text-red-600">*</span></label
@@ -42,5 +43,9 @@ const props = defineProps({
   },
   skip: Boolean,
   error: Boolean,
+  nolabel: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>

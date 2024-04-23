@@ -86,7 +86,8 @@
                     <div class="basis-[50%]">
                       <input
                         v-model="petition_number"
-                        v-maska data-maska="####"
+                        v-maska
+                        data-maska="####"
                         type="text"
                         class="bg-gray-50 border border-s-white border-e-white text-center border-gray-300 font-bold text-gray-900 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                       />
@@ -245,8 +246,9 @@
               </div>
             </Box>
           </div>
-
-          <div class="basis-[23%]">
+        </div>
+        <div class="flex flex-row gap-5">
+          <div class="basis-[30%]">
             <Box :title="IHeSheLabel" width="w-full">
               <div class="grid grid-cols-1 w-full gap-2">
                 <div>
@@ -270,9 +272,9 @@
             </Box>
           </div>
 
-          <div class="basis-[40%]">
-            <Box title=", at" width="w-ful">
-              <div class="grid grid-cols-2 w-full gap-2">
+          <div class="basis-[45%]">
+            <Box title=", at" width="w-full ">
+              <div class="grid sm:grid-cols-1 lg:grid-cols-2 w-full gap-2">
                 <Input
                   label="Country"
                   v-model="formData.at_country"
@@ -299,9 +301,10 @@
               </div>
             </Box>
           </div>
+
           <div class="grow">
-            <Box :title="`The ${registry_label} was recorded under`" width="w-ful">
-              <div class="grid grid-cols-1 w-full gap-2">
+            <Box :title="`The ${registry_label} was recorded under`" width="w-full ">
+              <div class="grid grid-cols-1 w-full gap-2 sm:mt-5">
                 <Input
                   label="Registry Number"
                   v-model="formData.registry_number"
@@ -400,8 +403,18 @@
           >
             <Box title="The first name to be change  " width="w-full">
               <div class="grid grid-cols-2 gap-2 w-full">
-                <Input label="From" v-model="formData.from" />
-                <Input label="To" v-model="formData.to" />
+                <Input
+                  label="From"
+                  @input="formData.from = $event.target.value.toUpperCase()"
+                  v-model="formData.from"
+                  :error="v$.from.$params.prop"
+                />
+                <Input
+                  @input="formData.to = $event.target.value.toUpperCase()"
+                  label="To"
+                  v-model="formData.to"
+                  :error="v$.to.$params.prop"
+                />
               </div>
             </Box>
           </div>
@@ -421,19 +434,27 @@
               <div class="flex flex-col gap-5 text-md font-base justify-center">
                 <div class="flex flex-row gap-2 items-center">
                   <p class="basis-[2%] font-serif">a)</p>
-                  <CheckBox v-model="formData.grounds.a" />
+                  <CheckBox
+                    :error="v$.grounds.$params.prop"
+                    v-model="formData.grounds.a"
+                  />
                   <div>The first name is extremely difficult to write or pronounce;</div>
                 </div>
                 <div class="flex flex-row gap-2 items-center">
                   <p class="basis-[2%] font-serif">b)</p>
-                  <CheckBox v-model="formData.grounds.b" />
+                  <CheckBox
+                    :error="v$.grounds.$params.prop"
+                    v-model="formData.grounds.b"
+                  />
 
                   <div class="relative">
                     I have/He/She has habitually and continuously used
                     <div class="absolute -top-[1.2rem] left-[23rem]">
                       <Input
+                        nolabel
                         :class="`flex text-center`"
                         v-model="formData.ground_b"
+                        :error="v$.ground_b.$params.prop"
                         :readonly="formData.grounds.b ? false : true"
                         :skip="formData.grounds.b ? false : true"
                       />
@@ -444,7 +465,10 @@
                 </div>
                 <div class="flex flex-row gap-2 items-center">
                   <p class="basis-[2%] font-serif">c)</p>
-                  <CheckBox v-model="formData.grounds.c" />
+                  <CheckBox
+                    :error="v$.grounds.$params.prop"
+                    v-model="formData.grounds.c"
+                  />
                   <div for="one">
                     <label for="one" class="cursor-pointer">
                       The first name is tainted with dishonor;</label
@@ -453,21 +477,32 @@
                 </div>
                 <div class="flex flex-row gap-2 items-center">
                   <p class="basis-[2%] font-serif">d)</p>
-                  <CheckBox v-model="formData.grounds.d" />
+                  <CheckBox
+                    :error="v$.grounds.$params.prop"
+                    v-model="formData.grounds.d"
+                  />
                   <div>The first name is ridiculous;</div>
                 </div>
                 <div class="flex flex-row gap-2 items-center flex-wrap">
                   <p class="basis-[2%] font-serif">e)</p>
-                  <CheckBox v-model="formData.grounds.e" />
+                  <CheckBox
+                    :error="v$.grounds.$params.prop"
+                    v-model="formData.grounds.e"
+                  />
                   <div>The first name causes confusion;</div>
                 </div>
                 <div class="flex flex-row gap-2 items-center">
                   <p class="basis-[2%] font-serif">f)</p>
-                  <CheckBox v-model="formData.grounds.f" />
+                  <CheckBox
+                    :error="v$.grounds.$params.prop"
+                    v-model="formData.grounds.f"
+                  />
                   <div class="relative w-max">
                     Others: (Specify)
                     <div class="absolute -top-[1.2rem] left-[7.4rem] w-full">
                       <Input
+                        nolabel
+                        :error="v$.ground_f.$params.prop"
                         v-model="formData.ground_f"
                         :class="`flex text-center`"
                         :readonly="formData.grounds.f ? false : true"
@@ -527,6 +562,12 @@
                 <textarea
                   id="message"
                   rows="4"
+                  :class="{
+                    'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50':
+                      v$.reason.$error,
+                    'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !v$
+                      .reason.$error,
+                  }"
                   v-model="formData.reason"
                   class="block py-6 px-6 text-justify tracking-wider font-semibold w-full text-md text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 ></textarea>
@@ -547,6 +588,8 @@
                   <p class="basis-[9%] text-sm text-center">{{ index + 1 }})</p>
                   <div class="basis-[90%]">
                     <InputSuggestions
+                      nolabel
+                      :error="v$.SupportingDocuments.$params.prop"
                       v-model="formData.SupportingDocuments[index]"
                       :items="SupportingDocumentsSuggestions"
                     />
@@ -574,9 +617,19 @@
           </div>
           <div class="basis-[40%] h-max">
             <Box title="filing this petition at the LCRO of " width="w-ful">
-              <div class="flex flex-row justify-center gap-2 w-full">
-                <Input label="City/Municipality" skip v-model="formData.LCRO_city" />
-                <Input label="Province" skip v-model="formData.LCRO_province" />
+              <div class="grid sm:grid-cols-1 lg:grid-cols-1 justify-center gap-2 w-full">
+                <Input
+                  label="City/Municipality"
+                  skip
+                  v-model="formData.LCRO_city"
+                  :error="v$.LCRO_city.$error"
+                />
+                <Input
+                  label="Province"
+                  skip
+                  v-model="formData.LCRO_province"
+                  :error="v$.LCRO_province.$error"
+                />
               </div>
             </Box>
           </div>
@@ -695,8 +748,8 @@
         </div>
 
         <div class="flex flex-row gap-2">
-          <div class="basis-[50%]" v-if="formData.ra !== '10172'">
-            <Box title="ACTION TAKEN BY THE C/MCR" width="w-ful">
+          <div class="basis-[100%]" v-if="formData.ra !== '10172'">
+            <Box title="ACTION TAKEN BY THE C/MCR" width="w-full ">
               <div class="grid grid-cols-1 w-full gap-2">
                 <div class="flex flex-row justify-evenly" v-if="formData.ra !== '10172'">
                   <Radio
@@ -706,39 +759,52 @@
                     name="action"
                   />
                 </div>
-                <div>
-                  <label
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >Date</label
-                  >
-                  <VueDatePicker
-                    :text-input="dateInputOptions"
-                    v-model="formData.date_granted"
-                    auto-apply
-                    input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
-                    format="MMMM dd, yyyy"
-                    model-type="MMMM dd, yyyy"
-                    :month-change-on-scroll="false"
-                    position="right"
-                  >
-                  </VueDatePicker>
+                <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
+                  <textarea
+                    id="message"
+                    rows="6"
+                    v-model="formData.decision"
+                    :class="{
+                      'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50':
+                        v$.decision.$error,
+                      'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !v$
+                        .decision.$error,
+                    }"
+                    class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  ></textarea>
                 </div>
-                <Input
-                  label="Municipal Civil Registrar"
-                  skip
-                  v-model="formData.mcr"
-                  :error="v$.mcr.$error"
-                  @input="formData.mcr = $event.target.value.toUpperCase()"
-                />
+                <div class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
+                  <div>
+                    <label
+                      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >Date</label
+                    >
+                    <VueDatePicker
+                      :text-input="dateInputOptions"
+                      v-model="formData.date_granted"
+                      auto-apply
+                      input-class-name="p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
+                      format="MMMM dd, yyyy"
+                      model-type="MMMM dd, yyyy"
+                      :month-change-on-scroll="false"
+                      position="right"
+                    >
+                    </VueDatePicker>
+                  </div>
+                  <Input
+                    label="Municipal Civil Registrar"
+                    skip
+                    v-model="formData.mcr"
+                    :error="v$.mcr.$error"
+                    @input="formData.mcr = $event.target.value.toUpperCase()"
+                  />
+                </div>
               </div>
             </Box>
           </div>
-          <div class="basis-[100%]">
-            <Box
-              title="ACTION TAKEN BY THE C/MCR"
-              width="full"
-              v-if="formData.ra === '10172'"
-            >
+
+          <div class="basis-[100%]" v-if="formData.ra === '10172'">
+            <Box title="ACTION TAKEN BY THE C/MCR" width="full">
               <div class="flex flex-col w-full gap-4">
                 <div
                   class="flex flex-row w-full gap-6 h-full"
@@ -812,16 +878,22 @@
               </div>
             </Box>
 
-            <Box title="Decision" width="full" v-else>
+            <!-- <Box title="Decision" width="full" v-else>
               <div class="grid grid-cols-1 w-full gap-2">
                 <textarea
                   id="message"
                   rows="6"
                   v-model="formData.decision"
+                  :class="{
+                    'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50':
+                      v$.decision.$error,
+                    'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !v$
+                      .decision.$error,
+                  }"
                   class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 ></textarea>
               </div>
-            </Box>
+            </Box> -->
           </div>
         </div>
 
@@ -1093,7 +1165,9 @@ import CheckBox from "../../components/essentials/buttons/CheckBox.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf } from "@vuelidate/validators";
 
-import { vMaska } from "maska"
+import { vMaska } from "maska";
+
+import toOOXML from "../../utils/toOOXML.js";
 
 const document = ref(false); // Modal
 const date = new Date();
@@ -1527,61 +1601,64 @@ const removeSupportItem = () => {
   }
 };
 
-const fromTextAndtoText = computed(() => {
-  const fromText = `“${formData.clerical_errors.from}”&#160;`;
-  const toText = `“${formData.clerical_errors.to}”`;
-
-  let text = `
-        <w:r>
-            <w:rPr>
-            <w:rFonts w:ascii="Arial"/>
-            <w:sz w:val="22"/>
-            <w:b/>
-            </w:rPr>
-            <w:t>${fromText}</w:t>
-        </w:r>
-
-        <w:r>
-            <w:rPr>
-            <w:rFonts w:ascii="Arial"/>
-            <w:sz w:val="22"/>
-            </w:rPr>
-                <w:t> to&#160;</w:t>
-        </w:r>
-
-        <w:r>
-            <w:rPr>
-            <w:rFonts w:ascii="Arial"/>
-            <w:b/>
-            <w:sz w:val="22"/>
-            </w:rPr>
-                <w:t>${toText}&#160;</w:t>
-        </w:r>`;
-
-  return text;
+const validate_grounds = computed(() => {
+  if (formData.type === "CFN") {
+    if (!Object.values(formData.grounds).some((value) => value)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  return false;
 });
 
-const formatted = computed(() => {
-  const words = formData.decision.split(" ");
-  let textFormatted = "";
-
-  words.forEach((word) => {
-    const formattedWord = `
-            <w:r><w:rPr><w:rFonts w:ascii="Arial"/><w:sz w:val="22"/></w:rPr><w:t>${word}&#160;</w:t></w:r>
-       `;
-
-    textFormatted += formattedWord;
-  });
-
-  return textFormatted;
+const validate_ground_b = computed(() => {
+  if (formData.type === "CFN") {
+    if (formData.grounds.b) {
+      if (formData.ground_b === "") {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+  return false;
 });
 
-const ooxml = computed(() => {
-  let ooxml = formatted.value.replace(
-    `<w:r><w:rPr><w:rFonts w:ascii="Arial"/><w:sz w:val="22"/></w:rPr><w:t>@here&#160;</w:t></w:r>`,
-    fromTextAndtoText.value
-  );
-  return ooxml;
+const validate_ground_f = computed(() => {
+  if (formData.type === "CFN") {
+    if (formData.grounds.f) {
+      if (formData.ground_f === "") {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+  return false;
+});
+
+const validate_from_and_to = computed(() => {
+  if (formData.type === "CFN") {
+    if (formData.from === "" || formData.to === "") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  return false;
+});
+
+const validate_supporting_documents = computed(() => {
+  if (SupportItems.value.length !== formData.SupportingDocuments.length) {
+    return true;
+  } else {
+    return false;
+  }
 });
 
 const validate = computed(() => {
@@ -1600,12 +1677,13 @@ const validate = computed(() => {
     name_owner: { required },
     relation_owner: { required },
 
-    // date_of: { required },
+    date_of: { required },
     at_city: { required },
     at_province: { required },
     at_country: { required },
     registry_number: { required },
 
+    // required  if
     // clerical_errors: {
     //   description: requiredIf(clerical_description()),
     //   from: requiredIf(clerical_from()),
@@ -1613,14 +1691,16 @@ const validate = computed(() => {
     // },
 
     // required  if
-    // from: { required },
-    // to: { required },
-    // ground_b: { required },
-    // ground_f: { required },
+    SupportingDocuments: requiredIf(validate_supporting_documents),
+    from: requiredIf(validate_from_and_to),
+    to: requiredIf(validate_from_and_to),
+    grounds: requiredIf(validate_grounds),
+    ground_b: requiredIf(validate_ground_b),
+    ground_f: requiredIf(validate_ground_f),
 
-    // reason: { required },
-    // LCRO_city: { required },
-    // LCRO_province: { required },
+    reason: { required },
+    LCRO_city: { required },
+    LCRO_province: { required },
 
     administering_officer: { required },
     administering_position: { required },
@@ -1630,6 +1710,9 @@ const validate = computed(() => {
     CtcIssuedOn: { required },
     CtcIssuedAt: { required },
     action: { required },
+
+    //
+    date_grated: { required },
 
     mcr: { required },
     decision: { required },
@@ -1647,11 +1730,12 @@ const validate = computed(() => {
 const v$ = useVuelidate(validate, formData);
 
 const submitForm = async () => {
-  v$.value.$touch();
-  if (v$.value.$error) {
-    console.log(v$.value);
-    return;
-  }
+  // v$.value.$touch();
+  // if (v$.value.$error) {
+  //   console.log(v$.value);
+  //   return;
+  // }
+  const OOXML = toOOXML(formData.decision);
 
   closeModal();
   const clerical_errors = ref({
@@ -1678,7 +1762,7 @@ const submitForm = async () => {
     formData.relation_owner = "N/A";
   }
 
-  const decisionFormatted = "<w:p>" + ooxml.value + "</w:p>";
+  const decisionFormatted = "<w:p>" + OOXML + "</w:p>";
 
   const data = {
     type: formData.type,

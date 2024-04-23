@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}</label>
+        <label  v-if="!nolabel" :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}</label>
         <input type="number" v-maska data-maska="####" :id="label" :value="modelValue"
             @input="emit('update:modelValue', $event.target.value)" :tabindex="tabindex" :readonly="readonly"
             :class="{ 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error, 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error }"
@@ -43,7 +43,11 @@ const props = defineProps({
     error: {
         type: Boolean,
         default: false
-    }
+    },
+    nolabel: {
+    type: Boolean,
+    default: false,
+  },
 })
 </script>
 

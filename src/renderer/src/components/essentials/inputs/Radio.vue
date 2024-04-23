@@ -14,7 +14,7 @@
     />
     <label :for="key" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{
       value
-    }} <span v-if="error" class="text-red-600">*</span></label>
+    }} <span v-if="error && nolabel" class="text-red-600">*</span></label>
   </div>
 </template>
 
@@ -33,5 +33,9 @@ const props = defineProps({
     default: "",
   },
   error: Boolean,
+  nolabel: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
