@@ -366,6 +366,39 @@ def petitions():
     )
 
 
+@app.route("/petitions/latest/petition_number", methods=["GET"])
+@jwt_required()
+def get_latest_petition_number():
+    latest_cce_petition = db.session.execute(
+        db.select(Petitions)
+        .where(Petitions.type == "CCE")
+        .order_by(desc(Petitions.id))
+        .limit(1)
+    ).scalar()
+
+    latest_cfn_petition = db.session.execute(
+        db.select(Petitions)
+        .where(Petitions.type == "CFN")
+        .order_by(desc(Petitions.id))
+        .limit(1)
+    ).scalar()
+
+    result = {
+        "CCE": (
+            latest_cce_petition.petition_number
+            if latest_cce_petition
+            else "CCE-0000-0000"
+        ),
+        "CFN": (
+            latest_cfn_petition.petition_number
+            if latest_cfn_petition
+            else "CFN-0000-0000"
+        ),
+    }
+
+    return jsonify({"message": "success", "petitions": result})
+
+
 @app.route("/petitions/add", methods=["POST"])
 @jwt_required()
 def add_petition():

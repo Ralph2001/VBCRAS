@@ -20,7 +20,7 @@ export function useAddress(pro) {
     })
 
     const municipality = computed(() => {
-        const selectedProvince = petitioner_province.value
+        const selectedProvince = petitioner_province.value.toUpperCase()
         if (!selectedProvince) {
             return []
         }
@@ -38,8 +38,8 @@ export function useAddress(pro) {
     })
 
     const barangay = computed(() => {
-        const selectedProvince = petitioner_province.value
-        const selectedMunicipality = petitioner_city.value
+        const selectedProvince = petitioner_province.value.toUpperCase()
+        const selectedMunicipality = petitioner_city.value.toUpperCase()
         if (!selectedProvince || !selectedMunicipality) {
             return []
         }
@@ -65,7 +65,7 @@ export function useAddress(pro) {
     })
 
     const at_city = computed(() => {
-        const selectedProvince = petitioner_province.value
+        const selectedProvince = petitioner_province.value.toUpperCase()
         if (!selectedProvince) {
             return []
         }

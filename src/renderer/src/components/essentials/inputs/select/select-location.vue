@@ -1,8 +1,10 @@
 <template>
   <div>
-    <label :for="id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" >
+    <label :for="id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
       <p v-if="Province">Province <span v-if="error" class="text-red-600">*</span></p>
-      <p v-if="City">City/Municipality <span v-if="error" class="text-red-600">*</span></p>
+      <p v-if="City">
+        City/Municipality <span v-if="error" class="text-red-600">*</span>
+      </p>
       <p v-if="Barangay">Barangay <span v-if="error" class="text-red-600">*</span></p>
     </label>
 
@@ -20,19 +22,19 @@
         class="font-medium"
         v-if="Province || City"
         v-for="(value, key) in options"
-        :value="key"
+        :value="titleCase(key)"
         :key="key"
       >
-        {{ key }}
+        {{ titleCase(key) }}
       </option>
       <option
         class="font-medium"
         v-if="Barangay"
         v-for="(value, key) in options"
-        :value="value"
+        :value="titleCase(value)"
         :key="key"
       >
-        {{ value }}
+        {{ titleCase(value) }}
       </option>
     </select>
   </div>
@@ -64,4 +66,8 @@ const props = defineProps({
     default: false,
   },
 });
+
+function titleCase(str) {
+  return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+}
 </script>

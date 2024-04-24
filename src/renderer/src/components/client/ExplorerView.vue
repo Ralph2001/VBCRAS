@@ -337,7 +337,8 @@ const year = ref("");
 const month = ref("");
 const searchQuery = ref("");
 const input = ref(null);
-const search = refDebounced(searchQuery, 1000);
+
+const search = refDebounced(searchQuery, 2000);
 
 onStartTyping(() => {
   if (!input.value.active) input.value.focus();

@@ -2,7 +2,7 @@
   <div class="flex flex-col relative justify-center w-full">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded-sm`" @click="modalOpener" />
-      <ButtonIcon @click="notification = true">
+      <ButtonIcon @click="settings = true">
         <font-awesome-icon icon="fa-solid fa-gear"
       /></ButtonIcon>
     </Header>
@@ -32,6 +32,7 @@
             />
             <Select
               skip
+              @change="getTheLatestPetitionNumber()"
               :options="Type"
               label="Type"
               :error="v$.type.$error"
@@ -67,13 +68,13 @@
         <div class="grid grid-cols-2 gap-4">
           <Box title="Petition Details" width="w-full">
             <div class="grid grid-cols-1 w-full">
-              <div class="w-full flex flex-col">
+              <div class="w-full flex flex-col ">
                 <label
                   class="basis-[100%] block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >Petition Number</label
                 >
-                <div class="flex flex-row items-center gap-2">
-                  <div class="flex flex-row gap-[4px] w-[50%] relative">
+                <div class="flex flex-row items-center gap-2 w-full ">
+                  <div class="flex flex-row gap-[4px] w-[50%] relative ">
                     <div class="basis-[60%]">
                       <input
                         disabled
@@ -335,7 +336,7 @@
                 </div>
               </div>
 
-              <div class="flex flex-col gap-2 w-full">
+              <div class="flex flex-col gap-2 w-full mt-5">
                 <div
                   class="flex flex-row w-full items-center gap-2"
                   v-for="(item, index) in items"
@@ -348,13 +349,17 @@
                   </div>
                   <div class="grow">
                     <InputSuggestions
+                      nolabel
+                      :error="v$.clerical_errors.description.$params.prop"
                       v-model="formData.clerical_errors.description[index]"
                       :items="DescriptionSuggestions"
                     />
                   </div>
                   <div class="grow">
                     <Input
+                      nolabel
                       v-model="formData.clerical_errors.from[index]"
+                      :error="v$.clerical_errors.from.$params.prop"
                       @input="
                         formData.clerical_errors.from[
                           index
@@ -364,7 +369,9 @@
                   </div>
                   <div class="grow">
                     <Input
+                      nolabel
                       v-model="formData.clerical_errors.to[index]"
+                      :error="v$.clerical_errors.to.$params.prop"
                       @input="
                         formData.clerical_errors.to[
                           index
@@ -438,7 +445,11 @@
                     :error="v$.grounds.$params.prop"
                     v-model="formData.grounds.a"
                   />
-                  <div>The first name is extremely difficult to write or pronounce;</div>
+                  <div>
+                    <label for=""
+                      >The first name is extremely difficult to write or pronounce;</label
+                    >
+                  </div>
                 </div>
                 <div class="flex flex-row gap-2 items-center">
                   <p class="basis-[2%] font-serif">b)</p>
@@ -516,7 +527,7 @@
             </Box>
           </div>
 
-          <div class="basis-[100%]">
+          <div class="basis-[100%]" v-if="formData.type !== 'CFN'">
             <Box
               title="The facts/reasons for filing this petition are the following. "
               width="w-ful"
@@ -530,14 +541,14 @@
                 "
               >
                 <div
-                  class="flex flex-row w-full p-2"
+                  class="flex flex-row w-full p-2 gap-2"
                   v-for="(item, index) in items"
                   :key="index"
                 >
-                  <div class="basis-[20%] px-8 text-end">
+                  <div class="basis-[20%] px-8 flex items-center">
                     <label
                       :for="index"
-                      class="text-md font-bold tracking-wide text-red-600"
+                      class="text-sm text-nowrap w-full font-semibold tracking-wide text-gray-900"
                     >
                       For error No. {{ index + 1 }}:
                     </label>
@@ -547,6 +558,12 @@
                       rows="3"
                       :id="index"
                       v-model="formData.reasons[index]"
+                      :class="{
+                        'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50':
+                          v$.reasons.$params.prop,
+                        'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !v$
+                          .reasons.$params.prop,
+                      }"
                       class="block py-3 tracking-wider px-6 text-justify font-semibold w-full text-md text-black bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     ></textarea>
                   </div>
@@ -564,9 +581,9 @@
                   rows="4"
                   :class="{
                     'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50':
-                      v$.reason.$error,
+                      v$.reason.$params.prop,
                     'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !v$
-                      .reason.$error,
+                      .reason.$params.prop,
                   }"
                   v-model="formData.reason"
                   class="block py-6 px-6 text-justify tracking-wider font-semibold w-full text-md text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -824,14 +841,21 @@
                     <div class="flex flex-row justify-evenly">
                       <Radio
                         :options="action_options"
-                        :name="index + 1"
+                        :error="v$.action_taken.action.$params.prop"
+                        :name="`action_taken${index}`"
                         v-model="formData.action_taken.action[index]"
                       />
                     </div>
                     <div class="grid grid-cols-1 w-full gap-2">
                       <textarea
-                        :id="`action_taken` + index + 1"
+                        :id="`action_taken${index}`"
                         v-model="formData.action_taken.decision[index]"
+                        :class="{
+                          'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50':
+                            v$.action_taken.decision.$params.prop,
+                          'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !v$
+                            .action_taken.decision.$params.prop,
+                        }"
                         rows="4"
                         class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       ></textarea>
@@ -1177,22 +1201,40 @@ const document_owner = ref("");
 const petition_number = ref("0000");
 const year = ref(date.getFullYear());
 
-const petitioner_number = computed(() => {
-  let combined = formData.type + "-" + petition_number.value + "-" + year.value + " ";
-
-  return combined;
-});
-
 const settings = ref(false);
 const closePreference = (event, value) => {
   settings.value = false;
 };
 
 const petitions = usePetitions();
-onMounted(() => {
+onMounted(async () => {
   petitions.getPetitions();
+  const latest = await petitions.getLatestPetition();
+  if (latest) {
+    getTheLatestPetitionNumber();
+  }
 });
 
+async function getTheLatestPetitionNumber() {
+  let latest_petition_number = petitions.latest.CCE.split("-");
+
+  if (formData.type === "CCE") {
+    latest_petition_number = petitions.latest.CCE.split("-");
+  } else if (formData.type === "CFN") {
+    latest_petition_number = petitions.latest.CFN.split("-");
+  }
+
+  const get_second_value = parseInt(latest_petition_number[1], 10);
+  const incrementedNumber = get_second_value + 1;
+  const paddedNumber = incrementedNumber.toString().padStart(4, "0");
+  petition_number.value = paddedNumber;
+}
+
+const petitioner_number = computed(() => {
+  let combined = formData.type + "-" + petition_number.value + "-" + year.value + " ";
+
+  return combined;
+});
 const notification = ref(false);
 
 const colDefs = ref([
@@ -1411,6 +1453,27 @@ const date_certificate_end = ref(add_date_certificate_end());
 const date_of_issued = ref(add_date_issued());
 const date_of_granted = ref(add_date_granted());
 
+const granted_TEXT = computed(() => {
+  if (formData.type === "CFN" && formData.from !== "" && formData.to !== "")
+    return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, the child’s first name from "${formData.from}" to "${formData.to}" is hereby changed. `;
+  else if (formData.type === "CCE") {
+    const errorStrings = [];
+    for (let i = 0; i < formData.clerical_errors.description.length; i++) {
+      errorStrings.push(
+        `the ${formData.clerical_errors.description[i].toLowerCase()} from "${
+          formData.clerical_errors.from[i]
+        }" to "${formData.clerical_errors.to[i]}"`
+      );
+    }
+
+    const lastItem = errorStrings.pop();
+    const formattedOutput =
+      errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
+
+    return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby changed.`;
+  }
+});
+
 const formData = reactive({
   ra: "9048",
   type: "CCE",
@@ -1480,8 +1543,9 @@ const formData = reactive({
   },
 
   mcr: "ISMAEL D. MALICDEM, JR.",
-  decision:
-    "Finding the petition sufficient in form and substance, the same is hereby GRANTED, ",
+  // decision:
+  //   "Finding the petition sufficient in form and substance, the same is hereby GRANTED, ",
+  decision: "",
 
   or_number: "",
   amount_paid: "",
@@ -1567,7 +1631,12 @@ const { at_province, at_city } = useAddress(() => [formData.at_province]);
 
 const RA9048 = ref(false);
 
-const modalOpener = () => {
+const modalOpener = async () => {
+  const latest = await petitions.getLatestPetition();
+  if (latest) {
+    getTheLatestPetitionNumber();
+  }
+
   document.value = !document.value;
 };
 
@@ -1661,6 +1730,117 @@ const validate_supporting_documents = computed(() => {
   }
 });
 
+const validate_clerical_description = computed(() => {
+  if (formData.type !== "CCE") {
+    return false;
+  }
+
+  for (let i = 0; i < items.value.length; i++) {
+    if (
+      i >= formData.clerical_errors.description.length ||
+      formData.clerical_errors.description[i] === ""
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+});
+
+const validate_clerical_from = computed(() => {
+  if (formData.type !== "CCE") {
+    return false;
+  }
+
+  for (let i = 0; i < items.value.length; i++) {
+    if (
+      i >= formData.clerical_errors.from.length ||
+      formData.clerical_errors.from[i] === ""
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+});
+
+const validate_clerical_to = computed(() => {
+  if (formData.type !== "CCE") {
+    return false;
+  }
+
+  for (let i = 0; i < items.value.length; i++) {
+    if (
+      i >= formData.clerical_errors.to.length ||
+      formData.clerical_errors.to[i] === ""
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+});
+
+const validate_reasons = computed(() => {
+  if (formData.ra !== "10172" && formData.type !== "CCE") {
+    return false;
+  }
+
+  for (let i = 0; i < items.value.length; i++) {
+    if (i >= formData.reasons.length || formData.reasons[i] === "") {
+      return true;
+    }
+  }
+
+  return false;
+});
+
+const validate_action_taken_action = computed(() => {
+  if (formData.ra !== "10172" && formData.type !== "CCE") {
+    return false;
+  }
+
+  for (let i = 0; i < items.value.length; i++) {
+    if (
+      i >= formData.action_taken.action ||
+      formData.action_taken.action[i] === "" ||
+      formData.action_taken.action[i] == null
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+});
+
+const validate_action_taken_decision = computed(() => {
+  if (formData.ra !== "10172" && formData.type !== "CCE") {
+    return false;
+  }
+
+  for (let i = 0; i < items.value.length; i++) {
+    if (
+      i >= formData.action_taken.decision ||
+      formData.action_taken.decision[i] === "" ||
+      formData.action_taken.decision[i] == null
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+});
+
+const validate_reason = computed(() => {
+  if (formData.type === "CFN") {
+    return false;
+  } else if (formData.type === "CFN" && formData.reason === "") {
+    return true;
+  }
+
+  return false;
+});
+
 const validate = computed(() => {
   return {
     ra: { required },
@@ -1684,21 +1864,27 @@ const validate = computed(() => {
     registry_number: { required },
 
     // required  if
-    // clerical_errors: {
-    //   description: requiredIf(clerical_description()),
-    //   from: requiredIf(clerical_from()),
-    //   to: requiredIf(clerical_to()),
-    // },
+    clerical_errors: {
+      description: requiredIf(validate_clerical_description),
+      from: requiredIf(validate_clerical_from),
+      to: requiredIf(validate_clerical_to),
+    },
+
+    reasons: requiredIf(validate_reasons),
+    action_taken: {
+      action: requiredIf(validate_action_taken_action),
+      decision: requiredIf(validate_action_taken_decision),
+    },
 
     // required  if
-    SupportingDocuments: requiredIf(validate_supporting_documents),
+    SupportingDocuments: requiredIf(validate_supporting_documents), // Array of Supporting Documents
     from: requiredIf(validate_from_and_to),
     to: requiredIf(validate_from_and_to),
     grounds: requiredIf(validate_grounds),
     ground_b: requiredIf(validate_ground_b),
     ground_f: requiredIf(validate_ground_f),
 
-    reason: { required },
+    reason: requiredIf(validate_reason),
     LCRO_city: { required },
     LCRO_province: { required },
 
@@ -1712,7 +1898,6 @@ const validate = computed(() => {
     action: { required },
 
     //
-    date_grated: { required },
 
     mcr: { required },
     decision: { required },
@@ -1730,11 +1915,11 @@ const validate = computed(() => {
 const v$ = useVuelidate(validate, formData);
 
 const submitForm = async () => {
-  // v$.value.$touch();
-  // if (v$.value.$error) {
-  //   console.log(v$.value);
-  //   return;
-  // }
+  v$.value.$touch();
+  if (v$.value.$error) {
+    console.log(v$.value);
+    return;
+  }
   const OOXML = toOOXML(formData.decision);
 
   closeModal();
@@ -1844,7 +2029,13 @@ const submitForm = async () => {
 
   const check = await window.ClericalApi.PrintLiveBirth(data);
 
-  petitions.addPetition(data);
+  const add = await petitions.addPetition(data);
+  if (add) {
+    const latest = await petitions.getLatestPetition();
+    if (latest) {
+      getTheLatestPetitionNumber();
+    }
+  }
 
   folderpath.value = check.filepath;
   endorsement_letter_filepath.value = check.filepath + "Endorsement Letter.docx";
