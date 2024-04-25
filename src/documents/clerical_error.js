@@ -206,6 +206,9 @@ async function petition(data) {
     let error_in_my = data.cce_in === 'my' ? true : false
     let error_in_the = data.cce_in === 'the' ? true : false
 
+    let granted = data.action === 'Granted' ? true : false
+    let denied = data.action === 'Denied' ? true : false
+
     doc.render({
         petition_number: petitioner_number,
         petitioner_name: petitioner_name,
@@ -246,8 +249,13 @@ async function petition(data) {
         administering_officer: data.administering_officer,
         administering_position: data.administering_position,
         decision: rawXML,
-        ActionDate: data.ActionDate,
+
+        granted: granted,
+        denied: denied,
+
+        ActionDate: data.date_granted,
         mcr: data.mcr,
+
         amount_paid: data.amount_paid,
         or_number: data.or_number,
         DatePaid: data.DatePaid,
@@ -280,6 +288,7 @@ async function petition(data) {
 }
 
 async function record_sheet(data) {
+
     const clerical = JSON.parse(data.clerical_errors)
     const clerical_errors = {
         errors: clerical.description.map((description, index) => ({

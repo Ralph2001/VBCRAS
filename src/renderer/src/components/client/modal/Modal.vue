@@ -20,11 +20,11 @@
       >
         <!-- Header -->
         <div
-          class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3"
+          class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3 bg-[#FFFFFF]"
         >
           <h3
             v-if="!titleCard"
-            class="text-sm font-semibold text-gray-900 dark:text-white"
+            class="text-md tracking-wide font-semibold text-gray-900 dark:text-white"
           >
             {{ label }}
           </h3>
@@ -60,7 +60,7 @@
         <!-- Footer -->
         <div
           :class="{ 'border-t': !titleCard, ' h-0': titleCard }"
-          class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600"
+          class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600 "
         >
           <slot name="footer"> </slot>
         </div>
