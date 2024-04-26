@@ -7,7 +7,7 @@
   >
     <div
       :class="{
-        ' max-w-[90rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
+        ' max-w-[85rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
         'max-w-2xl max-h-full': medium,
         'max-w-lg': small,
 
@@ -60,7 +60,7 @@
         <!-- Footer -->
         <div
           :class="{ 'border-t': !titleCard, ' h-0': titleCard }"
-          class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600 "
+          class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600"
         >
           <slot name="footer"> </slot>
         </div>

@@ -31,6 +31,7 @@
         </template>
 
         <div class="p-2">
+          
           <Box title="Document" width="w-fit">
             <div class="grid grid-cols-3 p-2 gap-3">
               <Select
@@ -124,9 +125,9 @@
                     <div class="w-[7rem]">
                       <div class="basis-[20%]" v-if="formData.ra === '10172'">
                         <input
-                          value="R.A 10172"
                           type="text"
                           disabled
+                          v-model="ra10172"
                           tabindex="-1"
                           class="bg-gray-50 border-e-gray-300 text-center border-t-gray-300 border-b-gray-300 border-s-white font-bold text-gray-500 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                         />
@@ -1189,6 +1190,7 @@ const date = new Date();
 const RepublicAct = ref(["9048", "10172"]);
 
 const document_owner = ref("");
+const ra10172 = ref("");
 const petition_number = ref("0000");
 const year = ref(date.getFullYear());
 
@@ -1222,7 +1224,18 @@ async function getTheLatestPetitionNumber() {
 }
 
 const petitioner_number = computed(() => {
-  let combined = formData.type + "-" + petition_number.value + "-" + year.value + " ";
+  if (formData.ra === "10172") {
+    ra10172.value = "R.A 10172";
+  }
+
+  let combined =
+    formData.type +
+      "-" +
+      petition_number.value +
+      "-" +
+      year.value +
+      " " +
+      ra10172.value || "";
 
   return combined;
 });
@@ -1235,7 +1248,7 @@ const colDefs = ref([
     flex: 2,
     filter: true,
     pinned: "left",
-    cellClass: "font-semibold tracking-wider w-full text-center",
+    cellClass: "font-semibold tracking-wider w-full text-start ",
     lockPinned: true,
   },
   {
@@ -1416,26 +1429,26 @@ const date_certificate_end = ref(add_date_certificate_end());
 const date_of_issued = ref(add_date_issued());
 const date_of_granted = ref(add_date_granted());
 
-const granted_TEXT = computed(() => {
-  if (formData.type === "CFN" && formData.from !== "" && formData.to !== "")
-    return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, the child’s first name from "${formData.from}" to "${formData.to}" is hereby changed. `;
-  else if (formData.type === "CCE") {
-    const errorStrings = [];
-    for (let i = 0; i < formData.clerical_errors.description.length; i++) {
-      errorStrings.push(
-        `the ${formData.clerical_errors.description[i].toLowerCase()} from "${
-          formData.clerical_errors.from[i]
-        }" to "${formData.clerical_errors.to[i]}"`
-      );
-    }
+// const granted_TEXT = computed(() => {
+//   if (formData.type === "CFN" && formData.from !== "" && formData.to !== "")
+//     return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, the child’s first name from "${formData.from}" to "${formData.to}" is hereby changed. `;
+//   else if (formData.type === "CCE") {
+//     const errorStrings = [];
+//     for (let i = 0; i < formData.clerical_errors.description.length; i++) {
+//       errorStrings.push(
+//         `the ${formData.clerical_errors.description[i].toLowerCase()} from "${
+//           formData.clerical_errors.from[i]
+//         }" to "${formData.clerical_errors.to[i]}"`
+//       );
+//     }
 
-    const lastItem = errorStrings.pop();
-    const formattedOutput =
-      errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
+//     const lastItem = errorStrings.pop();
+//     const formattedOutput =
+//       errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
 
-    return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby changed.`;
-  }
-});
+//     return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby changed.`;
+//   }
+// });
 
 const formData = reactive({
   ra: "9048",
@@ -1478,7 +1491,7 @@ const formData = reactive({
   ground_b: "",
   ground_f: "",
 
-  reason: "To correct ",
+  reason: "",
   reasons: [],
 
   SupportingDocuments: [],
@@ -1508,7 +1521,7 @@ const formData = reactive({
   mcr: "ISMAEL D. MALICDEM, JR.",
   // decision:
   //   "Finding the petition sufficient in form and substance, the same is hereby GRANTED, ",
-  decision: granted_TEXT,
+  decision: "",
 
   or_number: "",
   amount_paid: "",
@@ -1521,6 +1534,91 @@ const formData = reactive({
   date_issued: date_of_issued,
   date_granted: date_of_granted,
 });
+
+function factReasons() {
+  if (
+    (formData.cce_in !== "" &&
+      formData.type === "CCE" &&
+      formData.document_type === "Birth") ||
+    formData.document_type === "Marriage"
+  ) {
+    const name = formData.relation_owner
+      ? `${"my " + formData.relation_owner.toLowerCase() + "’s"}`
+      : "(relation of owner)";
+
+    const relation = name;
+    const owner = formData.relation_owner === "N/A" ? "my" : `${relation}`;
+
+    const certificate = formData.document_type === "Birth" ? "Live Birth" : "Marriage";
+
+    formData.reason = `To correct the above mentioned clerical error in ${owner} Certificate of ${certificate} which is inconsistent with all of `;
+  } else if (formData.document_type === "Death") {
+    const relation = formData.relation_owner
+      ? `${"my " + formData.relation_owner.toLowerCase() + "’s"}`
+      : "unknown";
+    const owner = relation || "specify";
+    formData.reason = `To correct the above mentioned clerical error in ${owner} Certificate of Death which is inconsistent with all of `;
+  } else {
+    formData.reason = `To correct the `;
+  }
+}
+
+function granted_TEXT() {
+  if ((formData.type === "CFN" && formData.from !== "") || formData.to !== "") {
+    const fromValue = formData.from || "(from)";
+    const toValue = formData.to || "(to)";
+    formData.decision = `Finding the petition sufficient in form and substance, the same is hereby GRANTED, the child’s first name from "${fromValue}" to "${toValue}" is hereby changed. `;
+  } else if (
+    (formData.type === "CCE" && formData.document_type === "Birth") ||
+    formData.document_type === "Death" ||
+    formData.document_type === "Marriage"
+  ) {
+    const errorStrings = [];
+
+    for (
+      let i = 0;
+      i < formData.clerical_errors.description.length ||
+      i < formData.clerical_errors.from.length ||
+      i < formData.clerical_errors.to.length;
+      i++
+    ) {
+      const description = formData.clerical_errors.description[i] || "(description)";
+      const fromValue = formData.clerical_errors.from[i] || "(from)";
+      const toValue = formData.clerical_errors.to[i] || "(to)";
+
+      errorStrings.push(
+        `the ${description.toLowerCase()} from "${fromValue}" to "${toValue}"`
+      );
+    }
+
+    const lastItem = errorStrings.pop();
+    const formattedOutput =
+      errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
+
+    formData.decision = `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby changed.`;
+  }
+}
+
+watch(
+  () => formData.clerical_errors,
+  (errors) => {
+    granted_TEXT();
+  },
+  { deep: true }
+);
+
+watch(
+  () => [formData.from, formData.to],
+  (from_and_two) => {
+    granted_TEXT();
+  }
+);
+watch(
+  () => [formData.cce_in, formData.relation_owner],
+  (hello) => {
+    factReasons();
+  }
+);
 
 watch(
   () => formData.cce_in,
@@ -1878,11 +1976,11 @@ const validate = computed(() => {
 const v$ = useVuelidate(validate, formData);
 
 const submitForm = async () => {
-  // v$.value.$touch();
-  // if (v$.value.$error) {
-  //   console.log(v$.value);
-  //   return;
-  // }
+  v$.value.$touch();
+  if (v$.value.$error) {
+    console.log(v$.value);
+    return;
+  }
   const OOXML = toOOXML(formData.decision);
 
   closeModal();
