@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -31,6 +31,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///local.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=8)
 app.config["JWT_SECRET_KEY"] = "created_by_villanuevaralph2001@gmail.com"
+allowed_user_agent = "VitalBridgeCivilRegistryandArchiveSystem(VBCRAS)"
+
+
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -188,6 +191,8 @@ with app.app_context():
     create_admin_user()
 
 
+
+
 @jwt.user_identity_loader
 def user_identity_lookup(user):
     return user.id
@@ -197,6 +202,14 @@ def user_identity_lookup(user):
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     return User.query.filter_by(id=identity).one_or_none()
+
+def check_authorization(request):
+    if  allowed_user_agent not in request.headers.get('User-Agent'):
+        abort(404)  
+        
+@app.before_request
+def before_request():
+    check_authorization(request)
 
 
 @app.route("/login", methods=["POST"])

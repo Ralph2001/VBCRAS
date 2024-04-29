@@ -31,7 +31,6 @@
         </template>
 
         <div class="p-2">
-          
           <Box title="Document" width="w-fit">
             <div class="grid grid-cols-3 p-2 gap-3">
               <Select
@@ -1259,16 +1258,15 @@ const colDefs = ref([
     filter: true,
   },
   {
-    field: "petitioner_name",
+    field: "name_owner",
     cellClass: "font-medium tracking-wider w-full text-gray-900",
-
     headerName: "Document Owner",
     flex: 1,
     filter: true,
   },
   {
     field: "document_type",
-    cellClass: "font-medium tracking-wider w-full text-gray-600",
+    cellClass: "font-medium tracking-wider w-full text-gray-600 ",
     headerName: "Document Type",
     flex: 1,
     filter: true,
@@ -1450,6 +1448,16 @@ const date_of_granted = ref(add_date_granted());
 //   }
 // });
 
+function add_petition_date() {
+  formData.SwornDate = date_now;
+  formData.DatePaid = date_now;
+  formData.notice_posting = date_notice;
+  formData.certificate_posting_start = date_certificate_start;
+  formData.certificate_posting_end = date_certificate_end;
+  formData.date_issued = date_of_issued;
+  formData.date_granted = date_of_granted;
+}
+
 const formData = reactive({
   ra: "9048",
   type: "CCE",
@@ -1503,7 +1511,7 @@ const formData = reactive({
   administering_officer: "ISMAEL D. MALICDEM, JR.",
   administering_position: "Municipal Civil Registrar",
 
-  SwornDate: date_now,
+  SwornDate: "",
   SwornCity: "Bayambang, Pangasinan",
 
   Ctc: "",
@@ -1519,20 +1527,18 @@ const formData = reactive({
   },
 
   mcr: "ISMAEL D. MALICDEM, JR.",
-  // decision:
-  //   "Finding the petition sufficient in form and substance, the same is hereby GRANTED, ",
   decision: "",
 
   or_number: "",
   amount_paid: "",
-  DatePaid: date_now,
+  DatePaid: "",
 
-  notice_posting: date_notice,
-  certificate_posting_start: date_certificate_start,
-  certificate_posting_end: date_certificate_end,
+  notice_posting: "",
+  certificate_posting_start: "",
+  certificate_posting_end: "",
 
-  date_issued: date_of_issued,
-  date_granted: date_of_granted,
+  date_issued: "",
+  date_granted: "",
 });
 
 function factReasons() {
@@ -1626,6 +1632,9 @@ watch(
     if (cce_in === "my" && formData.document_type === "Birth") {
       formData.name_owner = "N/A";
       formData.relation_owner = "N/A";
+    } else if (cce_in === "my" && formData.document_type === "Marriage") {
+      formData.name_owner = "";
+      formData.relation_owner = "Spouse";
     } else {
       formData.name_owner = "";
       formData.relation_owner = "";
@@ -1692,7 +1701,9 @@ const { at_province, at_city } = useAddress(() => [formData.at_province]);
 
 const RA9048 = ref(false);
 
+
 const modalOpener = async () => {
+  add_petition_date();
   const latest = await petitions.getLatestPetition();
   if (latest) {
     getTheLatestPetitionNumber();
@@ -1977,6 +1988,7 @@ const v$ = useVuelidate(validate, formData);
 
 const submitForm = async () => {
   v$.value.$touch();
+
   if (v$.value.$error) {
     console.log(v$.value);
     return;
@@ -2081,6 +2093,8 @@ const submitForm = async () => {
 
   const add = await petitions.addPetition(data);
   if (add) {
+    v$.value.$reset();
+    
     const latest = await petitions.getLatestPetition();
     if (latest) {
       getTheLatestPetitionNumber();
@@ -2094,7 +2108,14 @@ const submitForm = async () => {
 
   if (check) {
     petition_details.value =
-      formData.type + " " + formData.document_type + ",  " + formData.petitioner_name;
+      "R.A " +
+      formData.ra +
+      " " +
+      formData.type +
+      " " +
+      formData.document_type +
+      ",  " +
+      formData.petitioner_name;
     petition_owner.value = document_owner;
   }
 };

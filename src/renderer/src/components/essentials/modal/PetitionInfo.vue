@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import LoadingBlock from "../block/LoadingBlock.vue";
 import Modal from "../../client/modal/Modal.vue";
 import ModalCloseButton from "../../client/modal/ModalCloseButton.vue";
@@ -82,11 +82,21 @@ const props = defineProps({
   },
 });
 
-let endorsement_letter_filepath = props.folderpath + "Endorsement Letter.docx";
-let petition_filepath = props.folderpath + "Petition.docx";
-let record_sheet_filepath = props.folderpath + "Record Sheet.docx";
-let notice_and_certificate_posting_filepath =
-  props.folderpath + "Cert. of Posting and Notice of Posting.docx";
+const endorsement_letter_filepath = ref("");
+const petition_filepath = ref("");
+const record_sheet_filepath = ref("");
+const notice_and_certificate_posting_filepath = ref("");
+
+watch(
+  () => props.folderpath,
+  (newValue, oldValue) => {
+    endorsement_letter_filepath.value = props.folderpath + "Endorsement Letter.docx";
+    petition_filepath.value = props.folderpath + "Petition.docx";
+    record_sheet_filepath.value = props.folderpath + "Record Sheet.docx";
+    notice_and_certificate_posting_filepath.value =
+      props.folderpath + "Cert. of Posting and Notice of Posting.docx";
+  }
+);
 </script>
 
 <style lang="scss" scoped></style>
