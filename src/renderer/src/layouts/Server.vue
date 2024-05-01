@@ -1,4 +1,3 @@
-
 <template>
     <div class="h-screen">
         <Sidebar />
