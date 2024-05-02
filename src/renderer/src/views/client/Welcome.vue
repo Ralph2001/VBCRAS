@@ -11,12 +11,13 @@ import Carousel from "../../components/Carousel.vue";
       <div class="flex flex-col md:basis-[35%] items-center h-full   justify-center gap-10  px-10  ">
 
 
-        <p class="text-lg tracking-wide">For I know the plans I have for you, declares the Lord, plans for welfare and
+        <!-- <p class="text-lg tracking-wide font-normal text-justify text-pretty">For I know the plans I have for you,
+          declares the Lord, plans for welfare and
           not for evil,
           to give you a future and a hope.</p>
-        <p class="font-semibold italic text-md">Jeremiah 29:11</p>
-     
-        <!-- <div
+        <p class="font-semibold italic text-md">Jeremiah 29:11</p> -->
+
+        <div
           class="flex flex-row gap-2 items-center text-lg uppercase font-semibold text-nowrap text-gray-800 justify-center">
           <p class="hover:scale-105 transition-all">Vital</p>
           <p class="hover:scale-105 transition-all">Bridge</p>
@@ -38,7 +39,7 @@ import Carousel from "../../components/Carousel.vue";
             <span class="font-bold italic">"bridge"</span> implies the facilitation or
             connection between different components or entities.
           </p>
-        </div> -->
+        </div>
 
       </div>
 

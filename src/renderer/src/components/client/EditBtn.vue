@@ -22,7 +22,8 @@
         that might be the issue:</span>
 
       <ul class="mt-4 mb-4 list-disc list-inside">
-        <li> <span class="font-bold">Shared Drive Connection:</span> Double-check that the shared drive where the file is
+        <li> <span class="font-bold">Shared Drive Connection:</span> Double-check that the shared drive where the file
+          is
           located is
           properly connected
           and
@@ -36,7 +37,8 @@
 
       <span class="font-medium ">What you can do:</span>
       <ul class="mt-2  list-disc list-inside">
-        <li> <span class="font-bold">Check your connection:</span> Verify the shared drive connection and internet access.
+        <li> <span class="font-bold">Check your connection:</span> Verify the shared drive connection and internet
+          access.
         </li>
         <li>
           <span class="font-bold">Wait for synchronization:</span>

@@ -6,45 +6,23 @@
       </template>
       <div class="flex flex-col w-full h-full justify-center gap-2 p-2">
         <div class="">
-          <LoadingBlock
-            :label="isLoading ? 'Creating Document Folder' : 'Document Folder'"
-            isFolder
-            isBold
-            :isLoading="isLoading"
-            :filepath="props.folderpath"
-          >
-            <font-awesome-icon
-              icon="fa-solid fa-folder"
-              class="text-yellow-300 shadow-sm"
-            />
+          <LoadingBlock :label="isLoading ? 'Creating Document Folder' : 'Document Folder'" isFolder isBold
+            :isLoading="isLoading" :filepath="props.folderpath">
+            <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-300 shadow-sm" />
           </LoadingBlock>
         </div>
 
         <div class="flex flex-col justify-center gap-2 pl-5">
-          <LoadingBlock
-            :label="isLoading ? 'Creating Endorsement Letter' : 'Endorsement Letter'"
-            :isLoading="isLoading"
-            :filepath="endorsement_letter_filepath"
-          />
-          <LoadingBlock
-            :label="isLoading ? 'Creating Petition' : 'Petition'"
-            :isLoading="isLoading"
-            :filepath="petition_filepath"
-          />
-          <LoadingBlock
-            :label="isLoading ? 'Creating Record Sheet' : 'Record Sheet'"
-            :isLoading="isLoading"
-            :filepath="record_sheet_filepath"
-          />
-          <LoadingBlock
-            :label="
-              isLoading
-                ? 'Creating Notice of Posting and Certificate of Posting'
-                : 'Notice and Certificate of Posting'
-            "
-            :isLoading="isLoading"
-            :filepath="notice_and_certificate_posting_filepath"
-          />
+          <LoadingBlock :label="isLoading ? 'Creating Endorsement Letter' : 'Endorsement Letter'" :isLoading="isLoading"
+            :filepath="endorsement_letter_filepath" />
+          <LoadingBlock :label="isLoading ? 'Creating Petition' : 'Petition'" :isLoading="isLoading"
+            :filepath="petition_filepath" />
+          <LoadingBlock :label="isLoading ? 'Creating Record Sheet' : 'Record Sheet'" :isLoading="isLoading"
+            :filepath="record_sheet_filepath" />
+          <LoadingBlock :label="isLoading
+            ? 'Creating Notice of Posting and Certificate of Posting'
+            : 'Notice and Certificate of Posting'
+            " :isLoading="isLoading" :filepath="notice_and_certificate_posting_filepath" />
         </div>
       </div>
     </Modal>

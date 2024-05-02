@@ -31,19 +31,41 @@ const CFN_PATH = path.resolve(
     __dirname,
     '../../resources/documents/RA 9048 RA 10172/Change First Name/petition.docx'
 )
+const CCE10172_PATH = path.resolve(
+    __dirname,
+    '../../resources/documents/RA 9048 RA 10172/Live Birth/petition_RA_10172.docx'
+)
 
 let folderPath
 
-async function PetitionFile(type, document_type) {
+async function PetitionFile(ra, type, document_type) {
     let content = ''
-    if ((type === 'CCE') & (document_type === 'Birth')) {
+    if ((ra === '9048') & (type === 'CCE') & (document_type === 'Birth')) {
         content = fs.readFileSync(LIVEBIRTH_PATH, 'binary')
-    } else if ((type === 'CCE') & (document_type === 'Marriage')) {
+    } else if (
+        (ra === '9048') &
+        (type === 'CCE') &
+        (document_type === 'Marriage')
+    ) {
         content = fs.readFileSync(MARRIAGE_PATH, 'binary')
-    } else if ((type === 'CCE') & (document_type === 'Death')) {
+    } else if (
+        (ra === '9048') &
+        (type === 'CCE') &
+        (document_type === 'Death')
+    ) {
         content = fs.readFileSync(DEATH_PATH, 'binary')
-    } else if ((type === 'CFN') & (document_type === 'Birth')) {
+    } else if (
+        (ra === '9048') &
+        (type === 'CFN') &
+        (document_type === 'Birth')
+    ) {
         content = fs.readFileSync(CFN_PATH, 'binary')
+    } else if (
+        (ra === '10172') &
+        (type === 'CCE') &
+        (document_type === 'Birth')
+    ) {
+        content = fs.readFileSync(CCE10172_PATH, 'binary')
     }
     return content
 }
@@ -126,7 +148,7 @@ async function endorsement_letter(data) {
     return true
 }
 async function petition(data) {
-    const content = await PetitionFile(data.type, data.document_type)
+    const content = await PetitionFile(data.ra, data.type, data.document_type)
 
     const support = JSON.parse(data.supportingDocuments)
     const supporting_documents = {
@@ -161,7 +183,23 @@ async function petition(data) {
     let e = grounds_filing.e ? true : false
     let f = grounds_filing.f ? true : false
 
-    console.log(a, b, c, d, e, f)
+    const datareason = JSON.parse(data.reasons)
+    const reasons = {
+        list: [...datareason].map((reasonName) => ({
+            nameofreason: reasonName,
+        })),
+    }
+
+    console.log(reasons)
+    console.log(supporting_documents)
+
+    const dataactions = JSON.parse(data.action_taken)
+    const actions = {
+        list: dataactions.action.map((action, index) => ({
+            action,
+            decision: dataactions.decision[index],
+        })),
+    }
 
     const date_now = new Date()
     const number = data.petition_number
@@ -274,7 +312,9 @@ async function petition(data) {
         e: e,
         f: f,
 
-        // Change First Name Tags
+        // CCE 10172 Tags
+        reasons: reasons.list,
+        actions: actions.list,
     })
 
     const buf = doc.getZip().generate({
@@ -288,7 +328,6 @@ async function petition(data) {
 }
 
 async function record_sheet(data) {
-
     const clerical = JSON.parse(data.clerical_errors)
     const clerical_errors = {
         errors: clerical.description.map((description, index) => ({
