@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { generate } from '../documents/clerical_error'
+import { finality } from '../documents/finality'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
@@ -62,6 +63,16 @@ ipcMain.handle('printLiveBirth', async (event, formData) => {
         const generate_document = await generate(formData)
         if ((generate_document.success = true)) {
             return { status: true, filepath: generate_document.filepath }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+ipcMain.handle('createFinality', async (event, formData) => {
+    try {
+        const create_finality = await finality(formData)
+        if ((create_finality.success = true)) {
+            return { status: true, filepath: create_finality.filepath }
         }
     } catch (error) {
         console.log(error)

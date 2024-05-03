@@ -25,21 +25,19 @@
       <p class="text-xs italic">on April 16, 2024</p>
     </div>
 
-    <div v-if="showOption" class="absolute flex gap-1 flex-col w-full p-2 bg-white border z-50 h-[5.2rem] top-[95%]">
-      <button @click="DisapprovedBtn" type="button"
-        class="px-3 py-2 text-xs font-medium text-center text-white bg-red-400 hover:bg-red-500 focus:outline-none">
-        Disapprove
-      </button>
+    <div v-if="showOption"
+      class="absolute flex  gap-2 flex-col w-full p-2 bg-white border z-50 items-center top-[95%] ">
       <button @click="ImpugnedBtn" type="button"
-        class="px-3 py-2 text-xs font-medium text-center text-white bg-gray-500 hover:bg-gray-600 focus:outline-none">
+        class="px-3 py-2 text-xs font-medium text-center w-full text-white bg-gray-500 hover:bg-gray-600 focus:outline-none shadow-2xl">
         Impugn
       </button>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import FinalityMessage from "../../../modals/FinalityMessage.vue";
 const showOption = ref(false);
@@ -63,9 +61,11 @@ const props = defineProps({
   }
 })
 
+
 onClickOutside(mainBtn, (event) => (showOption.value = false));
 
 const ApprovedBtn = () => {
+
   Swal
     .fire({
       title: "Are you sure?",
@@ -76,13 +76,10 @@ const ApprovedBtn = () => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, approve it!",
     })
-    .then((result) => {
+    .then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Success!",
-          text: "Petition Successfully Approved.",
-          icon: "success",
-        });
+
+        const create_finality = await window.ClericalApi.CreateFinality(props.params.data);
 
         Approved.value = true;
         showOption.value = false;

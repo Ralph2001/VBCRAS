@@ -1,24 +1,16 @@
 <template>
     <div class="flex flex-row justify-between w-full h-[3rem] items-center p-1">
-        <p
-            :class="{
-                'font-semibold': isBold,
-                ' text-md font-normal ': !isBold,
-            }"
-            class="antialiased text-md tracking-wide"
-        >
+        <p :class="{
+            'font-semibold': isBold,
+            ' text-md font-normal ': !isBold,
+        }" class="antialiased text-md tracking-wide">
             <slot></slot>
             {{ label }}
         </p>
         <div class="text-end flex items-center justify-center">
             <Loading v-if="isLoading" />
-            <OpenFile
-                :isLoading="LoadingBtn"
-                :label="isFolder ? 'Open Folder' : 'Open'"
-                v-if="!isLoading"
-                :isFolder="props.isFolder"
-                @click="open(props.filepath)"
-            />
+            <OpenFile :isLoading="LoadingBtn" :label="isFolder ? 'Open Folder' : 'Open'" v-if="!isLoading"
+                :isFolder="props.isFolder" @click="open(props.filepath)" />
         </div>
     </div>
 </template>

@@ -114,6 +114,7 @@ class Petitions(db.Model):
     certificate_posting_end = db.Column(db.String)
     date_issued = db.Column(db.String)
     date_granted = db.Column(db.String)
+    filepath = db.Column(db.String)
 
 
 class PetitionErrors(db.Model):
@@ -191,8 +192,6 @@ with app.app_context():
     create_admin_user()
 
 
-
-
 @jwt.user_identity_loader
 def user_identity_lookup(user):
     return user.id
@@ -203,10 +202,12 @@ def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     return User.query.filter_by(id=identity).one_or_none()
 
+
 def check_authorization(request):
-    if  allowed_user_agent not in request.headers.get('User-Agent'):
-        abort(404)  
-        
+    if allowed_user_agent not in request.headers.get("User-Agent"):
+        abort(404)
+
+
 @app.before_request
 def before_request():
     check_authorization(request)
@@ -456,6 +457,7 @@ def add_petition():
             certificate_posting_end=data["certificate_posting_end"],
             date_issued=data["date_issued"],
             date_granted=data["date_granted"],
+            filepath=data["filepath"],
         )
         existing_document = Petitions.query.filter_by(
             petition_number=data["petition_number"]

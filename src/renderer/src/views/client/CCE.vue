@@ -43,10 +43,11 @@
                 :error="v$.document_type.$error" />
             </div>
           </Box>
-          <!-- 
+
           {{ formData.ra }}
+          {{ formData.petition_number }}
           {{ formData.type }}
-          {{ formData.document_type }} -->
+          {{ formData.document_type }}
         </div>
 
         <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
@@ -60,7 +61,7 @@
             </p>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-4">
             <Box title="Petition Details" width="w-full">
               <div class="grid grid-cols-1 w-full">
                 <div class="w-full flex flex-col">
@@ -114,7 +115,8 @@
               </div>
             </Box>
           </div>
-          <div class="flex flex-row flex-wrap gap-4 items-stretch">
+
+          <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-4 items-stretch">
             <div class="basis-[35%]" v-if="
               formData.document_type === 'Birth' ||
               formData.document_type === 'Marriage' ||
@@ -164,7 +166,8 @@
               </Box>
             </div>
           </div>
-          <div class="flex flex-row gap-5">
+
+          <div class="flex sm:flex-col md:lg:flex-row gap-5">
             <div class="basis-[30%]">
               <Box :title="IHeSheLabel" width="w-full">
                 <div class="grid grid-cols-1 w-full gap-2">
@@ -206,7 +209,9 @@
 
           <div class="flex flex-row flex-wrap gap-5">
             <div class="grow" v-if="formData.type === 'CCE'">
-              <Box title="The clerical error(s) to be corrected is (are): " width="w-full">
+              <Box title="The clerical error(s) to be corrected is (are): "
+                :error="v$.clerical_errors.description.$params.prop || v$.clerical_errors.from.$params.prop || v$.clerical_errors.to.$params.prop ? '* Required Fields' : ''"
+                width="w-full">
                 <div class="flex flex-col gap-2 w-full font-bold">
                   <div class="flex flex-row w-full items-center justify-center gap-2">
                     <div class="basis-[10%]">
@@ -346,7 +351,8 @@
             </div>
 
             <div class="basis-[100%]" v-if="formData.type !== 'CFN'">
-              <Box title="The facts/reasons for filing this petition are the following. " width="w-ful">
+              <Box title="The facts/reasons for filing this petition are the following. "
+                :error="v$.reasons.$params.prop ? '* Reqiuired Fields' : ''" width="w-ful">
                 <div class="flex flex-col w-full" v-if="
                   formData.type === 'CCE' &&
                   formData.document_type === 'Birth' &&
@@ -386,13 +392,14 @@
             </div>
           </div>
 
-          <div class="flex flex-row flex-wrap gap-2">
+          <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-2">
             <div class="grow">
-              <Box title=" documents to support this petition: " width="w-ful">
-                <div class="flex flex-col w-full gap-3">
+              <Box title=" documents to support this petition: " width="w-ful"
+                :error="v$.SupportingDocuments.$params.prop ? '* Required Fields' : ''">
+                <div class="flex flex-col w-full gap-3 mt-5">
                   <div class="flex flex-row w-full gap-2 items-center" v-for="(support, index) in SupportItems"
                     :key="index">
-                    <p class="basis-[9%] text-sm text-center">{{ index + 1 }})</p>
+                    <p class="basis-[9%] text-sm text-center">{{ indexToLetter(index) }})</p>
                     <div class="basis-[90%]">
                       <InputSuggestions nolabel :error="v$.SupportingDocuments.$params.prop"
                         v-model="formData.SupportingDocuments[index]" :items="SupportingDocumentsSuggestions" />
@@ -435,7 +442,7 @@
           <!-- Page 2 -->
           <!-- //////////// -->
 
-          <div class="flex flex-wrap flex-row gap-4">
+          <div class="flex flex-wrap sm:flex-col md:lg:flex-row gap-4">
             <div class="basis-[50%]">
               <Box title="VERIFICATION" width="w-ful">
                 <div class="grid grid-cols-1 w-full gap-2">
@@ -461,7 +468,7 @@
 
             <div class="grow">
               <Box title="SUBSCRIBE AND SWORN" width="w-ful">
-                <div class="grid grid-cols-3 w-full gap-2">
+                <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 w-full gap-2">
                   <div></div>
                   <div>
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date Sworn</label>
@@ -522,7 +529,9 @@
             </div>
 
             <div class="basis-[100%]" v-if="formData.ra === '10172'">
-              <Box title="ACTION TAKEN BY THE C/MCR" width="full">
+              <Box title="ACTION TAKEN BY THE C/MCR"
+                :error="v$.action_taken.action.$params.prop || v$.action_taken.decision.$params.prop ? '* Reqiuired Fields' : ''"
+                width="full">
                 <div class="flex flex-col w-full gap-4">
                   <div class="flex flex-row w-full gap-6 h-full" v-for="(item, index) in items" :key="index">
                     <div class="flex p-2 items-center justify-center basis-[15%]">
@@ -585,7 +594,7 @@
             </div>
           </div>
 
-          <div class="flex flex-row gap-2">
+          <div class="flex sm:flex-col md:lg:flex-row gap-2">
             <div class="basis-[35%]">
               <Box title="Payment of filing fee" width="w-ful">
                 <div class="grid grid-cols-1 w-full gap-2">
@@ -765,6 +774,10 @@ const ClericalSettings = defineAsyncComponent(() =>
 )
 
 
+function indexToLetter(index) {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  return alphabet[index].toLowerCase();
+}
 
 const document = ref(false); // Modal
 const date = new Date();
@@ -787,6 +800,7 @@ onMounted(async () => {
   if (latest) {
     getTheLatestPetitionNumber();
   }
+  console.log(window)
 });
 
 async function getTheLatestPetitionNumber() {
@@ -804,9 +818,13 @@ async function getTheLatestPetitionNumber() {
   petition_number.value = paddedNumber;
 }
 
+
 const petitioner_number = computed(() => {
   if (formData.ra === "10172") {
     ra10172.value = "R.A 10172";
+  }
+  else {
+    ra10172.value = ''
   }
 
   let combined =
@@ -1212,9 +1230,11 @@ watch(
     if (cce_in === "my" && formData.document_type === "Birth") {
       formData.name_owner = "N/A";
       formData.relation_owner = "N/A";
+
     } else if (cce_in === "my" && formData.document_type === "Marriage") {
       formData.name_owner = "";
       formData.relation_owner = "Spouse";
+
     } else {
       formData.name_owner = "";
       formData.relation_owner = "";
@@ -1228,7 +1248,9 @@ watch(
     if (RA === "9048") {
       Type.value = ["CCE", "CFN"];
       DocumentType.value = ["Birth", "Death", "Marriage"];
+      v$.value.$reset()
     } else if (RA === "10172") {
+      v$.value.$reset()
       Type.value = ["CCE"];
       DocumentType.value = ["Birth"];
 
@@ -1245,10 +1267,12 @@ watch(
   () => formData.type,
   (type) => {
     if (type === "CFN") {
+      v$.value.$reset()
       formData.document_type = "Birth";
       formData.cce_in = "";
       DocumentType.value = ["Birth"];
     } else if (formData.type === "CCE" && formData.ra !== "10172") {
+      v$.value.$reset()
       formData.cce_in = "";
       DocumentType.value = ["Birth", "Death", "Marriage"];
     }
@@ -1259,12 +1283,15 @@ watch(
   () => formData.document_type,
   (document_type) => {
     if (document_type === "Birth") {
+      v$.value.$reset()
       formData.name_owner = "N/A";
       formData.relation_owner = "N/A";
       formData.cce_in = "";
     } else if (document_type === "Death") {
+      v$.value.$reset()
       formData.cce_in = "the";
     } else {
+      v$.value.$reset()
       formData.cce_in = "";
       formData.name_owner = "";
       formData.relation_owner = "";
@@ -1434,7 +1461,7 @@ const validate_clerical_to = computed(() => {
 });
 
 const validate_reasons = computed(() => {
-  if (formData.ra !== "10172" && formData.type !== "CCE") {
+  if (formData.ra !== "10172") {
     return false;
   }
 
@@ -1564,9 +1591,12 @@ const validate = computed(() => {
   };
 });
 
+
 const v$ = useVuelidate(validate, formData);
 
 const submitForm = async () => {
+
+
   v$.value.$touch();
 
   if (v$.value.$error) {
@@ -1689,15 +1719,88 @@ const submitForm = async () => {
 
   const check = await window.ClericalApi.PrintLiveBirth(data);
 
-  const add = await petitions.addPetition(data);
-  if (add) {
-    v$.value.$reset();
+  if (check) {
+    const database = {
+      ra: formData.ra,
+      type: formData.type,
+      document_type: formData.document_type,
+      petition_number: formData.petition_number,
+      petitioner_name: formData.petitioner_name,
+      nationality: formData.nationality,
+      petitioner_province: formData.petitioner_province,
 
-    const latest = await petitions.getLatestPetition();
-    if (latest) {
-      getTheLatestPetitionNumber();
+      petitioner_city: formData.petitioner_city,
+      petitioner_barangay: formData.petitioner_barangay,
+      cce_in: formData.cce_in,
+
+      name_owner: formData.name_owner,
+      relation_owner: formData.relation_owner,
+      date_of: formData.date_of,
+
+      at_city: formData.at_city,
+      at_province: formData.at_province,
+      at_country: formData.at_country,
+
+      registry_number: formData.registry_number,
+
+      clerical_errors: errors,
+      supportingDocuments: supports,
+
+      // Change First Name
+      grounds: grounds_filing,
+      from: formData.from,
+      to: formData.to,
+      ground_b: formData.ground_b,
+      ground_f: formData.ground_f,
+      // Change First Name
+
+      reason: formData.reason,
+      LCRO_city: formData.LCRO_city,
+      LCRO_province: formData.LCRO_province,
+
+      administering_officer: formData.administering_officer,
+      administering_position: formData.administering_position,
+
+      SwornDate: formData.SwornDate,
+      SwornCity: formData.SwornCity,
+
+      Ctc: formData.Ctc,
+      CtcIssuedOn: formData.CtcIssuedOn,
+      CtcIssuedAt: formData.CtcIssuedAt,
+
+      action: formData.action,
+      ActionDate: formData.ActionDate,
+      mcr: formData.mcr,
+      decision: formData.decision,
+
+      or_number: formData.or_number,
+      amount_paid: formData.amount_paid,
+      DatePaid: formData.DatePaid,
+
+      notice_posting: formData.notice_posting,
+      certificate_posting_start: formData.certificate_posting_start,
+      certificate_posting_end: formData.certificate_posting_end,
+
+      date_issued: formData.date_issued,
+      date_granted: formData.date_granted,
+
+      // CCE 10172
+      reasons: reasons,
+      action_taken: actionsdata,
+      filepath: check.filepath
+    };
+
+    const add = await petitions.addPetition(database);
+    if (add) {
+      v$.value.$reset();
+
+      const latest = await petitions.getLatestPetition();
+      if (latest) {
+        getTheLatestPetitionNumber();
+      }
     }
   }
+
   isProcessInfoLoading.value = false;
 
   folderpath.value = check.filepath;

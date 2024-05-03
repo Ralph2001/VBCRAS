@@ -20,6 +20,10 @@ contextBridge.exposeInMainWorld('ClericalApi', {
         const result = await ipcRenderer.invoke('printLiveBirth', formData)
         return { status: result.status, filepath: result.filepath }
     },
+    CreateFinality: async (formData) => {
+        const result = await ipcRenderer.invoke('createFinality', formData)
+        return { status: result.status, filepath: result.filepath }
+    },
     OpenClerical: async (source) => {
         const result = await ipcRenderer.invoke('open-clerical', source)
         if (result) {
