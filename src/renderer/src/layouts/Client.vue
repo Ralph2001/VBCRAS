@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen relative px-4" @keyup.ctrl.space="sayHi()">
+    <div class="h-screen relative px-4">
         <NavBar />
         <router-view v-slot="{ Component }">
             <transition mode="out-in" name="slide">
@@ -45,8 +45,5 @@ const showsuccess = ref(false)
 const show = () => {
     showsuccess.value = !showsuccess.value
 }
-const sayHi = () => {
 
-    console.log('Hi Ralph')
-}
 </script>

@@ -33,9 +33,9 @@
           <ModalCloseButton @click="closeModal" />
         </template>
 
-        <div class="p-2">
+        <div class=" flex items-center justify-center p-2" ref="isFormVisible">
           <Box title="Document" width="w-fit">
-            <div class="grid grid-cols-3 p-2 gap-3">
+            <div class="grid grid-cols-3 p-2 gap-3" ref="documentChanger" tabindex="-1">
               <Select skip :options="RepublicAct" v-model="formData.ra" label="Republic Act" :error="v$.ra.$error" />
               <Select skip @change="getTheLatestPetitionNumber()" :options="Type" label="Type" :error="v$.type.$error"
                 v-model="formData.type" />
@@ -44,15 +44,24 @@
             </div>
           </Box>
 
-          {{ formData.ra }}
-          {{ formData.petition_number }}
-          {{ formData.type }}
-          {{ formData.document_type }}
+          <Transition enter-active-class="animate__animated animate__zoomIn"
+            leave-active-class="animate__animated animate__zoomOut">
+            <button type="button" v-if="!targetIsVisible" @click="focusDocumentChanger()"
+              class="fixed shadow-sm w-auto p-2 h-auto z-10 bg-white rounded-md top-[5.4rem] right-7 border font-medium text-gray-800 flex flex-row items-center text-xs tracking-wide">
+              <font-awesome-icon icon="fa-solid fa-list-check " class="me-2 text-gray-800" />
+
+              R.A {{ formData.ra }}
+              {{ formData.type }}
+              {{ formData.document_type }}
+            </button>
+          </Transition>
+
         </div>
 
-        <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
+        <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10 ">
+
           <div class="w-full flex item-center justify-center p-1 mb-5 transition-all bg-[#F3F4F6]">
-            <p class="text-lg uppercase font-semibold tracking-wider" v-if="formData.type === 'CCE'">
+            <p class="text-lg uppercase font-semibold tracking-wider text-pretty" v-if="formData.type === 'CCE'">
               PETITION FOR CORRECTION OF CLERICAL ERROR IN THE CERTIFICATE OF
               {{ documentTypeLabel }}
             </p>
@@ -60,6 +69,7 @@
               PETITION FOR CHANGE OF FIRST NAME
             </p>
           </div>
+
 
           <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-4">
             <Box title="Petition Details" width="w-full">
@@ -103,6 +113,7 @@
             <Box title="Petitioner Nationality & Complete Address" width="w-full">
               <div class="grid grid-cols-2 w-full gap-2">
                 <Input label="Nationality" :error="v$.nationality.$error" v-model="formData.nationality" skip />
+
 
                 <selectLocation @change="formData.petitioner_city = ''" :options="provinces[0]"
                   :error="v$.petitioner_province.$error" id="province" v-model="formData.petitioner_province"
@@ -212,8 +223,15 @@
               <Box title="The clerical error(s) to be corrected is (are): "
                 :error="v$.clerical_errors.description.$params.prop || v$.clerical_errors.from.$params.prop || v$.clerical_errors.to.$params.prop ? '* Required Fields' : ''"
                 width="w-full">
-                <div class="flex flex-col gap-2 w-full font-bold">
-                  <div class="flex flex-row w-full items-center justify-center gap-2">
+
+
+                <div class="flex flex-col gap-2 w-full font-bold relative">
+                  <div class="absolute w-auto -top-4 right-4">
+                    <p class="text-xs italic text-gray-400 font-normal"> <font-awesome-icon
+                        icon="fa-solid fa-circle-info" class="me-1" /> <span class="font-medium">Crtl + Space</span> to
+                      add new column</p>
+                  </div>
+                  <div class="flex flex-row w-full items-center justify-center gap-2 mt-4">
                     <div class="basis-[10%]">
                       <p class="text-sm text-center">Item No.</p>
                     </div>
@@ -238,7 +256,8 @@
                     </div>
                     <div class="grow">
                       <InputSuggestions nolabel :error="v$.clerical_errors.description.$params.prop"
-                        v-model="formData.clerical_errors.description[index]" :items="DescriptionSuggestions" />
+                        v-model="formData.clerical_errors.description[index]" :items="DescriptionSuggestions"
+                        @keyup.ctrl.space="addItem()" />
                     </div>
                     <div class="grow">
                       <Input nolabel v-model="formData.clerical_errors.from[index]"
@@ -246,7 +265,7 @@
                           formData.clerical_errors.from[
                           index
                           ] = $event.target.value.toUpperCase()
-                          " />
+                          " @keyup.ctrl.space="addItem()" />
                     </div>
                     <div class="grow">
                       <Input nolabel v-model="formData.clerical_errors.to[index]"
@@ -254,18 +273,19 @@
                           formData.clerical_errors.to[
                           index
                           ] = $event.target.value.toUpperCase()
-                          " />
+                          " @keyup.ctrl.space="addItem()" />
                     </div>
                   </div>
-                  <div class="flex justify-end gap-2">
-                    <button type="button" @click="addItem()"
-                      class="py-2 px-4 mb-2 text-sm font-medium text-white bg-green-400 rounded-full shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                      Add
-                    </button>
+                  <div class="flex justify-end gap-2 mt-3">
                     <button type="button" @click="removeItem()" v-if="items.length > 1"
-                      class="py-2 px-4 mb-2 text-sm font-medium text-white bg-red-400 rounded-full shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      class="py-1 px-3  font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
                     </button>
+                    <button type="button" @click="addItem()"
+                      class="py-1 px-3  font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      Add
+                    </button>
+
                   </div>
                 </div>
               </Box>
@@ -396,24 +416,34 @@
             <div class="grow">
               <Box title=" documents to support this petition: " width="w-ful"
                 :error="v$.SupportingDocuments.$params.prop ? '* Required Fields' : ''">
-                <div class="flex flex-col w-full gap-3 mt-5">
+                <div class="flex flex-col w-full gap-3 mt-5 relative">
+                  <div class="absolute w-auto -top-9 right-4">
+                    <p class="text-xs italic text-gray-400 font-normal"> <font-awesome-icon
+                        icon="fa-solid fa-circle-info" class="me-1" /> <span class="font-medium">Crtl + Space</span> to
+                      add new column</p>
+                  </div>
+
                   <div class="flex flex-row w-full gap-2 items-center" v-for="(support, index) in SupportItems"
                     :key="index">
                     <p class="basis-[9%] text-sm text-center">{{ indexToLetter(index) }})</p>
                     <div class="basis-[90%]">
                       <InputSuggestions nolabel :error="v$.SupportingDocuments.$params.prop"
-                        v-model="formData.SupportingDocuments[index]" :items="SupportingDocumentsSuggestions" />
+                        v-model.trim="formData.SupportingDocuments[index]" :items="SupportingDocumentsSuggestions"
+                        @keyup.ctrl.space="addSuppportItem()" @keydown.enter.prevent />
                     </div>
                   </div>
                   <div class="flex justify-end gap-2">
-                    <button type="button" @click="addSuppportItem()"
-                      class="py-2 px-4 mb-2 text-sm font-medium text-white bg-green-400 rounded-full shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                      Add
-                    </button>
+
                     <button type="button" @click="removeSupportItem()" v-if="SupportItems.length > 1"
-                      class="py-2 px-4 mb-2 text-sm font-medium text-white bg-red-400 rounded-full shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      class="py-1 px-3  font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
                     </button>
+                    <button type="button" @click="addSuppportItem()"
+                      class="py-1 px-3  font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      Add
+                    </button>
+
+
                   </div>
                 </div>
               </Box>
@@ -772,6 +802,18 @@ const Modal = defineAsyncComponent(() =>
 const ClericalSettings = defineAsyncComponent(() =>
   import("../../components/essentials/settings/ClericalSettings.vue")
 )
+
+import { useElementVisibility } from '@vueuse/core'
+
+
+const documentChanger = ref(null)
+const isFormVisible = ref(null)
+const targetIsVisible = useElementVisibility(isFormVisible)
+
+function focusDocumentChanger() {
+  documentChanger.value.focus()
+}
+
 
 
 function indexToLetter(index) {
@@ -1139,6 +1181,31 @@ const formData = reactive({
   date_granted: "",
 });
 
+const male = ref([
+  'Boyfriend',
+  'Husband',
+  'Father',
+  'Son',
+  'Brother',
+  'Uncle',
+  'Nephew',
+  'Grandfather',
+  'Grandson'
+])
+
+const female = ref([
+  'Girlfriend',
+  'Wife',
+  'Partner',
+  'Mother',
+  'Daughter',
+  'Sister',
+  'Aunt',
+  'Niece',
+  'Grandmother',
+  'Granddaughter'
+])
+
 function factReasons() {
   if (
     (formData.cce_in !== "" &&
@@ -1152,16 +1219,42 @@ function factReasons() {
 
     const relation = name;
     const owner = formData.relation_owner === "N/A" ? "my" : `${relation}`;
-
     const certificate = formData.document_type === "Birth" ? "Live Birth" : "Marriage";
 
-    formData.reason = `To correct the above mentioned clerical error in ${owner} Certificate of ${certificate} which is inconsistent with all of `;
+
+    let pronouns = 'his/her'
+
+    if (male.value.includes(formData.relation_owner) && formData.cce_in === 'the') {
+      pronouns = 'his'
+    }
+    else if (formData.document_type === 'Birth' && formData.cce_in === 'my') {
+      pronouns = 'my'
+    }
+    else if (formData.document_type === 'Marriage' && formData.cce_in === 'my') {
+      pronouns = 'our'
+    }
+    else if (female.value.includes(formData.relation_owner) && formData.cce_in === 'the') {
+      pronouns = 'her'
+    }
+
+
+
+    formData.reason = `To correct the above mentioned clerical error in ${owner} Certificate of ${certificate} which is inconsistent with all of ${pronouns} documents.`;
   } else if (formData.document_type === "Death") {
     const relation = formData.relation_owner
       ? `${"my " + formData.relation_owner.toLowerCase() + "’s"}`
       : "unknown";
     const owner = relation || "specify";
-    formData.reason = `To correct the above mentioned clerical error in ${owner} Certificate of Death which is inconsistent with all of `;
+    let pronouns = 'his/her'
+
+    if (male.value.includes(formData.relation_owner) && formData.cce_in === 'the') {
+      pronouns = 'his'
+    }
+    else if (female.value.includes(formData.relation_owner) && formData.cce_in === 'the') {
+      pronouns = 'her'
+    }
+
+    formData.reason = `To correct the above mentioned clerical error in ${owner} Certificate of Death which is inconsistent with all of ${pronouns} documents. `;
   } else {
     formData.reason = `To correct the `;
   }
@@ -1402,11 +1495,15 @@ const validate_from_and_to = computed(() => {
 });
 
 const validate_supporting_documents = computed(() => {
-  if (SupportItems.value.length !== formData.SupportingDocuments.length) {
-    return true;
-  } else {
-    return false;
+  for (let i = 0; i < SupportItems.value.length; i++) {
+    if (
+      i >= formData.SupportingDocuments.length ||
+      formData.SupportingDocuments[i] === "" || formData.SupportingDocuments[i] == null
+    ) {
+      return true;
+    }
   }
+  return false
 });
 
 const validate_clerical_description = computed(() => {
@@ -1417,7 +1514,7 @@ const validate_clerical_description = computed(() => {
   for (let i = 0; i < items.value.length; i++) {
     if (
       i >= formData.clerical_errors.description.length ||
-      formData.clerical_errors.description[i] === ""
+      formData.clerical_errors.description[i] === "" || formData.clerical_errors.description[i] == null
     ) {
       return true;
     }

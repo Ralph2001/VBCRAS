@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { generate } from '../documents/clerical_error'
 import { finality } from '../documents/finality'
+import { generate_form } from '../documents/forms/createForm'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
@@ -57,6 +58,20 @@ async function startServer() {
         return false
     }
 }
+
+// Form 1, 2, 3 IpcMain
+ipcMain.handle('createForm', async (event, formData) => {
+    try {
+        const createForm = await generate_form(formData)
+        if ((createForm.success = true)) {
+            return { status: true, filepath: createForm.filepath }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// Clerical IpcMain
 
 ipcMain.handle('printLiveBirth', async (event, formData) => {
     try {

@@ -32,6 +32,13 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     },
 })
 
+contextBridge.exposeInMainWorld('FormApi', {
+    CreateForm: async (formData) => {
+        const result = await ipcRenderer.invoke('createForm', formData)
+        return { status: result.status, filepath: result.filepath }
+    },
+})
+
 contextBridge.exposeInMainWorld('LocalCivilApi', {
     IsServerRunning: async () => {
         const result = await ipcRenderer.invoke('is-server-running')
