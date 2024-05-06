@@ -96,7 +96,7 @@ ipcMain.handle('createFinality', async (event, formData) => {
 
 ipcMain.handle('open-clerical', async (event, source) => {
     try {
-        const filefolder = shell.openExternal(source)
+        const filefolder = await shell.openExternal(source)
         return true
     } catch (error) {
         win.close()

@@ -51,7 +51,8 @@ import {
     faRotateRight,
     faLightbulb,
     faListCheck,
-    faCircleInfo
+    faCircleInfo,
+    faChevronUp
 } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
@@ -84,7 +85,8 @@ library.add(
     faRotateRight,
     faLightbulb, 
     faListCheck,
-    faCircleInfo
+    faCircleInfo, 
+    faChevronUp
 
 )
 

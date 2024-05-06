@@ -47,7 +47,7 @@
           <Transition enter-active-class="animate__animated animate__zoomIn"
             leave-active-class="animate__animated animate__zoomOut">
             <button type="button" v-if="!targetIsVisible" @click="focusDocumentChanger()"
-              class="fixed shadow-sm w-auto p-2 h-auto z-10 bg-white rounded-md top-[5.4rem] right-7 border font-medium text-gray-800 flex flex-row items-center text-xs tracking-wide">
+              class="fixed shadow-sm w-auto p-2 h-auto z-10 bg-white rounded-md top-[5.4rem]  border font-medium text-gray-800 flex flex-row items-center text-xs tracking-wide">
               <font-awesome-icon icon="fa-solid fa-list-check " class="me-2 text-gray-800" />
 
               R.A {{ formData.ra }}
@@ -114,6 +114,8 @@
               <div class="grid grid-cols-2 w-full gap-2">
                 <Input label="Nationality" :error="v$.nationality.$error" v-model="formData.nationality" skip />
 
+
+              
 
                 <selectLocation @change="formData.petitioner_city = ''" :options="provinces[0]"
                   :error="v$.petitioner_province.$error" id="province" v-model="formData.petitioner_province"
@@ -947,6 +949,8 @@ const colDefs = ref([
     lockPinned: true,
     resizable: true,
     sortable: false,
+    cellStyle: { overflow: "visible", border: "none" },
+
     cellRenderer: ViewBTn,
   },
 ]);

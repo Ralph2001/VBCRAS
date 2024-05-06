@@ -1,9 +1,8 @@
 <template>
   <Teleport to="body">
-
     <FinalityMessage v-if="finality" @close-modal="finality = false" :data="props.params" />
-
   </Teleport>
+  
   <div class="flex items-center h-full justify-center relative w-full" :class="{
     'bg-green-200': Approved,
     'bg-red-200': Disapproved,

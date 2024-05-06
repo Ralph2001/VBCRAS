@@ -45,13 +45,17 @@
             </p>
           </div>
         </div>
-        <div class="flex gap-2 flex-row justify-end">
+        <div class="flex gap-2 flex-row justify-end mt-5">
+          <button type="button" @click="openfolder(props.data.data.filepath)"
+            class="px-3 py-2 text-xs tracking-widest font-medium text-center text-white bg-green-500 rounded-sm hover:bg-green-800 active:scale-95  focus:outline-none focus:ring-green-300 shadow-md">
+            Open Petition Folder
+          </button>
           <button type="button" @click="open(props.data.data.filepath)"
-            class="px-3 py-2 text-xs tracking-widest font-medium text-center text-white bg-blue-700 rounded-sm hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            class="px-3 py-2 text-xs tracking-widest font-medium text-center text-white bg-blue-700 rounded-sm hover:bg-blue-800 active:scale-95  focus:outline-none focus:ring-blue-300 shadow-md">
             Open Finality
           </button>
           <button type="button" @click="emit('close-modal', false)"
-            class="px-3 py-2 text-xs tracking-widest font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-sm hover:bg-red-500 hover:text-white">
+            class="px-3 py-2 text-xs tracking-widest font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-sm active:scale-95  hover:bg-red-500 hover:text-white shadow-md">
             Close
           </button>
         </div>
@@ -70,6 +74,14 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(["close-modal"]);
+
+const openfolder = async (filepath) => {
+  const open = await window.ClericalApi.OpenClerical(filepath)
+  if (open) {
+
+  }
+}
+
 
 const open = async (filepath) => {
   const filelocation = filepath + 'Finality/Certificate of Finality.docx'

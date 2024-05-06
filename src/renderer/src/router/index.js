@@ -309,6 +309,24 @@ const router = createRouter({
                         return { name: 'client' }
                     },
                 },
+                {
+                    path: 'ausf',
+                    name: 'client_ausf',
+                    component: () => import('../views/client/AUSF.vue'),
+                    beforeEnter: async (to, from) => {
+                        const auth = AuthStore()
+                        const authKey = await auth.isAuthenticated()
+                        const con = useHostStore()
+                        const connection = await con.isConnected()
+                        if (connection) {
+                            if (authKey) {
+                                return true
+                            }
+                            return { name: 'client' }
+                        }
+                        return { name: 'client' }
+                    },
+                },
             ],
         },
     ],

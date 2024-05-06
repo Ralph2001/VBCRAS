@@ -16,11 +16,23 @@ const FORM1A_PATH = path.resolve(
     __dirname,
     '../../resources/documents/Forms/Form 1/Form1A.docx'
 )
+const FORM1B_PATH = path.resolve(
+    __dirname,
+    '../../resources/documents/Forms/Form 1/Form1B.docx'
+)
+const FORM1C_PATH = path.resolve(
+    __dirname,
+    '../../resources/documents/Forms/Form 1/Form1C.docx'
+)
 
 async function createFormByType(data) {
     console.log(data)
     if (data.type === 'Form 1A') {
         createForm1A(data)
+    } else if (data.type === 'Form 1B') {
+        createForm1B(data)
+    } else if (data.type === 'Form 1C') {
+        createForm1C(data)
     }
 }
 
@@ -58,6 +70,11 @@ async function createForm1A(data) {
             amount: data.amount,
             or_number: data.or_number,
             date_paid: data.date_paid,
+
+            date_filed: data.date_filed,
+            verified_by: data.verified_by,
+            position: data.position,
+            mcr: data.mcr,
         })
 
         const buf = doc.getZip().generate({
@@ -66,10 +83,101 @@ async function createForm1A(data) {
         })
 
         // Create File in the folder
-        fs.writeFileSync(
-            `${folderPath + '/' + data.name_child + ' ' + data.document} .docx`,
-            buf
-        )
+        fs.writeFileSync(`${folderPath + '/' + data.name_child}.docx`, buf)
+
+        return true
+    }
+}
+
+async function createForm1B(data) {
+    // First Create Folder
+    const create_folder = await folderCreation(data)
+
+    // After Success Create Document
+    if (create_folder) {
+        // Form Template Path
+        const content = fs.readFileSync(FORM1B_PATH, 'binary')
+
+        const zip = new PizZip(content)
+        const doc = new Docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        })
+
+        doc.render({
+            document_owner: data.document_owner,
+            mother: data.name_mother,
+            father: data.name_father,
+            date_of_birth: data.date_of_birth,
+            year_recorded: data.year_recorded,
+
+            issued_to: data.issued_to,
+            amount: data.amount,
+            or_number: data.or_number,
+            date_paid: data.date_paid,
+
+            date_filed: data.date_filed,
+            verified_by: data.verified_by,
+            position: data.position,
+            mcr: data.mcr,
+        })
+
+        const buf = doc.getZip().generate({
+            type: 'nodebuffer',
+            compression: 'DEFLATE',
+        })
+
+        // Create File in the folder
+        fs.writeFileSync(`${folderPath + '/' + data.document_owner}.docx`, buf)
+
+        return true
+    }
+}
+
+async function createForm1C(data) {
+    // First Create Folder
+    const create_folder = await folderCreation(data)
+
+    // After Success Create Document
+    if (create_folder) {
+        // Form Template Path
+        const content = fs.readFileSync(FORM1C_PATH, 'binary')
+
+        const zip = new PizZip(content)
+        const doc = new Docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        })
+
+        doc.render({
+            year: data.year,
+            period: data.period,
+            destroyed_by: data.destroyed_by,
+
+            document_owner: data.document_owner,
+            mother: data.name_mother,
+            father: data.name_father,
+            date_of_birth: data.date_of_birth,
+            year_recorded: data.year_recorded,
+
+            issued_to: data.issued_to,
+            amount: data.amount,
+            or_number: data.or_number,
+            date_paid: data.date_paid,
+
+            date_filed: data.date_filed,
+            verified_by: data.verified_by,
+            position: data.position,
+            mcr: data.mcr,
+        })
+
+        const buf = doc.getZip().generate({
+            type: 'nodebuffer',
+            compression: 'DEFLATE',
+        })
+
+        // Create File in the folder
+        fs.writeFileSync(`${folderPath + '/' + data.document_owner}.docx`, buf)
 
         return true
     }
@@ -78,11 +186,8 @@ async function createForm1A(data) {
 async function folderCreation(data) {
     const date_now = new Date()
     const doctype = data.type
-    const registry_number = data.registry_number
 
-    var folderCreation = `C:/VBCRAS/${
-        date_now.getFullYear() + '/' + doctype + ' ' + registry_number
-    }`
+    var folderCreation = `C:/VBCRAS/${date_now.getFullYear() + '/' + doctype}`
 
     if (!fs.existsSync(folderCreation)) {
         fs.mkdirSync(folderCreation, { recursive: true })
