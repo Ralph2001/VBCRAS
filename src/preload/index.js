@@ -40,6 +40,10 @@ contextBridge.exposeInMainWorld('FormApi', {
 })
 
 contextBridge.exposeInMainWorld('LocalCivilApi', {
+    ConvertFile: async () => {
+        const result = await ipcRenderer.invoke('convert-files')
+        return result
+    },
     IsServerRunning: async () => {
         const result = await ipcRenderer.invoke('is-server-running')
         return result

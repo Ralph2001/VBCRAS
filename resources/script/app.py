@@ -81,9 +81,7 @@ class Petitions(db.Model):
     petition_number = db.Column(db.String)
     petitioner_name = db.Column(db.String)
     nationality = db.Column(db.String)
-    petitioner_province = db.Column(db.String)
-    petitioner_city = db.Column(db.String)
-    petitioner_barangay = db.Column(db.String)
+    petitioner_address = db.Column(db.String)
     cce_in = db.Column(db.String)
     name_owner = db.Column(db.String)
     relation_owner = db.Column(db.String)
@@ -424,9 +422,7 @@ def add_petition():
             petition_number=data["petition_number"],
             petitioner_name=data["petitioner_name"],
             nationality=data["nationality"],
-            petitioner_province=data["petitioner_province"],
-            petitioner_city=data["petitioner_city"],
-            petitioner_barangay=data["petitioner_barangay"],
+            petitioner_address=data["petitioner_address"],
             cce_in=data["cce_in"],
             name_owner=data["name_owner"],
             relation_owner=data["relation_owner"],

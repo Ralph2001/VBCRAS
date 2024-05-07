@@ -35,6 +35,7 @@ const CCE10172_PATH = path.resolve(
     __dirname,
     '../../resources/documents/RA 9048 RA 10172/Live Birth/petition_RA_10172.docx'
 )
+const GENERATED_PATH = path.resolve(__dirname, '../../resources/generated/')
 
 let folderPath
 
@@ -75,17 +76,13 @@ async function document_folder(data) {
     const doctype = data.type
     const petitioner_name = data.petitioner_name
 
-    var folderCreation = `C:/VBCRAS/${
-        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
-    }`
+    var folderCreation = GENERATED_PATH
 
     if (!fs.existsSync(folderCreation)) {
         fs.mkdirSync(folderCreation, { recursive: true })
     }
 
-    folderPath = `C:/VBCRAS/${
-        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
-    }/`
+    folderPath = GENERATED_PATH
 
     return true
 }
@@ -214,13 +211,6 @@ async function petition(data) {
     const petitioner_name = data.petitioner_name
     const petitioner_number = number
 
-    const petitioner_addressFormatted =
-        data.petitioner_barangay +
-        ', ' +
-        data.petitioner_city +
-        ', ' +
-        data.petitioner_province
-
     const rawXML = `'` + data.decision + `'`
 
     const day_ss = dateFns.format(data.SwornDate, 'do')
@@ -251,7 +241,7 @@ async function petition(data) {
         petition_number: petitioner_number,
         petitioner_name: petitioner_name,
         nationality: data.nationality,
-        petitioner_address: petitioner_addressFormatted,
+        petitioner_address: data.petitioner_address,
 
         // For Birth Certificate
         my: error_in_my,

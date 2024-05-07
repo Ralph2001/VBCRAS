@@ -1,7 +1,7 @@
 <style scoped>
 .animate__animated.animate__fadeIn,
 .animate__animated.animate__fadeOut {
-  --animate-duration: 0.2s;
+  --animate-duration: 0.1s;
 }
 </style>
 <template>
@@ -47,9 +47,8 @@
           <Transition enter-active-class="animate__animated animate__zoomIn"
             leave-active-class="animate__animated animate__zoomOut">
             <button type="button" v-if="!targetIsVisible" @click="focusDocumentChanger()"
-              class="fixed shadow-sm w-auto p-2 h-auto z-10 bg-white rounded-md top-[5.4rem]  border font-medium text-gray-800 flex flex-row items-center text-xs tracking-wide">
-              <font-awesome-icon icon="fa-solid fa-list-check " class="me-2 text-gray-800" />
-
+              class="fixed shadow-sm w-auto p-2 px-3 h-auto z-10 bg-blue-400 rounded-md top-[5.4rem]  border font-medium text-white flex flex-row items-center text-xs tracking-wide">
+              <font-awesome-icon icon="fa-solid fa-list-check " class="me-2 text-white" />
               R.A {{ formData.ra }}
               {{ formData.type }}
               {{ formData.document_type }}
@@ -86,6 +85,7 @@
 
                       <div class="basis-[50%]">
                         <input v-model="petition_number" v-maska data-maska="####" type="text"
+                          :class="{ 'border-red-500': !petition_number }"
                           class="bg-gray-50 border border-s-white border-e-white text-center border-gray-300 font-bold text-gray-900 text-sm focus:ring-green-500 focus:border-green-500 block w-full p-2.5" />
                       </div>
 
@@ -111,20 +111,20 @@
             </Box>
 
             <Box title="Petitioner Nationality & Complete Address" width="w-full">
-              <div class="grid grid-cols-2 w-full gap-2">
+              <div class="grid grid-cols-1 w-full gap-2">
                 <Input label="Nationality" :error="v$.nationality.$error" v-model="formData.nationality" skip />
+                <AutoComplete label="Petitioner Address" v-model="formData.petitioner_address"
+                  :error="v$.petitioner_address.$error" />
 
 
-              
-
-                <selectLocation @change="formData.petitioner_city = ''" :options="provinces[0]"
+                <!-- <selectLocation @change="formData.petitioner_city = ''" :options="provinces[0]"
                   :error="v$.petitioner_province.$error" id="province" v-model="formData.petitioner_province"
                   Province />
 
                 <selectLocation :options="municipality[0]" :error="v$.petitioner_city.$error"
                   v-model="formData.petitioner_city" City id="city" />
                 <selectLocation :options="barangay[0]" :error="v$.petitioner_barangay.$error"
-                  v-model="formData.petitioner_barangay" Barangay id="barangay" />
+                  v-model="formData.petitioner_barangay" Barangay id="barangay" /> -->
               </div>
             </Box>
           </div>
@@ -630,7 +630,7 @@
             <div class="basis-[35%]">
               <Box title="Payment of filing fee" width="w-ful">
                 <div class="grid grid-cols-1 w-full gap-2">
-                  <Input label="O.R. No." :error="v$.or_number.$error" type="number" v-model="formData.or_number" />
+                  <Input label="O.R. No." :error="v$.or_number.$error" type="text" v-model="formData.or_number" />
                   <InputCurrency label="Amount Paid" :error="v$.amount_paid.$error" v-model="formData.amount_paid" />
 
                   <div>
@@ -784,13 +784,10 @@ import { required, requiredIf } from "@vuelidate/validators";
 import { vMaska } from "maska";
 import toOOXML from "../../utils/toOOXML.js";
 import PetitionInfo from "../../components/essentials/modal/PetitionInfo.vue"
-
+import Box from "../../components/essentials/Box.vue"
 
 const GroundBlock = defineAsyncComponent(() =>
   import("../../components/essentials/block/GroundBlock.vue"),
-)
-const Box = defineAsyncComponent(() =>
-  import("../../components/essentials/Box.vue"),
 )
 const LoadingBlock = defineAsyncComponent(() =>
   import("../../components/essentials/block/LoadingBlock.vue")
@@ -807,6 +804,9 @@ const ClericalSettings = defineAsyncComponent(() =>
 
 import { useElementVisibility } from '@vueuse/core'
 
+const AutoComplete = defineAsyncComponent(() =>
+  import("../../components/essentials/inputs/AutoComplete.vue")
+)
 
 const documentChanger = ref(null)
 const isFormVisible = ref(null)
@@ -1102,6 +1102,10 @@ function add_petition_date() {
   formData.date_granted = date_of_granted;
 }
 
+// petitioner_province: "",
+// petitioner_city: "",
+// petitioner_barangay: "",
+
 const formData = reactive({
   ra: "9048",
   type: "CCE",
@@ -1109,9 +1113,8 @@ const formData = reactive({
   petition_number: petitioner_number,
   petitioner_name: "",
   nationality: "Filipino",
-  petitioner_province: "",
-  petitioner_city: "",
-  petitioner_barangay: "",
+
+  petitioner_address: '',
   cce_in: "", //
 
   name_owner: "",
@@ -1629,9 +1632,10 @@ const validate = computed(() => {
     petition_number: { required },
     petitioner_name: { required },
     nationality: { required },
-    petitioner_province: { required },
-    petitioner_city: { required },
-    petitioner_barangay: { required },
+    // petitioner_province: { required },
+    // petitioner_city: { required },
+    // petitioner_barangay: { required },
+    petitioner_address: { required },
     cce_in: { required },
 
     name_owner: { required },
@@ -1746,6 +1750,10 @@ const submitForm = async () => {
   const decisionFormatted = "<w:p>" + OOXML + "</w:p>";
 
 
+  // petitioner_province: formData.petitioner_province,
+  // petitioner_city: formData.petitioner_city,
+  // petitioner_barangay: formData.petitioner_barangay,
+
   const data = {
     ra: formData.ra,
     type: formData.type,
@@ -1753,12 +1761,10 @@ const submitForm = async () => {
     petition_number: formData.petition_number,
     petitioner_name: formData.petitioner_name,
     nationality: formData.nationality,
-    petitioner_province: formData.petitioner_province,
 
-    petitioner_city: formData.petitioner_city,
-    petitioner_barangay: formData.petitioner_barangay,
+    petitioner_address: formData.petitioner_address,
+
     cce_in: formData.cce_in,
-
     name_owner: formData.name_owner,
     relation_owner: formData.relation_owner,
     date_of: formData.date_of,
@@ -1821,6 +1827,9 @@ const submitForm = async () => {
   const check = await window.ClericalApi.PrintLiveBirth(data);
 
   if (check) {
+
+    const convert = await window.LocalCivilApi.ConvertFile()
+
     const database = {
       ra: formData.ra,
       type: formData.type,
@@ -1828,10 +1837,12 @@ const submitForm = async () => {
       petition_number: formData.petition_number,
       petitioner_name: formData.petitioner_name,
       nationality: formData.nationality,
-      petitioner_province: formData.petitioner_province,
 
-      petitioner_city: formData.petitioner_city,
-      petitioner_barangay: formData.petitioner_barangay,
+      // petitioner_province: formData.petitioner_province,
+      // petitioner_city: formData.petitioner_city,
+      // petitioner_barangay: formData.petitioner_barangay,
+
+      petitioner_address: formData.petitioner_address,
       cce_in: formData.cce_in,
 
       name_owner: formData.name_owner,

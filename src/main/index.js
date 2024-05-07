@@ -59,6 +59,15 @@ async function startServer() {
     }
 }
 
+async function convert() {
+    try {
+        execFile(join(__dirname, '../../resources/generated/convert_docx.exe'))
+        return true
+    } catch (error) {
+        console.log('Error')
+    }
+}
+
 // Form 1, 2, 3 IpcMain
 ipcMain.handle('createForm', async (event, formData) => {
     try {
@@ -236,6 +245,16 @@ ipcMain.handle('open-file-folder', async (event, path) => {
 
 ipcMain.handle('get-user', async (event) => {
     return username
+})
+
+ipcMain.handle('convert-files', async (event) => {
+    try {
+        const success = await convert()
+        return true
+    } catch (error) {
+        console.error('Error handling start-server request:', error)
+        return false
+    }
 })
 
 //Main Window
