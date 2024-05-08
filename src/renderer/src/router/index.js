@@ -12,8 +12,8 @@ import {
 } from 'vue-router'
 
 const router = createRouter({
-    // history: createMemoryHistory(),
-    history: createWebHashHistory(),
+    history: createMemoryHistory(),
+    // history: createWebHashHistory(),
 
     _routes: [
         {

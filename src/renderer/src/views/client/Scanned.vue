@@ -49,7 +49,7 @@
       @drop="handleDrop" @dragover.prevent />
 
     <Transition mode="out-in" name="zoom_in">
-      <Modal label="Scanned Documents" v-if="modal" medium>
+      <Modal label="Scanned Documents" v-if="modal" dropbox>
         <template v-slot:header>
           <button type="button" @click="close_modal"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"

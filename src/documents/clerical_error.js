@@ -5,7 +5,6 @@ const fs = require('fs')
 const path = require('path')
 const dateFns = require('date-fns')
 
-
 export async function generate(formData) {
     const folderCreation = await document_folder(formData)
     const petitionCreation = await petition(formData)
@@ -36,7 +35,8 @@ const CCE10172_PATH = path.resolve(
     __dirname,
     '../../resources/documents/RA 9048 RA 10172/Live Birth/petition_RA_10172.docx'
 )
-const GENERATED_PATH = path.resolve(__dirname, '../../resources/generated/')
+// const GENERATED_PATH = path.resolve(__dirname, '../../resources/generated/')
+// const GENERATED_PATH = `C:/VBCRAS/${}`
 
 let folderPath
 
@@ -77,13 +77,17 @@ async function document_folder(data) {
     const doctype = data.type
     const petitioner_name = data.petitioner_name
 
-    var folderCreation = GENERATED_PATH
+    var folderCreation = `C:/VBCRAS/${
+        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
+    }`
 
     if (!fs.existsSync(folderCreation)) {
         fs.mkdirSync(folderCreation, { recursive: true })
     }
 
-    folderPath = GENERATED_PATH
+    folderPath = `C:/VBCRAS/${
+        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
+    }/`
 
     return true
 }
@@ -142,7 +146,7 @@ async function endorsement_letter(data) {
     })
 
     fs.writeFileSync(`${folderPath + '/'}Endorsement Letter.docx`, buf)
-    
+
     return true
 }
 async function petition(data) {

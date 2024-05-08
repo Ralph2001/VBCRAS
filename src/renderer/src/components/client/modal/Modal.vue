@@ -5,6 +5,7 @@
     <div :class="{
       ' max-w-[85rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
       'lg:max-w-5xl max-h-full': medium,
+      'lg:max-w-2xl max-h-full': dropbox,
       'max-w-lg': small,
 
       'max-w-[35rem] ': titleCard,
@@ -59,5 +60,6 @@ const props = defineProps({
   medium: Boolean,
   first: String,
   second: String,
+  dropbox: Boolean
 });
 </script>

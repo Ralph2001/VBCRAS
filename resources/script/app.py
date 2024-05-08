@@ -395,14 +395,12 @@ def add_records():
     try:
         data = request.get_json()
         records = RecordData(
-            
-        type = data["type"],
-        registry_number = data["registry_number"],
-        document_owner = data["document_owner"],
-        document_spouse = data["document_spouse"],
-        date_of = data["date_of"],
-        date_of_registration = data["date_of_registration"],
-        
+            type=data["type"],
+            registry_number=data["registry_number"],
+            document_owner=data["document_owner"],
+            document_spouse=data["document_spouse"],
+            date_of=data["date_of"],
+            date_of_registration=data["date_of_registration"],
         )
         existing_document = RecordData.query.filter_by(
             registry_number=data["registry_number"]
@@ -750,4 +748,4 @@ def remove_scanned(id, device_used_to_delete):
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, handle_sigterm)
     CORS(app)
-    app.run(host="0.0.0.0", port=1216)
+    app.run(host="0.0.0.0", port=1216, debug=False)
