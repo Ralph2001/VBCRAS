@@ -5,6 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const dateFns = require('date-fns')
 
+
 export async function generate(formData) {
     const folderCreation = await document_folder(formData)
     const petitionCreation = await petition(formData)
@@ -141,7 +142,7 @@ async function endorsement_letter(data) {
     })
 
     fs.writeFileSync(`${folderPath + '/'}Endorsement Letter.docx`, buf)
-
+    
     return true
 }
 async function petition(data) {

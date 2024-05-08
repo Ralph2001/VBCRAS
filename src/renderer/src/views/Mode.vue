@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full bg-slate-100  min-h-screen  flex-grow justify-center p-4 items-center relative">
         <Wave />
-        <p class="text-md uppercase text-gray-800 font-bold mb-10 font-mono antialiased">Connection Mode</p>
+        <p class="text-md uppercase text-gray-800 font-bold mb-10 font-mono antialiased tracking-wider">Connection Mode</p>
         <!-- <p class="text-md uppercase text-gray-800 font-bold mb-10 font-mono antialiased">{{ mode.getMode() }}</p> -->
         <div class="flex flex-row p-3 gap-5">
             <ButtonMode title="Server" @click="serverMode()" />
@@ -30,4 +30,3 @@ const clientMode = () => {
 }
 
 </script>
-

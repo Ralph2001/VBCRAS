@@ -35,7 +35,8 @@
 
         <div class=" flex items-center justify-center p-2" ref="isFormVisible">
           <Box title="Document" width="w-fit">
-            <div class="grid grid-cols-3 p-2 gap-3" ref="documentChanger" tabindex="-1">
+            <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 p-2 gap-3 items-center justify-center w-full"
+              ref="documentChanger" tabindex="-1">
               <Select skip :options="RepublicAct" v-model="formData.ra" label="Republic Act" :error="v$.ra.$error" />
               <Select skip @change="getTheLatestPetitionNumber()" :options="Type" label="Type" :error="v$.type.$error"
                 v-model="formData.type" />
@@ -72,7 +73,7 @@
 
           <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-4">
             <Box title="Petition Details" width="w-full">
-              <div class="grid grid-cols-1 w-full">
+              <div class="grid grid-cols-1 w-full gap-3">
                 <div class="w-full flex flex-col">
                   <label class="basis-[100%] block mb-2 text-sm font-medium text-gray-900 dark:text-white">Petition
                     Number</label>
@@ -144,7 +145,7 @@
 
             <div class="basis-[60%] grow">
               <Box title="Document Owner & Relationship to the Owner" width="w-full">
-                <div class="flex flex-row w-full gap-2">
+                <div class="flex sm:flex-col md:lg:flex-row w-full gap-2">
                   <div :class="{
                     grow:
                       (formData.document_type === 'Marriage' &&
@@ -1828,7 +1829,7 @@ const submitForm = async () => {
 
   if (check) {
 
-    const convert = await window.LocalCivilApi.ConvertFile()
+    // const convert = await window.LocalCivilApi.ConvertFile()
 
     const database = {
       ra: formData.ra,

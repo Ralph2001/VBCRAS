@@ -310,9 +310,9 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'ausf',
-                    name: 'client_ausf',
-                    component: () => import('../views/client/AUSF.vue'),
+                    path: 'data_record',
+                    name: 'data_record',
+                    component: () => import('../views/client/DataRecord.vue'),
                     beforeEnter: async (to, from) => {
                         const auth = AuthStore()
                         const authKey = await auth.isAuthenticated()

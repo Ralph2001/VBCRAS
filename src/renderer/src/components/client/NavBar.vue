@@ -48,10 +48,10 @@
               </router-link>
             </li>
             <li>
-              <router-link tabindex="-1" to="/client/ausf"
+              <router-link tabindex="-1" to="/client/data_record"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 class="block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                Ausf
+                Data Record
               </router-link>
             </li>
             <li v-if="auth.user_details.permissions.scanned">
@@ -70,9 +70,7 @@
                             </router-link>
                         </li> -->
             <li>
-              <button
-              tabindex="-1"
-               id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar"
+              <button tabindex="-1" id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar"
                 class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
                 Menu
                 <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"

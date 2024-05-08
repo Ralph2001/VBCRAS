@@ -29,7 +29,7 @@
                     <li class="me-2" @click="logsbtn()">
                         <p :class="{ 'text-blue-600 border-b-2 border-blue-600': logs }"
                             class="inline-block p-4  rounded-t-lg  cursor-pointer"><font-awesome-icon
-                                icon="fa-solid fa-info" /><font-awesome-icon icon="fa-solid fa-scroll" /> 
+                                icon="fa-solid fa-info" /><font-awesome-icon icon="fa-solid fa-scroll" />
                             Logs</p>
                     </li>
                     <li class="me-2" @click="flagsbtn()">
@@ -47,12 +47,31 @@
 
         </div>
         <div class="h-[calc(100vh-300px)] flex flex-col mt-2">
-            <TableGrid :data="Documents.scanned" :dataColumns="allDefs" v-if="all" />
-            <TableGrid :data="serverData.scanned_logs" :dataColumns="colDefs" v-if="logs" />
+
+            <Suspense>
+                <TableGrid :data="Documents.scanned" :dataColumns="allDefs" v-if="all" />
+                <template #fallback>
+                    <div class="flex flex-col items-center justify-center h-full" v-if="flags">
+                        <p class="text-lg italic font-light">Loading</p>
+                    </div>
+                </template>
+            </Suspense>
+
+            <Suspense>
+                <TableGrid :data="serverData.scanned_logs" :dataColumns="colDefs" v-if="logs" />
+                <template #fallback>
+                    <div class="flex flex-col items-center justify-center h-full" v-if="flags">
+                        <p class="text-lg italic font-light">Loading</p>
+                    </div>
+                </template>
+            </Suspense>
+
+
             <!-- <TableGrid :data="serverData.scanned_logs" :dataColumns="colDefs" v-if="flags" /> -->
             <div class="flex flex-col items-center justify-center h-full" v-if="flags">
                 <p class="text-lg italic font-light">Working on it</p>
             </div>
+
             <div class="flex flex-col  items-center h-full" v-if="record">
                 <div class="grid grid-cols-5 w-full gap-2">
                     <div
@@ -91,11 +110,10 @@
 
 
 <script setup>
-import TableGrid from '../../components/TableGrid.vue'
 import { useServerDataStore } from '../../stores/serverData.js'
 import { useScannedDocuments } from '../../stores/scanned'
 
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, defineAsyncComponent } from 'vue';
 
 const serverData = useServerDataStore()
 const Documents = useScannedDocuments()
@@ -104,6 +122,12 @@ import TypeFilter from '../../components/TypeFilter.vue';
 import ActionBtn from '../../components/ActionBtn.vue';
 import Tag from '../../components/Tag.vue';
 
+
+const TableGrid = defineAsyncComponent(() =>
+    import("../../components/TableGrid.vue"),
+)
+
+// import TableGrid from '../../components/TableGrid.vue'
 onMounted(() => {
     serverData.getScannedLog()
     Documents.getScanned()

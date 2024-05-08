@@ -21,8 +21,8 @@
                 <HandleButton title="Change Mode" @click="changeMode()" />
                 <div class="ml-none md:ml-auto flex flex-row ">
                     <!-- <HandleButton title="Auto Connect" @click="server.autoServerSwitch()" :isActive="server.auto" /> -->
-                    <!-- <HandleButton title="Dashboard" v-if="server.server" :disabled="!server.server"
-                        @click="goToDashboard()" /> -->
+                    <HandleButton title="Dashboard" v-if="server.server" :disabled="!server.server"
+                        @click="goToDashboard()" />
                 </div>
             </div>
         </div>
@@ -64,6 +64,13 @@ const changeMode = () => {
         return
     }
     mode.removeMode()
+}
+
+const goToDashboard = () => {
+    if (!server.server) {
+        return
+    }
+    router.push('/server/login')
 }
 
 </script>

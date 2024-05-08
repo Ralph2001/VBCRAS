@@ -1,6 +1,5 @@
 <template>
-    <div class="flex flex-col h-full md:justify-center items-center  bg-gray-50 relative">
-
+    <div class="flex flex-col h-full justify-center items-center  bg-gray-50 relative">
 
         <img src="../../assets/logo.png" class="h-20 mt-5 mb-5" alt="">
         <p class="text-lg text-gray-900 font-medium uppercase">Vital Bridge Civil Registry and Archive System</p>
@@ -24,13 +23,13 @@
                         class="font-medium">Error!</span> {{ v$.password.$errors[0].$message }}</p>
             </InputField>
 
-            <div class="ml-auto flex items-end w-[20rem] justify-between">
-                <router-link to="/client/signup" class="text-gray-900 border-black h-6 hover:border-b-2">
+            <div class="ml-auto flex items-center w-[20rem] justify-between">
+                <router-link to="/client/signup" class="text-gray-900 border-black h-6 hover:text-blue-500">
                     Create an Account
                 </router-link>
 
                 <button type="button" @click="login()"
-                    class="text-white bg-blue-700 hover:bg-blue-800 flex items-center active:scale-95 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    class="text-white bg-blue-700 hover:bg-blue-800 flex items-center active:scale-95 font-medium rounded-sm text-sm px-4 py-2 me-2  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                     <svg v-if="loader" aria-hidden="true" role="status"
                         class="inline w-4 h-4 me-2 text-white animate-spin" viewBox="0 0 100 101" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -73,15 +72,12 @@ onMounted(() => {
     auth.error = null
 })
 
-
-
 import { useHostStore } from '../../stores/connection'
 import Alert from "../../components/Alert.vue";
 
 const disconnect = () => {
     con.removeConnection()
 }
-
 
 
 const formData = reactive({
@@ -103,13 +99,14 @@ const login = async () => {
     if (v$.value.$error) {
         return;
     }
-
+    loader.value = true
     const username = formData.username;
     const password = formData.password;
 
     try {
         const login = auth.login(username, password)
         if (login) {
+            loader.value = false
         }
         else {
             console.log('error hays')

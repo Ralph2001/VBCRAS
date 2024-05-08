@@ -20,8 +20,9 @@
             <div class="mt-1 flex items-end w-[20rem] justify-between">
                 <button type="button" @click="login()"
                     class="text-white ml-auto bg-blue-700 hover:bg-blue-800 flex items-center active:scale-95 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                    <svg v-if="loader" aria-hidden="true" role="status" class="inline w-4 h-4 me-2 text-white animate-spin"
-                        viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg v-if="loader" aria-hidden="true" role="status"
+                        class="inline w-4 h-4 me-2 text-white animate-spin" viewBox="0 0 100 101" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
                             fill="#E5E7EB" />
@@ -31,13 +32,30 @@
                     </svg>
                     Enter
                 </button>
-
             </div>
-            <KillSwitch @click="disconnect()">
-                <template #icon>
-                    <font-awesome-icon icon="fa-solid fa-arrow-rotate-left" />
-                </template>
-            </KillSwitch>
+
+
+            <div v-if="showrunning"
+                class="absolute bottom-[3rem] bg-white z-[9999999] right-[4rem] rounded-md shadow-md  h-[10rem] w-[20rem] ">
+                <div class="p-4 flex flex-col gap-1  justify-end h-full border">
+                    <p class="text-lg font-base tracking-wider font-mono">Server Currently Running</p>
+                    <p class="text-2xl font-medium">{{ server.serverAddress }}</p>
+                    <p class="text-xs font-base tracking-wider font-mono mt-3">Click to turn off server</p>
+
+                    <div class=" opacity-45">
+                        <Wave />
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="fixed bottom-0 right-0" @mouseover="showServerRunning" @mouseleave="hideServerRunning">
+                <KillSwitch @click="turnoffServer()">
+                    <template #icon>
+                        <font-awesome-icon icon="fa-solid fa-power-off" />
+                    </template>
+                </KillSwitch>
+            </div>
         </div>
     </div>
 </template>
@@ -47,26 +65,35 @@ import { useRouter } from "vue-router";
 import InputField from '../components/client/InputField.vue'
 import { ref, reactive, computed, onMounted } from "vue";
 import { useVuelidate } from '@vuelidate/core'
+import { useServerStore } from "../stores/server";
 import { required } from '@vuelidate/validators'
 import { useServerAuthStore } from '../stores/ServerAuth'
 import KillSwitch from "../components/client/KillSwitch.vue";
 import { useHostStore } from '../stores/connection'
+import Wave from "../components/Wave.vue";
 const con = useHostStore();
 const router = useRouter();
 const loader = ref(false)
-
-
+const showrunning = ref(false)
+const server = useServerStore()
 const auth = useServerAuthStore()
+
 onMounted(() => {
     auth.error = null
 })
 
-
-
-const disconnect = () => {
-    con.removeConnection()
+const showServerRunning = () => {
+    showrunning.value = true
+}
+const hideServerRunning = () => {
+    showrunning.value = false
 }
 
+const turnoffServer = async () => {
+    const server_off = await server.serverSwitch()
+    router.push('/mode/server')
+
+}
 
 
 const formData = reactive({

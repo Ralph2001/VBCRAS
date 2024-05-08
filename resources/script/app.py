@@ -129,6 +129,18 @@ class PetitionSupportDocument(db.Model):
     document = db.Column(db.Integer)
 
 
+class RecordData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String, nullable=False)
+    registry_number = db.Column(db.String, nullable=False)
+    document_owner = db.Column(db.String, nullable=False)
+    document_spouse = db.Column(db.String, nullable=True)
+    date_of = db.Column(db.String, nullable=False)
+    date_of_registration = db.Column(db.String, nullable=False)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(400), unique=True, nullable=False)
@@ -352,6 +364,68 @@ def signup():
         return jsonify({"error": "Database integrity error: " + str(e)}), 409
 
     return jsonify({"status": "success"}), 201
+
+
+# Record Data
+@app.route("/records", methods=["GET", "POST"])
+@jwt_required()
+def records():
+    records = db.session.execute(
+        db.select(RecordData).order_by(desc(RecordData.id))
+    ).scalars()
+    record_data = []
+    for record in records:
+        mapped_record = {
+            column.key: getattr(record, column.key)
+            for column in class_mapper(RecordData).columns
+        }
+        record_data.append(mapped_record)
+
+    return jsonify(
+        {
+            "message": "success",
+            "record_data": record_data,
+        }
+    )
+
+
+@app.route("/records/add", methods=["POST"])
+@jwt_required()
+def add_records():
+    try:
+        data = request.get_json()
+        records = RecordData(
+            
+        type = data["type"],
+        registry_number = data["registry_number"],
+        document_owner = data["document_owner"],
+        document_spouse = data["document_spouse"],
+        date_of = data["date_of"],
+        date_of_registration = data["date_of_registration"],
+        
+        )
+        existing_document = RecordData.query.filter_by(
+            registry_number=data["registry_number"]
+        ).first()
+        if existing_document:
+            return (
+                jsonify(
+                    {
+                        "message": f"Data already exists: {data['name']}",
+                        "status": "duplicate",
+                    }
+                ),
+                409,
+            )
+        db.session.add(records)
+        db.session.commit()
+
+        return (
+            jsonify({"message": data}),
+            201,
+        )
+    except Exception as e:
+        return jsonify({"message": "Something went wrong.", "status": "error"}), 500
 
 
 # Petition Records
@@ -676,4 +750,4 @@ def remove_scanned(id, device_used_to_delete):
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, handle_sigterm)
     CORS(app)
-    app.run(host="0.0.0.0", port=1216, debug=True)
+    app.run(host="0.0.0.0", port=1216)

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col h-full md:justify-center items-center bg-gray-50 relative">
+    <div class="flex flex-col h-full justify-center items-center bg-[#FFFFFF] relative overflow-y-scroll">
         <img src="../../assets/logo.png" class="h-20 mb-5 mt-5" alt="">
         <p class="text-2xl text-gray-900 font-medium ">Create an Account</p>
         <div class="w-[15rem] mb-5 mt-5">
@@ -26,28 +26,27 @@
                 <p v-if="v$.confirmPassword.$error" class="mt-2 text-sm text-red-600 dark:text-red-500"><span
                         class="font-medium">Error!</span> {{ v$.confirmPassword.$errors[0].$message }}</p>
             </InputField>
-            <!-- <InputField label="Position" type="text" v-model="formData.position" :error="v$.position.$error"
-                @keyup.enter="login()">
-                <p v-if="v$.position.$error" class="mt-2 text-sm text-red-600 dark:text-red-500"><span
-                        class="font-medium">Error!</span> {{ v$.position.$errors[0].$message }}</p>
-            </InputField> -->
+
 
             <div class="flex flex-col w-[18rem]">
                 <label for="countries" class="block  text-sm font-medium text-gray-900 dark:text-white">Position</label>
                 <select id="countries" v-model="formData.position"
-                    class="bg-white border border-gray-300 text-gray-900 text-sm font-bold rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    :class="{ 'border-red-400 focus:ring-red-500 focus:border-red-500': v$.position.$error, 'focus:ring-blue-500 focus:border-blue-500': !v$.position.$error }"
+                    class="bg-white mt-2 border border-gray-300 text-gray-900 text-sm font-bold rounded-sm  block w-full p-2.5 focus:outline-none focus:ring-0">
                     <option selected disabled></option>
                     <option v-for="position in positions" :key="position" :value="position">{{ position }}</option>
                 </select>
+                <p v-if="v$.position.$error" class="mt-1 text-sm text-red-600 dark:text-red-500"><span
+                        class="font-medium">Error!</span> {{ v$.position.$errors[0].$message }}</p>
             </div>
 
-            <div class="ml-auto flex items-end w-[20rem] justify-between mt-10">
-                <router-link to="/" class="text-gray-900 border-black h-6 hover:border-b-2">
-                    Already an Account
+            <div class="ml-auto flex items-center w-[20rem] justify-between mt-10">
+                <router-link to="/" class="text-gray-900 border-black h-6 hover:text-blue-500">
+                    Already have an Account
                 </router-link>
 
                 <button type="button" @click="login()"
-                    class="text-white bg-blue-700 hover:bg-blue-800 flex items-center active:scale-95 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    class="text-white bg-blue-700 hover:bg-blue-800 flex items-center active:scale-95 font-medium rounded-sm text-sm px-4 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                     <svg v-if="loader" aria-hidden="true" role="status"
                         class="inline w-4 h-4 me-2 text-white animate-spin" viewBox="0 0 100 101" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -63,8 +62,14 @@
 
             </div>
         </div>
-        <KillSwitch @click="disconnect()" />
 
+        <div class="fixed bottom-0 right-0 bg-blue-200 z-50 border">
+            <KillSwitch @click="disconnect()">
+                <template #icon>
+                    <font-awesome-icon icon="fa-solid fa-power-off" />
+                </template>
+            </KillSwitch>
+        </div>
     </div>
 </template>
 
@@ -75,7 +80,7 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useVuelidate } from '@vuelidate/core'
 import { required, sameAs } from '@vuelidate/validators'
 import { AuthStore } from '../../stores/clientAuth'
-import KillSwitch from "../../components/client/KillSwitch.vue";
+
 
 const con = useHostStore();
 const router = useRouter();
@@ -83,6 +88,7 @@ const loader = ref(false)
 
 
 import { useHostStore } from '../../stores/connection'
+import KillSwitch from "../../components/client/KillSwitch.vue";
 
 const disconnect = () => {
     con.removeConnection()
@@ -130,10 +136,11 @@ const login = async () => {
     const password = formData.password;
     const position = formData.position;
 
-
+    loader.value = true
     try {
         const signUp = auth.signUp(username, password, position)
         if (signUp) {
+            loader.value = false
         }
         else {
             console.log('error hays')

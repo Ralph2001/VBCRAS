@@ -1,36 +1,22 @@
 <template>
   <div class="h-full relative">
     <Sidebar header="Connect to Server" />
-    <div
-      class="flex flex-col h-full justify-center items-center p-4 md:ml-[50%] lg:ml-[30%] relative"
-    >
-      <Transition
-        enter-active-class="animate__animated animate__fadeInDown"
-        leave-active-class="animate__animated animate__fadeOutUp"
-      >
+    <div class="flex flex-col h-full justify-center items-center p-4 md:ml-[50%] lg:ml-[30%] relative">
+      <Transition enter-active-class="animate__animated animate__fadeInDown"
+        leave-active-class="animate__animated animate__fadeOutUp">
         <Alert v-if="error" message="Error: Unable to connect to host." error />
       </Transition>
       <div class="mt-auto flex items-center flex-col gap-2 relative h-20">
-        <HostInput
-          label="Host Address"
-          v-model="formData.hostAddress"
-          :error="v$.hostAddress.$error"
-          @keyup.enter="connectToHost()"
-          :autofocus="true"
-        >
-          <p
-            v-if="v$.hostAddress.$error"
-            class="mt-2 text-sm text-red-600 dark:text-red-500"
-          >
+        <HostInput label="Host Address" v-model="formData.hostAddress" :error="v$.hostAddress.$error"
+          @keyup.enter="connectToHost()" :autofocus="true">
+          <p v-if="v$.hostAddress.$error" class="mt-2 text-sm text-red-600 dark:text-red-500">
             <span class="font-medium">Error!</span>
             {{ v$.hostAddress.$errors[0].$message }}
           </p>
         </HostInput>
-        <button
-          :class="{ 'animate__animated animate__bounce animate__repeat-3': error }"
+        <button :class="{ 'animate__animated animate__bounce animate__repeat-3': error }"
           class="rounded-full text-gray-500 font-semibold text-sm p-2 absolute top-[30px] right-[-30px]"
-          @click="infoBtn"
-        >
+          @click="infoBtn">
           ?
         </button>
         <InfoMessage v-if="info" />
@@ -39,12 +25,7 @@
         <HandleButton title="Change Mode" @click="changeMode()" />
         <div class="ml-auto flex flex-row gap-3">
           <!-- <HandleButton title="Auto Connect" /> -->
-          <HandleButton
-            :title="connectText"
-            @click="connectToHost()"
-            :isLoading="loading"
-            :isDisabled="isDisabled"
-          />
+          <HandleButton :title="connectText" @click="connectToHost()" :isLoading="loading" :isDisabled="isDisabled" />
         </div>
       </div>
     </div>

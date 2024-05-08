@@ -8,13 +8,13 @@ import { generate_form } from '../documents/forms/createForm'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
-
 const { dialog } = require('electron')
+
 const os = require('os')
-
 const username = os.userInfo().username
-
+const fs = require('fs-extra')
 var interfaces = os.networkInterfaces()
+
 var addresses = []
 for (var k in interfaces) {
     for (var k2 in interfaces[k]) {
@@ -25,8 +25,6 @@ for (var k in interfaces) {
     }
 }
 
-const fs = require('fs-extra')
-
 let dialogOpen = false
 
 let pythonProcess = null
@@ -36,7 +34,7 @@ async function startServer() {
 
         pythonProcess = spawn(
             'python',
-            [join(__dirname, '../../resources/script/main.py')],
+            [join(__dirname, '../../resources/script/app.py')],
             {}
         )
 
@@ -59,14 +57,6 @@ async function startServer() {
     }
 }
 
-async function convert() {
-    try {
-        execFile(join(__dirname, '../../resources/generated/convert_docx.exe'))
-        return true
-    } catch (error) {
-        console.log('Error')
-    }
-}
 
 // Form 1, 2, 3 IpcMain
 ipcMain.handle('createForm', async (event, formData) => {
@@ -247,15 +237,6 @@ ipcMain.handle('get-user', async (event) => {
     return username
 })
 
-ipcMain.handle('convert-files', async (event) => {
-    try {
-        const success = await convert()
-        return true
-    } catch (error) {
-        console.error('Error handling start-server request:', error)
-        return false
-    }
-})
 
 //Main Window
 function mainWindow() {

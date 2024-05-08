@@ -18,7 +18,8 @@
             <div class="flex flex-col items-center sm:px-6 md:px-4 h-max  w-full gap-4 relative ">
                 <div class="flex flex-row w-full justify-center " ref="isDocumentChangerVisible">
                     <Box title="Document" width="w-max">
-                        <div class="grid grid-cols-2 px-2 gap-2" ref="documentChanger" tabindex="-1">
+                        <div class="grid sm:grid-cols-1 md:lg:grid-cols-2  px-2 gap-2" ref="documentChanger"
+                            tabindex="-1">
                             <Select skip label="Type" :options="type" v-model="formData.type" :readonly="isSubmitted"
                                 :error="v$.type.$error" />
                             <Select skip label="Document Type" :options="document" v-model="formData.document"
@@ -41,7 +42,7 @@
                 </Transition>
 
                 <div class="flex flex-col p-2 w-full mt-2 gap-3" v-if="formData.type === 'Form 1A'">
-                    <div class="grid grid-cols-2 gap-2 w-full">
+                    <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-2 w-full">
                         <Input label="Book Number" v-model="formData.book_number" :readonly="isSubmitted"
                             :error="v$.book_number.$error" />
                         <Input label="Page Number" v-model="formData.page_number" :readonly="isSubmitted"
@@ -129,7 +130,126 @@
             </template>
         </Modal>
 
+        <Modal medium label="Create a new Document" v-if="formTwo">
+            <template v-slot:header>
+                <ModalCloseButton @click="closeModal" />
+            </template>
+            <div class="flex flex-col  sm:px-6 md:px-4 h-max  w-full gap-4 relative ">
+                <div class="h-full flex flex-col p-10">
+                    <p class="px-9 ">TO WHOM IT MAY CONCERN:</p>
+                    <div class="px-10 mt-5">
+                        <p class=" relative text-pretty  tracking-widest indent-8">We certify that among others, the
+                            following
+                            facts of
+                            death appear in our
+                            Register of Deaths on page
+                        __________ of book number _________.</p>
+                    </div>
 
+                    <div class="h-full flex flex-col sm:px-[2rem] md:lg:px-[5rem] mt-10 gap-2 ">
+                        <div class="grid grid-cols-2">
+                            <p>Registry Number</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Date of Registration</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Name of Deceased</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Sex</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Age</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Civil Status</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Citizenship</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Date of Death</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Place of Death</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <p>Cause of Death</p>
+                            <div class="flex flex-row items-center gap-1">
+                                :<input type="text" id="first_name"
+                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-center mt-10 relative text-nowrap">
+                        This certification is issued to <div class="px-2"><input type="text" id="first_name"
+                                class="bg-gray-50 border font-semibold w-[15rem] border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="" required /></div> upon his/her request.
+                    </div>
+
+                </div>
+
+            </div>
+            <template v-slot:footer>
+                <div class="h-full flex items-center justify-center w-full">
+                    <button type="button" @click="!isSubmitted ? submitForm() : openFile(filepath)"
+                        :class="!isSubmitted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-600'"
+                        class="py-2 px-4 tracking-wide ml-auto flex items-center text-sm font-medium text-white   rounded  active:scale-95 transition-all  shadow-sm hover:text-white focus:z-10 ">
+                        <Loading v-if="isLoading" />
+
+                        {{ !isSubmitted ? 'Submit' : 'Open File' }}
+                    </button>
+                </div>
+            </template>
+        </Modal>
 
     </div>
 </template>
@@ -360,7 +480,9 @@ function modalOpener(e) {
         formOne.value = true
     }
     else if (e === 'Form 2 (Death)') {
+        formOne.value = false
         formTwo.value = true
+        formThree.value = false
     }
     else if (e === 'Form 3 (Marriage)') {
         formThree.value = true
@@ -378,3 +500,5 @@ function focusDocumentChanger() {
 }
 
 </script>
+
+<style></style>
