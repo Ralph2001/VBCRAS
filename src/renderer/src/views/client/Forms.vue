@@ -135,104 +135,157 @@
                 <ModalCloseButton @click="closeModal" />
             </template>
             <div class="flex flex-col  sm:px-6 md:px-4 h-max  w-full gap-4 relative ">
-                <div class="h-full flex flex-col p-10">
-                    <p class="px-9 ">TO WHOM IT MAY CONCERN:</p>
-                    <div class="px-10 mt-5">
-                        <p class=" relative text-pretty  tracking-widest indent-8">We certify that among others, the
-                            following
-                            facts of
-                            death appear in our
-                            Register of Deaths on page
-                        __________ of book number _________.</p>
+                <div class="h-full flex flex-col px-10 py-4">
+                    <div
+                        class="w-full grid grid-cols-3 mb-10  rounded items-center justify-evenly border shadow-sm font-medium">
+                        <BtnBorderless label="Form 2A" @click="toggleForm('2A')" :class="{
+                            'bg-gray-700 text-white hover:bg-gray-800 shadow-2xl transition-all': selectedForm === '2A',
+                            'hover:bg-gray-200': selectedForm !== '2A'
+                        }" />
+                        <BtnBorderless label="Form 2B" @click="toggleForm('2B')" :class="{
+                            'bg-gray-700 text-white hover:bg-gray-800 shadow-2xl transition-all': selectedForm === '2B',
+                            'hover:bg-gray-200': selectedForm !== '2B'
+                        }" />
+                        <BtnBorderless label="Form 2C" @click="toggleForm('2C')" :class="{
+                            'bg-gray-700 text-white hover:bg-gray-800 shadow-2xl transition-all': selectedForm === '2C',
+                            'hover:bg-gray-200': selectedForm !== '2C'
+                        }" />
                     </div>
 
-                    <div class="h-full flex flex-col sm:px-[2rem] md:lg:px-[5rem] mt-10 gap-2 ">
-                        <div class="grid grid-cols-2">
-                            <p>Registry Number</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
+                    <div class="flex items-center pl-10" v-if="selectedForm === '2A'">
+                        <input id="default-checkbox" type="checkbox" value=""
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="default-checkbox"
+                            class="ms-2 text-sm font-base  text-gray-900 dark:text-gray-300">With
+                            Authentication (Abroad)</label>
+                    </div>
+                    <div class="flex items-center justify-end">
+                        <input type="text" id="first_name"
+                            class="bg-white border 15rem] items-center text-center font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500   px-2 py-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="" required />
+                    </div>
+                    <p class="px-9 italic font-semibold font-serif">TO WHOM IT MAY CONCERN:</p>
+
+
+                    <div v-if="selectedForm === '2A'">
+                        <div class="px-10 mt-5">
+                            <p class=" relative text-pretty  tracking-widest indent-8 text-gray-900">We certify that
+                                among
+                                others,
+                                the
+                                following
+                                facts of
+                                death appear in our
+                                Register of Deaths on page
+                                <InputNoLabel width="6rem" />
+                                of book number
+                                <InputNoLabel width="6rem" /> .
+                            </p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p>Date of Registration</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
+
+                        <div class="h-full flex flex-col sm:px-[2rem] md:lg:px-[5rem] mt-10 gap-2 ">
+                            <InputforForm label="Registry Number" />
+                            <InputforForm label="Date of Registration" />
+                            <InputforForm label="Name of Deceased" />
+                            <InputforForm label="Sex" />
+                            <InputforForm label="Age" />
+                            <InputforForm label="Civil Status" />
+                            <InputforForm label="Citizenship" />
+                            <InputforForm label="Date of Death" />
+                            <InputforForm label="Place of Death" />
+                            <InputforForm label="Cause of Death" />
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p>Name of Deceased</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
+                    </div>
+
+                    <div v-if="selectedForm === '2B'">
+                        <div class="mt-10 px-10">
+                            <p class="indent-8 text-pretty tracking-wider text-justify">We certify that this office has
+                                no
+                                record of death of
+                                <InputNoLabel width="10rem" /> who
+                                is
+                                alleged
+                                to have died on
+                                <InputNoLabel width="10rem" />. in this municipality. Hence, we cannot issue, as
+                                requested, a true
+                                copy of his/her Certificate of Death or transcription from the Register of Deaths.
+                            </p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p>Sex</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
+
+                        <div class="mt-10 px-10 ">
+                            <p class="indent-8 text-pretty tracking-wider text-justify"> We also certify that the
+                                records of
+                                deaths for the year
+                                <InputNoLabel width="6rem" /> are
+                                still
+                                intact in the
+                                archives of
+                                this office.
+                            </p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p>Age</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
+                    </div>
+
+                    <div v-if="selectedForm === '2C'">
+                        <div class="mt-10 px-10">
+                            <p class="indent-8 text-pretty tracking-wider text-justify"> We certify that the records of
+                                deaths
+                                filed in the archives of this office include those, which were registered from
+                                <InputNoLabel width="6rem" /> to
+                                present.
+                                However, the records of deaths during period
+                                <InputNoLabel width="6rem" /> to
+                                <InputNoLabel width="6rem" /> were totally destroyed by
+                                <InputNoLabel width="20rem" />
+                                Hence, we cannot issue as requested, a true transcription from the Register of Death or
+                                true
+                                copy of the Certification of Death of
+                                <InputNoLabel width="15rem" /> who is alleged to have died on
+                                <InputNoLabel width="10rem" /> in this municipality.
+                            </p>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <p>Civil Status</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <p>Citizenship</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <p>Date of Death</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <p>Place of Death</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2">
-                            <p>Cause of Death</p>
-                            <div class="flex flex-row items-center gap-1">
-                                :<input type="text" id="first_name"
-                                    class="bg-gray-50 border font-semibold border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="" required />
-                            </div>
+
+                        <div class="mt-10 px-10 flex flex-col gap-2 w-full opacity-50">
+                            <div class="calc(100%-50px)]  ml-auto h-[1rem] bg-gray-200 rounded-lg "></div>
+                            <div class="w-full h-[1rem] bg-gray-200 rounded-lg "></div>
+                            <div class="w-full h-[1rem] bg-gray-200 rounded-lg "></div>
+                            <div class="calc(100%-400px)] h-[1rem] bg-gray-200 rounded-lg "></div>
+
+                            <!-- <p class="indent-8 text-pretty tracking-wider text-justify ">We also certify that for every
+                                registered death, this office submits a copy of the Certificate of Death of the Office
+                                of the
+                                Civil Registrar General, Philippine Statistics Authority (PSA), East Avenue, Diliman,
+                                Quezon
+                                City, Metro Manila. In view of this, the interested party is hereby advised to make
+                                further
+                                verification in the archives of that office.</p> -->
                         </div>
                     </div>
 
                     <div class="flex items-center justify-center mt-10 relative text-nowrap">
-                        This certification is issued to <div class="px-2"><input type="text" id="first_name"
-                                class="bg-gray-50 border font-semibold w-[15rem] border-gray-200 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="" required /></div> upon his/her request.
+                        This certification is issued to <div class="px-2">
+                            <InputNoLabel width="15rem" />
+                        </div> upon his/her request.
+                    </div>
+
+                    <div
+                        class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-20 relative text-nowrap gap-2  px-2">
+                        <div class="flex flex-col items-start sm:gap-2 md:lg:gap-10">
+                            <p class="italic">Verified by:</p>
+                            <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
+                                <InputNoLabel width="20rem" />
+                                <InputNoLabel width="20rem" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <InputNoLabel width="20rem" />
+                            <p class="italic">Municipal Civil Registrar</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-start w-full justify-end mt-10 relative text-nowrap gap-2   px-2">
+                        <InputforForm label="Amount Paid" />
+                        <InputforForm label="O.R. Number" />
+                        <InputforForm label="Date Paid" />
                     </div>
 
                 </div>
@@ -268,7 +321,9 @@ import { useElementVisibility } from '@vueuse/core'
 import Loading from '../../components/essentials/others/Loading.vue'
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf } from "@vuelidate/validators";
-
+import BtnBorderless from '../../components/forms/BtnBorderless.vue'
+import InputNoLabel from '../../components/forms/InputNoLabel.vue'
+import InputforForm from '../../components/forms/InputforForm.vue'
 
 const Modal = defineAsyncComponent(() =>
     import("../../components/client/modal/Modal.vue")
@@ -279,6 +334,17 @@ const formThree = ref(false)
 const isLoading = ref(false)
 const isSubmitted = ref(false)
 const filepath = ref('')
+
+
+
+
+
+const selectedForm = ref('2A')
+
+function toggleForm(formId) {
+    selectedForm.value = (selectedForm.value === formId) ? selectedForm.value : formId;
+}
+
 
 const documentChanger = ref()
 const isDocumentChangerVisible = ref(null)

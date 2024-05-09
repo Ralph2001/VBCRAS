@@ -61,7 +61,7 @@
           </button>
         </template>
 
-        <div class="flex flex-col gap-2 py-2">
+        <div class="flex flex-col gap-2 p-5">
           <p class="text-sm p-1 font-semibold antialiased mb-4">
             <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-2xl text-red-400 me-2" />
             {{ data_name }}
@@ -69,9 +69,9 @@
 
           <p class="text-sm font-bold">Type</p>
           <div class="flex flex-row justify-center items-center">
-            <div class="flex flex-row gap-1">
+            <div class="grid md:lg:grid-cols-5 sm:grid-cols-2  sm:gap-3 md:lg:gap-5 w-full">
               <div v-for="uri in type"
-                class="flex w-[7.5rem] items-center p-2 px-2 h-[3.5rem] rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200 transition-all">
+                class="flex sm:w-full md:lg:w-[7.5rem] items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200 transition-all">
                 <fwb-radio :label="uri" :value="uri" v-model="scannedData.type" name="typeBox" class="cursor-pointer" />
               </div>
             </div>

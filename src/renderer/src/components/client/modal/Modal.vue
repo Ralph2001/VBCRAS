@@ -34,7 +34,7 @@
         <div :class="{
           'h-[19rem]': titleCard,
           'h-[calc(100vh-180px)]': small || medium || large,
-        }" class="p-3 md:p-8 lg:p-5 overflow-y-scroll relative">
+        }" class=" overflow-y-scroll relative ">
           <slot> </slot>
         </div>
 
