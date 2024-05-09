@@ -1,5 +1,5 @@
 {
-  "name": "Vital Bridge Civil Registry and Archive System (VBCRAS)",
+  "name": "Vital Bridge Civil Registry and ArchiveSystem(VBCRAS)",
   "version": "1.0.0",
   "description": "Vital Bridge suggests a connection or link that is essenstials or crucial. In the context of a birth, death, and marriage record system, it could signify the pivotal role of the system in connecting and managing vital life events, serving as a bridge between individuals and official records. The Term vital emphasizes the importance or significance of the information being bridged, while bridge implies the facilitation or connection between different components or entities",
   "main": "./out/main/index.js",
@@ -10,7 +10,6 @@
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
-    "start-all": "npm run dev & python resources/script/app.py",
     "build": "electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:win": "npm run build && electron-builder --win --config",
