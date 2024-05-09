@@ -31,7 +31,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///local.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=8)
 app.config["JWT_SECRET_KEY"] = "created_by_villanuevaralph2001@gmail.com"
-allowed_user_agent = "VitalBridgeCivilRegistryandArchiveSystem(VBCRAS)"
+allowed_user_agent = "vbcras"
 
 
 jwt = JWTManager(app)
