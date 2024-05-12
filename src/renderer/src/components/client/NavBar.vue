@@ -1,6 +1,7 @@
 <template>
   <div>
-    <nav tabindex="-1" class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+    <nav tabindex="-1"
+      class="bg-white text-sm font-sans tracking-tighter  border-gray-200 dark:bg-gray-900 dark:border-gray-700">
       <div tabindex="-1" class="w-full flex flex-wrap items-center justify-between mx-auto p-4 relative">
         <a tabindex="-1" href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
           <img tabindex="-1" src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" />
@@ -34,10 +35,8 @@
             <li>
               <router-link tabindex="-1" to="/client/cce"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
-                class="block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
-                CCE & CFN
-                <span class="text-[0.60rem] font-base tracking-tight">
-                  R.A. 9048 / R.A 10172</span>
+                class="  block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                Correction in Clerical Error & Change of First Name
               </router-link>
             </li>
             <li>
@@ -61,14 +60,7 @@
                 Scanned Documents
               </router-link>
             </li>
-            <!-- <li>
-                            <router-link to="/client/collections"
-                                active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
-                                class="block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
 
-                                Collections
-                            </router-link>
-                        </li> -->
             <li>
               <button tabindex="-1" id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar"
                 class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
@@ -126,10 +118,7 @@ const menu = ref(null);
 
 const dropdownmenu = () => {
   dropdown.value = !dropdown.value;
-  //   console.log("Clicked");
 };
-
-// onClickOutside(menu, (event) => (dropdown.value = false));
 
 const logout = () => {
   auth.UserLogout();

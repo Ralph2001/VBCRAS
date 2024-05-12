@@ -2,9 +2,9 @@
     <div class="flex flex-col relative justify-center w-full">
         <Header label="Data Records">
             <BtnDrop label="Create" @click="modalOpen" />
-            <ButtonIcon>
+            <!-- <ButtonIcon>
                 <font-awesome-icon icon="fa-solid fa-gear" />
-            </ButtonIcon>
+            </ButtonIcon> -->
         </Header>
 
         <div class="h-[calc(100vh-190px)] ">

@@ -12,8 +12,8 @@
     }" class="relative p-4 w-full">
       <div class="relative bg-white h-full overflow-y-auto rounded-lg shadow dark:bg-gray-700">
         <!-- Header -->
-        <div class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3 bg-[#FFFFFF]">
-          <h3 v-if="!titleCard" class="text-md tracking-wide font-semibold text-gray-900 dark:text-white">
+        <div class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3  ">
+          <h3 v-if="!titleCard" class="text-sm tracking-wide font-semibold text-gray-600 uppercase dark:text-white">
             {{ label }}
           </h3>
 
@@ -39,8 +39,8 @@
         </div>
 
         <!-- Footer -->
-        <div :class="{ 'border-t': !titleCard, ' h-0': titleCard }"
-          class="flex items-center justify-end p-2 md:p-3 rounded-b dark:border-gray-600">
+        <div :class="{ ' h-0': titleCard }"
+          class="flex z-50  border-t items-center justify-end p-2 shadow-md inset-20 rounded-b dark:border-gray-600">
           <slot name="footer"> </slot>
         </div>
       </div>

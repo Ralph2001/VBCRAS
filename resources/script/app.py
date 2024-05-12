@@ -34,7 +34,7 @@ app.config["JWT_SECRET_KEY"] = "created_by_villanuevaralph2001@gmail.com"
 allowed_user_agent = "vbcras"
 
 
-jwt = JWTManager(app)
+jwt = JWTManager(app)   
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 

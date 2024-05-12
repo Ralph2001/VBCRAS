@@ -3,7 +3,7 @@
         <p class="text-md font-semibold tracking-tight">
             {{ label }}
         </p>
-        <div class="relative flex flex-row gap-1 ml-auto">
+        <div class="relative flex flex-row gap-3 items-center ml-auto">
             <slot></slot>
         </div>
     </div>

@@ -4,9 +4,6 @@ export const useComputerStore = defineStore('computer', {
     state: () => ({
         desktop_name: '',
     }),
-    getters: {
-
-    },
     actions: {
         async getUserName() {
             try {
