@@ -6,16 +6,17 @@
             Manage
         </button>
 
-        <div class="h-auto flex flex-col items-start justify-center bg-white z-50 p-2 absolute top-[95%] right-0 border shadow-md w-auto"
+        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-auto"
             v-if="dropdown">
-            <button type="button" class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-[8rem]">Open
+            <button @click="openfolder(props.params.data.filepath)" type="button"
+                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Folder</button>
             <button type="button"
-                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-[8rem]">Details</button>
+                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Details</button>
             <button type="button"
-                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-[8rem]">ReGenerate</button>
-            <button type="button"
-                class=" flex items-start text-md font-medium hover:bg-red-400 hover:text-white px-5 w-[8rem]">Remove</button>
+                class=" flex flex-row justify-center items-center text-md font-medium hover:bg-gray-100 cursor-not-allowed bg-gray-200 text-gray-400 px-5 w-full">
+                <font-awesome-icon icon="fa-solid fa-rotate-right " class="me-2" /> <span>Generate Again</span>
+            </button>
         </div>
     </div>
 </template>
@@ -27,6 +28,19 @@ import { onClickOutside } from "@vueuse/core";
 const mainBtn = ref(null)
 onClickOutside(mainBtn, (event) => (dropdown.value = false));
 const dropdown = ref(false)
+
+const props = defineProps({
+    data: {
+        type: Object
+
+    }
+})
+
+const openfolder = async (filepath) => {
+    const open = await window.ClericalApi.OpenClerical(filepath)
+
+}
+
 </script>
 
 <style lang="scss" scoped></style>

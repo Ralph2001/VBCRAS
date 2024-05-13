@@ -2,13 +2,13 @@
   <Teleport to="body">
     <FinalityMessage v-if="finality" @close-modal="finality = false" :data="props.params" />
   </Teleport>
-  
+
   <div class="flex items-center h-full justify-center relative w-full" :class="{
     'bg-green-200': Approved,
     'bg-red-200': Disapproved,
     'bg-yellow-200': Impugned,
   }" ref="mainBtn">
-    <div class="flex flex-row" v-if="status === ''">
+    <div class="flex flex-row divide-x" v-if="status === ''">
       <button @click="ApprovedBtn" type="button"
         class="px-3 py-2 text-xs font-medium text-center text-white bg-green-500 hover:bg-green-600 focus:outline-none transition-all hover:shadow-md">
         Approve

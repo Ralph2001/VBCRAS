@@ -7,11 +7,11 @@
             </ButtonIcon> -->
         </Header>
 
-        <div class="h-[calc(100vh-190px)] ">
+        <div class="h-[calc(100vh-190px)] px-36">
             <TableGrid :data="records.records" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
-        <div tabindex="-1" v-if="isModalOpen"
+        <div v-if="isModalOpen"
             class="overflow-x-hidden h-[calc(100vh)] overflow-y-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
             aria-modal="true" role="dialog">
             <div class="relative p-4 w-full max-w-lg max-h-auto">
@@ -40,17 +40,17 @@
                                 v-model="formData.document_owner"
                                 @input="formData.document_owner = $event.target.value.toUpperCase()" />
 
-                            <Input label="Name of Wife" v-model.trim="formData.document_spouse"
-                                :error="v$.document_spouse.$params.prop"
+                            <Input label="Name of Wife" v-on:keyup.enter="submitForm()"
+                                v-model.trim="formData.document_spouse" :error="v$.document_spouse.$params.prop"
                                 @input="formData.document_spouse = $event.target.value.toUpperCase()"
                                 v-if="formData.type === 'Marriage'" />
 
-                            <Input :error="v$.date_of.$error" :label="formData.type === 'Birth' ? 'Date of Birth' :
+                            <Input :error="v$.date_of.$error" v-on:keyup.enter="submitForm()" :label="formData.type === 'Birth' ? 'Date of Birth' :
                                 formData.type === 'Death' ? 'Date of Death' :
                                     formData.type === 'Marriage' ? 'Date of Marriage' : ''"
                                 v-model="formData.date_of" />
-                            <Input :error="v$.date_of_registration.$error" label="Date of Registration"
-                                v-model="formData.date_of_registration" />
+                            <Input :error="v$.date_of_registration.$error" v-on:keyup.enter="submitForm()"
+                                label="Date of Registration" v-model="formData.date_of_registration" />
                         </div>
 
                     </div>
@@ -187,6 +187,13 @@ const colDefs = ref([
 
     },
     {
+        field: "type",
+        headerName: "Type",
+        flex: 1,
+        cellClass: "font-medium tracking-wider w-full text-gray-700",
+        filter: true,
+    },
+    {
         field: "document_owner",
         headerName: "Document Owner",
         flex: 1,
@@ -194,13 +201,6 @@ const colDefs = ref([
         filter: true,
     },
 
-    {
-        field: "date_of",
-        cellClass: "font-medium tracking-wider w-full text-gray-600 ",
-        headerName: "Date of Birth/Death/Marriage",
-        flex: 1,
-        filter: true,
-    },
     {
         field: "date_of_registration",
         cellClass: "font-medium tracking-wider w-full text-gray-600",
