@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png'
 import { generate } from '../documents/clerical_error'
 import { finality } from '../documents/finality'
 import { generate_form } from '../documents/forms/createForm'
+import { generate_records } from '../documents/records/generate_records'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
@@ -30,13 +31,15 @@ let dialogOpen = false
 let pythonProcess = null
 async function startServer() {
     try {
-        pythonProcess = execFile(join(__dirname, '../../resources/script/dist/app/app.exe'));
+        pythonProcess = execFile(
+            join(__dirname, '../../resources/script/dist/app/app.exe')
+        )
 
-            // pythonProcess = spawn(
-            //     'python',
-            //     [join(__dirname, '../../resources/script/app.py')],
-            //     {}
-            // )
+        // pythonProcess = spawn(
+        //     'python',
+        //     [join(__dirname, '../../resources/script/app.py')],
+        //     {}
+        // )
 
         pythonProcess.on('error', (error) => {
             console.error('Error starting Python process:', error)
@@ -57,6 +60,17 @@ async function startServer() {
     }
 }
 
+ipcMain.handle('GenerateRecords', async (event, formData) => {
+    try {
+        const generate_record = await generate_records(formData)
+        // if ((generate_records.success = true)) {
+        //     return true
+        // }
+        console.log(generate_record)
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 // Form 1, 2, 3 IpcMain
 ipcMain.handle('createForm', async (event, formData) => {
@@ -236,7 +250,6 @@ ipcMain.handle('open-file-folder', async (event, path) => {
 ipcMain.handle('get-user', async (event) => {
     return username
 })
-
 
 //Main Window
 function mainWindow() {

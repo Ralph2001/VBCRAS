@@ -14,7 +14,7 @@ import { onKeyStroke } from '@vueuse/core'
 onKeyStroke('Alt', (e) => {
   e.preventDefault()
 
-  console.log('Hi')
+  console.log('Hi') 
 })
 </script>
 

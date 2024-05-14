@@ -39,6 +39,7 @@
     "docx-to-pdf": "^1.1.0",
     "docxtemplater": "^3.46.2",
     "electron-updater": "^6.1.1",
+    "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "flowbite": "^2.3.0",
     "flowbite-vue": "^0.1.2",

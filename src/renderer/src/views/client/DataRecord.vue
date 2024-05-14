@@ -1,13 +1,24 @@
 <template>
-    <div class="flex flex-col relative justify-center w-full">
+    <div class="flex flex-col relative justify-center w-full relative">
+
+        <teleport to='body'>
+            <Transition enter-active-class="animate__animated animate__fadeInDown"
+                leave-active-class="animate__animated animate__fadeOutUp">
+                <Alert v-if="error" :message="error_message" error />
+            </Transition>
+        </teleport>
+
         <Header label="Data Records">
             <BtnDrop label="Create" @click="modalOpen" />
-            <!-- <ButtonIcon>
-                <font-awesome-icon icon="fa-solid fa-gear" />
-            </ButtonIcon> -->
         </Header>
+        <!-- <div class="flex items-center justify-end px-4">
+            <div class="text-sm h-5 flex w-max p-1 items-center rounded-2xl bg-blue-100 font-normal italic">Space + 1
+            </div>
+        </div> -->
 
-        <div class="h-[calc(100vh-190px)] px-36">
+        <div class="h-[calc(100vh-190px)] md:lg:px-36 ">
+            <button type="button" class="p-2 bg-white border text-gray-800 w-[10rem]" @click="generate()">
+                Generate</button>
             <TableGrid :data="records.records" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
@@ -22,14 +33,19 @@
                             <h3 class="text-lg tracking-wide font-semibold text-gray-800 dark:text-white">
                                 Create Record
                             </h3>
-                            <ModalCloseButton @click="isModalOpen = false" />
+                            <ModalCloseButton @click="modelClose" />
                         </div>
                     </div>
 
                     <!-- Main Body -->
                     <div class="p-3 md:p-8 lg:p-5 overflow-y-scroll relative flex flex-col gap-4">
                         <div class="flex w-full">
-                            <Select :options="items" label="Type" v-model="formData.type" />
+                            <!-- <Select :options="items" label="Type" v-model="formData.type" /> -->
+                            <div
+                                class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
+                                <ButtonBorderless v-for="type in FormTypes" :key="type" :label="`${type}`"
+                                    @click="toggleForm(`${type}`)" :isActive="formData.type === type" />
+                            </div>
                         </div>
                         <div class="flex flex-col gap-3">
                             <Input label="Registry Number" v-model="formData.registry_number"
@@ -41,16 +57,37 @@
                                 @input="formData.document_owner = $event.target.value.toUpperCase()" />
 
                             <Input label="Name of Wife" v-on:keyup.enter="submitForm()"
-                                v-model.trim="formData.document_spouse" :error="v$.document_spouse.$params.prop"
+                                v-model.trim="formData.document_spouse" :error="v$.document_spouse.$error"
                                 @input="formData.document_spouse = $event.target.value.toUpperCase()"
                                 v-if="formData.type === 'Marriage'" />
 
-                            <Input :error="v$.date_of.$error" v-on:keyup.enter="submitForm()" :label="formData.type === 'Birth' ? 'Date of Birth' :
-                                formData.type === 'Death' ? 'Date of Death' :
-                                    formData.type === 'Marriage' ? 'Date of Marriage' : ''"
-                                v-model="formData.date_of" />
-                            <Input :error="v$.date_of_registration.$error" v-on:keyup.enter="submitForm()"
-                                label="Date of Registration" v-model="formData.date_of_registration" />
+
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ formData.type === 'Birth' ? 'Date of Birth' :
+                                        formData.type === 'Death' ? 'Date of Death' :
+                                            formData.type === 'Marriage' ? 'Date of Marriage' : '' }}
+
+                                    <span v-if="v$.date_of.$error" class="text-red-600">*</span></label>
+                                <VueDatePicker :transitions="false" :input-class-name="date_of_class"
+                                    :class="`rounded-sm `" text-input auto-apply format="MM/dd/yyyy" autocomplete="on"
+                                    v-model="formData.date_of" :teleport="true" :model-value="date_of"
+                                    @update:model-value="handleDateOf" @cleared="formData.date_of = ''">
+                                </VueDatePicker>
+                            </div>
+
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    Date of Registration
+                                    <span v-if="v$.date_of_registration.$error" class="text-red-600">*</span></label>
+                                <VueDatePicker :transitions="false" :input-class-name="date_of_registration_class"
+                                    :class="`rounded-sm `" text-input auto-apply format="MM/dd/yyyy" autocomplete="on"
+                                    v-on:keyup.enter="submitForm()" :model-value="date_registration"
+                                    @update:model-value="handleDateRegistration" :teleport="true"
+                                    @cleared="formData.date_of_registration = ''">
+                                </VueDatePicker>
+
+                            </div>
                         </div>
 
                     </div>
@@ -80,7 +117,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue';
 import Button from '../../components/essentials/buttons/Button.vue';
 import ButtonIcon from '../../components/essentials/buttons/ButtonIcon.vue';
@@ -93,8 +130,47 @@ import { required, requiredIf } from "@vuelidate/validators";
 import { useRecords } from '../../stores/Records/main';
 import TableGrid from '../../components/TableGrid.vue';
 import RecordCell from '../../components/essentials/block/RecordCell.vue';
+import ButtonBorderless from '../../component/FormPageComponents/ButtonBorderless.vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+import { format } from "date-fns";
+import RemoveBtn from '../../component/DataRecordComponents/RemoveBtn.vue';
+import Alert from '../../components/Alert.vue'
+import { onKeyStroke } from '@vueuse/core'
+import { useMagicKeys } from '@vueuse/core';
 
-const records = useRecords()
+
+
+const error = ref(false)
+const error_message = ref()
+
+const { space, digit1, digit2, digit3, Numpad1, Numpad2, Numpad3 } = useMagicKeys();
+
+const date_registration = ref()
+const date_of = ref()
+
+
+watch([space, digit1, digit2, digit3, Numpad1, Numpad2, Numpad3], (values) => {
+    if (values[0]) {
+        if (values[1] || values[4]) {
+            modelClose()
+
+            modalOpen();
+            formData.type = 'Birth';
+        } else if (values[2] || values[5]) {
+            modelClose()
+            modalOpen();
+            formData.type = 'Death';
+        } else if (values[3] || values[6]) {
+            modelClose()
+            modalOpen();
+            formData.type = 'Marriage';
+        }
+    }
+
+}, { immediate: true });
+
+const records = useRecords()  
 const loader = ref(false)
 
 onMounted(() => {
@@ -107,35 +183,56 @@ const modalOpen = () => {
     isModalOpen.value = true
 }
 
-const items = ref([
-    'Birth',
-    'Death',
-    'Marriage'
-])
 
-const formData = reactive({
+function handleDateOf(modelData) {
+    if (!modelData) { return }
+
+    const date = new Date(modelData);
+    const formatted = format(date, "MM/dd/yyyy");
+    date_of.value = formatted
+    formData.date_of = formatted;
+}
+
+
+function handleDateRegistration(modelData) {
+    if (!modelData) { return }
+    const date = new Date(modelData);
+    const formatted = format(date, "MM/dd/yyyy");
+    date_registration.value = formatted
+    formData.date_of_registration = formatted;
+}
+
+
+
+const initialFormData = {
     type: 'Birth',
     registry_number: '',
     document_owner: '',
     document_spouse: '',
     date_of: '',
-    date_of_registration: ''
-})
+    date_of_registration: '',
+};
 
-const validate_spouse = computed(() => {
-    if (formData.type === 'Marriage' && formData.document_spouse === '' || formData.document_spouse === '' || formData.document_spouse == null) {
-        return true
-    }
-    return false
-});
+const formData = reactive({ ...initialFormData });
 
+
+
+const FormTypes = ref(['Birth',
+    'Death',
+    'Marriage'])
+
+const toggleForm = (val) => {
+    formData.type = val
+    v$.value.$reset()
+    resetForm()
+}
 
 const validate = computed(() => {
     return {
         type: { required },
         registry_number: { required },
         document_owner: { required },
-        document_spouse: requiredIf(validate_spouse),
+        document_spouse: { requiredIf: requiredIf(() => formData.type === 'Marriage') },
         date_of: { required },
         date_of_registration: { required },
     };
@@ -144,6 +241,40 @@ const validate = computed(() => {
 
 const v$ = useVuelidate(validate, formData);
 
+const resetForm = () => {
+    formData.registry_number = initialFormData.registry_number;
+    formData.document_owner = initialFormData.document_owner;
+    formData.document_spouse = initialFormData.document_spouse;
+    formData.date_of = initialFormData.date_of;
+    formData.date_of_registration = initialFormData.date_of_registration;
+
+    v$.value.$reset()
+    date_registration.value = ''
+    date_of.value = ''
+}
+const modelClose = () => {
+    isModalOpen.value = false
+    v$.value.$reset()
+    resetForm()
+
+}
+
+const date_of_registration_class = computed(() => {
+    const defaultClasses = 'p-2.5 px-8 bg-gray-50 border border-gray-300 hover:border-gray-300 text-gray-900 text-sm font-bold';
+    const errorClasses = v$.value.date_of_registration.$error
+        ? 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50 hover:border-red-400'
+        : '';
+
+    return `${defaultClasses} ${errorClasses}`;
+});
+const date_of_class = computed(() => {
+    const defaultClasses = 'p-2.5 px-8 bg-gray-50 border border-gray-300 hover:border-gray-300 text-gray-900 text-sm font-bold';
+    const errorClasses = v$.value.date_of.$error
+        ? 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50 hover:border-red-400'
+        : '';
+
+    return `${defaultClasses} ${errorClasses}`;
+});
 const submitForm = async () => {
     v$.value.$touch();
     if (v$.value.$error) {
@@ -160,19 +291,32 @@ const submitForm = async () => {
         date_of_registration: formData.date_of_registration,
     }
 
-
     const submit_data = await records.addRecord(data)
+
     if (submit_data.status) {
         isModalOpen.value = false
-        v$.value.$reset
+        resetForm()
         loader.value = false
+    }
+
+    else if (submit_data.status === false) {
+        loader.value = false
+        error.value = true
+        error_message.value = "Duplicate Registry Number"
+        setTimeout(() => {
+            error.value = false;
+        }, 2000);
     }
 }
 
+const generate = async () => {
+    const filepath = "Hi"
+    const open = await window.RecordsApi.GenerateRecords(filepath)
+}
 const cellClassRules = {
-    // "bg-green-200 border-0": params => params.data.type === "Birth",
-    // "bg-blue-200 border-0": params => params.data.type === "Death",
-    // "bg-red-200 border-0": params => params.data.type === "Marriage",
+    "bg-green-50 border-0": params => params.data.type === "Birth",
+    "bg-blue-50 border-0": params => params.data.type === "Death",
+    "bg-red-50 border-0": params => params.data.type === "Marriage",
 }
 const colDefs = ref([
     {
@@ -192,11 +336,13 @@ const colDefs = ref([
         flex: 1,
         cellClass: "font-medium tracking-wider w-full text-gray-700",
         filter: true,
+        pinned: "left",
+        lockPinned: true,
     },
     {
         field: "document_owner",
         headerName: "Document Owner",
-        flex: 1,
+        flex: 2,
         cellClass: "font-medium tracking-wider w-full text-gray-700",
         filter: true,
     },
@@ -204,10 +350,25 @@ const colDefs = ref([
     {
         field: "date_of_registration",
         cellClass: "font-medium tracking-wider w-full text-gray-600",
-
         headerName: "Date of Registration",
         flex: 1,
         filter: true,
+        pinned: "right",
+        lockPinned: true,
+
+    },
+    {
+
+        cellClass: "font-medium tracking-wider w-full text-gray-600 text-center",
+        headerClass: 'text-center w-full',
+        headerName: "Action",
+        flex: 1,
+        pinned: "right",
+        lockPinned: true,
+        filter: true,
+        cellRenderer: RemoveBtn,
+        cellStyle: { border: "none" },
+        cellStyle: { overflow: "visible", border: "none" },
     },
 
 

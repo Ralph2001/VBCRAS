@@ -63,7 +63,8 @@
 
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" :label="name_of">
                                 :
-                                <InputforForm width="100%" v-model="formData.name_of" :error="v$.name_of.$error" />
+                                <InputforForm bold @input="formData.name_of = $event.target.value.toUpperCase()"
+                                    width="100%" v-model="formData.name_of" :error="v$.name_of.$error" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Sex">
@@ -299,8 +300,8 @@
 
                     <div class="flex items-center justify-center mt-10 relative text-nowrap">
                         This certification is issued to <div class="px-2">
-                            <InputforForm width="15rem" middle v-model="formData.issued_to"
-                                :error="v$.issued_to.$error" />
+                            <InputforForm width="15rem" middle v-model="formData.issued_to" :error="v$.issued_to.$error"
+                                bold />
                         </div> upon his/her request.
                     </div>
 
@@ -310,13 +311,15 @@
                             <p class="italic">Verified by:</p>
                             <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
                                 <InputforForm width="20rem" bold middle v-model="formData.verified_by"
-                                    :error="v$.verified_by.$error" />
+                                    :error="v$.verified_by.$error"
+                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
                                 <InputforForm width="20rem" middle italic unbordered isTransparent
                                     v-model="formData.position" :error="v$.position.$error" />
                             </div>
                         </div>
                         <div class="flex flex-col items-center">
-                            <InputforForm middle width="20rem" bold v-model="formData.mcr" :error="v$.mcr.$error" />
+                            <InputforForm middle width="20rem" bold v-model="formData.mcr"
+                                @input="formData.mcr = $event.target.value.toUpperCase()" :error="v$.mcr.$error" />
                             <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
                         </div>
                     </div>

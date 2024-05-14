@@ -34,7 +34,7 @@ app.config["JWT_SECRET_KEY"] = "created_by_villanuevaralph2001@gmail.com"
 allowed_user_agent = "vbcras"
 
 
-jwt = JWTManager(app)   
+jwt = JWTManager(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -403,13 +403,13 @@ def add_records():
             date_of_registration=data["date_of_registration"],
         )
         existing_document = RecordData.query.filter_by(
-            registry_number=data["registry_number"]
+            registry_number=data["registry_number"], type=data["type"]
         ).first()
         if existing_document:
             return (
                 jsonify(
                     {
-                        "message": f"Data already exists: {data['name']}",
+                        "message": f"Data already exists: {data['registry_number']}",
                         "status": "duplicate",
                     }
                 ),
@@ -424,6 +424,24 @@ def add_records():
         )
     except Exception as e:
         return jsonify({"message": "Something went wrong.", "status": "error"}), 500
+
+
+@app.route("/records/delete/<int:id>", methods=["DELETE"])
+@jwt_required()
+def remove_record(id):
+    try:
+        record = RecordData.query.filter_by(id=id).first()
+
+        db.session.delete(record)
+        db.session.commit()
+
+        return (
+            jsonify({"message": "Deleted", "status": "Success"}),
+            201,
+        )
+
+    except NotFound:
+        return jsonify({"message": "Document not found", "status": "Error"}), 404
 
 
 # Petition Records
@@ -748,4 +766,4 @@ def remove_scanned(id, device_used_to_delete):
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, handle_sigterm)
     CORS(app)
-    app.run(host="0.0.0.0", port=1216, debug=False)
+    app.run(host="0.0.0.0", port=1216, debug=True)

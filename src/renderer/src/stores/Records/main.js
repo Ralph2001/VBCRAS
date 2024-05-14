@@ -29,12 +29,40 @@ export const useRecords = defineStore('records', {
             try {
                 const hostAdd = localStorage.getItem('host')
                 let tokenStr = localStorage.getItem('token')
-                await axios.post(`http://${hostAdd}:1216/records/add`, data, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${tokenStr}`,
-                    },
-                })
+                const add = await axios.post(
+                    `http://${hostAdd}:1216/records/add`,
+                    data,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`,
+                        },
+                    }
+                )
+
+                if (add.status == 201) {
+                    this.refresh()
+                    return { reason: null, status: true }
+                }
+            } catch (error) {
+                // console.log(error.response.data.status)
+                return { reason: error.response.data.status, status: false }
+            }
+        },
+        async removeRecord(id) {
+            try {
+                const data = id
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                await axios.delete(
+                    `http://${hostAdd}:1216/records/delete/${data}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`,
+                        },
+                    }
+                )
                 const status = true
                 this.refresh()
                 return { status }
