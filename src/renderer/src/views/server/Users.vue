@@ -10,9 +10,7 @@
         </div>
         <div class="grid grid-cols-2 w-full items-center mt-10">
             <div class="">
-                <!-- <input type="text"
-                    class="border rounded-md border-gray-300 py-2 px-3 w-[15rem] font-semibold placeholder:text-xs text-gray-800"
-                    placeholder="Search"> -->
+
             </div>
             <div class="flex flex-row items-center justify-end px-10 gap-2 p-2">
                 <button type="button"
@@ -22,9 +20,9 @@
             </div>
         </div>
 
-        <div class="flex flex-row flex-wrap gap-3 w-full  mt-20 items-center">
+        <div class="grid sm:grid-cols-2 md:lg:grid-cols-4 gap-4 items-center ">
             <div v-for="user in data.users" :key="user.id"
-                class="flex flex-row justify-between border active:scale-90 rounded-md h-32 items-center p-2 hover:shadow-md transition-all cursor-pointer"
+                class="flex flex-row justify-between border rounded-md h-32 items-center p-2 hover:shadow-md transition-all cursor-pointer"
                 @click="userCheck(user.id)">
                 <div class="grid grid-flow-col w-full  h-full">
                     <div class="flex items-center justify-center w-[80%]  ">

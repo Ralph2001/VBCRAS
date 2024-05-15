@@ -169,6 +169,45 @@ const router = createRouter({
                         return { name: 'server_login' }
                     },
                 },
+                {
+                    path: 'corrections',
+                    component: () => import('../views/server/Corrections.vue'),
+                    name: 'server_corrections',
+                    beforeEnter: async (to, from) => {
+                        const auth = useServerAuthStore()
+                        const authenticated = await auth.isServerAuthenticated()
+                        if (authenticated) {
+                            return true
+                        }
+                        return { name: 'server_login' }
+                    },
+                },
+                {
+                    path: 'forms',
+                    component: () => import('../views/server/Forms.vue'),
+                    name: 'server_forms',
+                    beforeEnter: async (to, from) => {
+                        const auth = useServerAuthStore()
+                        const authenticated = await auth.isServerAuthenticated()
+                        if (authenticated) {
+                            return true
+                        }
+                        return { name: 'server_login' }
+                    },
+                },
+                {
+                    path: 'datarecords',
+                    component: () => import('../views/server/DataRecords.vue'),
+                    name: 'server_records',
+                    beforeEnter: async (to, from) => {
+                        const auth = useServerAuthStore()
+                        const authenticated = await auth.isServerAuthenticated()
+                        if (authenticated) {
+                            return true
+                        }
+                        return { name: 'server_login' }
+                    },
+                },
             ],
         },
 

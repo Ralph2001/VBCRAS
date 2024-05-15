@@ -4,7 +4,7 @@
             <div class="grid grid-rows-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-4">
 
                 <div
-                    class="flex flex-col items-center p-2 bg-blue-50  justify-center border border-blue-100 hover:cursor-pointer hover:shadow-md h-32 rounded  dark:bg-gray-800">
+                    class="flex flex-col items-center p-2 bg-blue-50  justify-center border border-blue-300 hover:cursor-pointer hover:shadow-md h-32 rounded  dark:bg-gray-800">
                     <div class="mb-auto">
                         <p class="text-lg font-semibold leading-none text-gray-900">
                             Total Scanned Documents

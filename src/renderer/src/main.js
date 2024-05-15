@@ -7,8 +7,6 @@ import router from './router'
 import PrimeVue from 'primevue/config'
 import Lara from './assets/presets/lara'
 
-
-
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
 
@@ -55,8 +53,15 @@ import {
     faListCheck,
     faCircleInfo,
     faChevronUp,
+    faHouse,
+    faLandmarkDome,
+    faFilePen,
+    faFileLines
 } from '@fortawesome/free-solid-svg-icons'
 
+// import {
+
+// } from '@fortawesome/free-brands-svg-icons'
 /* add icons to the library */
 library.add(
     faTrash,
@@ -88,7 +93,11 @@ library.add(
     faLightbulb,
     faListCheck,
     faCircleInfo,
-    faChevronUp
+    faChevronUp,
+    faHouse,
+    faLandmarkDome,
+    faFilePen,
+    faFileLines
 )
 
 import './assets/index.css'

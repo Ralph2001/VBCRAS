@@ -31,15 +31,15 @@ let dialogOpen = false
 let pythonProcess = null
 async function startServer() {
     try {
-        pythonProcess = execFile(
-            join(__dirname, '../../resources/script/dist/app/app.exe')
-        )
-
-        // pythonProcess = spawn(
-        //     'python',
-        //     [join(__dirname, '../../resources/script/app.py')],
-        //     {}
+        // pythonProcess = execFile(
+        //     join(__dirname, '../../resources/script/dist/app/app.exe')
         // )
+
+        pythonProcess = spawn(
+            'python',
+            [join(__dirname, '../../resources/script/app.py')],
+            {}
+        )
 
         pythonProcess.on('error', (error) => {
             console.error('Error starting Python process:', error)
