@@ -1,12 +1,12 @@
 <template>
-    <div class="flex flex-col relative justify-center w-full">
+    <div class="flex flex-col relative justify-center w-full p-10">
         <Header label="Local Civil Registry Forms">
             <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
-            <!-- <ButtonIcon>
-                <font-awesome-icon icon="fa-solid fa-gear" />
-            </ButtonIcon> -->
+            <ButtonIcon @click="generate()">
+                Generate
+            </ButtonIcon>
         </Header>
-        <div class="h-[calc(100vh-170px)] px-5 relative flex flex-col items-center justify-center border rounded-sm ">
+        <div class="h-[calc(100vh-250px)] relative flex flex-col items-center justify-center border rounded-sm ">
             <p class="italic font-thin  font-mono">Table Here</p>
             <!-- <TableGrid :data="data" :dataColumns="colDefs" /> -->
         </div>
@@ -374,7 +374,10 @@ import InputLabel from '../../component/FormPageComponents/InputLabel.vue'
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 
-
+const generate = async() => {
+    const filelocation = 'Hi'
+    const open = await window.FormApi.createPdfForm(filelocation)
+}
 
 const isLoading = ref(false)
 

@@ -1,11 +1,12 @@
 <template>
-  <div class="flex flex-col h-full border rounded-lg relative">
+  <div class="flex flex-col h-full border rounded-lg relative justify-center ">
     <Transition enter-active-class="animate__animated animate__fadeInDown"
       leave-active-class="animate__animated animate__fadeOutUp">
       <Alert v-if="showAlert" message="Error: Unable to open the file." error />
     </Transition>
-    <div class="grid grid-cols-3 items-center justify-between px-3 py-3 bg-gray-50/50">
-      <p class="text-lg font-semibold ms-3">Scanned Documents</p>
+    <div
+      class="grid sm:grid-cols-1 gap-4 md:lg:grid-cols-3 items-center shadow-sm justify-between px-3 py-3 bg-gray-100 rounded-t-lg">
+      <p class="text-xl tracking-wider font-semibold ms-3 text-gray-800">Scanned Documents</p>
 
       <div class="relative">
         <font-awesome-icon icon="fa-solid fa-xmark" v-if="searchQuery" @click="searchQuery = ''"
@@ -20,12 +21,15 @@
           class="placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-full select-none"
           placeholder="Search" />
       </div>
+
+
       <div class="flex justify-end items-center me-5">
         <font-awesome-icon icon="fa-solid fa-circle-question"
           class="text-gray-400 hover:text-gray-600 cursor-pointer" />
       </div>
+
     </div>
-    <div class="flex flex-row justify-center h-16 items-center gap-2 mt-5 px-3 py-3 w-full">
+    <div class="flex mt-2  flex-row justify-center h-16 items-center gap-2  p-2 w-full">
       <button
         class="rounded-full hover:bg-gray-50 active:scale-95 px-2 disabled:text-gray-200 text-blue-400 hover:text-blue-500"
         :disabled="!toggleBack" @click="goBack()">
@@ -33,7 +37,7 @@
       </button>
 
       <nav
-        class="flex px-5 py-3 w-full text-white rounded-lg shadow-sm border border-gray-50 dark:bg-gray-800 dark:border-gray-700"
+        class="flex p-2 w-full bg-white text-white rounded-lg shadow-sm border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
         aria-label="Breadcrumb">
         <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
           <li class="inline-flex items-center" disabled>
@@ -93,6 +97,7 @@
           </li>
         </ol>
       </nav>
+
       <div class="flex flex-row p-1 items-center gap-2 justify-center"
         v-if="type && year && month && searchQuery == ''">
         <p class="text-xs font-mono text-gray-800">Files:</p>
@@ -102,7 +107,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col p-4 overflow-y-scroll relative h-full">
+    <div class="flex  flex-col p-4 overflow-y-scroll relative h-full">
       <ul class="w-full space-y-1 px-2 m list-none list-inside dark:text-gray-400">
         <li v-if="!type && searchQuery == ''" v-for="type in types" :key="type" @click="selectType(type)"
           class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">

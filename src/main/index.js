@@ -6,6 +6,7 @@ import { generate } from '../documents/clerical_error'
 import { finality } from '../documents/finality'
 import { generate_form } from '../documents/forms/createForm'
 import { generate_records } from '../documents/records/generate_records'
+import { createPdfForm } from '../documents/forms/createPdfForm'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
@@ -66,6 +67,17 @@ ipcMain.handle('GenerateRecords', async (event, formData) => {
         // if ((generate_records.success = true)) {
         //     return true
         // }
+        console.log(generate_record)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// Form IPCMAIN
+
+ipcMain.handle('createPdfForm', async (event, formData) => {
+    try {
+        const generate_record = await createPdfForm(formData)
         console.log(generate_record)
     } catch (error) {
         console.log(error)

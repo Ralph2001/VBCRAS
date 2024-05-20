@@ -37,6 +37,10 @@ contextBridge.exposeInMainWorld('FormApi', {
         const result = await ipcRenderer.invoke('createForm', formData)
         return { status: result.status, filepath: result.filepath }
     },
+    createPdfForm: async (formData) => {
+        const result = await ipcRenderer.invoke('createPdfForm', formData)
+        return true
+    },
 })
 
 contextBridge.exposeInMainWorld('RecordsApi', {

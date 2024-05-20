@@ -56,7 +56,8 @@ import {
     faHouse,
     faLandmarkDome,
     faFilePen,
-    faFileLines
+    faFileLines, 
+    faUser
 } from '@fortawesome/free-solid-svg-icons'
 
 // import {
@@ -97,7 +98,8 @@ library.add(
     faHouse,
     faLandmarkDome,
     faFilePen,
-    faFileLines
+    faFileLines,
+    faUser
 )
 
 import './assets/index.css'

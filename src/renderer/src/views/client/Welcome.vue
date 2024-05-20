@@ -5,8 +5,8 @@ import Carousel from "../../components/Carousel.vue";
 </script>
 
 <template>
-  <div class="flex flex-col h-[calc(100vh-80px)] relative w-full">
-    <div class="bg-white rounded-sm flex md:flex-row sm:flex-col p-4 h-[calc(100vh-139px)] items-center flex-wrap ">
+  <div class="flex flex-col h-[calc(100vh-190px)] relative w-full">
+    <div class="bg-transparent  rounded-sm flex md:flex-row sm:flex-col p-4 h-[calc(100vh-139px)] items-center flex-wrap ">
 
       <div class="flex flex-col md:basis-[35%] items-center h-full   justify-center gap-10  px-10  ">
 

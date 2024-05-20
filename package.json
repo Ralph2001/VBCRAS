@@ -44,6 +44,8 @@
     "flowbite": "^2.3.0",
     "flowbite-vue": "^0.1.2",
     "fs-extra": "^11.2.0",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "maska": "^2.1.11",
     "mysql2": "^3.6.5",
     "pinia": "^2.1.7",

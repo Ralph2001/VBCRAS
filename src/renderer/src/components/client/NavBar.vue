@@ -1,8 +1,8 @@
 <template>
   <div>
     <nav tabindex="-1"
-      class="bg-white text-sm font-sans tracking-tighter  border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-      <div tabindex="-1" class="w-full flex flex-wrap items-center justify-between mx-auto p-4 relative">
+      class="bg-white  shadow-sm text-sm font-sans tracking-tighter  border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+      <div tabindex="-1" class="w-full flex flex-wrap items-center justify-between mx-auto p-3.5 relative">
         <a tabindex="-1" href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
           <img tabindex="-1" src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" />
           <span tabindex="-1"
@@ -77,12 +77,13 @@
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
                   <li>
                     <button
-                      class="w-full text-left px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      class="w-full  text-left px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      <font-awesome-icon icon="fa-solid fa-user" class="me-2" />
                       {{ auth.user }}
                     </button>
                   </li>
                   <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <a href="#" class="items-center w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                       <font-awesome-icon icon="fa-solid fa-gear" class="me-2" />
                       Settings</a>
                   </li>

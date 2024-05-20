@@ -19,8 +19,8 @@
 </style>
 
 <template>
-  <div class="flex flex-col relative justify-center w-full" @dragenter="handleDragEnter()">
-    <div class="h-[calc(100vh-130px)] px-5 relative">
+  <div class="flex flex-col relative justify-center w-full p-10" @dragenter="handleDragEnter()">
+    <div class="h-[calc(100vh-250px)] relative">
       <Transition leave-active-class="animate__animated animate__zoomOut">
         <div v-if="Documents.loading"
           class="text-center text-gray-600 font-italic flex flex-col justify-center items-center right-0 left-0 absolute h-full border z-50 bg-white">

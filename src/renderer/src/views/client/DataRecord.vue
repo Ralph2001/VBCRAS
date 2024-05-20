@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col relative justify-center w-full relative">
+    <div class="flex flex-col relative justify-center w-full p-10">
 
         <teleport to='body'>
             <Transition enter-active-class="animate__animated animate__fadeInDown"
@@ -16,9 +16,8 @@
             </div>
         </div> -->
 
-        <div class="h-[calc(100vh-190px)] md:lg:px-36 ">
-            <button type="button" class="p-2 bg-white border text-gray-800 w-[10rem]" @click="generate()">
-                Generate</button>
+        <div class="h-[calc(100vh-250px)] ">
+
             <TableGrid :data="records.records" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
@@ -170,7 +169,7 @@ watch([space, digit1, digit2, digit3, Numpad1, Numpad2, Numpad3], (values) => {
 
 }, { immediate: true });
 
-const records = useRecords()  
+const records = useRecords()
 const loader = ref(false)
 
 onMounted(() => {

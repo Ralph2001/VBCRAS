@@ -5,15 +5,12 @@
 }
 </style>
 <template>
-  <div class="flex flex-col relative justify-center w-full">
+  <div class="flex flex-col relative  justify-center w-full p-10">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="modalOpener" />
-      <!-- <ButtonIcon @click="settings = true">
-        <font-awesome-icon icon="fa-solid fa-gear" />
-      </ButtonIcon> -->
     </Header>
 
-    <div class="h-[calc(100vh-190px)] px-5">
+    <div class="h-[calc(100vh-250px)]">
       <Suspense>
         <template #default>
           <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
