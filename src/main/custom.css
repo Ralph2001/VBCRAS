@@ -1,0 +1,5 @@
+/* Hide the download button */
+body > #toolbarViewer.toolbar > .download,
+body > .printPreview > #sidebarContainer > .toolbar > .download {
+    display: none !important; 
+}

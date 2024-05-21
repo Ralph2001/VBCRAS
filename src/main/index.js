@@ -235,11 +235,14 @@ ipcMain.handle('open-file', async (event, source) => {
         win = new BrowserWindow({
             webPreferences: {
                 plugins: true,
-                devTools: false,
+                devTools: true,
+                // preload: join(__dirname, 'custom.css'),
             },
+            
             autoHideMenuBar: true,
             show: true,
         })
+      
         const load = await win.loadURL('C:\\Users\\' + username + '\\' + source)
         return true
     } catch (error) {
