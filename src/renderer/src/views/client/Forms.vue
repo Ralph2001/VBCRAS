@@ -2,13 +2,10 @@
     <div class="flex flex-col relative justify-center w-full p-10">
         <Header label="Local Civil Registry Forms">
             <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
-            <ButtonIcon @click="generate()">
-                Generate
-            </ButtonIcon>
         </Header>
         <div class="h-[calc(100vh-250px)] relative flex flex-col items-center justify-center border rounded-sm ">
-            <p class="italic font-thin  font-mono">Table Here</p>
-            <!-- <TableGrid :data="data" :dataColumns="colDefs" /> -->
+            <p class="italic font-thin text-sm  font-mono">Table Here</p>
+         
         </div>
 
         <Modal medium label="Create a new Document" v-if="isFormOpen">
@@ -225,7 +222,7 @@
 
                     <div v-if="selectedType === '1B' || selectedType === '2B' || selectedType === '3B'">
                         <div class="mt-10 px-10">
-                            <p class="indent-8 text-pretty leading-8 tracking-wider text-justify">We certify that this
+                            <p class="indent-8 text-pretty leading-10 tracking-wider text-justify">We certify that this
                                 office
                                 has
                                 no
@@ -236,8 +233,10 @@
                                 alleged
                                 to have {{ alleged_to }} on
                                 <InputforForm width="10rem" middle v-model="formData.date_of"
-                                    :error="v$.date_of.$error" />. in this
-                                municipality. Hence, we cannot issue,
+                                    :error="v$.date_of.$error" /> in this
+                                municipality, <span v-if="selectedType === '1B'"> of parents  <InputforForm width="15rem" middle v-if="selectedType === '1B'"
+                                     /> and  <InputforForm width="15rem" v-if="selectedType === '1B'" middle
+                                     />.</span> Hence, we cannot issue,
                                 as
                                 requested, a true
                                 copy of his/her Certificate of {{ register_of }} or transcription from the Register of
@@ -326,13 +325,13 @@
 
                     <div class="flex  flex-col px-2 gap-2 w-[20rem] mt-5">
                         <InputLabel label="Amount Paid">
-                            <InputforForm width="100%" />
+                            <InputforForm width="100%" v-model="formData.amount_paid" />
                         </InputLabel>
                         <InputLabel label="O.R. Number">
-                            <InputforForm width="100%" />
+                            <InputforForm width="100%" v-model="formData.or_number" />
                         </InputLabel>
                         <InputLabel label="Date Paid">
-                            <InputforForm width="100%" />
+                            <InputforForm width="100%" v-model="formData.date_paid" />
                         </InputLabel>
                     </div>
 
@@ -374,14 +373,9 @@ import InputLabel from '../../component/FormPageComponents/InputLabel.vue'
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 
-const generate = async() => {
-    const filelocation = 'Hi'
-    const open = await window.FormApi.createPdfForm(filelocation)
-}
+
 
 const isLoading = ref(false)
-
-
 const Modal = defineAsyncComponent(() =>
     import("../../components/client/modal/Modal.vue")
 )
@@ -433,6 +427,7 @@ const alleged_to = computed(() => {
 })
 
 const formData = reactive({
+    form_type: '',
     date_filed: '',
     page_number: '',
     book_number: '',
@@ -526,13 +521,18 @@ const rules = computed(() => ({
 const v$ = useVuelidate(rules, formData);
 const submit = async () => {
     const isFormValid = await v$.value.$validate();
+    
     if (isFormValid) {
         try {
             const dataToSubmit = {
                 ...formData,
             };
 
-            console.log(dataToSubmit)
+            const open = await window.FormApi.createPdfForm(dataToSubmit)
+            if (open.status) {
+                const openFolder = await window.FormApi.openPdfForm(open.filepath)
+            }
+            console.log(open)
         } catch (error) {
             console.error('Error submitting form:', error);
         }
@@ -542,7 +542,7 @@ const submit = async () => {
 }
 
 const OpenForms = (e) => {
-    e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A"] : null
+    e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A", formData.form_type = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A",  formData.form_type = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A",  formData.form_type = "3A"] : null
     isFormOpen.value = true
     selectedForm.value = e
     v$.value.$reset()
@@ -555,6 +555,7 @@ const closeModal = () => {
 }
 const toggleForm = (val) => {
     selectedType.value = val
+    formData.form_type = val
     v$.value.$reset()
 }
 

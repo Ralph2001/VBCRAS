@@ -78,9 +78,31 @@ ipcMain.handle('GenerateRecords', async (event, formData) => {
 ipcMain.handle('createPdfForm', async (event, formData) => {
     try {
         const generate_record = await createPdfForm(formData)
-        console.log(generate_record)
+        if ((generate_record.success = true)) {
+            return { status: true, filepath: generate_record.filepath }
+        }
     } catch (error) {
         console.log(error)
+    }
+})
+
+ipcMain.handle('open-form', async (event, source) => {
+    try {
+        win = new BrowserWindow({
+            webPreferences: {
+                plugins: true,
+                devTools: true,
+            },
+
+            autoHideMenuBar: true,
+            show: true,
+        })
+
+        const load = await win.loadURL(source)
+        return true
+    } catch (error) {
+        win.close()
+        return false
     }
 })
 
@@ -238,11 +260,11 @@ ipcMain.handle('open-file', async (event, source) => {
                 devTools: true,
                 // preload: join(__dirname, 'custom.css'),
             },
-            
+
             autoHideMenuBar: true,
             show: true,
         })
-      
+
         const load = await win.loadURL('C:\\Users\\' + username + '\\' + source)
         return true
     } catch (error) {

@@ -47,6 +47,7 @@
   /* box-shadow: inset 120px 0 50px 0 #FFF; */
   background: linear-gradient(to left,
       rgba(255, 255, 255, 0) 70%,
-      rgba(255, 255, 255, 1) 100%);
+      #FCFCFC 100%);
+
 }
 </style>

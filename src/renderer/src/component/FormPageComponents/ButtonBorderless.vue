@@ -8,6 +8,7 @@
 const props = defineProps({
     label: String,
     isActive: Boolean
+    
 })
 </script>
 

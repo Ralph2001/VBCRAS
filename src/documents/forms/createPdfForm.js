@@ -1,30 +1,48 @@
+import { format } from 'date-fns'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
 const fs = require('fs')
 const path = require('path')
 
-let doc = new jsPDF({
-    orientation: 'p',
-    unit: 'in',
-    format: [8.5, 13],
-    putOnlyUsedFonts: true,
-})
-
-doc.setProperties({
-    title: 'Form 1A (Abroad) - Ralph Advincula Villanueva',
-    subject: 'Form 1A',
-    author: 'Local Civil Registry',
-    keywords: 'pdf, generated, amazing',
-    creator: 'VBCRAS',
-})
+let filePath = ''
+let doc = ''
 
 let marginLeft = 1
 let marginTop = 0.9
 let marginRight = 1
 let marginBottom = 0.3
 
-export async function createPdfForm() {
+export async function createPdfForm(formData) {
+    if (['1A', '2A', '3A'].includes(formData.form_type)) {
+        doc = new jsPDF({
+            orientation: 'p',
+            unit: 'in',
+            format: [8.5, 13],
+            putOnlyUsedFonts: true,
+            floatPrecision: 16,
+        })
+    } else {
+        doc = new jsPDF({
+            orientation: 'p',
+            unit: 'in',
+            format: 'A4',
+            putOnlyUsedFonts: true,
+            floatPrecision: 16,
+        })
+    }
+
+    doc.deletePage(1)
+    doc.addPage()
+
+    doc.setProperties({
+        title: '',
+        subject: '',
+        author: 'Local Civil Registry',
+        keywords: 'pdf, generated, amazing, one piece',
+        creator: 'VBCRAS',
+    })
+
     doc.addFont(
         path.resolve(__dirname, '../../resources/font/timesnewroman.ttf'),
         'Times New Roman',
@@ -53,6 +71,21 @@ export async function createPdfForm() {
     doc.setFont('Times New Roman', 'normal')
     doc.setFontSize(12)
 
+    await createHeader(formData)
+    await whatTypeofForm(formData)
+    certificate(formData)
+    municipal_registrar(formData)
+    verified_by(formData)
+    billing_info(formData)
+    note(formData)
+
+    const save = await saving_details(formData)
+    if (save) {
+        return { success: true, filepath: filePath }
+    }
+}
+
+async function createHeader(formData) {
     const leftLogoPath = path.resolve(
         __dirname,
         '../../resources/images/logo_bayambang.png'
@@ -66,8 +99,25 @@ export async function createPdfForm() {
     const rightLogoData = fs.readFileSync(rightLogoPath)
 
     // Text positioning for initial lines (adjust y-coordinate for multiple lines)
-    doc.text('Civil Registry Form No. 1A', marginLeft - 0.6, marginTop - 0.4)
-    doc.text('(Birth - Available)', marginLeft - 0.6, marginTop - 0.2)
+
+
+    const formTypeMap = {
+        '1A': '(Birth - Available)',
+        '1B': '(Birth - Not-Available)',
+        '1C': '(Birth - Destroyed)',
+        '2A': '(Death - Available)',
+        '2B': '(Death - Not-Available)',
+        '2C': '(Death - Destroyed)',
+        '3A': '(Marriage - Available)',
+        '3B': '(Marriage - Not-Available)',
+        '3C': '(Marriage - Destroyed)',
+    }
+    const document_type = formTypeMap[formData.form_type] || ''
+
+
+    
+    doc.text(`Civil Registry Form No. ${formData.form_type}`, marginLeft - 0.6, marginTop - 0.4)
+    doc.text(document_type, marginLeft - 0.6, marginTop - 0.2)
 
     const linesToCenter = [
         'Republic of the Philippines',
@@ -122,7 +172,7 @@ export async function createPdfForm() {
         logoHeight
     )
 
-    const currentDate = 'May 16, 2001'
+    const currentDate = formData.date_filed
     doc.setFont('Times New Roman', 'normal')
     doc.setFontSize(12)
     const dateWidth = doc.getTextWidth(currentDate)
@@ -135,95 +185,10 @@ export async function createPdfForm() {
     doc.setFontSize(12)
     doc.text(towhom, marginLeft, marginTop + 2)
     doc.setFont('Times New Roman', 'normal')
-
-    await whatTypeofForm()
-    certificate()
-    municipal_registrar()
-    verified_by()
-    billing_info()
-    note()
-
-    doc.save('a4.pdf')
 }
 
-async function whatTypeofForm() {
-    // We certify that among others the following facts of birth appear in our Register of Births
-
-    doc.setFont('Times New Roman', 'normal')
-    doc.setFontSize(12)
-    doc.text(
-        'We certify that among others the following facts of birth appear in our Register of',
-        marginLeft + 0.63,
-        marginTop + 2.5
-    )
-
-    doc.text(
-        'Births on page ________ book number ________. ',
-        marginLeft,
-        marginTop + 2.8
-    )
-    doc.setFont('Times New Roman', 'bold')
-    doc.text('24', marginLeft + 1.3, marginTop + 2.8)
-    doc.text('23', marginLeft + 3, marginTop + 2.8)
-    doc.setFont('Times New Roman', 'normal')
-
-    doc.autoTable({
-        body: [
-            ['Registry Number', ':', '2024-23'],
-            ['Date of registration', ':', 'May 16, 2001'],
-            ['Name of Child', ':', 'RALPH ADVINCULA VILLANUEVA'],
-            ['Sex', ':', 'Male'],
-            ['Date of birth', ':', 'Alcala, Pangasinan'],
-            ['Place of birth', ':', 'Anulid, Alcala, Pangasinan'],
-            ['Name of Mother', ':', 'Anita A. Villanueva'],
-            ['Citizenship of Mother', ':', 'Filipino'],
-            ['Name of Father', ':', 'Rolando M. Villanueva'],
-            ['Citizenship of Father', ':', 'Filipino'],
-            ['Date of Marriage', ':', 'December 28, 1990'],
-            ['Place of marriage of parents', ':', 'Alcala, Pangasinan'],
-        ],
-        theme: 'plain', // You can choose other themes like 'grid'
-        headStyles: { fillColor: [255, 255, 255] }, // White header background
-        columnStyles: {
-            0: {
-                font: 'Times New Roman',
-                fontStyle: 'normal',
-                cellWidth: 2.2,
-                halign: 'left',
-                fontSize: 12,
-                minCellHeight: 0.39,
-                valign: 'center',
-            },
-            1: {
-                font: 'Times New Roman',
-                fontStyle: 'normal',
-                cellWidth: 0.1,
-                halign: 'left',
-                valign: 'center',
-                fontSize: 12,
-                minCellHeight: 0.39,
-                cellPadding: { left: 0, right: 0 },
-            },
-            2: {
-                cellWidth: 6,
-                font: 'Times New Roman',
-                fontStyle: 'bold',
-                halign: 'left',
-                valign: 'center',
-                fontSize: 12,
-                minCellHeight: 0.39,
-                cellPadding: { left: 0, right: 0 },
-            },
-        },
-        startY: marginTop + 3.1,
-        tableWidth: 'auto',
-        margin: { left: 1.4 },
-    })
-}
-
-function certificate() {
-    let inputValue =
-        'This certificates is issued to **Ralph A. Villanueva** upon his/her request.'
+function certificate(formData) {
+    let inputValue = `This certificates is issued to **${formData.issued_to}** upon his/her request.`
     let startX = (8.5 - doc.getTextWidth(inputValue)) / 2
     let startY = marginTop + 8.2
     let lineHeight = 15
@@ -243,8 +208,8 @@ function certificate() {
     })
 }
 
-function municipal_registrar() {
-    const name = 'ISMAEL D. MALICDEM, JR.'
+function municipal_registrar(formData) {
+    const name = formData.mcr
     const title = 'Municipal Civil Registrar'
 
     const nameWidth = doc.getTextWidth(name)
@@ -261,14 +226,14 @@ function municipal_registrar() {
     doc.text(title, titleStartX, 9 + 1.2)
 }
 
-function verified_by() {
+function verified_by(formData) {
     let y_position = 9 + 1.4
 
     doc.setFont('Times New Roman', 'italic')
     doc.text('Verified by:', 1, y_position)
 
-    const name = 'ERIKA JOYCE B. PARAGAS'
-    const title = 'Administrative Aide II'
+    const name = formData.verified_by
+    const title = formData.position
 
     const nameWidth = doc.getTextWidth(name)
     const titleWidth = doc.getTextWidth(title)
@@ -284,14 +249,14 @@ function verified_by() {
     doc.text(title, titleStartX - 1, y_position + 0.5)
 }
 
-function billing_info() {
+function billing_info(formData) {
     let position = 9 + 2.3
 
     doc.autoTable({
         body: [
-            ['Amount Paid', ':', 'PHP 1,200.00'],
-            ['O.R. Number', ':', '916591123'],
-            ['Date Paid', ':', 'May 16, 2001'],
+            ['Amount Paid', ':', formData.amount_paid],
+            ['O.R. Number', ':', formData.or_number],
+            ['Date Paid', ':', formData.date_paid],
         ],
         theme: 'plain', // You can choose other themes like 'grid'
         headStyles: { fillColor: [255, 255, 255] }, // White header background
@@ -330,7 +295,7 @@ function billing_info() {
     })
 }
 
-function note() {
+function note(formData) {
     let position = 9 + 3.5
 
     const note = 'Note:'
@@ -344,79 +309,145 @@ function note() {
     doc.text(text, 1 + note_width, position)
 }
 
-function adpdo() {
-    const inputValue = document.getElementById('multiline').value
-    const endX = 360
-    // red marks to make textwidth visible
-    // doc.setDrawColor('#ff0000');
-    // doc.setLineWidth(1);
-    // doc.line(startX, startY - 10, startX, startY + 200);
-    // doc.line(endX, startY - 10, endX, startY + 200);
-    let textMap = doc.splitTextToSize(inputValue, endX)
+async function saving_details(formData) {
+    const date = new Date()
+    const formTypeMap = {
+        '1A': 'Form 1A',
+        '1B': 'Form 1B',
+        '1C': 'Form 1C',
+        '2A': 'Form 2A',
+        '2B': 'Form 2B',
+        '2C': 'Form 2C',
+        '3A': 'Form 3A',
+        '3B': 'Form 3B',
+        '3C': 'Form 3C',
+    }
+    const document_type = formTypeMap[formData.form_type] || ''
 
-    const startXCached = startX
-    let boldOpen = false
-    textMap.map((text, i) => {
-        if (text) {
-            const arrayOfNormalAndBoldText = text.split('**')
-            const boldStr = 'bold'
-            const normalOr = 'normal'
-            arrayOfNormalAndBoldText.map((textItems, j) => {
-                doc.setFontType(boldOpen ? normalOr : boldStr)
-                if (j % 2 === 0) {
-                    doc.setFontType(boldOpen ? boldStr : normalOr)
-                }
-                doc.text(textItems, startX, startY)
-                startX = startX + doc.getStringUnitWidth(textItems) * fontSize
-            })
-            boldOpen = isBoldOpen(arrayOfNormalAndBoldText.length, boldOpen)
-            startX = startXCached
-            startY += lineSpacing
-        }
-    })
+    var folderCreation = `C:/VBCRAS/${
+        date.getFullYear() + '/' + 'Forms/' + document_type
+    }/`
 
-    const isBoldOpen = (arrayLength, valueBefore = false) => {
-        const isEven = arrayLength % 2 === 0
-        const result = valueBefore !== isEven
+    if (!fs.existsSync(folderCreation)) {
+        fs.mkdirSync(folderCreation, { recursive: true })
+    }
 
-        return result
+    doc.save(folderCreation + formData.name_of + '.pdf')
+    filePath = folderCreation + formData.name_of + '.pdf'
+    return true
+}
+
+async function whatTypeofForm(formData) {
+    if (['1A', '2A', '3A'].includes(formData.form_type)) {
+        create_for_A(formData)
+    } else if (['1B', '2B', '3B'].includes(formData.form_type)) {
+        console.log(formData.form_type)
+    } else if (['1C', '2C', '3C'].includes(formData.form_type)) {
+        console.log(formData.form_type)
     }
 }
 
-// function certificate() {
-//     const text = 'This certification is issued to'
-//     const nameToBold = 'Ralph A. Villanueva'
-//     const closingText = 'upon his/her request.'
 
-//     // Calculate total text width (including spaces)
-//     const totalTextWidth =
-//         doc.getTextWidth(text) +
-//         doc.getTextWidth(nameToBold) +
-//         doc.getTextWidth(closingText) +
-//         1 // Smaller spacing adjustment
+//Creating the Main Body for Forms A (1A, 2A, 3A)
 
-//     // Available width for text
-//     const availableWidth = 8.5
+function create_for_A(formData) {
 
-//     // Calculate centering offset
-//     const centerOffset = (availableWidth - totalTextWidth) / 2
+    const type = formData.form_type.includes('A')? 'birth': formData.form_type.includes('B')? 'death': formData.form_type.includes('C')? 'marriage': ''
+    const typeofdocument =  type.charAt(0).toUpperCase()
+    + type.slice(1)
 
-//     // Start X position (centered)
-//     const startX = 1 + centerOffset // Slightly adjust to the left
+    doc.setFont('Times New Roman', 'normal')
+    doc.setFontSize(12)
+    doc.text(
+        `We certify that among others the following facts of ${type} appear in our Register of`,
+        marginLeft + 0.63,
+        marginTop + 2.5
+    )
 
-//     const startY = marginTop + 8.2 // Your original Y position
+    doc.text(
+        `${typeofdocument} on page ________ book number ________. `,
+        marginLeft,
+        marginTop + 2.8
+    )
+    doc.setFont('Times New Roman', 'bold')
+    doc.text(formData.book_number, marginLeft + 1.3, marginTop + 2.8)
+    doc.text(formData.page_number, marginLeft + 3, marginTop + 2.8)
+    doc.setFont('Times New Roman', 'normal')
 
-//     // Write the text (centered)
-//     doc.setFont('Times New Roman', 'normal')
-//     doc.text(text, startX, startY)
+    let thebody = []
 
-//     doc.setFont('Times New Roman', 'bold')
-//     doc.text(nameToBold, startX + doc.getTextWidth(text) + 0.1, startY) // Smaller spacing adjustment
+    if (formData.form_type === '1A') {
+        thebody = [
+            ['Registry Number', ':', formData.registry_number],
+            ['Date of registration', ':', formData.date_registration],
+            ['Name of Child', ':', formData.name_of],
+            ['Sex', ':', formData.sex],
+            ['Date of birth', ':', formData.date_of],
+            ['Place of birth', ':', formData.place_of],
+            ['Name of Mother', ':', formData.name_of_mother],
+            ['Citizenship of Mother', ':', formData.citizenship_mother],
+            ['Name of Father', ':', formData.name_of_father],
+            ['Citizenship of Father', ':', formData.citizenship_father],
+            ['Date of Marriage', ':', formData.date_marriage],
+            [
+                'Place of marriage of parents',
+                ':',
+                formData.place_of_marriage_parents,
+            ],
+        ]
+    } else if (formData.form_type === '2A') {
+        thebody = [
+            ['Registry Number', ':', formData.registry_number],
+            ['Date of registration', ':', formData.date_registration],
+            ['Name of Deceased', ':', formData.name_of],
+            ['Sex', ':', formData.sex],
+            ['Age', ':', formData.age],
+            ['Civil Status', ':', formData.civil_status],
+            ['Citizenship', ':', formData.citizenship],
+            ['Date of Death', ':', formData.date_of],
+            ['Place of Death', ':', formData.place_of],
+            ['Cause of Death', ':', formData.cause_of_death],
+            
+        ]
+    }
 
-//     doc.setFont('Times New Roman', 'normal')
-//     doc.text(
-//         closingText,
-//         startX + doc.getTextWidth(text) + doc.getTextWidth(nameToBold),
-//         startY
-//     ) // Smaller spacing adjustment
-// }
+    doc.autoTable({
+        body: thebody,
+        theme: 'plain',
+        headStyles: { fillColor: [255, 255, 255] },
+        columnStyles: {
+            0: {
+                font: 'Times New Roman',
+                fontStyle: 'normal',
+                cellWidth: 2.2,
+                halign: 'left',
+                fontSize: 12,
+                minCellHeight: 0.39,
+                valign: 'center',
+            },
+            1: {
+                font: 'Times New Roman',
+                fontStyle: 'normal',
+                cellWidth: 0.1,
+                halign: 'left',
+                valign: 'center',
+                fontSize: 12,
+                minCellHeight: 0.39,
+                cellPadding: { left: 0, right: 0 },
+            },
+            2: {
+                cellWidth: 6,
+                font: 'Times New Roman',
+                fontStyle: 'bold',
+                halign: 'left',
+                valign: 'center',
+                fontSize: 12,
+                minCellHeight: 0.39,
+                cellPadding: { left: 0, right: 0 },
+            },
+        },
+        startY: marginTop + 3.1,
+        tableWidth: 'auto',
+        margin: { left: 1.4 },
+    })
+}
