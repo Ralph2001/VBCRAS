@@ -60,9 +60,13 @@ import {
     faUser
 } from '@fortawesome/free-solid-svg-icons'
 
-// import {
+import {
+    faEye
+} from '@fortawesome/free-regular-svg-icons'
 
-// } from '@fortawesome/free-brands-svg-icons'
+
+
+
 /* add icons to the library */
 library.add(
     faTrash,
@@ -99,7 +103,9 @@ library.add(
     faLandmarkDome,
     faFilePen,
     faFileLines,
-    faUser
+    faUser,
+    faEye,
+   
 )
 
 import './assets/index.css'

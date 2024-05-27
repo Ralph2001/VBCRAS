@@ -1,12 +1,14 @@
 import { format } from 'date-fns'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
+// import { esbuildVersion } from 'vite'
 
 const fs = require('fs')
 const path = require('path')
 
 let filePath = ''
 let doc = ''
+let dataurl = ''
 
 let marginLeft = 1
 let marginTop = 0.9
@@ -14,6 +16,7 @@ let marginRight = 1
 let marginBottom = 0.3
 
 export async function createPdfForm(formData) {
+    console.log(formData)
     if (['1A', '2A', '3A'].includes(formData.form_type)) {
         doc = new jsPDF({
             orientation: 'p',
@@ -41,6 +44,11 @@ export async function createPdfForm(formData) {
         author: 'Local Civil Registry',
         keywords: 'pdf, generated, amazing, one piece',
         creator: 'VBCRAS',
+    })
+
+    doc.viewerPreferences({
+        HideToolbar: true,
+        HideMenubar: true,
     })
 
     doc.addFont(
@@ -81,7 +89,7 @@ export async function createPdfForm(formData) {
 
     const save = await saving_details(formData)
     if (save) {
-        return { success: true, filepath: filePath }
+        return { success: true, filepath: filePath, dataurl: dataurl }
     }
 }
 
@@ -100,7 +108,6 @@ async function createHeader(formData) {
 
     // Text positioning for initial lines (adjust y-coordinate for multiple lines)
 
-
     const formTypeMap = {
         '1A': '(Birth - Available)',
         '1B': '(Birth - Not-Available)',
@@ -114,10 +121,22 @@ async function createHeader(formData) {
     }
     const document_type = formTypeMap[formData.form_type] || ''
 
+ 
+    // Position Adjustments
 
-    
-    doc.text(`Civil Registry Form No. ${formData.form_type}`, marginLeft - 0.6, marginTop - 0.4)
-    doc.text(document_type, marginLeft - 0.6, marginTop - 0.2)
+    const civil_form_x = Number(formData.civil_x)
+    const civil_form_y = Number(formData.civil_y)
+
+    const document_type_x = Number(formData.civil_x)
+    const document_type_y = Number(formData.civil_y) + 0.2
+    // Position Adjustments
+
+    doc.text(
+        `Civil Registry Form No. ${formData.form_type}`,
+        civil_form_x,
+        civil_form_y
+    )
+    doc.text(document_type, document_type_x, document_type_y)
 
     const linesToCenter = [
         'Republic of the Philippines',
@@ -146,14 +165,14 @@ async function createHeader(formData) {
         startY += doc.getFontSize() / 72 + 0.05
     }
 
-    const lowercaseLine = 'LOCAL CIVIL REGISTRY'
+    const lowercaseLine = 'LOCAL CIVIL REGISTRY OFFICE'
     const textWidth = doc.getTextWidth(lowercaseLine)
     const x = (8.5 - textWidth) / 2
     doc.text(lowercaseLine, x, startY + 0.3)
 
-    const logoWidth = 1.09 // Adjust as needed
-    const logoHeight = 1.05 // Adjust as needed
-    const logoTopMargin = marginTop // Adjust to position the logos correctly
+    const logoWidth = 1.09
+    const logoHeight = 1.05
+    const logoTopMargin = marginTop
 
     doc.addImage(
         leftLogoData,
@@ -172,25 +191,34 @@ async function createHeader(formData) {
         logoHeight
     )
 
+    // Date Filed
     const currentDate = formData.date_filed
     doc.setFont('Times New Roman', 'normal')
     doc.setFontSize(12)
     const dateWidth = doc.getTextWidth(currentDate)
-    const dateX = 8.5 - marginRight - dateWidth
-    const dateY = marginTop + 1.7
-    doc.text(currentDate, dateX, dateY)
+    //Date Filed Position Adjustments
+    const date_filed_x = 8.5 - marginRight - dateWidth
+    const date_filed_y = marginTop + 1.7
+    doc.text(currentDate, date_filed_x, date_filed_y)
 
+    // To Whom
     const towhom = 'TO WHOM IT MAY CONCERN:'
     doc.setFont('Times New Roman', 'bolditalic')
     doc.setFontSize(12)
-    doc.text(towhom, marginLeft, marginTop + 2)
+    //To Whom Position Adjustments
+    const towhom_x = marginLeft
+    const towhom_y = marginTop + 2
+    doc.text(towhom, towhom_x, towhom_y)
     doc.setFont('Times New Roman', 'normal')
 }
 
 function certificate(formData) {
     let inputValue = `This certificates is issued to **${formData.issued_to}** upon his/her request.`
-    let startX = (8.5 - doc.getTextWidth(inputValue)) / 2
-    let startY = marginTop + 8.2
+
+    // Certificate Adjust Positions
+    let certificate_x = Number(formData.certificate_x)
+    let certificate_y = Number(formData.certificate_y)
+
     let lineHeight = 15
 
     doc.setFont('Times New Roman', 'normal')
@@ -198,14 +226,14 @@ function certificate(formData) {
     arrayOfNormalAndBoldText.map((text, i) => {
         doc.setFont('Times New Roman', i % 2 === 0 ? 'normal' : 'bold')
         let textWidth = doc.getTextWidth(text)
-        if (startX + textWidth > 8.5) {
-            startX = (8.5 - doc.getTextWidth(inputValue)) / 2
-            startY += lineHeight
+        if (certificate_x + textWidth > 8.5) {
+            certificate_x = (8.5 - doc.getTextWidth(inputValue)) / 2
+            certificate_y += lineHeight
         }
-
-        doc.text(text, startX, startY)
-        startX += textWidth
+        doc.text(text, certificate_x, certificate_y)
+        certificate_x += textWidth
     })
+  
 }
 
 function municipal_registrar(formData) {
@@ -215,22 +243,29 @@ function municipal_registrar(formData) {
     const nameWidth = doc.getTextWidth(name)
     const titleWidth = doc.getTextWidth(title)
 
-    const nameStartX = 2 + (8.5 - nameWidth) / 2
-    const titleStartX = 2 + (8.5 - titleWidth) / 2
+    // Municipal Position Adjustments
+    const municipal_x = 2 + (8.5 - nameWidth) / 2
+    const municipal_y = 9 + 1
+
+    // Position Adjustments
+    const mun_position_x = 2 + (8.5 - titleWidth) / 2
+    const mun_position_y = 9 + 1.2
 
     doc.setFontSize(12)
     doc.setFont('Times New Roman', 'bold')
-    doc.text(name, nameStartX, 9 + 1)
+    doc.text(name, municipal_x, municipal_y)
 
     doc.setFont('Times New Roman', 'italic')
-    doc.text(title, titleStartX, 9 + 1.2)
+    doc.text(title, mun_position_x, mun_position_y)
 }
 
 function verified_by(formData) {
-    let y_position = 9 + 1.4
+    // Verified Postion Adjustments
+    const verified_by_y = 9 + 1.4
+    const verified_by_x = 1
 
     doc.setFont('Times New Roman', 'italic')
-    doc.text('Verified by:', 1, y_position)
+    doc.text('Verified by:', verified_by_x, verified_by_y)
 
     const name = formData.verified_by
     const title = formData.position
@@ -238,19 +273,26 @@ function verified_by(formData) {
     const nameWidth = doc.getTextWidth(name)
     const titleWidth = doc.getTextWidth(title)
 
-    const nameStartX = (8.5 - nameWidth) / 2
-    const titleStartX = (8.5 - titleWidth) / 2
+    // User Name Position Adjustments
+    const user_name_x = (8.5 - nameWidth) / 2 - 1
+    const user_name_y = 9 + 1.4 + 0.3
+
+    // User Position Position Adjustments
+    const user_position_x = (8.5 - titleWidth) / 2 - 1
+    const user_position_y = 9 + 1.4 + 0.5
 
     doc.setFontSize(12)
     doc.setFont('Times New Roman', 'bold')
-    doc.text(name, nameStartX - 1, y_position + 0.3)
+    doc.text(name, user_name_x, user_name_y)
 
     doc.setFont('Times New Roman', 'italic')
-    doc.text(title, titleStartX - 1, y_position + 0.5)
+    doc.text(title, user_position_x, user_position_y)
 }
 
 function billing_info(formData) {
-    let position = 9 + 2.3
+    // Billing Position Adjustments
+    const billing_y = 9 + 2.3
+    const billing_x = 1
 
     doc.autoTable({
         body: [
@@ -289,52 +331,59 @@ function billing_info(formData) {
                 cellPadding: { left: 0, right: 0, top: 0, bottom: 0 },
             },
         },
-        startY: position,
+        startY: billing_y,
         tableWidth: 'auto',
-        margin: { left: 1 },
+        margin: { left: billing_x },
     })
 }
 
 function note(formData) {
-    let position = 9 + 3.5
+    // Note Position Adjustments
+    const note_y = 9 + 3.5
+    const note_x = 1
 
     const note = 'Note:'
     doc.setFont('Times New Roman', 'bold')
     const note_width = doc.getTextWidth(note)
-    doc.text(note, 1, position)
+    doc.text(note, note_x, note_y)
 
     const text =
         ' A mark, erasure or alteration of any entry invalidates this certification.'
     doc.setFont('Times New Roman', 'normal')
-    doc.text(text, 1 + note_width, position)
+    doc.text(text, note_x + note_width, note_y)
 }
 
 async function saving_details(formData) {
-    const date = new Date()
-    const formTypeMap = {
-        '1A': 'Form 1A',
-        '1B': 'Form 1B',
-        '1C': 'Form 1C',
-        '2A': 'Form 2A',
-        '2B': 'Form 2B',
-        '2C': 'Form 2C',
-        '3A': 'Form 3A',
-        '3B': 'Form 3B',
-        '3C': 'Form 3C',
+    if (formData.purpose === 'save') {
+        const date = new Date()
+        const formTypeMap = {
+            '1A': 'Form 1A',
+            '1B': 'Form 1B',
+            '1C': 'Form 1C',
+            '2A': 'Form 2A',
+            '2B': 'Form 2B',
+            '2C': 'Form 2C',
+            '3A': 'Form 3A',
+            '3B': 'Form 3B',
+            '3C': 'Form 3C',
+        }
+        const document_type = formTypeMap[formData.form_type] || ''
+
+        var folderCreation = `C:/VBCRAS/${
+            date.getFullYear() + '/' + 'Forms/' + document_type
+        }/`
+
+        if (!fs.existsSync(folderCreation)) {
+            fs.mkdirSync(folderCreation, { recursive: true })
+        }
+
+        doc.save(folderCreation + formData.name_of + '.pdf')
+        filePath = folderCreation + formData.name_of + '.pdf'
+        return true
+    } else if (formData.purpose === 'edit') {
+        dataurl = doc.output('datauristring')
+        return true
     }
-    const document_type = formTypeMap[formData.form_type] || ''
-
-    var folderCreation = `C:/VBCRAS/${
-        date.getFullYear() + '/' + 'Forms/' + document_type
-    }/`
-
-    if (!fs.existsSync(folderCreation)) {
-        fs.mkdirSync(folderCreation, { recursive: true })
-    }
-
-    doc.save(folderCreation + formData.name_of + '.pdf')
-    filePath = folderCreation + formData.name_of + '.pdf'
-    return true
 }
 
 async function whatTypeofForm(formData) {
@@ -347,14 +396,17 @@ async function whatTypeofForm(formData) {
     }
 }
 
-
 //Creating the Main Body for Forms A (1A, 2A, 3A)
 
 function create_for_A(formData) {
-
-    const type = formData.form_type.includes('A')? 'birth': formData.form_type.includes('B')? 'death': formData.form_type.includes('C')? 'marriage': ''
-    const typeofdocument =  type.charAt(0).toUpperCase()
-    + type.slice(1)
+    const type = formData.form_type.includes('A')
+        ? 'birth'
+        : formData.form_type.includes('B')
+          ? 'death'
+          : formData.form_type.includes('C')
+            ? 'marriage'
+            : ''
+    const typeofdocument = type.charAt(0).toUpperCase() + type.slice(1)
 
     doc.setFont('Times New Roman', 'normal')
     doc.setFontSize(12)
@@ -407,9 +459,13 @@ function create_for_A(formData) {
             ['Date of Death', ':', formData.date_of],
             ['Place of Death', ':', formData.place_of],
             ['Cause of Death', ':', formData.cause_of_death],
-            
         ]
     }
+
+    // Info List Position Adjustments
+
+    const info_x = Number(formData.info_x) 
+    const info_y = Number(formData.info_y) 
 
     doc.autoTable({
         body: thebody,
@@ -446,8 +502,8 @@ function create_for_A(formData) {
                 cellPadding: { left: 0, right: 0 },
             },
         },
-        startY: marginTop + 3.1,
+        startY: info_y,
         tableWidth: 'auto',
-        margin: { left: 1.4 },
+        margin: { left: info_x },
     })
 }

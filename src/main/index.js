@@ -79,7 +79,7 @@ ipcMain.handle('createPdfForm', async (event, formData) => {
     try {
         const generate_record = await createPdfForm(formData)
         if ((generate_record.success = true)) {
-            return { status: true, filepath: generate_record.filepath }
+            return { status: true, filepath: generate_record.filepath, dataurl: generate_record.dataurl }
         }
     } catch (error) {
         console.log(error)

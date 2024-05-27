@@ -3,21 +3,19 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-  main: {
-    plugins: [externalizeDepsPlugin()]
-  },
-  preload: {
-    plugins: [externalizeDepsPlugin()]
-  },
-  renderer: {
-    resolve: {
-      alias: {
-        '@renderer': resolve('src/renderer/src')
-      }
+    main: {
+        plugins: [externalizeDepsPlugin()],
     },
-    // base: '',
-    plugins: [vue()]
-  }
+    preload: {
+        plugins: [externalizeDepsPlugin()],
+    },
+    renderer: {
+        resolve: {
+            alias: {
+                '@renderer': resolve('src/renderer/src'),
+            },
+        },
+        // base: '',
+        plugins: [vue()],
+    }
 })
-
-

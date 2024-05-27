@@ -5,14 +5,14 @@
         </Header>
         <div class="h-[calc(100vh-250px)] relative flex flex-col items-center justify-center border rounded-sm ">
             <p class="italic font-thin text-sm  font-mono">Table Here</p>
-         
+
         </div>
 
         <Modal medium label="Create a new Document" v-if="isFormOpen">
             <template v-slot:header>
                 <ModalCloseButton @click="closeModal" />
             </template>
-            <div class="flex flex-col  sm:px-6 md:px-4 h-max  w-full gap-4 relative  font-medium">
+            <div class="flex flex-col  sm:px-6 md:px-4 h-max  w-full gap-4 relative font-medium" v-if="!isPreview">
                 <div class="h-full flex flex-col px-10 py-4">
                     <div
                         class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
@@ -234,9 +234,10 @@
                                 to have {{ alleged_to }} on
                                 <InputforForm width="10rem" middle v-model="formData.date_of"
                                     :error="v$.date_of.$error" /> in this
-                                municipality, <span v-if="selectedType === '1B'"> of parents  <InputforForm width="15rem" middle v-if="selectedType === '1B'"
-                                     /> and  <InputforForm width="15rem" v-if="selectedType === '1B'" middle
-                                     />.</span> Hence, we cannot issue,
+                                municipality, <span v-if="selectedType === '1B'"> of parents
+                                    <InputforForm width="15rem" middle v-if="selectedType === '1B'" /> and
+                                    <InputforForm width="15rem" v-if="selectedType === '1B'" middle />.
+                                </span> Hence, we cannot issue,
                                 as
                                 requested, a true
                                 copy of his/her Certificate of {{ register_of }} or transcription from the Register of
@@ -338,8 +339,42 @@
                 </div>
 
             </div>
+
+            <div class="flex flex-row h-full bg-blue-50 w-full border" v-if="isPreview">
+                <div class="basis-[70%]  flex h-full bg-blue-100 ">
+                    <!-- <iframe v-if="isPreview" class="h-full w-full" :src="previewUrl" frameborder="1"
+                        allowfullscreen=""></iframe> -->
+                    <PDFViewer  :source="previewUrl" class="h-full w-[5rem]" :setting="pdfViewerSetting"
+                        :controls="pdfViewerControls" />
+                </div>
+                <div class=" flex p-4 flex-col h-full grow bg-white items-center">
+                    <p class="text-md text-gray-800 font-medium mb-10">Adjust Positions</p>
+
+                    <RangeInput label="title_x" v-model="preferences.civil_x" :max="8.5" @change="change_preferences" />
+                    <RangeInput label="title_y" v-model="preferences.civil_y" :max="13" @change="change_preferences" />
+
+                    <RangeInput label="client_info_x" v-model="preferences.info_x" :max="8.5"
+                        @change="change_preferences" />
+                    <RangeInput label="client_info_y" v-model="preferences.info_y" :max="13"
+                        @change="change_preferences" />
+
+                    <RangeInput label="certificate_x" v-model="preferences.certificate_x" :max="8.5"
+                        @change="change_preferences" />
+                    <RangeInput label="certificate_y" v-model="preferences.certificate_y" :max="13"
+                        @change="change_preferences" />
+
+     
+
+                </div>
+            </div>
+
             <template v-slot:footer>
-                <div class="h-full flex items-center justify-center w-full">
+                <div class="h-full flex items-center justify-center w-full px-2">
+                    <button :class="{ 'text-blue-500': isPreview, 'text-gray-800 ': !isPreview }"
+                        class="rounded-full flex items-center text-sm " @click="previewcontent">
+                        <font-awesome-icon icon="fa-regular fa-eye" class="me-1" /> Preview
+
+                    </button>
                     <button type="button" @click="submit"
                         :class="{ 'pointer-events-none bg-blue-500 ': isLoading, 'bg-blue-600': !isLoading }"
                         class="py-2 px-4 tracking-wide ml-auto   flex items-center text-sm font-medium text-white   rounded  active:scale-95 transition-all  shadow-sm hover:text-white focus:z-10 ">
@@ -354,7 +389,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, reactive, ref } from 'vue'
+import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
 import TableGrid from '../../components/TableGrid.vue'
 import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
 import Header from '../../components/essentials/header.vue'
@@ -369,11 +404,12 @@ import InputforForm from '../../component/FormPageComponents/InputforForm.vue'
 import ButtonBorderless from '../../component/FormPageComponents/ButtonBorderless.vue'
 import FormCheckbox from '../../component/FormPageComponents/FormCheckbox.vue'
 import InputLabel from '../../component/FormPageComponents/InputLabel.vue'
+import RangeInput from '../../component/FormPageComponents/RangeInput.vue'
 
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 
-
+import PDFViewer from 'pdf-viewer-vue'
 
 const isLoading = ref(false)
 const Modal = defineAsyncComponent(() =>
@@ -391,6 +427,9 @@ const FormTypes = ref([])
 const isFormOpen = ref(false)
 const selectedForm = ref(null)
 const selectedType = ref(null)
+
+
+
 
 
 
@@ -424,6 +463,15 @@ const alleged_to = computed(() => {
     const selected = selectedType.value
     return selected === "1A" || selected === "1B" || selected === "1C" ? 'born' :
         selected === "2A" || selected === "2B" || selected === "2C" ? 'died' : selected === "3A" || selected === "3B" || selected === "3C" ? 'married' : ''
+})
+
+const preferences = reactive({
+    civil_x: '0.3',
+    civil_y: '0.3',
+    info_x: '1.3',
+    info_y: '3.7',
+    certificate_x: '2.3',
+    certificate_y: '8.8'
 })
 
 const formData = reactive({
@@ -518,14 +566,16 @@ const rules = computed(() => ({
 }))
 
 
+
 const v$ = useVuelidate(rules, formData);
 const submit = async () => {
     const isFormValid = await v$.value.$validate();
-    
+
     if (isFormValid) {
         try {
             const dataToSubmit = {
                 ...formData,
+                purpose: 'save'
             };
 
             const open = await window.FormApi.createPdfForm(dataToSubmit)
@@ -542,7 +592,7 @@ const submit = async () => {
 }
 
 const OpenForms = (e) => {
-    e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A", formData.form_type = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A",  formData.form_type = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A",  formData.form_type = "3A"] : null
+    e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A", formData.form_type = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A", formData.form_type = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A", formData.form_type = "3A"] : null
     isFormOpen.value = true
     selectedForm.value = e
     v$.value.$reset()
@@ -560,4 +610,47 @@ const toggleForm = (val) => {
 }
 
 
+
+
+const isPreview = ref(false)
+const previewUrl = ref('')
+const pdfViewerSetting = ref({ defaultZoom: 175 })
+const pdfViewerControls = ref([
+    'zoom',
+])
+
+
+
+const previewcontent = async () => {
+    isPreview.value = !isPreview.value
+
+    if (isPreview) {
+        const dataToSubmit = {
+            ...formData,
+            ...preferences,
+            purpose: 'edit'
+        };
+
+        const open = await window.FormApi.createPdfForm(dataToSubmit)
+        previewUrl.value = open.dataurl
+
+
+    }
+
+}
+
+const change_preferences = async () => {
+    if (isPreview) {
+        const dataToSubmit = {
+            ...formData,
+            ...preferences,
+            purpose: 'edit'
+        };
+
+        const open = await window.FormApi.createPdfForm(dataToSubmit)
+        previewUrl.value = open.dataurl
+
+
+    }
+}
 </script>
