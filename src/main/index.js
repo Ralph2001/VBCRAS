@@ -85,6 +85,7 @@ ipcMain.handle('createPdfForm', async (event, formData) => {
         console.log(error)
     }
 })
+console.log(process.versions.node); // Outputs the Node.js version
 
 ipcMain.handle('open-form', async (event, source) => {
     try {

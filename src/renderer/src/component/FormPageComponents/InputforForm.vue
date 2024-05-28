@@ -1,22 +1,24 @@
 <template>
 
-    <input type="text" :value="modelValue" @input="emit('update:modelValue', $event.target.value)" :class="[
-        baseClasses,
-        {
-            'text-center': middle,
-            'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
-            'border border-gray-300 focus:ring-blue-500 focus:border-blue-500': !unbordered,
-            'italic': italic,
-            'font-bold': bold,
-            'bg-transparent': isTransparent,
-            'focus:ring-red-400 focus:border-red-400': she,
-            'border-red-500 ring-0 focus:ring-red-500 focus:border-red-500': error
-        }
-    ]" />
+    <input :tabindex="skip ? '-1' : ''" type="text" :value="modelValue"
+        @input="emit('update:modelValue', $event.target.value)" :class="[
+            baseClasses,
+            {
+                'text-center': middle,
+                'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
+                'border border-gray-300 focus:ring-blue-500 focus:border-blue-500': !unbordered,
+                'italic': italic,
+                'font-bold': bold,
+                'bg-transparent': isTransparent,
+                'focus:ring-red-400 focus:border-red-400': she,
+                'border-red-500 ring-0 focus:ring-red-500 focus:border-red-500': error,
+                ' cursor-help': isReadOnly
+            }
+        ]" :readonly="isReadOnly" />
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, isReadonly, readonly } from 'vue';
 const emit = defineEmits(["update:modelValue"]);
 
 const props = defineProps({
@@ -48,6 +50,14 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    isReadOnly: {
+        type: Boolean,
+        default: false
+    },
+    skip: {
+        type: Boolean,
+        default: false
+    }
 
 });
 

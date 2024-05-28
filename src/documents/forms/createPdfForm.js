@@ -121,7 +121,6 @@ async function createHeader(formData) {
     }
     const document_type = formTypeMap[formData.form_type] || ''
 
- 
     // Position Adjustments
 
     const civil_form_x = Number(formData.civil_x)
@@ -233,7 +232,6 @@ function certificate(formData) {
         doc.text(text, certificate_x, certificate_y)
         certificate_x += textWidth
     })
-  
 }
 
 function municipal_registrar(formData) {
@@ -354,36 +352,36 @@ function note(formData) {
 }
 
 async function saving_details(formData) {
-    if (formData.purpose === 'save') {
-        const date = new Date()
-        const formTypeMap = {
-            '1A': 'Form 1A',
-            '1B': 'Form 1B',
-            '1C': 'Form 1C',
-            '2A': 'Form 2A',
-            '2B': 'Form 2B',
-            '2C': 'Form 2C',
-            '3A': 'Form 3A',
-            '3B': 'Form 3B',
-            '3C': 'Form 3C',
-        }
-        const document_type = formTypeMap[formData.form_type] || ''
-
-        var folderCreation = `C:/VBCRAS/${
-            date.getFullYear() + '/' + 'Forms/' + document_type
-        }/`
-
-        if (!fs.existsSync(folderCreation)) {
-            fs.mkdirSync(folderCreation, { recursive: true })
-        }
-
-        doc.save(folderCreation + formData.name_of + '.pdf')
-        filePath = folderCreation + formData.name_of + '.pdf'
-        return true
-    } else if (formData.purpose === 'edit') {
-        dataurl = doc.output('datauristring')
+    if (formData.purpose === 'edit') {
+        dataurl = doc.output('dataurlstring')
         return true
     }
+
+    const date = new Date()
+    const formTypeMap = {
+        '1A': 'Form 1A',
+        '1B': 'Form 1B',
+        '1C': 'Form 1C',
+        '2A': 'Form 2A',
+        '2B': 'Form 2B',
+        '2C': 'Form 2C',
+        '3A': 'Form 3A',
+        '3B': 'Form 3B',
+        '3C': 'Form 3C',
+    }
+    const document_type = formTypeMap[formData.form_type] || ''
+
+    var folderCreation = `C:/VBCRAS/${
+        date.getFullYear() + '/' + 'Forms/' + document_type
+    }/`
+
+    if (!fs.existsSync(folderCreation)) {
+        fs.mkdirSync(folderCreation, { recursive: true })
+    }
+
+    doc.save(folderCreation + formData.name_of + '.pdf')
+    filePath = folderCreation + formData.name_of + '.pdf'
+    return true
 }
 
 async function whatTypeofForm(formData) {
@@ -464,8 +462,8 @@ function create_for_A(formData) {
 
     // Info List Position Adjustments
 
-    const info_x = Number(formData.info_x) 
-    const info_y = Number(formData.info_y) 
+    const info_x = Number(formData.info_x)
+    const info_y = Number(formData.info_y)
 
     doc.autoTable({
         body: thebody,

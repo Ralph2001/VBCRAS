@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+import 'core-js/features/promise/with-resolvers'; 
 import PrimeVue from 'primevue/config'
 import Lara from './assets/presets/lara'
 
@@ -56,16 +57,13 @@ import {
     faHouse,
     faLandmarkDome,
     faFilePen,
-    faFileLines, 
-    faUser
+    faFileLines,
+    faUser,
+    faChevronDown, 
+    faMarker
 } from '@fortawesome/free-solid-svg-icons'
 
-import {
-    faEye
-} from '@fortawesome/free-regular-svg-icons'
-
-
-
+import { faEye } from '@fortawesome/free-regular-svg-icons'
 
 /* add icons to the library */
 library.add(
@@ -105,7 +103,8 @@ library.add(
     faFileLines,
     faUser,
     faEye,
-   
+    faChevronDown,
+    faMarker
 )
 
 import './assets/index.css'

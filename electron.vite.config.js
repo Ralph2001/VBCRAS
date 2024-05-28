@@ -17,5 +17,10 @@ export default defineConfig({
         },
         // base: '',
         plugins: [vue()],
-    }
+        optimizeDeps: {
+            esbuildOptions: {
+                supported: { 'top-level-await': true },
+            },
+        },
+    },
 })

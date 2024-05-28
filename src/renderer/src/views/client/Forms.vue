@@ -24,7 +24,14 @@
                         <FormCheckbox label="With Authentication (Abroad)" />
                     </div>
                     <div class="flex items-center justify-end">
-                        <InputforForm middle v-model="formData.date_filed" :error="v$.date_filed.$error" />
+                        <div class="w-[13rem]">
+                            <VueDatePicker :transitions="false" :input-class-name="date_of_class" :class="`rounded-sm `"
+                                text-input auto-apply format="MMMM dd, yyyy" autocomplete="on"
+                                v-model="formData.date_filed" :teleport="true" :model-value="date_filed"
+                                @update:model-value="handleDateFiled" @cleared="formData.date_filed = ''">
+                            </VueDatePicker>
+                        </div>
+                        <!-- <InputforForm middle v-model="formData.date_filed" :error="v$.date_filed.$error" /> -->
                     </div>
 
                     <p class="px-9 italic font-semibold font-serif">TO WHOM IT MAY CONCERN:</p>
@@ -54,8 +61,14 @@
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'"
                                 label="Date of Registration">
                                 :
-                                <InputforForm width="100%" v-model="formData.date_registration"
-                                    :error="v$.date_registration.$error" />
+                                <!-- <InputforForm width="100%" v-model="formData.date_registration"
+                                    :error="v$.date_registration.$error" /> -->
+                                <VueDatePicker :transitions="false" :input-class-name="date_of_class"
+                                    :class="`rounded-sm `" text-input auto-apply format="MMMM dd, yyyy"
+                                    autocomplete="on" v-model="formData.date_registration" :teleport="true"
+                                    :model-value="date_registration" @update:model-value="handleDateRegistration"
+                                    @cleared="formData.date_registration = ''">
+                                </VueDatePicker>
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" :label="name_of">
@@ -71,12 +84,19 @@
 
                             <InputLabel v-if="selectedType === '1A'" label="Date of Birth">
                                 :
-                                <InputforForm width="100%" v-model="formData.date_of" :error="v$.date_of.$error" />
+                                <!-- <InputforForm width="100%" v-model="formData.date_of" :error="v$.date_of.$error" /> -->
+                                <VueDatePicker :transitions="false" :input-class-name="date_of_class"
+                                    :class="`rounded-sm `" text-input auto-apply format="MMMM dd, yyyy"
+                                    autocomplete="on" v-model="formData.date_of" :teleport="true" :model-value="date_of"
+                                    @update:model-value="handleDateOf" @cleared="formData.date_of = ''">
+                                </VueDatePicker>
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Birth">
                                 :
-                                <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" />
+                                <!-- <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" /> -->
+                                <AutoCompleteAddress width="100%" v-model="formData.place_of"
+                                    :error="v$.place_of.$error" nolabel />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Name of Mother">
@@ -105,14 +125,38 @@
 
                             <InputLabel v-if="selectedType === '1A'" label="Date of Marriage">
                                 :
-                                <InputforForm width="100%" v-model="formData.date_marriage"
-                                    :error="v$.date_marriage.$error" />
+                                <div class="flex flex-row w-full relative">
+                                    <InputforForm width="100%" v-model="formData.date_marriage"
+                                        :error="v$.date_marriage.$error" v-if="nodateforparentsmarriage" isReadOnly />
+
+                                    <VueDatePicker v-else :transitions="false" :input-class-name="date_of_class"
+                                        :class="`rounded-sm `" text-input auto-apply format="MMMM dd, yyyy"
+                                        autocomplete="on" v-model="formData.date_marriage" :teleport="true"
+                                        :model-value="date_marriage" @update:model-value="handleDateMarriage"
+                                        @cleared="formData.date_marriage = ''">
+                                    </VueDatePicker>
+                                    <button @click="date_marriage_option = !date_marriage_option" tabindex="-1"
+                                        class="p-1 px-2 text-gray-500 items-center justify-center text-sm hover:bg-gray-100 "><font-awesome-icon
+                                            icon="fa-solid fa-chevron-down" /></button>
+                                    <div v-if="date_marriage_option"
+                                        class="absolute flex  p-2 z-50 justify-center h-auto border right-0 top-10 bg-white w-[10rem]">
+                                        <ul class="w-full">
+                                            <li v-for="option in date_marriage_parents_options" :key="option"
+                                                @click="parentsdatemarriage_opt(option)"
+                                                class="hover:bg-gray-200 p-2 text-gray-700 hover:cursor-pointer">
+                                                {{ option }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Marriage of Parents">
                                 :
-                                <InputforForm width="100%" v-model="formData.place_of_marriage_parents"
-                                    :error="v$.place_of_marriage_parents.$error" />
+                                <!-- <InputforForm width="100%" v-model="formData.place_of_marriage_parents"
+                                    :error="v$.place_of_marriage_parents.$error" /> -->
+
+                                <AutoCompleteAddress width="100%" v-model="formData.place_of_marriage_parents"
+                                    :error="v$.place_of_marriage_parents.$error" nolabel />
                             </InputLabel>
 
                             <!-- Form 2 -->
@@ -305,20 +349,39 @@
                         </div> upon his/her request.
                     </div>
 
+                    <div class="flex w-full flex-col  items-center justify-center">
+
+                        <div class="w-full flex flex-row items-center justify-center mt-10 group" title="Add Remarks"
+                            v-if="!hasRemarks">
+                            <font-awesome-icon icon="fa-solid fa-marker"
+                                class="p-2 rounded-full bg-blue-100 text-sm text-blue-400 group-hover:bg-blue-200  group-hover:cursor-pointer "
+                                @click="addRemarks()" />
+                            <div class="w-[30rem] border h-2 bg-blue-100 group-hover:bg-blue-200 group-hover:cursor-pointer  rounded-e-md "
+                                @click="addRemarks()">
+                            </div>
+                        </div>
+
+                        <div class="flex-row w-full px-10 mt-5 gap-2" v-if="hasRemarks">
+                            <p>REMARKS:</p>
+                            <div class="w-full">
+                                <QuillEditor theme="snow" :toolbar="['bold', 'italic', 'underline']"/>
+                            </div>
+                        </div>
+                    </div>
                     <div
                         class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-20 relative text-nowrap gap-2  px-2">
                         <div class="flex flex-col items-start sm:gap-2 md:lg:gap-10">
                             <p class="italic">Verified by:</p>
                             <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
-                                <InputforForm width="20rem" bold middle v-model="formData.verified_by"
+                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
                                     :error="v$.verified_by.$error"
                                     @input="formData.verified_by = $event.target.value.toUpperCase()" />
-                                <InputforForm width="20rem" middle italic unbordered isTransparent
+                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
                                     v-model="formData.position" :error="v$.position.$error" />
                             </div>
                         </div>
                         <div class="flex flex-col items-center">
-                            <InputforForm middle width="20rem" bold v-model="formData.mcr"
+                            <InputforForm skip middle width="20rem" bold v-model="formData.mcr"
                                 @input="formData.mcr = $event.target.value.toUpperCase()" :error="v$.mcr.$error" />
                             <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
                         </div>
@@ -326,13 +389,19 @@
 
                     <div class="flex  flex-col px-2 gap-2 w-[20rem] mt-5">
                         <InputLabel label="Amount Paid">
-                            <InputforForm width="100%" v-model="formData.amount_paid" />
+                            <InputCurrency v-model="formData.amount_paid" />
+                            <!-- <InputforForm width="100%" v-model="formData.amount_paid" /> -->
                         </InputLabel>
                         <InputLabel label="O.R. Number">
                             <InputforForm width="100%" v-model="formData.or_number" />
                         </InputLabel>
                         <InputLabel label="Date Paid">
-                            <InputforForm width="100%" v-model="formData.date_paid" />
+                            <!-- <InputforForm width="100%" v-model="formData.date_paid" /> -->
+                            <VueDatePicker :transitions="false" :input-class-name="date_of_class" :class="`rounded-sm `"
+                                text-input auto-apply format="MMMM dd, yyyy" autocomplete="on"
+                                v-model="formData.date_paid" :teleport="true" :model-value="date_paid"
+                                @update:model-value="handleDatePaid" @cleared="formData.date_paid = ''">
+                            </VueDatePicker>
                         </InputLabel>
                     </div>
 
@@ -341,11 +410,19 @@
             </div>
 
             <div class="flex flex-row h-full bg-blue-50 w-full border" v-if="isPreview">
-                <div class="basis-[70%]  flex h-full bg-blue-100 ">
+                <div
+                    class="basis-[68%]  flex items-center justify-center h-full bg-gray-600  w-full overflow-y-scroll sm:overflow-x-scroll md:lg:overflow-x-hidden p-1">
                     <!-- <iframe v-if="isPreview" class="h-full w-full" :src="previewUrl" frameborder="1"
                         allowfullscreen=""></iframe> -->
-                    <PDFViewer  :source="previewUrl" class="h-full w-[5rem]" :setting="pdfViewerSetting"
-                        :controls="pdfViewerControls" />
+                    <PDFViewer :source="previewUrl" class="w-[5rem]" :zoom="150" controls="zoom" />
+                    <!-- <PDF :src="previewUrl" style="width: 100%;"  /> -->
+
+                    <!-- <pdf :src="previewUrl" :page="1">
+                        <template slot="loading">
+                            loading content here...
+                        </template>
+                    </pdf> -->
+                    <!-- <VuePdfEmbed annotation-layer print text-layer :source="previewUrl" :width="600" class="mt-24" /> -->
                 </div>
                 <div class=" flex p-4 flex-col h-full grow bg-white items-center">
                     <p class="text-md text-gray-800 font-medium mb-10">Adjust Positions</p>
@@ -363,8 +440,6 @@
                     <RangeInput label="certificate_y" v-model="preferences.certificate_y" :max="13"
                         @change="change_preferences" />
 
-     
-
                 </div>
             </div>
 
@@ -377,9 +452,9 @@
                     </button>
                     <button type="button" @click="submit"
                         :class="{ 'pointer-events-none bg-blue-500 ': isLoading, 'bg-blue-600': !isLoading }"
-                        class="py-2 px-4 tracking-wide ml-auto   flex items-center text-sm font-medium text-white   rounded  active:scale-95 transition-all  shadow-sm hover:text-white focus:z-10 ">
+                        class="py-2 px-4 tracking-wide ml-auto  hover:bg-red-500  flex items-center text-sm font-medium text-white   rounded  active:scale-95 transition-all  shadow-sm hover:text-white focus:z-10 ">
                         <Loading v-if="isLoading" />
-                        Submit
+                        Create
                     </button>
                 </div>
             </template>
@@ -405,11 +480,33 @@ import ButtonBorderless from '../../component/FormPageComponents/ButtonBorderles
 import FormCheckbox from '../../component/FormPageComponents/FormCheckbox.vue'
 import InputLabel from '../../component/FormPageComponents/InputLabel.vue'
 import RangeInput from '../../component/FormPageComponents/RangeInput.vue'
-
+import VueDatePicker from '@vuepic/vue-datepicker';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
-
+import { format } from 'date-fns'
+import AutoCompleteAddress from '../../component/FormPageComponents/AutoCompleteAddress.vue'
 import PDFViewer from 'pdf-viewer-vue'
+import VuePdfEmbed from 'vue-pdf-embed'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+
+
+// import PDF from "pdf-vue3";
+// import { VuePDF, usePDF } from '@tato30/vue-pdf'
+
+// import pdf from 'pdfvuer'
+
+// not needed since v1.9.1
+
+
+// essential styles
+import 'vue-pdf-embed/dist/style/index.css'
+// optional styles
+import 'vue-pdf-embed/dist/style/annotationLayer.css'
+import 'vue-pdf-embed/dist/style/textLayer.css'
+import InputCurrency from '../../components/essentials/inputs/InputCurrency.vue'
+
+
 
 const isLoading = ref(false)
 const Modal = defineAsyncComponent(() =>
@@ -423,14 +520,21 @@ const options = ref(
     ]
 )
 
+const date_marriage_parents_options = [
+    'Not Married',
+    'Not Applicable',
+    'Forgotten',
+    'No Column',
+    'No Entry',
+]
+
+
 const FormTypes = ref([])
 const isFormOpen = ref(false)
 const selectedForm = ref(null)
 const selectedType = ref(null)
-
-
-
-
+const print = ref()
+const date_marriage_option = ref(false)
 
 
 const name_of = computed(() => {
@@ -465,6 +569,59 @@ const alleged_to = computed(() => {
         selected === "2A" || selected === "2B" || selected === "2C" ? 'died' : selected === "3A" || selected === "3B" || selected === "3C" ? 'married' : ''
 })
 
+
+const date_filed = ref(new Date())
+const date_registration = ref()
+const date_of = ref()
+const date_marriage = ref()
+const date_paid = ref(new Date())
+
+
+
+function handleDateFiled(modelData) {
+    if (!modelData) { return }
+
+    const date = new Date(modelData);
+    const formatted = format(date, "MMMM dd, yyyy");
+    date_filed.value = formatted
+    formData.date_filed = formatted;
+}
+function handleDateRegistration(modelData) {
+    if (!modelData) { return }
+
+    const date = new Date(modelData);
+    const formatted = format(date, "MMMM dd, yyyy");
+    date_registration.value = formatted
+    formData.date_registration = formatted;
+}
+function handleDateOf(modelData) {
+    if (!modelData) { return }
+
+    const date = new Date(modelData);
+    const formatted = format(date, "MMMM dd, yyyy");
+    date_of.value = formatted
+    formData.date_of = formatted;
+}
+function handleDateMarriage(modelData) {
+    if (!modelData) { return }
+
+    const date = new Date(modelData);
+    const formatted = format(date, "MMMM dd, yyyy");
+    date_marriage.value = formatted
+    formData.date_marriage = formatted;
+}
+
+function handleDatePaid(modelData) {
+    if (!modelData) { return }
+
+    const date = new Date(modelData);
+    const formatted = format(date, "MMMM dd, yyyy");
+    date_paid.value = formatted
+    formData.date_paid = formatted;
+}
+
+
+
 const preferences = reactive({
     civil_x: '0.3',
     civil_y: '0.3',
@@ -474,9 +631,9 @@ const preferences = reactive({
     certificate_y: '8.8'
 })
 
-const formData = reactive({
+const initialFormData = {
     form_type: '',
-    date_filed: '',
+    date_filed: format(new Date(), "MMMM dd, yyyy"),
     page_number: '',
     book_number: '',
     registry_number: '',
@@ -508,16 +665,21 @@ const formData = reactive({
 
 
     issued_to: '',
-    verified_by: '',
-    position: '',
+    verified_by: 'ERIKA JOYCE B. PARAGAS',
+    position: 'Administrative Aide II',
 
-    mcr: '',
+    mcr: 'ISMAEL D. MALICDEM, JR.',
 
     amount_paid: '',
     or_number: '',
-    date_paid: '',
+    date_paid: format(new Date(), "MMMM dd, yyyy"),
+}
 
-})
+const formData = reactive({ ...initialFormData })
+
+function resetFormData() {
+    Object.assign(formData, initialFormData);
+}
 
 const rules = computed(() => ({
 
@@ -566,7 +728,6 @@ const rules = computed(() => ({
 }))
 
 
-
 const v$ = useVuelidate(rules, formData);
 const submit = async () => {
     const isFormValid = await v$.value.$validate();
@@ -575,14 +736,16 @@ const submit = async () => {
         try {
             const dataToSubmit = {
                 ...formData,
+                ...preferences,
                 purpose: 'save'
             };
 
             const open = await window.FormApi.createPdfForm(dataToSubmit)
+            console.log(open)
+
             if (open.status) {
                 const openFolder = await window.FormApi.openPdfForm(open.filepath)
             }
-            console.log(open)
         } catch (error) {
             console.error('Error submitting form:', error);
         }
@@ -601,11 +764,15 @@ const OpenForms = (e) => {
 const closeModal = () => {
     isFormOpen.value = false
     v$.value.$reset()
+    resetFormData()
+    isPreview.value = false
 
 }
 const toggleForm = (val) => {
+    resetFormData()
     selectedType.value = val
     formData.form_type = val
+    nodateforparentsmarriage.value = false
     v$.value.$reset()
 }
 
@@ -614,16 +781,9 @@ const toggleForm = (val) => {
 
 const isPreview = ref(false)
 const previewUrl = ref('')
-const pdfViewerSetting = ref({ defaultZoom: 175 })
-const pdfViewerControls = ref([
-    'zoom',
-])
-
-
 
 const previewcontent = async () => {
     isPreview.value = !isPreview.value
-
     if (isPreview) {
         const dataToSubmit = {
             ...formData,
@@ -633,10 +793,10 @@ const previewcontent = async () => {
 
         const open = await window.FormApi.createPdfForm(dataToSubmit)
         previewUrl.value = open.dataurl
-
-
     }
-
+    else {
+        previewUrl.value = null
+    }
 }
 
 const change_preferences = async () => {
@@ -649,8 +809,21 @@ const change_preferences = async () => {
 
         const open = await window.FormApi.createPdfForm(dataToSubmit)
         previewUrl.value = open.dataurl
-
-
     }
+}
+
+
+const nodateforparentsmarriage = ref(false)
+const parentsdatemarriage_opt = (val) => {
+    nodateforparentsmarriage.value = true
+    formData.date_marriage = val
+    formData.place_of_marriage_parents = 'Not Applicable'
+
+    date_marriage_option.value = false
+}
+
+const hasRemarks = ref(false)
+const addRemarks = () => {
+    hasRemarks.value = !hasRemarks.value
 }
 </script>

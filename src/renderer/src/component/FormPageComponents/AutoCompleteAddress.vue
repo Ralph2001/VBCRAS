@@ -1,16 +1,19 @@
 <template>
     <div class="relative w-full">
-        <label :for="label" v-if="!nolabel" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            {{ label }}
-            <span v-if="error" class="text-red-600">*</span>
-        </label>
-
         <input type="text" :readonly="readonly" ref="input" :id="label" :value="modelValue" @input="onChange"
-            :tabindex="skip ? '-1' : ''" :class="{
-                'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
-                'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
-            }"
-            class="  read-only:text-gray-400 read-only:bg-gray-100 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200 border border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm rounded-sm block w-full p-2.5 " />
+            :tabindex="skip ? '-1' : ''" :class="[
+                baseClasses,
+                {
+                    'text-center': middle,
+                    'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
+                    'border border-gray-300 focus:ring-blue-500 focus:border-blue-500': !unbordered,
+                    'italic': italic,
+                    'font-bold': bold,
+                    'bg-transparent': isTransparent,
+                    'focus:ring-red-400 focus:border-red-400': she,
+                    'border-red-500 ring-0 focus:ring-red-500 focus:border-red-500': error
+                }
+            ]" />
         <ul v-if="isOpen && props.modelValue && results.length"
             class="absolute shadow-lg z-50 bg-white w-full border p-1 max-h-[15rem] overflow-y-scroll ">
             <li v-for="address in results" :key="address.address"
@@ -25,8 +28,7 @@
 <script setup>
 import { ref, computed, defineProps, defineEmits } from "vue";
 import { onClickOutside } from "@vueuse/core";
-
-import philippines from '../../../utils/philippines';
+import philippines from '../../utils/philippines';
 const regions = computed(() => {
     return Object.keys(philippines[0]);
 })
@@ -58,6 +60,15 @@ const input = ref("");
 const isOpen = ref(false);
 const results = ref([]);
 
+const baseClasses = computed(() => [
+    `w-[${props.width}]`,
+    !props.bold ? 'font-semibold' : '',
+    !props.isTransparent ? 'bg-white' : '',
+    !props.she ? 'focus:ring-blue-500 focus:border-blue-500' : '',
+    'items-center text-gray-900 text-sm rounded px-2 py-1.5'
+]);
+
+
 const props = defineProps({
     label: {
         type: String,
@@ -77,10 +88,33 @@ const props = defineProps({
         type: [String, Number],
         default: "",
     },
-    error: Boolean,
     nolabel: {
         type: Boolean,
         default: false,
+    },
+    width: {
+        type: String,
+        default: 'auto',
+    },
+    middle: Boolean,
+    unbordered: {
+        type: Boolean,
+        default: false
+    },
+    italic: Boolean,
+    bold: {
+        type: Boolean,
+        default: false
+    },
+    isTransparent: { type: Boolean, default: false },
+    she: {
+        type: Boolean,
+        default: false
+    },
+
+    error: {
+        type: Boolean,
+        default: false
     },
 });
 
