@@ -29,7 +29,8 @@
       </div>
 
     </div>
-    <div class="flex mt-2  flex-row justify-center h-16 items-center gap-2  p-2 w-full">
+
+    <div class="flex mt-2 basis-[5%]   flex-row justify-center h-16 items-center gap-2  p-2 w-full" >
       <button
         class="rounded-full hover:bg-gray-50 active:scale-95 px-2 disabled:text-gray-200 text-blue-400 hover:text-blue-500"
         :disabled="!toggleBack" @click="goBack()">
@@ -107,8 +108,9 @@
       </div>
     </div>
 
-    <div class="flex  flex-col p-4 overflow-y-scroll relative h-full">
+    <div class="flex basis-[94%] border  flex-col p-4 overflow-y-scroll relative h-[calc(100vh-350px)]">
       <ul class="w-full space-y-1 px-2 m list-none list-inside dark:text-gray-400">
+        <!-- Folders Here -->
         <li v-if="!type && searchQuery == ''" v-for="type in types" :key="type" @click="selectType(type)"
           class="text-md font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm">
           <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" />
@@ -132,59 +134,60 @@
           <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400/70 me-2 ms-3" />
           {{ month }}
         </li>
-
-        <!-- Files -->
-
-        <div class="h-[calc(100vh-316px)]" v-if="type && year && month && searchQuery == ''">
-          <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full"
-            :item-size="28" key-field="name" v-slot="{ item }">
-            <li @dblclick.prevent="openFile(item.filepath, item.name)" tabindex="0"
-              class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm relative group">
-              <div class="block w-[60%] overflow-hidden truncate">
-                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
-                {{ item.name.replace(".pdf", "") }}
-              </div>
-              <p class="text-sm italic text-gray-600 font-normal mr-2">
-                {{ item.type }} {{ item.month }}
-                {{ item.year }}
-                <font-awesome-icon @click="openPath(item.filepath, item.name)" icon="fa-solid fa-folder-open"
-                  title="Open file path"
-                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
-              </p>
-            </li>
-          </RecycleScroller>
-        </div>
-
-        <div class="h-[calc(100vh-316px)]" v-if="searchQuery != ''">
-          <div v-if="!searchData.length && searchQuery != ''"
-            class="flex flex-col items-center h-full gap-10 justify-center">
-            <p class="text-center text-lg font-bold text-gray-600 font-italic">
-              No files found.
-            </p>
-
-            <div>
-              <img src="../../assets/no result.png" alt="" class="h-[15rem]" srcset="" />
-            </div>
-          </div>
-
-          <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
-            :item-size="28" key-field="name" v-slot="{ item }">
-            <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
-              class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
-              <div class="block w-[60%] overflow-hidden truncate">
-                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
-                {{ item.name.replace(".pdf", "") }}
-              </div>
-              <p class="text-sm italic text-gray-600 font-normal mr-2">
-                {{ item.type }} {{ item.month }} {{ item.year }}
-
-                <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path"
-                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
-              </p>
-            </li>
-          </RecycleScroller>
-        </div>
       </ul>
+      <!-- Files -->
+
+      <div class="h-full " v-if="type && year && month && searchQuery == ''">
+        <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full" :item-size="28"
+          key-field="name" v-slot="{ item }">
+          <li @dblclick.prevent="openFile(item.filepath, item.name)" tabindex="0"
+            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm relative group">
+            <div class="block w-[60%] overflow-hidden truncate">
+              <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
+              {{ item.name.replace(".pdf", "") }}
+            </div>
+            <p class="text-sm italic text-gray-600 font-normal mr-2">
+              {{ item.type }} {{ item.month }}
+              {{ item.year }}
+              <font-awesome-icon @click="openPath(item.filepath, item.name)" icon="fa-solid fa-folder-open"
+                title="Open file path"
+                class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
+            </p>
+          </li>
+        </RecycleScroller>
+      </div>
+
+      <!-- Search Scroller -->
+      <div class="h-full" v-if="searchQuery != ''">
+        <div v-if="!searchData.length && searchQuery != ''"
+          class="flex flex-col items-center h-full gap-10 justify-center">
+          <p class="text-center text-lg font-bold text-gray-600 font-italic">
+            No files found.
+          </p>
+
+          <div>
+            <img src="../../assets/no result.png" alt="" class="h-[15rem]" srcset="" />
+          </div>
+        </div>
+
+        <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
+          :item-size="28" key-field="name" v-slot="{ item }">
+          <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
+            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
+            <div class="block w-[60%] overflow-hidden truncate">
+              <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
+              {{ item.name.replace(".pdf", "") }}
+            </div>
+            <p class="text-sm italic text-gray-600 font-normal mr-2">
+              {{ item.type }} {{ item.month }} {{ item.year }}
+
+              <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path"
+                class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
+            </p>
+          </li>
+        </RecycleScroller>
+      </div>
+
     </div>
   </div>
 </template>

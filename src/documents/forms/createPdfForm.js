@@ -507,12 +507,11 @@ function create_for_A(formData) {
 }
 
 function create_for_B(formData) {
-    const TEXT_FOR_B = `     We certify that this office has no record of birth of **EMERITO CURAMENG CASTILLO** who is alleged to have been born on **September 22, 1953** in this municipality, of parents **Romulo Mamaril Castillo Sr** and **Felicidad Frias Curameng** Hence, we cannot issue, as requested, a true copy of his/her Certificate of Live Birth or transcription from the Register of Births.`
+    const TEXT_FOR_B = `   We certify that this office has no record of birth of **EMERITO CURAMENG CASTILLO** who is alleged to have been born on **September 22, 1953** in this municipality, of parents **Romulo Mamaril Castillo Sr** and **Felicidad Frias Curameng** Hence, we cannot issue, as requested, a true copy of his/her Certificate of Live Birth or transcription from the Register of Births.`
 
     const isBoldOpen = (arrayLength, valueBefore = false) => {
         const isEven = arrayLength % 2 === 0
         const result = valueBefore !== isEven
-
         return result
     }
 
@@ -526,27 +525,46 @@ function create_for_B(formData) {
     let textMap = doc.splitTextToSize(inputValue, endX)
     const startXCached = startX
     let boldOpen = false
+
     textMap.map((text, i) => {
         if (text) {
-            const arrayOfNormalAndBoldText = text.split('**')
-            const boldStr = 'bold'
-            const normalOr = 'normal'
-            arrayOfNormalAndBoldText.map((textItems, j) => {
-                // console.log(arrayOfNormalAndBoldText)
-                console.log(j + ': ' + textItems)
+            // Split text into words (includes bold delimiters)
+            const allWords = text.split(/\s+/)
 
-                doc.setFont('Times New Roman', boldOpen ? normalOr : boldStr)
-                if (j % 2 === 0) {
-                    doc.setFont(
-                        'Times New Roman',
-                        boldOpen ? boldStr : normalOr
-                    )
+            let xOffset = startX
+            let totalTextWidth = 0
+            for (let word of allWords) {
+                totalTextWidth += doc.getTextWidth(word)
+            }
+
+            const numSpaces = allWords.length - 1
+            let extraSpacePerWord = 0
+            if (i !== textMap.length - 1 && numSpaces > 0) {
+                extraSpacePerWord = (endX - totalTextWidth) / numSpaces
+            }
+
+            allWords.map((word, j) => {
+                // Determine if the word starts or ends with a bold delimiter
+                const startsWithBold = word.startsWith('**')
+                const endsWithBold = word.endsWith('**')
+                const wordWithoutDelimiters = word.replace(/\*\*/g, '')
+
+                // Set font based on boldness
+                if (startsWithBold || (boldOpen && !endsWithBold)) {
+                    doc.setFont('Times New Roman', 'bold')
+                } else {
+                    doc.setFont('Times New Roman', 'normal')
                 }
-                doc.text(textItems, startX, startY, 'justify')
-                startX =
-                    startX + (doc.getStringUnitWidth(textItems) * fontSize) / 72
+
+                doc.text(wordWithoutDelimiters, xOffset, startY)
+                xOffset += doc.getTextWidth(word) + extraSpacePerWord
+
+                // Update boldOpen if a bold delimiter was encountered
+                if (startsWithBold) {
+                    boldOpen = !boldOpen
+                }
             })
-            boldOpen = isBoldOpen(arrayOfNormalAndBoldText.length, boldOpen)
+
             startX = startXCached
             startY += lineSpacing
         }
