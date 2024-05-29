@@ -25,10 +25,10 @@
                     </div>
                     <div class="flex items-center justify-end">
                         <div class="w-[13rem]">
-                            <VueDatePicker :transitions="false" :input-class-name="date_of_class" :class="`rounded-sm `"
-                                text-input auto-apply format="MMMM dd, yyyy" autocomplete="on"
-                                v-model="formData.date_filed" :teleport="true" :model-value="date_filed"
-                                @update:model-value="handleDateFiled" @cleared="formData.date_filed = ''">
+                            <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                                format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_filed" :teleport="true"
+                                :model-value="date_filed" @update:model-value="handleDateFiled"
+                                @cleared="formData.date_filed = ''">
                             </VueDatePicker>
                         </div>
                         <!-- <InputforForm middle v-model="formData.date_filed" :error="v$.date_filed.$error" /> -->
@@ -63,10 +63,10 @@
                                 :
                                 <!-- <InputforForm width="100%" v-model="formData.date_registration"
                                     :error="v$.date_registration.$error" /> -->
-                                <VueDatePicker :transitions="false" :input-class-name="date_of_class"
-                                    :class="`rounded-sm `" text-input auto-apply format="MMMM dd, yyyy"
-                                    autocomplete="on" v-model="formData.date_registration" :teleport="true"
-                                    :model-value="date_registration" @update:model-value="handleDateRegistration"
+                                <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                                    format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_registration"
+                                    :teleport="true" :model-value="date_registration"
+                                    @update:model-value="handleDateRegistration"
                                     @cleared="formData.date_registration = ''">
                                 </VueDatePicker>
                             </InputLabel>
@@ -85,10 +85,10 @@
                             <InputLabel v-if="selectedType === '1A'" label="Date of Birth">
                                 :
                                 <!-- <InputforForm width="100%" v-model="formData.date_of" :error="v$.date_of.$error" /> -->
-                                <VueDatePicker :transitions="false" :input-class-name="date_of_class"
-                                    :class="`rounded-sm `" text-input auto-apply format="MMMM dd, yyyy"
-                                    autocomplete="on" v-model="formData.date_of" :teleport="true" :model-value="date_of"
-                                    @update:model-value="handleDateOf" @cleared="formData.date_of = ''">
+                                <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                                    format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_of" :teleport="true"
+                                    :model-value="date_of" @update:model-value="handleDateOf"
+                                    @cleared="formData.date_of = ''">
                                 </VueDatePicker>
                             </InputLabel>
 
@@ -129,11 +129,10 @@
                                     <InputforForm width="100%" v-model="formData.date_marriage"
                                         :error="v$.date_marriage.$error" v-if="nodateforparentsmarriage" isReadOnly />
 
-                                    <VueDatePicker v-else :transitions="false" :input-class-name="date_of_class"
-                                        :class="`rounded-sm `" text-input auto-apply format="MMMM dd, yyyy"
-                                        autocomplete="on" v-model="formData.date_marriage" :teleport="true"
-                                        :model-value="date_marriage" @update:model-value="handleDateMarriage"
-                                        @cleared="formData.date_marriage = ''">
+                                    <VueDatePicker v-else :transitions="false" :class="`rounded-sm `" text-input
+                                        auto-apply format="MMMM dd, yyyy" autocomplete="on"
+                                        v-model="formData.date_marriage" :teleport="true" :model-value="date_marriage"
+                                        @update:model-value="handleDateMarriage" @cleared="formData.date_marriage = ''">
                                     </VueDatePicker>
                                     <button @click="date_marriage_option = !date_marriage_option" tabindex="-1"
                                         class="p-1 px-2 text-gray-500 items-center justify-center text-sm hover:bg-gray-100 "><font-awesome-icon
@@ -349,10 +348,14 @@
                         </div> upon his/her request.
                     </div>
 
-                    <div class="flex w-full flex-col  items-center justify-center">
+                    <div class="flex w-full flex-col  items-center justify-center"
+                        v-if="formData.form_type.includes('A')">
 
-                        <div class="w-full flex flex-row items-center justify-center mt-10 group" title="Add Remarks"
-                            v-if="!hasRemarks">
+                        <div class="w-full flex flex-row items-center justify-center mt-10 group relative"
+                            title="Add Remarks" v-if="!hasRemarks">
+                            <p class="absolute -top-1 text-xs  group-hover:cursor-pointer tracking-wider"
+                                @click="addRemarks()">Add
+                                Remarks</p>
                             <font-awesome-icon icon="fa-solid fa-marker"
                                 class="p-2 rounded-full bg-blue-100 text-sm text-blue-400 group-hover:bg-blue-200  group-hover:cursor-pointer "
                                 @click="addRemarks()" />
@@ -361,15 +364,27 @@
                             </div>
                         </div>
 
-                        <div class="flex-row w-full px-10 mt-5 gap-2" v-if="hasRemarks">
-                            <p>REMARKS:</p>
-                            <div class="w-full">
-                                <QuillEditor theme="snow" :toolbar="['bold', 'italic', 'underline']"/>
+                        <div class="flex-row flex  w-full px-10 gap-2 mt-3" v-if="hasRemarks">
+                            <div class="flex  flex-row items-start gap-1 mb-2">
+                                <div class="flex items-center">
+                                    <button class="px-2.5 py-1 rounded-full  hover:bg-gray-100 group scale-75"
+                                        title="Remove Remarks" @click="addRemarks()">
+                                        <font-awesome-icon icon="fa-solid fa-xmark"
+                                            class="text-sm text-red-500 group-hover:text-red-400" />
+                                    </button>
+                                    <p>REMARKS:</p>
+                                </div>
+                            </div>
+                            <div class="w-full mt-5">
+                                <QuillEditor ref="remarks" theme="snow" :toolbar="['']"
+                                    v-model:content="formData.remarks" contentType="html" @ready="addremarksvalue" />
+                                <!-- {{ formData.remarks }} -->
                             </div>
                         </div>
                     </div>
+
                     <div
-                        class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-20 relative text-nowrap gap-2  px-2">
+                        class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-10     relative text-nowrap gap-2  px-2">
                         <div class="flex flex-col items-start sm:gap-2 md:lg:gap-10">
                             <p class="italic">Verified by:</p>
                             <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
@@ -397,10 +412,10 @@
                         </InputLabel>
                         <InputLabel label="Date Paid">
                             <!-- <InputforForm width="100%" v-model="formData.date_paid" /> -->
-                            <VueDatePicker :transitions="false" :input-class-name="date_of_class" :class="`rounded-sm `"
-                                text-input auto-apply format="MMMM dd, yyyy" autocomplete="on"
-                                v-model="formData.date_paid" :teleport="true" :model-value="date_paid"
-                                @update:model-value="handleDatePaid" @cleared="formData.date_paid = ''">
+                            <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                                format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_paid" :teleport="true"
+                                :model-value="date_paid" @update:model-value="handleDatePaid"
+                                @cleared="formData.date_paid = ''">
                             </VueDatePicker>
                         </InputLabel>
                     </div>
@@ -414,7 +429,8 @@
                     class="basis-[68%]  flex items-center justify-center h-full bg-gray-600  w-full overflow-y-scroll sm:overflow-x-scroll md:lg:overflow-x-hidden p-1">
                     <!-- <iframe v-if="isPreview" class="h-full w-full" :src="previewUrl" frameborder="1"
                         allowfullscreen=""></iframe> -->
-                    <PDFViewer :source="previewUrl" class="w-[5rem]" :zoom="150" controls="zoom" />
+                    <PDFViewer ref="PdfViewerRef" :source="previewUrl" class="w-[5rem]" :zoom="150"
+                        :controls="['zoom']" />
                     <!-- <PDF :src="previewUrl" style="width: 100%;"  /> -->
 
                     <!-- <pdf :src="previewUrl" :page="1">
@@ -663,6 +679,7 @@ const initialFormData = {
     destroyed_by: '',
 
 
+    remarks: '',
 
     issued_to: '',
     verified_by: 'ERIKA JOYCE B. PARAGAS',
@@ -728,22 +745,34 @@ const rules = computed(() => ({
 }))
 
 
+const PdfViewerRef = ref()
+watch(() => PdfViewerRef.value, () => {
+    PdfViewerRef.value.zoom = 150;
+    console.log(PdfViewerRef.value)
+
+
+}, { deep: true });
+
+
 const v$ = useVuelidate(rules, formData);
 const submit = async () => {
+
     const isFormValid = await v$.value.$validate();
 
     if (isFormValid) {
         try {
+
             const dataToSubmit = {
                 ...formData,
                 ...preferences,
-                purpose: 'save'
+                purpose: 'edit'
             };
 
             const open = await window.FormApi.createPdfForm(dataToSubmit)
             console.log(open)
 
             if (open.status) {
+
                 const openFolder = await window.FormApi.openPdfForm(open.filepath)
             }
         } catch (error) {
@@ -826,4 +855,12 @@ const hasRemarks = ref(false)
 const addRemarks = () => {
     hasRemarks.value = !hasRemarks.value
 }
+const remarks = ref()
+const addremarksvalue = () => {
+
+    remarks.value.focus()
+
+}
+
+
 </script>

@@ -60,7 +60,8 @@ import {
     faFileLines,
     faUser,
     faChevronDown, 
-    faMarker
+    faMarker,
+   
 } from '@fortawesome/free-solid-svg-icons'
 
 import { faEye } from '@fortawesome/free-regular-svg-icons'
@@ -104,12 +105,13 @@ library.add(
     faUser,
     faEye,
     faChevronDown,
-    faMarker
+    faMarker, 
+  
 )
 
 import './assets/index.css'
 import 'flowbite'
-import 'animate.css'
+// import 'animate.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const app = createApp(App)

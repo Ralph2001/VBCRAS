@@ -434,3 +434,12 @@ body{
     background: #555;
 }
 
+.ql-toolbar.ql-snow{
+    @apply hidden !important
+}
+.ql-editor.ql-blank{
+    @apply border-t border-[#E5E7EB] !important
+}
+.ql-editor{
+    @apply border-t border-[#E5E7EB] !important
+}

@@ -388,7 +388,7 @@ async function whatTypeofForm(formData) {
     if (['1A', '2A', '3A'].includes(formData.form_type)) {
         create_for_A(formData)
     } else if (['1B', '2B', '3B'].includes(formData.form_type)) {
-        console.log(formData.form_type)
+        create_for_B(formData)
     } else if (['1C', '2C', '3C'].includes(formData.form_type)) {
         console.log(formData.form_type)
     }
@@ -504,4 +504,56 @@ function create_for_A(formData) {
         tableWidth: 'auto',
         margin: { left: info_x },
     })
+}
+
+function create_for_B(formData) {
+    const TEXT_FOR_B = `     We certify that this office has no record of birth of **EMERITO CURAMENG CASTILLO** who is alleged to have been born on **September 22, 1953** in this municipality, of parents **Romulo Mamaril Castillo Sr** and **Felicidad Frias Curameng** Hence, we cannot issue, as requested, a true copy of his/her Certificate of Live Birth or transcription from the Register of Births.`
+
+    const isBoldOpen = (arrayLength, valueBefore = false) => {
+        const isEven = arrayLength % 2 === 0
+        const result = valueBefore !== isEven
+
+        return result
+    }
+
+    let startX = 1
+    let startY = 3.5
+    const fontSize = 12
+    const lineSpacing = 0.3
+
+    const inputValue = TEXT_FOR_B
+    const endX = 6.44
+    let textMap = doc.splitTextToSize(inputValue, endX)
+    const startXCached = startX
+    let boldOpen = false
+    textMap.map((text, i) => {
+        if (text) {
+            const arrayOfNormalAndBoldText = text.split('**')
+            const boldStr = 'bold'
+            const normalOr = 'normal'
+            arrayOfNormalAndBoldText.map((textItems, j) => {
+                // console.log(arrayOfNormalAndBoldText)
+                console.log(j + ': ' + textItems)
+
+                doc.setFont('Times New Roman', boldOpen ? normalOr : boldStr)
+                if (j % 2 === 0) {
+                    doc.setFont(
+                        'Times New Roman',
+                        boldOpen ? boldStr : normalOr
+                    )
+                }
+                doc.text(textItems, startX, startY, 'justify')
+                startX =
+                    startX + (doc.getStringUnitWidth(textItems) * fontSize) / 72
+            })
+            boldOpen = isBoldOpen(arrayOfNormalAndBoldText.length, boldOpen)
+            startX = startXCached
+            startY += lineSpacing
+        }
+    })
+
+    const ANOTHER_TEXT =
+        '   We also certify that the records of births for the year 1953 are still intact in the archives of this office.'
+    const splitted_another = doc.splitTextToSize(ANOTHER_TEXT, 6.44)
+    doc.text(splitted_another, 1, 5.3, 'justify')
 }
