@@ -376,7 +376,7 @@
                                 </div>
                             </div>
                             <div class="w-full mt-5">
-                                <QuillEditor ref="remarks" theme="snow" :toolbar="['']"
+                                <QuillEditor ref="remarks"  theme="snow" :toolbar="['']"
                                     v-model:content="formData.remarks" contentType="html" @ready="addremarksvalue" />
                                 <!-- {{ formData.remarks }} -->
                             </div>
