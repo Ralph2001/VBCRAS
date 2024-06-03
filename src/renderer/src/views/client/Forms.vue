@@ -822,6 +822,7 @@ const previewcontent = async () => {
 
         const open = await window.FormApi.createPdfForm(dataToSubmit)
         previewUrl.value = open.dataurl
+        console.log(open.dataurl)
     }
     else {
         previewUrl.value = null

@@ -30,7 +30,7 @@
 
     </div>
 
-    <div class="flex mt-2 basis-[5%]   flex-row justify-center h-16 items-center gap-2  p-2 w-full" >
+    <div class="flex mt-2 basis-[5%]   flex-row justify-center h-16 items-center gap-2  p-2 w-full">
       <button
         class="rounded-full hover:bg-gray-50 active:scale-95 px-2 disabled:text-gray-200 text-blue-400 hover:text-blue-500"
         :disabled="!toggleBack" @click="goBack()">
@@ -137,30 +137,41 @@
       </ul>
       <!-- Files -->
 
-      <div class="h-full " v-if="type && year && month && searchQuery == ''">
-        <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full" :item-size="28"
-          key-field="name" v-slot="{ item }">
-          <li @dblclick.prevent="openFile(item.filepath, item.name)" tabindex="0"
-            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm relative group">
-            <div class="block w-[60%] overflow-hidden truncate">
-              <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
-              {{ item.name.replace(".pdf", "") }}
-            </div>
-            <p class="text-sm italic text-gray-600 font-normal mr-2">
-              {{ item.type }} {{ item.month }}
-              {{ item.year }}
-              <font-awesome-icon @click="openPath(item.filepath, item.name)" icon="fa-solid fa-folder-open"
-                title="Open file path"
-                class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
-            </p>
-          </li>
-        </RecycleScroller>
+      <div class="h-full flex flex-row" v-if="type && year && month && searchQuery == ''">
+        <div class="h-full grow">
+          <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full"
+            :item-size="28" key-field="name" v-slot="{ item }">
+            <li @dblclick.prevent="openFileSideBar(item.filepath, item.name)" tabindex="0"
+              class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm relative group">
+              <div class="block w-[60%] overflow-hidden truncate">
+                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
+                {{ item.name.replace(".pdf", "") }}
+              </div>
+              <p class="text-sm italic text-gray-600 font-normal mr-2">
+                {{ item.type }} {{ item.month }}
+                {{ item.year }}
+                <font-awesome-icon @click="openFileSideBar(item.filepath, item.name)" icon="fa-solid fa-folder-open"
+                  title="Open file path"
+                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
+              </p>
+            </li>
+          </RecycleScroller>
+        </div>
+        <div class="basis-[45%] h-full w-full flex items-center justify-center">
+          <PDFViewer :source="pdfSource" class="w-[5rem]" v-if="pdfSource" :controls="[
+            'print',
+            'rotate',
+            'zoom',
+
+            'switchPage',]" />
+          <p v-else class="text-gray-600 font-mono">Double Click to open Pdf</p>
+        </div>
       </div>
 
       <!-- Search Scroller -->
-      <div class="h-full" v-if="searchQuery != ''">
+      <div class="h-full flex flex-row" v-if="searchQuery != ''">
         <div v-if="!searchData.length && searchQuery != ''"
-          class="flex flex-col items-center h-full gap-10 justify-center">
+          class="flex w-full flex-col items-center h-full gap-10 justify-center">
           <p class="text-center text-lg font-bold text-gray-600 font-italic">
             No files found.
           </p>
@@ -170,22 +181,35 @@
           </div>
         </div>
 
-        <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
-          :item-size="28" key-field="name" v-slot="{ item }">
-          <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
-            class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
-            <div class="block w-[60%] overflow-hidden truncate">
-              <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
-              {{ item.name.replace(".pdf", "") }}
-            </div>
-            <p class="text-sm italic text-gray-600 font-normal mr-2">
-              {{ item.type }} {{ item.month }} {{ item.year }}
+        <div class="h-full grow">
+          <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
+            :item-size="28" key-field="name" v-slot="{ item }">
+            <li tabindex="0" @dblclick="openFileSideBar(item.filepath, item.name)"
+              class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
+              <div class="block w-[60%] overflow-hidden truncate">
+                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
+                {{ item.name.replace(".pdf", "") }}
+              </div>
+              <p class="text-sm italic text-gray-600 font-normal mr-2">
+                {{ item.type }} {{ item.month }} {{ item.year }}
 
-              <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path"
-                class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
-            </p>
-          </li>
-        </RecycleScroller>
+                <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path"
+                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
+              </p>
+            </li>
+          </RecycleScroller>
+        </div>
+
+        <div class="basis-[45%] h-full w-full flex items-center justify-center"
+          v-if="searchQuery != '' && searchData.length">
+          <PDFViewer :source="pdfSource" class="w-[5rem]" v-if="pdfSource" :controls="[
+            'print',
+            'rotate',
+            'zoom',
+
+            'switchPage',]" />
+          <p v-else class="text-gray-600 font-mono">Double Click to open Pdf</p>
+        </div>
       </div>
 
     </div>
@@ -199,6 +223,7 @@ import { useComputerStore } from "../../stores/computer";
 import { useScannedDocuments } from "../../stores/scanned";
 import Alert from "../Alert.vue";
 import { watchDebounced, refDebounced, onStartTyping } from "@vueuse/core";
+import PDFViewer from 'pdf-viewer-vue'
 
 const showAlert = ref(false);
 
@@ -207,7 +232,7 @@ const Documents = useScannedDocuments();
 onMounted(() => {
   computer.getUserName();
 });
-
+const pdfSource = ref('')
 const toggleBack = ref(false);
 const type = ref("");
 const year = ref("");
@@ -252,7 +277,14 @@ const openFile = async (filepath, filename) => {
   }
 };
 
+const openFileSideBar = async (filepath, filename) => {
+  const check = await window.ScannedApi.OpenInSideBar(filepath);
+  pdfSource.value = 'data:application/pdf;filename=generated.pdf;base64,' + check.fileUrl
+
+};
+
 const openPath = async (filepath, filename) => {
+
   try {
     const device = computer.desktop_name;
     const data = [
@@ -266,6 +298,7 @@ const openPath = async (filepath, filename) => {
     const add_log = await Documents.add_log(data);
     if (add_log) {
       const openpath = await window.LocalCivilApi.openFilePath(filepath);
+
       if (!openpath) {
         showAlert.value = true;
 
@@ -282,6 +315,10 @@ const openPath = async (filepath, filename) => {
     }, 3000);
   }
 };
+
+
+
+
 
 const props = defineProps({
   data: {

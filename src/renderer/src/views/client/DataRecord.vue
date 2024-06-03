@@ -8,17 +8,61 @@
             </Transition>
         </teleport>
 
-        <Header label="Data Records">
+        <Header label="Registry Records">
             <BtnDrop label="Create" @click="modalOpen" />
         </Header>
-        <!-- <div class="flex items-center justify-end px-4">
-            <div class="text-sm h-5 flex w-max p-1 items-center rounded-2xl bg-blue-100 font-normal italic">Space + 1
+
+
+        <div class="h-[calc(100vh-250px)]  gap-1 flex flex-row">
+            <div class="basis-[15%] border-e p-4 flex flex-col h-full overflow-y-scroll">
+                <div class="w-full flex flex-col gap-1 p-3">
+                    <div class="flex flex-col w-full justify-between">
+                        <p class="font-semibold text-gray-800 ">Search Record </p>
+                        <Input />
+                    </div>
+                </div>
+                <div class="w-full flex flex-col gap-1 p-3">
+                    <div class="flex flex-col w-full justify-between">
+                        <p class="font-semibold text-gray-800 ">Year </p>
+                        <select id="countries"
+                            class="bg-gray-50 border border-gray-300 font-semibold  text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                            <option value="">2024</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="w-full flex flex-col gap-1 p-3">
+                    <div class="flex flex-row w-full items-center justify-between">
+                        <p class="font-semibold text-gray-800 ">Month <span
+                                class="text-xs font-normal italic">(Selected: All)</span></p>
+
+                        <p class=" cursor-pointer text-xs">[<span class="text-blue-600"
+                                @click="isFilterMonthVisible = !isFilterMonthVisible">{{ !isFilterMonthVisible ? 'Show'
+                                    :
+                                    'Hide' }}</span>]</p>
+                    </div>
+                    <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700 hover:cursor-pointer"
+                        v-if="isFilterMonthVisible" v-for="month in months" :key="month">
+                        <input :id="month" type="checkbox" value="" name="bordered-checkbox"
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  hover:cursor-pointer rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label :for="month"
+                            class="w-full py-2.5 ms-2 text-sm font-medium text-gray-900  hover:cursor-pointer    dark:text-gray-300">
+                            {{ month
+                            }}</label>
+                    </div>
+                </div>
             </div>
-        </div> -->
-
-        <div class="h-[calc(100vh-250px)] ">
-
-            <TableGrid :data="records.records" :dataColumns="colDefs" :suppressRowTransform="true" />
+            <div class="grow">
+                <TabsWrapper>
+                    <Tab title="Birth">
+                        <TableGrid :data="records.records" :dataColumns="colDefs" :suppressRowTransform="true" />
+                    </Tab>
+                    <Tab title="Death">
+                    </Tab>
+                    <Tab title="Marriage">
+                    </Tab>
+                </TabsWrapper>
+            </div>
         </div>
 
         <div v-if="isModalOpen"
@@ -137,8 +181,25 @@ import RemoveBtn from '../../component/DataRecordComponents/RemoveBtn.vue';
 import Alert from '../../components/Alert.vue'
 import { onKeyStroke } from '@vueuse/core'
 import { useMagicKeys } from '@vueuse/core';
+import TabsWrapper from '../../component/DataRecordComponents/TabsWrapper.vue';
+import Tab from '../../component/DataRecordComponents/Tab.vue';
 
+const months = ref([
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+])
 
+const isFilterMonthVisible = ref(false)
 
 const error = ref(false)
 const error_message = ref()
@@ -313,7 +374,7 @@ const generate = async () => {
     const open = await window.RecordsApi.GenerateRecords(filepath)
 }
 const cellClassRules = {
-    "bg-green-50 border-0": params => params.data.type === "Birth",
+    "bg-green-200 border-0": params => params.data.type === "Birth",
     "bg-blue-50 border-0": params => params.data.type === "Death",
     "bg-red-50 border-0": params => params.data.type === "Marriage",
 }
@@ -322,7 +383,7 @@ const colDefs = ref([
         field: "registry_number",
         headerName: "Registry Number",
         flex: 2,
-        filter: true,
+
         pinned: "left",
         cellClassRules: cellClassRules,
         cellClass: "font-semibold tracking-wider w-full h-full  text-start ",
@@ -334,7 +395,7 @@ const colDefs = ref([
         headerName: "Type",
         flex: 1,
         cellClass: "font-medium tracking-wider w-full text-gray-700",
-        filter: true,
+
         pinned: "left",
         lockPinned: true,
     },
@@ -343,7 +404,7 @@ const colDefs = ref([
         headerName: "Document Owner",
         flex: 2,
         cellClass: "font-medium tracking-wider w-full text-gray-700",
-        filter: true,
+
     },
 
     {
@@ -351,7 +412,7 @@ const colDefs = ref([
         cellClass: "font-medium tracking-wider w-full text-gray-600",
         headerName: "Date of Registration",
         flex: 1,
-        filter: true,
+
         pinned: "right",
         lockPinned: true,
 
@@ -364,7 +425,7 @@ const colDefs = ref([
         flex: 1,
         pinned: "right",
         lockPinned: true,
-        filter: true,
+
         cellRenderer: RemoveBtn,
         cellStyle: { border: "none" },
         cellStyle: { overflow: "visible", border: "none" },

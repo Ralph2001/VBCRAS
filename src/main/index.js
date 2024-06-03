@@ -14,7 +14,8 @@ const { dialog } = require('electron')
 
 const os = require('os')
 const username = os.userInfo().username
-const fs = require('fs-extra')
+const fse = require('fs-extra')
+const fs = require('fs')
 var interfaces = os.networkInterfaces()
 
 var addresses = []
@@ -79,13 +80,17 @@ ipcMain.handle('createPdfForm', async (event, formData) => {
     try {
         const generate_record = await createPdfForm(formData)
         if ((generate_record.success = true)) {
-            return { status: true, filepath: generate_record.filepath, dataurl: generate_record.dataurl }
+            return {
+                status: true,
+                filepath: generate_record.filepath,
+                dataurl: generate_record.dataurl,
+            }
         }
     } catch (error) {
         console.log(error)
     }
 })
-console.log(process.versions.node); // Outputs the Node.js version
+console.log(process.versions.node) // Outputs the Node.js version
 
 ipcMain.handle('open-form', async (event, source) => {
     try {
@@ -233,7 +238,7 @@ ipcMain.handle('select-file', async (event) => {
 
 ipcMain.handle('move-file', async (event, { source, destination }) => {
     try {
-        await fs.move(source, destination)
+        await fse.move(source, destination)
         event.returnValue = 'File moved successfully!'
     } catch (err) {
         console.error(err)
@@ -243,7 +248,7 @@ ipcMain.handle('move-file', async (event, { source, destination }) => {
 
 ipcMain.handle('copy-file', async (event, { source, destination }) => {
     try {
-        await fs.copy(source, destination)
+        await fse.copy(source, destination)
         event.returnValue = true
     } catch (err) {
         console.error(err)
@@ -287,6 +292,15 @@ ipcMain.handle('open-file-folder', async (event, path) => {
 
 ipcMain.handle('get-user', async (event) => {
     return username
+})
+
+//Scanned Document IPC
+
+ipcMain.handle('open-scanned-sidebar', async (event, source) => {
+        const fiepath = 'C:\\Users\\' + username + '\\' + source
+        const data = fs.readFileSync(fiepath)
+       
+        return { status: true, fileUrl: data.toString('base64') }
 })
 
 //Main Window

@@ -58,6 +58,17 @@ contextBridge.exposeInMainWorld('RecordsApi', {
     },
 })
 
+contextBridge.exposeInMainWorld('ScannedApi', {
+    OpenInSideBar: async (formData) => {
+        const result = await ipcRenderer.invoke(
+            'open-scanned-sidebar',
+            formData
+        )
+        console.log(result)
+        return { status: result.status, fileUrl: result.fileUrl }
+    },
+})
+
 contextBridge.exposeInMainWorld('LocalCivilApi', {
     IsServerRunning: async () => {
         const result = await ipcRenderer.invoke('is-server-running')
