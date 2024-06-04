@@ -297,10 +297,14 @@ ipcMain.handle('get-user', async (event) => {
 //Scanned Document IPC
 
 ipcMain.handle('open-scanned-sidebar', async (event, source) => {
+    try {
         const fiepath = 'C:\\Users\\' + username + '\\' + source
         const data = fs.readFileSync(fiepath)
-       
-        return { status: true, fileUrl: data.toString('base64') }
+        if (data) {
+            return { status: true, fileUrl: data.toString('base64') }
+        }
+        return { status: false, fileUrl: null }
+    } catch (error) {}
 })
 
 //Main Window

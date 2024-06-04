@@ -29,14 +29,14 @@ import Carousel from "../../components/Carousel.vue";
         </div>
         <div class="">
           <p class="text-md font-normal  text-justify leading-7 tracking-wider text-gray-800 ">
-            <span class="font-bold hover:scale-95">"Vital Bridge"</span>
+            <span class="font-bold hover:scale-95 font-mono text-lg">"Vital Bridge"</span>
             suggests a connection or link that is essential or crucial. In the context
             of a birth, death, and marriage record system, it could signify the
             pivotal role of the system in connecting and managing vital life events,
             serving as a bridge between individuals and official records. The term
-            <span class="font-bold italic">"vital"</span> emphasizes the importance or
+            <span class="font-bold font-mono text-lg tracking-wider">"vital"</span> emphasizes the importance or
             significance of the information being bridged, while
-            <span class="font-bold italic">"bridge"</span> implies the facilitation or
+            <span class="font-bold font-mono text-lg tracking-wider">"bridge"</span> implies the facilitation or
             connection between different components or entities.
           </p>
         </div>

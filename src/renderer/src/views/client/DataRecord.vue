@@ -13,8 +13,8 @@
         </Header>
 
 
-        <div class="h-[calc(100vh-250px)]  gap-1 flex flex-row">
-            <div class="basis-[15%] border-e p-4 flex flex-col h-full overflow-y-scroll">
+        <div class="h-[calc(100vh-250px)]  gap-1 flex flex-row ">
+            <div class="basis-[15%] p-4 flex flex-col h-full overflow-y-scroll">
                 <div class="w-full flex flex-col gap-1 p-3">
                     <div class="flex flex-col w-full justify-between">
                         <p class="font-semibold text-gray-800 ">Search Record </p>
@@ -52,8 +52,8 @@
                     </div>
                 </div>
             </div>
-            <div class="grow">
-                <TabsWrapper>
+            <div class="grow border-s border-e border-b">
+                <TabsWrapper >
                     <Tab title="Birth">
                         <TableGrid :data="records.records" :dataColumns="colDefs" :suppressRowTransform="true" />
                     </Tab>
@@ -383,7 +383,6 @@ const colDefs = ref([
         field: "registry_number",
         headerName: "Registry Number",
         flex: 2,
-
         pinned: "left",
         cellClassRules: cellClassRules,
         cellClass: "font-semibold tracking-wider w-full h-full  text-start ",
@@ -395,7 +394,6 @@ const colDefs = ref([
         headerName: "Type",
         flex: 1,
         cellClass: "font-medium tracking-wider w-full text-gray-700",
-
         pinned: "left",
         lockPinned: true,
     },
@@ -425,7 +423,6 @@ const colDefs = ref([
         flex: 1,
         pinned: "right",
         lockPinned: true,
-
         cellRenderer: RemoveBtn,
         cellStyle: { border: "none" },
         cellStyle: { overflow: "visible", border: "none" },

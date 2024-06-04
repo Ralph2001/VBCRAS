@@ -64,7 +64,6 @@ contextBridge.exposeInMainWorld('ScannedApi', {
             'open-scanned-sidebar',
             formData
         )
-        console.log(result)
         return { status: result.status, fileUrl: result.fileUrl }
     },
 })

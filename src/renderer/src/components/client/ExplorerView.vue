@@ -23,14 +23,34 @@
       </div>
 
 
-      <div class="flex justify-end items-center me-5">
-        <font-awesome-icon icon="fa-solid fa-circle-question"
-          class="text-gray-400 hover:text-gray-600 cursor-pointer" />
+      <div class="flex justify-end gap-2 items-center me-5 text-gray-400  cursor-pointer relative">
+        <font-awesome-icon icon="fa-solid fa-gear" class="hover:text-gray-600"
+          @click="ScannedSettings = !ScannedSettings" />
+        <!-- <font-awesome-icon icon="fa-solid fa-circle-question" class="hover:text-gray-600" /> -->
+
+
+        <div v-if="ScannedSettings" ref="settings"
+          class="bg-white flex flex-col top-8 shadow-md w-auto border border-gray-200 z-[99999] p-4 absolute h-auto">
+          <p class="text-gray-600 font-semibold text-sm mb-3">
+            Opening PDF:
+          </p>
+          <div class="w-full flex flex-col gap-2">
+            <div class="flex items-center group ps-2 border border-gray-200 rounded" v-for="(key, value) in openlist"
+              :key="value">
+              <input :id="value" type="radio" :checked="Documents.OpenMode === value" @change="changeOpenMethod"
+                v-model="opening_method" :value="value" name="openMethod"
+                class="w-4 h-4 text-blue-600 bg-gray-100  border-gray-300 focus:ring-blue-500 group-hover:cursor-pointer ">
+              <label :for="value"
+                class="w-full py-1.5 px-2 ms-2 text-sm font-medium text-gray-900  group-hover:cursor-pointer">{{
+                  key }}</label>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
 
-    <div class="flex mt-2 basis-[5%]   flex-row justify-center h-16 items-center gap-2  p-2 w-full">
+    <div class="flex mt-2 basis-[5%]   flex-row justify-cente6r h-16 items-center gap-2  p-2 w-full">
       <button
         class="rounded-full hover:bg-gray-50 active:scale-95 px-2 disabled:text-gray-200 text-blue-400 hover:text-blue-500"
         :disabled="!toggleBack" @click="goBack()">
@@ -138,33 +158,43 @@
       <!-- Files -->
 
       <div class="h-full flex flex-row" v-if="type && year && month && searchQuery == ''">
-        <div class="h-full grow">
+        <div :class="{ 'sm:hidden md:lg:block h-full': pdfSource }" class="h-full grow">
           <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full"
             :item-size="28" key-field="name" v-slot="{ item }">
-            <li @dblclick.prevent="openFileSideBar(item.filepath, item.name)" tabindex="0"
+            <li @dblclick.prevent="openFile(item.filepath, item.name)" tabindex="0"
+              :class="{ 'bg-blue-500 hover:bg-blue-500 text-white group ': ActiveFile === item.name && pdfSource }"
               class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm relative group">
               <div class="block w-[60%] overflow-hidden truncate">
                 <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
                 {{ item.name.replace(".pdf", "") }}
               </div>
-              <p class="text-sm italic text-gray-600 font-normal mr-2">
+              <p :class="{ 'text-white  ': ActiveFile === item.name && pdfSource }"
+                class="text-sm italic  font-normal mr-2 text-gray-800">
                 {{ item.type }} {{ item.month }}
                 {{ item.year }}
-                <font-awesome-icon @click="openFileSideBar(item.filepath, item.name)" icon="fa-solid fa-folder-open"
+                <font-awesome-icon @click="openFile(item.filepath, item.name)" icon="fa-solid fa-folder-open"
                   title="Open file path"
-                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
+                  class="ms-1 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
               </p>
             </li>
           </RecycleScroller>
         </div>
-        <div class="basis-[45%] h-full w-full flex items-center justify-center">
-          <PDFViewer :source="pdfSource" class="w-[5rem]" v-if="pdfSource" :controls="[
-            'print',
-            'rotate',
-            'zoom',
-
-            'switchPage',]" />
-          <p v-else class="text-gray-600 font-mono">Double Click to open Pdf</p>
+        <div class="border-s sm:hidden md:lg:block h-full"></div>
+        <div :class="{ 'flex': pdfSource, 'sm:hidden md:lg:flex': !pdfSource }"
+          class="basis-[50%]  h-full w-full flex   p-1  items-center justify-center  gap-2"
+          v-if="Documents.OpenMode === 'OpenSideBar'">
+          <button v-if="pdfSource" @click="pdfSource = ''"
+            class="border px-2 py-1.5 self-start rounded-sm text-gray-700 text-sm font-medium hover:bg-red-400 hover:text-white ">Close</button>
+          <PDFViewer ref="PdfViewerRef" :source="pdfSource" class="sm:w-full md:lg:w-[5rem] h-full" v-if="pdfSource"
+            :controls="[
+              'print',
+              'rotate',
+              'zoom',
+              'switchPage',
+              'catalog']" />
+          <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100">
+            <p class="text-gray-600 font-mono text-lg ">VBCRAS</p>
+          </div>
         </div>
       </div>
 
@@ -184,7 +214,7 @@
         <div class="h-full grow">
           <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
             :item-size="28" key-field="name" v-slot="{ item }">
-            <li tabindex="0" @dblclick="openFileSideBar(item.filepath, item.name)"
+            <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
               class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
               <div class="block w-[60%] overflow-hidden truncate">
                 <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
@@ -200,15 +230,19 @@
           </RecycleScroller>
         </div>
 
-        <div class="basis-[45%] h-full w-full flex items-center justify-center"
+        <div class="basis-[50%] h-full w-full flex  border-s p-1  items-center justify-center  gap-2"
           v-if="searchQuery != '' && searchData.length">
+          <button v-if="pdfSource" @click="pdfSource = ''"
+            class="border px-2 py-1.5 self-start rounded-sm text-gray-700 text-sm font-medium hover:bg-red-400 hover:text-white ">Close</button>
           <PDFViewer :source="pdfSource" class="w-[5rem]" v-if="pdfSource" :controls="[
             'print',
             'rotate',
             'zoom',
 
             'switchPage',]" />
-          <p v-else class="text-gray-600 font-mono">Double Click to open Pdf</p>
+          <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100">
+            <p class="text-gray-600 font-mono text-lg ">VBCRAS</p>
+          </div>
         </div>
       </div>
 
@@ -217,13 +251,20 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import SearchFilter from "./SearchFilter.vue";
 import { useComputerStore } from "../../stores/computer";
 import { useScannedDocuments } from "../../stores/scanned";
 import Alert from "../Alert.vue";
 import { watchDebounced, refDebounced, onStartTyping } from "@vueuse/core";
 import PDFViewer from 'pdf-viewer-vue'
+import { onClickOutside } from '@vueuse/core'
+import { useScroll } from '@vueuse/core'
+
+
+
+
+const ActiveFile = ref()
 
 const showAlert = ref(false);
 
@@ -239,6 +280,36 @@ const year = ref("");
 const month = ref("");
 const searchQuery = ref("");
 const input = ref(null);
+const ScannedSettings = ref(false)
+
+const settings = ref(null)
+
+onClickOutside(settings, event =>
+  ScannedSettings.value = false
+)
+
+const PdfViewerRef = ref()
+
+const { x, y, isScrolling, arrivedState, directions } = useScroll(PdfViewerRef)
+
+watch(() => PdfViewerRef.value, () => {
+  if (pdfSource.value === '') {
+    return
+  }
+  PdfViewerRef.value.zoom = 175;
+}, { deep: true });
+
+const openlist = ref({
+  OpenSideBar: 'Sidebar',
+  OpenNewWindow: 'New Window',
+})
+
+const opening_method = ref()
+
+const changeOpenMethod = () => {
+  Documents.changeOpeningMode(opening_method.value)
+  pdfSource.value = ''
+}
 
 const search = refDebounced(searchQuery, 2000);
 
@@ -249,6 +320,8 @@ onStartTyping(() => {
 const openFile = async (filepath, filename) => {
   try {
     const device = computer.desktop_name;
+
+    ActiveFile.value = filename
     const data = [
       {
         name: filename,
@@ -259,7 +332,22 @@ const openFile = async (filepath, filename) => {
 
     const add_log = await Documents.add_log(data);
     if (add_log) {
-      const check = await window.LocalCivilApi.checkFile(filepath);
+
+      if (Documents.OpenMode === 'OpenSideBar') {
+        const check = await window.ScannedApi.OpenInSideBar(filepath)
+        pdfSource.value = 'data:application/pdf;filename=generated.pdf;base64,' + check.fileUrl
+        console.log(check)
+        if (!check.status) {
+          showAlert.value = true;
+          pdfSource.value = ''
+          setTimeout(() => {
+            showAlert.value = false;
+          }, 3000);
+        }
+        return
+      }
+
+      const check = await window.LocalCivilApi.checkFile(filepath)
       if (!check) {
         showAlert.value = true;
 
@@ -267,6 +355,7 @@ const openFile = async (filepath, filename) => {
           showAlert.value = false;
         }, 3000);
       }
+
     }
   } catch (error) {
     showAlert.value = true;
@@ -277,11 +366,6 @@ const openFile = async (filepath, filename) => {
   }
 };
 
-const openFileSideBar = async (filepath, filename) => {
-  const check = await window.ScannedApi.OpenInSideBar(filepath);
-  pdfSource.value = 'data:application/pdf;filename=generated.pdf;base64,' + check.fileUrl
-
-};
 
 const openPath = async (filepath, filename) => {
 
@@ -318,8 +402,6 @@ const openPath = async (filepath, filename) => {
 
 
 
-
-
 const props = defineProps({
   data: {
     type: Array,
@@ -346,6 +428,7 @@ const searchData = computed(() => {
 });
 
 const goBack = () => {
+  pdfSource.value = ''
   if (type.value && year.value && month.value) {
     month.value = "";
     toggleBack.value = true;
@@ -359,17 +442,23 @@ const goBack = () => {
 };
 
 const goHome = () => {
+  pdfSource.value = ''
+
   type.value = "";
   month.value = "";
   year.value = "";
   toggleBack.value = false;
 };
 const goYear = () => {
+  pdfSource.value = ''
+
   year.value = "";
   month.value = "";
   toggleBack.value = true;
 };
 const goMonth = () => {
+  pdfSource.value = ''
+
   month.value = "";
   toggleBack.value = true;
 };
@@ -422,6 +511,8 @@ const files = computed(() => {
 });
 
 const selectType = (selectedType) => {
+  pdfSource.value = ''
+
   toggleBack.value = true;
   type.value = selectedType;
   year.value = "";
@@ -429,12 +520,16 @@ const selectType = (selectedType) => {
 };
 
 const selectYear = (selectedYear) => {
+  pdfSource.value = ''
+
   toggleBack.value = true;
   year.value = selectedYear;
   month.value = "";
 };
 
 const selectMonth = (selectedMonth) => {
+  pdfSource.value = ''
+
   toggleBack.value = true;
   month.value = selectedMonth;
 };

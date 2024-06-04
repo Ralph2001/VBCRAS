@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full text-sm font-medium text-center text-gray-700 border-b border-gray-200 ">
-        <ul class="flex flex-wrap -mb-px ">
+    <div class="w-full text-sm font-medium text-center text-gray-700 border-b border-gray-200 shadow-lg">
+        <ul class="flex flex-wrap -mb-px s">
             <li v-for="tab in slots.default()" :key="tab.props.title"
                 :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTitle === tab.props.title }"
                 @click="selectedTitle = tab.props.title">
@@ -11,7 +11,7 @@
             </li>
         </ul>
     </div>
-    <div class="flex h-full p-4 overflow-y-scroll w-full ">
+    <div class="flex h-full p-4 overflow-y-scroll w-full bg-gray-100">
         <slot />
     </div>
 </template>

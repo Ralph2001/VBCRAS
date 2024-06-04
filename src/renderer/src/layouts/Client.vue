@@ -15,7 +15,7 @@
 <style>
 .slide_down-enter-active,
 .slide_down-leave-active {
-    transition: animate__animated animate__fadeInDown
+    transition: animate__animated animate__zoomOut
 }
 
 .slide_down-enter-from,
@@ -28,7 +28,7 @@
 
 .slide-enter-active,
 .slide-leave-active {
-    transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 }
 
 .slide-enter-from,
