@@ -51,6 +51,7 @@
     "jspdf-autotable": "^3.8.2",
     "maska": "^2.1.11",
     "mysql2": "^3.6.5",
+    "pdf-lib": "^1.17.1",
     "pdf-viewer-vue": "^0.2.7",
     "pdf-vue3": "^1.0.12",
     "pdfjs-dist": "^4.2.67",

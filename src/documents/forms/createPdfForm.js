@@ -87,6 +87,10 @@ export async function createPdfForm(formData) {
     billing_info(formData)
     note(formData)
 
+    if (formData.isWithAuthenticatedForm) {
+        createAuthenticationForm(formData)
+    }
+
     const save = await saving_details(formData)
     if (save) {
         return { success: true, filepath: filePath, dataurl: dataurl }
@@ -574,4 +578,118 @@ function create_for_B(formData) {
         '   We also certify that the records of births for the year 1953 are still intact in the archives of this office.'
     const splitted_another = doc.splitTextToSize(ANOTHER_TEXT, 6.44)
     doc.text(splitted_another, 1, 5.3, 'justify')
+}
+
+function createAuthenticationForm(formData) {
+    function setCenter(text) {
+        const x = 8.5 / 2 - (doc.getStringUnitWidth(text) * 12) / 72 / 2
+        return x
+    }
+
+    let position_of_all =  Number(formData.authenticate_position_y)
+
+    // Example usage:
+    doc.addPage('l')
+    doc.setTextColor('#1F497D')
+    doc.setFontSize(12)
+    doc.setFont('Times New Roman', 'normal')
+
+    const text1 = 'Republic of the Philippines'
+    const x1 = setCenter(text1)
+    doc.text(text1, x1, position_of_all + 1)
+
+    const text2 = 'Province of Pangasinan'
+    const x2 = setCenter(text2)
+    doc.text(text2, x2, position_of_all + 1.2)
+
+    const text3 = 'MUNICIPALITY OF BAYAMBANG'
+    const x3 = setCenter(text3)
+    doc.text(text3, x3, position_of_all + 1.4)
+
+    doc.setFontSize(12)
+    const text4 = 'LOCAL CIVIL REGISTRY OFFICE'
+    const x4 = setCenter(text4)
+    doc.setFont('Times New Roman', 'bold')
+    doc.text(text4, x4 - 0.1, position_of_all + 1.8)
+
+    const texts = [
+        'THIS IS TO CERTIFY THAT THIS DOCUMENT WAS ISSUED BY A LOCAL CIVIL',
+        'REGISTRY PERSONNEL WHO IS AUTHORIZED TO ISSUE THE SAME AND WHOSE ',
+        'AUTHORITY WAS CONFIRMED BY THE CIVIL REGISTRAR GENERAL AND THE',
+        'SIGNATURE OF THE LOCAL CIVIL REGISTRY PERSONNEL, WHICH APPEARS ON ',
+        'THIS DOCUMENT, IS SIMILAR TO THE SIGNATURE SPECIMEN',
+        'OFFICIALLY SUBMITTED TO AND FILED WITH THIS OFFICE.',
+    ]
+
+    let margin_top = position_of_all + 2.3
+    for (let text = 0; text < texts.length; text++) {
+        doc.setFontSize(12)
+        doc.setFont('Times New Roman', 'normal')
+        const info = texts[text]
+        const x = setCenter(info)
+        doc.text(info, x, margin_top)
+        margin_top += 0.2
+    }
+
+    // Define text and position for "DATE VERIFIED:"
+    const text5 = 'DATE VERIFIED:'
+    const x5 = setCenter(
+        'DATE VERIFIED: ' + format(new Date(formData.date_filed), 'MM/dd/yyyy')
+    )
+    doc.setFontSize(12)
+    doc.text(text5, x5, position_of_all + 3.5)
+
+    // Define text and position for the date part
+    const text6 = format(new Date(formData.date_filed), 'MM/dd/yyyy')
+    const dateX = x5 + doc.getTextWidth(text5) + 0.05
+    doc.setFontSize(12)
+    doc.text(text6, dateX, position_of_all + 3.5)
+
+    // Add underline for the date part
+    var dateWidth = doc.getTextWidth(text6)
+
+    doc.setLineWidth(0.01)
+    doc.setDrawColor('#1F497D')
+    doc.line(
+        dateX,
+        position_of_all + 3.5 + 0.03,
+        dateX + dateWidth,
+        position_of_all + 3.5 + 0.03
+    )
+
+    const text7 = 'VERIFIED BY:'
+    const x7 = setCenter('VERIFIED BY: ' + formData.verified_by)
+    doc.setFontSize(12)
+    doc.text(text7, x7, position_of_all + 3.7)
+
+    // Define text and position for the date part
+    const text8 = formData.verified_by
+    const dateXY = x7 + doc.getTextWidth(text7) + 0.05
+    doc.setFontSize(12)
+    doc.text(text8, dateXY, position_of_all + 3.7)
+
+    // Add underline for the date part
+    var dateWidthxy = doc.getTextWidth(text8)
+
+    doc.setLineWidth(0.01)
+    doc.setDrawColor('#1F497D')
+    doc.line(
+        dateXY,
+        position_of_all + 3.7 + 0.03,
+        dateXY + dateWidthxy,
+        position_of_all + 3.7 + 0.03
+    )
+
+    // Municipal Civil Registrar
+
+    doc.setFontSize(12)
+    const text9 = formData.mcr
+    const x9 = setCenter(text9)
+    doc.setFont('Times New Roman', 'bold')
+    doc.text(text9, x9 - 0.1, position_of_all + 4.3)
+
+    doc.setFont('Times New Roman', 'normal')
+    const text10 = 'MUNICIPAL CIVIL REGISTRAR'
+    const x10 = setCenter(text10)
+    doc.text(text10, x10, 4.3 + position_of_all + 0.2)
 }

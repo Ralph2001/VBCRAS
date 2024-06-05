@@ -180,11 +180,19 @@
           </RecycleScroller>
         </div>
         <div class="border-s sm:hidden md:lg:block h-full"></div>
-        <div :class="{ 'flex': pdfSource, 'sm:hidden md:lg:flex': !pdfSource }"
-          class="basis-[50%]  h-full w-full flex   p-1  items-center justify-center  gap-2"
+        <div
+          :class="{ 'flex': pdfSource, 'sm:hidden md:lg:flex': !pdfSource, 'basis-[100%]': full_screen && pdfSource === '', 'basis-[50%]': !full_screen }"
+          class=" h-full w-full flex   p-1  items-center justify-center  gap-2"
           v-if="Documents.OpenMode === 'OpenSideBar'">
-          <button v-if="pdfSource" @click="pdfSource = ''"
-            class="border px-2 py-1.5 self-start rounded-sm text-gray-700 text-sm font-medium hover:bg-red-400 hover:text-white ">Close</button>
+          <div class="flex flex-col items-center h-full gap-2 w-[4rem]">
+            <button v-if="pdfSource && !full_screen" @click="pdfSource = ''"
+              class="border px-2 py-1.5 self-start w-full rounded-sm text-white text-sm font-medium bg-red-400 hover:bg-red-500 hover:text-white ">Close</button>
+            <button :title="!full_screen ? 'Expand' : 'Shrink'" v-if="pdfSource" @click="full_screen = !full_screen"
+              class="border sm:hidden md:lg:flex justify-center px-2 py-1.5 self-start w-full rounded-sm text-white text-sm font-medium bg-slate-400 hover:bg-slate-500 hover:text-white "><font-awesome-icon
+                icon="fa-solid fa-expand" v-if="!full_screen" />
+
+              <font-awesome-icon icon="fa-solid fa-compress" v-if="full_screen" /></button>
+          </div>
           <PDFViewer ref="PdfViewerRef" :source="pdfSource" class="sm:w-full md:lg:w-[5rem] h-full" v-if="pdfSource"
             :controls="[
               'print',
@@ -192,8 +200,8 @@
               'zoom',
               'switchPage',
               'catalog']" />
-          <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100">
-            <p class="text-gray-600 font-mono text-lg ">VBCRAS</p>
+          <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100 ">
+            <p class="text-gray-600 font-mono text-lg">VBCRAS</p>
           </div>
         </div>
       </div>
@@ -241,7 +249,7 @@
 
             'switchPage',]" />
           <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100">
-            <p class="text-gray-600 font-mono text-lg ">VBCRAS</p>
+            <p class="text-gray-600 font-mono text-lg  ">VBCRAS</p>
           </div>
         </div>
       </div>
@@ -261,7 +269,7 @@ import PDFViewer from 'pdf-viewer-vue'
 import { onClickOutside } from '@vueuse/core'
 import { useScroll } from '@vueuse/core'
 
-
+const full_screen = ref(false)
 
 
 const ActiveFile = ref()
@@ -350,7 +358,7 @@ const openFile = async (filepath, filename) => {
       const check = await window.LocalCivilApi.checkFile(filepath)
       if (!check) {
         showAlert.value = true;
-
+        pdfSource.value = ''
         setTimeout(() => {
           showAlert.value = false;
         }, 3000);
@@ -359,7 +367,7 @@ const openFile = async (filepath, filename) => {
     }
   } catch (error) {
     showAlert.value = true;
-
+    pdfSource.value = ''
     setTimeout(() => {
       showAlert.value = false;
     }, 3000);
@@ -410,6 +418,8 @@ const props = defineProps({
 });
 
 const searchData = computed(() => {
+  pdfSource.value = ''
+
   const searchQueryLower = search.value.toLowerCase();
   const searchWords = searchQueryLower.split(/\s+/);
 

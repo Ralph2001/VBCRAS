@@ -61,6 +61,8 @@ import {
     faUser,
     faChevronDown, 
     faMarker,
+    faExpand,
+    faCompress
    
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -106,6 +108,8 @@ library.add(
     faEye,
     faChevronDown,
     faMarker, 
+    faExpand, 
+    faCompress
   
 )
 

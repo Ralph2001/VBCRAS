@@ -21,7 +21,7 @@
                     </div>
                     <div class="flex items-center pl-10"
                         v-if="selectedType === '1A' || selectedType === '2A' || selectedType === '3A'">
-                        <FormCheckbox label="With Authentication (Abroad)" />
+                        <FormCheckbox label="With Authentication (Abroad)" v-model="formData.isWithAuthenticatedForm" />
                     </div>
                     <div class="flex items-center justify-end">
                         <div class="w-[13rem]">
@@ -376,7 +376,7 @@
                                 </div>
                             </div>
                             <div class="w-full mt-5">
-                                <QuillEditor ref="remarks"  theme="snow" :toolbar="['']"
+                                <QuillEditor ref="remarks" theme="snow" :toolbar="['']"
                                     v-model:content="formData.remarks" contentType="html" @ready="addremarksvalue" />
                                 <!-- {{ formData.remarks }} -->
                             </div>
@@ -455,6 +455,10 @@
                         @change="change_preferences" />
                     <RangeInput label="certificate_y" v-model="preferences.certificate_y" :max="13"
                         @change="change_preferences" />
+
+                    <RangeInput label="authenticate_y" v-if="formData.isWithAuthenticatedForm" v-model="preferences.authenticate_position_y" :max="13"
+                        @change="change_preferences" />
+                    
 
                 </div>
             </div>
@@ -644,10 +648,12 @@ const preferences = reactive({
     info_x: '1.3',
     info_y: '3.7',
     certificate_x: '2.3',
-    certificate_y: '8.8'
+    certificate_y: '8.8',
+    authenticate_position_y: '3.5'
 })
 
 const initialFormData = {
+    isWithAuthenticatedForm: false,
     form_type: '',
     date_filed: format(new Date(), "MMMM dd, yyyy"),
     page_number: '',
