@@ -87,6 +87,9 @@ export async function createPdfForm(formData) {
     billing_info(formData)
     note(formData)
 
+    if (formData.isWithRemarks) {
+        createRemarks(formData)
+    }
     if (formData.isWithAuthenticatedForm) {
         createAuthenticationForm(formData)
     }
@@ -216,25 +219,47 @@ async function createHeader(formData) {
 }
 
 function certificate(formData) {
-    let inputValue = `This certificates is issued to **${formData.issued_to}** upon his/her request.`
+    const position = Number(formData.certificate_y)
+    function setCenter(text) {
+        const x = 8.5 / 2 - (doc.getStringUnitWidth(text) * 12) / 72 / 2
+        return x
+    }
 
-    // Certificate Adjust Positions
-    let certificate_x = Number(formData.certificate_x)
-    let certificate_y = Number(formData.certificate_y)
+    const text7 = 'This certification is issued to'
+    const x7 = setCenter(
+        `This certification is issued to ${formData.issued_to} upon his/her request.`
+    )
+    doc.setFontSize(12)
+    doc.text(text7, x7, position)
 
-    let lineHeight = 15
+    // Issued To Name
+    const dateXY = x7 + doc.getTextWidth(text7) + 0.05
+    const text8 = formData.issued_to
+    const text8X = dateXY
+    doc.setFontSize(12)
+    doc.setFont('Times New Roman', 'bold')
+    doc.text(text8, text8X, position)
 
+    const text9 = 'upon his/her request.'
+    const text9X = text8X + doc.getTextWidth(text8) + 0.05
     doc.setFont('Times New Roman', 'normal')
-    const arrayOfNormalAndBoldText = inputValue.split('**')
-    arrayOfNormalAndBoldText.map((text, i) => {
-        doc.setFont('Times New Roman', i % 2 === 0 ? 'normal' : 'bold')
-        let textWidth = doc.getTextWidth(text)
-        if (certificate_x + textWidth > 8.5) {
-            certificate_x = (8.5 - doc.getTextWidth(inputValue)) / 2
-            certificate_y += lineHeight
-        }
-        doc.text(text, certificate_x, certificate_y)
-        certificate_x += textWidth
+    doc.text(text9, text9X, position)
+}
+
+async function createRemarks(formData) {
+    doc.setFont('Times New Roman', 'bold')
+    doc.text('REMARKS:', 1, 9.1)
+
+    const remarks_width = doc.getTextWidth('REMARKS:')
+    doc.setFont('Times New Roman', 'italic')
+    doc.text('Reconstructed Copy', 1 + remarks_width + 0.1, 9.1)
+
+    var field = '<b>html test </b>'
+    await doc.html(field, {
+        callback: function (doc) {
+            // return doc
+            console.log(doc)
+        },
     })
 }
 
@@ -586,7 +611,7 @@ function createAuthenticationForm(formData) {
         return x
     }
 
-    let position_of_all =  Number(formData.authenticate_position_y)
+    let position_of_all = Number(formData.authenticate_position_y)
 
     // Example usage:
     doc.addPage('l')

@@ -352,27 +352,27 @@
                         v-if="formData.form_type.includes('A')">
 
                         <div class="w-full flex flex-row items-center justify-center mt-10 group relative"
-                            title="Add Remarks" v-if="!hasRemarks">
+                            title="Add Remarks" v-if="!formData.isWithRemarks">
                             <p class="absolute -top-1 text-xs  group-hover:cursor-pointer tracking-wider"
-                                @click="addRemarks()">Add
+                                @click="formData.isWithRemarks = true">Add
                                 Remarks</p>
                             <font-awesome-icon icon="fa-solid fa-marker"
                                 class="p-2 rounded-full bg-blue-100 text-sm text-blue-400 group-hover:bg-blue-200  group-hover:cursor-pointer "
-                                @click="addRemarks()" />
+                                @click="formData.isWithRemarks = true" />
                             <div class="w-[30rem] border h-2 bg-blue-100 group-hover:bg-blue-200 group-hover:cursor-pointer  rounded-e-md "
-                                @click="addRemarks()">
+                                @click="formData.isWithRemarks = true">
                             </div>
                         </div>
-
-                        <div class="flex-row flex  w-full px-10 gap-2 mt-3" v-if="hasRemarks">
+                      
+                        <div class="flex-row flex  w-full px-10 gap-2 mt-3" v-if="formData.isWithRemarks">
                             <div class="flex  flex-row items-start gap-1 mb-2">
                                 <div class="flex items-center">
                                     <button class="px-2.5 py-1 rounded-full  hover:bg-gray-100 group scale-75"
-                                        title="Remove Remarks" @click="addRemarks()">
+                                        title="Remove Remarks" @click="formData.isWithRemarks = false">
                                         <font-awesome-icon icon="fa-solid fa-xmark"
                                             class="text-sm text-red-500 group-hover:text-red-400" />
                                     </button>
-                                    <p>REMARKS:</p>
+                                    <p>REMARKS: </p>
                                 </div>
                             </div>
                             <div class="w-full mt-5">
@@ -654,6 +654,7 @@ const preferences = reactive({
 
 const initialFormData = {
     isWithAuthenticatedForm: false,
+    isWithRemarks: false,
     form_type: '',
     date_filed: format(new Date(), "MMMM dd, yyyy"),
     page_number: '',
@@ -858,15 +859,10 @@ const parentsdatemarriage_opt = (val) => {
     date_marriage_option.value = false
 }
 
-const hasRemarks = ref(false)
-const addRemarks = () => {
-    hasRemarks.value = !hasRemarks.value
-}
+
 const remarks = ref()
 const addremarksvalue = () => {
-
     remarks.value.focus()
-
 }
 
 
