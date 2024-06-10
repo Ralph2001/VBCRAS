@@ -7,10 +7,13 @@ import { finality } from '../documents/finality'
 import { generate_form } from '../documents/forms/createForm'
 import { generate_records } from '../documents/records/generate_records'
 import { createPdfForm } from '../documents/forms/createPdfForm'
+import { PDFConvert } from '../documents/forms/convertion'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
 const { dialog } = require('electron')
+
+const convertit = PDFConvert
 
 const os = require('os')
 const username = os.userInfo().username

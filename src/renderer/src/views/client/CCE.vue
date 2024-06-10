@@ -25,7 +25,7 @@
 
     <Transition enter-active-class="animate__animated animate__fadeIn"
       leave-active-class="animate__animated animate__fadeOut">
-      <Modal large label="Create a new Document" v-if="document">
+      <Modal medium label="Create a new Document" v-if="document">
         <template v-slot:header>
           <ModalCloseButton @click="closeModal" />
         </template>
@@ -44,17 +44,19 @@
               </div>
             </Box>
 
-            <Transition enter-active-class="animate__animated animate__zoomIn"
-              leave-active-class="animate__animated animate__zoomOut">
+
+            <div class="fixed flex flex-col shadow-sm right-[25%]  h-auto z-10 w-[10rem] gap-2">
               <button type="button" v-if="!targetIsVisible" @click="focusDocumentChanger()"
-                class="fixed shadow-sm w-auto p-2 px-3 h-auto z-10 bg-blue-400 rounded-md top-[5.4rem]  border font-medium text-white flex flex-row items-center text-xs tracking-wide">
+                class=" bg-blue-400 p-2 rounded-md top-[7rem]   border font-medium text-white flex flex-row items-center text-xs tracking-wide">
                 <font-awesome-icon icon="fa-solid fa-list-check " class="me-2 text-white" />
                 R.A {{ formData.ra }}
                 {{ formData.type }}
                 {{ formData.document_type }}
               </button>
-            </Transition>
-
+              <div v-if="v$.$error"
+                class=" bg-red-400 p-2 rounded-md top-[7rem] right-[25%]  border font-medium text-white flex flex-row items-center text-xs tracking-wide">
+                Required Field <br> {{ v$.$errors[0].$property.toUpperCase().replace('_', ' ') }}</div>
+            </div>
           </div>
 
           <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10 ">

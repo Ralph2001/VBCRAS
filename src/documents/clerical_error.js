@@ -1,16 +1,25 @@
+import { faSpa } from '@fortawesome/free-solid-svg-icons'
+
 const PizZip = require('pizzip')
 const Docxtemplater = require('docxtemplater')
 
 const fs = require('fs')
+const fsp = require('fs').promises
 const path = require('path')
 const dateFns = require('date-fns')
 
+const libre = require('libreoffice-convert')
+libre.convertAsync = require('util').promisify(libre.convert)
+
 export async function generate(formData) {
     const folderCreation = await document_folder(formData)
+
     const petitionCreation = await petition(formData)
     const endorsement_letterCreation = await endorsement_letter(formData)
     const record_sheetCreation = await record_sheet(formData)
     const notice_and_certificate_posting = await posting(formData)
+
+    // const convertThisToPDF = await ConvertMultipleFiles()
 
     return { success: true, filepath: folderPath }
 }
@@ -35,8 +44,6 @@ const CCE10172_PATH = path.resolve(
     __dirname,
     '../../resources/documents/RA 9048 RA 10172/Live Birth/petition_RA_10172.docx'
 )
-// const GENERATED_PATH = path.resolve(__dirname, '../../resources/generated/')
-// const GENERATED_PATH = `C:/VBCRAS/${}`
 
 let folderPath
 
@@ -77,17 +84,22 @@ async function document_folder(data) {
     const doctype = data.type
     const petitioner_name = data.petitioner_name
 
-    var folderCreation = `C:/VBCRAS/${
-        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
-    }`
+    folderPath = path.join(
+        __dirname,
+        '../../resources/documents/Generated/Correction of Clerical Error'
+    )
 
-    if (!fs.existsSync(folderCreation)) {
-        fs.mkdirSync(folderCreation, { recursive: true })
-    }
+    // var folderCreation = `C:/VBCRAS/${
+    //     date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
+    // }`
 
-    folderPath = `C:/VBCRAS/${
-        date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
-    }/`
+    // if (!fs.existsSync(folderCreation)) {
+    //     fs.mkdirSync(folderCreation, { recursive: true })
+    // }
+
+    // folderPath = `C:/VBCRAS/${
+    //     date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
+    // }/`
 
     return true
 }
@@ -145,9 +157,10 @@ async function endorsement_letter(data) {
         compression: 'DEFLATE',
     })
 
-    fs.writeFileSync(`${folderPath + '/'}Endorsement Letter.docx`, buf)
-
-    return true
+    const convertit = await Convert(buf, 'Endorsement Letter')
+    if (convertit) {
+        return true
+    }
 }
 async function petition(data) {
     const content = await PetitionFile(data.ra, data.type, data.document_type)
@@ -317,9 +330,10 @@ async function petition(data) {
         compression: 'DEFLATE',
     })
 
-    fs.writeFileSync(`${folderPath + '/'}Petition.docx`, buf)
-
-    return true
+    const convertit = await Convert(buf, 'Petition')
+    if (convertit) {
+        return true
+    }
 }
 
 async function record_sheet(data) {
@@ -400,9 +414,10 @@ async function record_sheet(data) {
         compression: 'DEFLATE',
     })
 
-    fs.writeFileSync(`${folderPath + '/'}Record Sheet.docx`, buf)
-
-    return true
+    const convertit = await Convert(buf, 'Record Sheet')
+    if (convertit) {
+        return true
+    }
 }
 
 async function posting(data) {
@@ -486,10 +501,50 @@ async function posting(data) {
         compression: 'DEFLATE',
     })
 
-    fs.writeFileSync(
-        `${folderPath + '/'}Cert. of Posting and Notice of Posting.docx`,
-        buf
+    const convertit = await Convert(
+        buf,
+        'Cert. of Posting and Notice of Posting'
     )
-
-    return true
+    if (convertit) {
+        return true
+    }
 }
+
+async function Convert(file, fileName) {
+    const ext = '.pdf'
+    const outputPath = folderPath + '/' + fileName + ext
+    try {
+        let pdfBuf = await libre.convertAsync(file, ext, undefined)
+        await fsp.writeFile(outputPath, pdfBuf)
+        return true
+    } catch (err) {
+        console.error(`Error converting ${fileName}: ${err}`)
+        return false
+    }
+}
+
+// async function ConvertFile(filePath, ext = '.pdf') {
+//     const inputPath = filePath
+//     const outputPath = `${filePath.slice(0, filePath.lastIndexOf('.'))}.${ext}`
+
+//     console.log(filePath)
+//     try {
+//         const docxBuf = await fsp.readFile(inputPath)
+//         let pdfBuf = await libre.convertAsync(docxBuf, ext, undefined)
+//         await fsp.writeFile(outputPath, pdfBuf)
+//         console.log(`Converted: ${inputPath}`)
+//     } catch (err) {
+//         console.error(`Error converting ${inputPath}: ${err}`)
+//     }
+// }
+
+// async function ConvertMultipleFiles() {
+//     const fileExtension = '.docx'
+//     const files = await fsp.readdir(folderPath)
+//     for (const file of files) {
+//         if (file.endsWith(fileExtension)) {
+//             const filePath = `${folderPath}/${file}`
+//             await ConvertFile(filePath)
+//         }
+//     }
+// }
