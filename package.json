@@ -49,6 +49,7 @@
     "fs-extra": "^11.2.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
+    "libreoffice-convert": "^1.5.1",
     "maska": "^2.1.11",
     "mysql2": "^3.6.5",
     "pdf-lib": "^1.17.1",

@@ -3188,6 +3188,14 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
+libreoffice-convert@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.npmjs.org/libreoffice-convert/-/libreoffice-convert-1.5.1.tgz"
+  integrity sha512-NtoH+OLl+ATuQE/HKPcpMgeJswwmJuvxZVzZ/+0kMZ3IxhCua8wdNeHqKelj36/2z7P595qjCNvQ2518gg8tvA==
+  dependencies:
+    async "^3.2.3"
+    tmp "^0.2.1"
+
 lie@~3.3.0:
   version "3.3.0"
   resolved "https://registry.npmjs.org/lie/-/lie-3.3.0.tgz"
@@ -4735,7 +4743,7 @@ tmp-promise@^3.0.2:
   dependencies:
     tmp "^0.2.0"
 
-tmp@^0.2.0:
+tmp@^0.2.0, tmp@^0.2.1:
   version "0.2.1"
   resolved "https://registry.npmjs.org/tmp/-/tmp-0.2.1.tgz"
   integrity sha512-76SUhtfqR2Ijn+xllcI5P1oyannHNHByD80W1q447gU3mp9G9PSpGdWmjUOHRDPiHYacIk66W7ubDTuPF3BEtQ==
