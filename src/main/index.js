@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, utilityProcess } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
@@ -7,18 +7,17 @@ import { finality } from '../documents/finality'
 import { generate_form } from '../documents/forms/createForm'
 import { generate_records } from '../documents/records/generate_records'
 import { createPdfForm } from '../documents/forms/createPdfForm'
-import { PDFConvert } from '../documents/forms/convertion'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
 const { dialog } = require('electron')
 
-const convertit = PDFConvert
 
 const os = require('os')
 const username = os.userInfo().username
 const fse = require('fs-extra')
 const fs = require('fs')
+
 var interfaces = os.networkInterfaces()
 
 var addresses = []
@@ -297,8 +296,8 @@ ipcMain.handle('get-user', async (event) => {
     return username
 })
 
-//Scanned Document IPC
 
+//Scanned Document IPC
 ipcMain.handle('open-scanned-sidebar', async (event, source) => {
     try {
         const fiepath = 'C:\\Users\\' + username + '\\' + source
@@ -309,6 +308,7 @@ ipcMain.handle('open-scanned-sidebar', async (event, source) => {
         return { status: false, fileUrl: null }
     } catch (error) {}
 })
+
 
 //Main Window
 function mainWindow() {

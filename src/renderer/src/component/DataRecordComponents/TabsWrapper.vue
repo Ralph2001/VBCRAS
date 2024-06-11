@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full text-sm font-medium text-center text-gray-700 border-b border-gray-200 shadow-lg">
+    <div class="w-full text-sm font-medium text-center text-gray-700 border-b bg-gray-50 border-gray-200 shadow-lg">
         <ul class="flex flex-wrap -mb-px s">
             <li v-for="tab in slots.default()" :key="tab.props.title"
                 :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTitle === tab.props.title }"
