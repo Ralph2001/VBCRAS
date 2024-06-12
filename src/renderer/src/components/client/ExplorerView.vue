@@ -181,26 +181,45 @@
         </div>
         <div class="border-s sm:hidden md:lg:block h-full"></div>
         <div
-          :class="{ 'flex': pdfSource, 'sm:hidden md:lg:flex': !pdfSource, 'basis-[100%]': full_screen && pdfSource === '', 'basis-[50%]': !full_screen }"
-          class=" h-full w-full flex   p-1  items-center justify-center  gap-2"
+          :class="{ 'flex flex-col': pdfSource, 'sm:hidden md:lg:flex': !pdfSource, 'basis-[100%]': full_screen && pdfSource === '', 'basis-[50%]': !full_screen }"
+          class=" h-full w-full flex    p-1  items-center justify-center  gap-2"
           v-if="Documents.OpenMode === 'OpenSideBar'">
-          <div class="flex flex-col items-center h-full gap-2 w-[4rem]">
+          <div class="flex flex-row items-center w-full h-[2rem] gap-2 ">
             <button v-if="pdfSource && !full_screen" @click="pdfSource = ''"
-              class="border px-2 py-1.5 self-start w-full rounded-sm text-white text-sm font-medium bg-red-400 hover:bg-red-500 hover:text-white ">Close</button>
+              class="border px-2 py-1.5 h-full self-start w-full rounded-sm text-white text-xs font-medium bg-red-400 hover:bg-red-500 hover:text-white ">Close</button>
             <button :title="!full_screen ? 'Expand' : 'Shrink'" v-if="pdfSource" @click="full_screen = !full_screen"
-              class="border sm:hidden md:lg:flex justify-center px-2 py-1.5 self-start w-full rounded-sm text-white text-sm font-medium bg-slate-400 hover:bg-slate-500 hover:text-white "><font-awesome-icon
-                icon="fa-solid fa-expand" v-if="!full_screen" />
+              class="border sm:hidden h-full md:lg:flex justify-center px-2 py-1.5 self-start w-full rounded-sm text-gray-800 text-sm font-medium bg-white hover:bg-gray-800 hover:text-white hover:transition-colors duration-300 shadow-sm">
+              
+             <p class="text-xs tracking-wide" v-if="!full_screen">Full Screen</p>
 
               <font-awesome-icon icon="fa-solid fa-compress" v-if="full_screen" /></button>
           </div>
-          <PDFViewer ref="PdfViewerRef" :source="pdfSource" class="sm:w-full md:lg:w-[5rem] h-full" v-if="pdfSource"
-            :controls="[
-              'print',
-              'rotate',
-              'zoom',
-              'switchPage',
-              'catalog']" />
-          <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100 ">
+          <div v-if="pdfSource"
+            :class="{ ' fixed gap-2 top-0 bottom-0 right-0 left-0 z-50 flex flex-col px-5 py-2 bg-gray-700': full_screen, 'flex': !full_screen }"
+            class="w-full h-full">
+            <button :title="!full_screen ? 'Expand' : 'Shrink'" v-if="full_screen" @click="full_screen = !full_screen"
+              class=" justify-center px-2 py-1  self-end w-[3rem] shadow-lg rounded-sm text-gray-800 text-sm font-medium bg-white hover:bg-gray-800  hover:text-white "><font-awesome-icon
+                icon="fa-solid fa-expand" v-if="!full_screen" />
+
+              <font-awesome-icon icon="fa-solid fa-compress" v-if="full_screen" /></button>
+
+            <div :class="{ 'top-[3rem]': full_screen, 'top-[4rem]': !full_screen }" v-if="pdfSource"
+              class="absolute  right-[7rem] z-50 bg-[#323639]   py-4 px-1 text-xs items-center justify-center  font-mono tracking-wider text-gray-50 font-medium ">
+              VBCRAS</div>
+            <div class="w-full h-full bg-[#323639]">
+              <iframe  :src="pdfSource" frameborder="0" class="w-full h-full">
+              </iframe>
+            </div>
+            <!-- <PDFViewer ref="PdfViewerRef" :source="pdfSource"
+              :class="{ 'w-full': full_screen, 'w-[5rem] ': !full_screen }" class="h-full" :controls="[
+                'print',
+                'rotate',
+                'zoom',
+                'switchPage',
+                'catalog']" /> -->
+          </div>
+
+          <div v-else class="h-full  w-full flex items-center justify-center shadow-sm bg-gray-100 ">
             <p class="text-gray-600 font-mono text-lg">VBCRAS</p>
           </div>
         </div>
@@ -267,10 +286,9 @@ import Alert from "../Alert.vue";
 import { watchDebounced, refDebounced, onStartTyping } from "@vueuse/core";
 import PDFViewer from 'pdf-viewer-vue'
 import { onClickOutside } from '@vueuse/core'
-import { useScroll } from '@vueuse/core'
+
 
 const full_screen = ref(false)
-
 
 const ActiveFile = ref()
 
@@ -296,16 +314,6 @@ onClickOutside(settings, event =>
   ScannedSettings.value = false
 )
 
-const PdfViewerRef = ref()
-
-const { x, y, isScrolling, arrivedState, directions } = useScroll(PdfViewerRef)
-
-watch(() => PdfViewerRef.value, () => {
-  if (pdfSource.value === '') {
-    return
-  }
-  PdfViewerRef.value.zoom = 175;
-}, { deep: true });
 
 const openlist = ref({
   OpenSideBar: 'Sidebar',
