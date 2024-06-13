@@ -23,13 +23,13 @@
       </div>
 
 
-      <div class="flex justify-end gap-2 items-center me-5 text-gray-400  cursor-pointer relative">
+      <!-- <div class="flex justify-end gap-2 items-center me-5 text-gray-400  cursor-pointer relative">
         <font-awesome-icon icon="fa-solid fa-gear" class="hover:text-gray-600"
           @click="ScannedSettings = !ScannedSettings" />
-        <!-- <font-awesome-icon icon="fa-solid fa-circle-question" class="hover:text-gray-600" /> -->
+        <font-awesome-icon icon="fa-solid fa-circle-question" class="hover:text-gray-600" /> 
 
 
-        <div v-if="ScannedSettings" ref="settings"
+         <div v-if="ScannedSettings" ref="settings"
           class="bg-white flex flex-col top-8 shadow-md w-auto border border-gray-200 z-[99999] p-4 absolute h-auto">
           <p class="text-gray-600 font-semibold text-sm mb-3">
             Opening PDF:
@@ -45,6 +45,20 @@
                   key }}</label>
             </div>
           </div>
+        </div>
+      </div> -->
+
+      <div class="flex flex-row gap-1 justify-end pr-5">
+        <div :class="{ 'text-gray-600 shadow-custom-inset ': Documents.OpenMode === 'OpenSideBar' }"
+          class="bg-white px-1 text-gray-400 rounded hover:cursor-pointer active:scale-95"
+          @click="changeOpenMethod('OpenSideBar')"
+          >
+          <font-awesome-icon icon="fa-solid fa-window-maximize" />
+        </div>
+        <div :class="{ 'text-gray-600 shadow-custom-inset': Documents.OpenMode === 'OpenNewWindow' }"
+          class="bg-white px-1 text-gray-400  rounded  hover:cursor-pointer active:scale-95"
+          @click="changeOpenMethod('OpenNewWindow')">
+          <font-awesome-icon icon="fa-solid fa-window-restore" />
         </div>
       </div>
 
@@ -180,22 +194,22 @@
           </RecycleScroller>
         </div>
         <div class="border-s sm:hidden md:lg:block h-full"></div>
-        <div
-          :class="{ 'flex flex-col': pdfSource, 'sm:hidden md:lg:flex': !pdfSource, 'basis-[100%]': full_screen && pdfSource === '', 'basis-[50%]': !full_screen }"
-          class=" h-full w-full flex    p-1  items-center justify-center  gap-2"
+        <div :class="{ 'flex flex-col': pdfSource, 'sm:hidden md:lg:flex': !pdfSource }"
+          class=" h-full w-full flex    p-1  items-center justify-center  gap-2 sm:basis-[100%] md:lg:basis-[50%]"
           v-if="Documents.OpenMode === 'OpenSideBar'">
-          <div class="flex flex-row items-center w-full h-[2rem] gap-2 ">
+          <div class="flex flex-row items-center w-full h-[2rem] gap-2 " v-if="pdfSource">
             <button v-if="pdfSource && !full_screen" @click="pdfSource = ''"
-              class="border px-2 py-1.5 h-full self-start w-full rounded-sm text-white text-xs font-medium bg-red-400 hover:bg-red-500 hover:text-white ">Close</button>
+              class="border px-2 py-1.5 h-full self-start w-[5rem] text-white text-xs font-medium bg-red-400 hover:bg-red-500 rounded hover:text-white ">Close</button>
             <button :title="!full_screen ? 'Expand' : 'Shrink'" v-if="pdfSource" @click="full_screen = !full_screen"
-              class="border sm:hidden h-full md:lg:flex justify-center px-2 py-1.5 self-start w-full rounded-sm text-gray-800 text-sm font-medium bg-white hover:bg-gray-800 hover:text-white hover:transition-colors duration-300 shadow-sm">
-              
-             <p class="text-xs tracking-wide" v-if="!full_screen">Full Screen</p>
+              class="border sm:hidden h-full md:lg:flex w-auto justify-center px-2 py-1.5 self-start rounded text-gray-800 text-sm font-medium bg-white hover:bg-gray-700 hover:text-white hover:transition-colors duration-300 shadow-sm">
 
-              <font-awesome-icon icon="fa-solid fa-compress" v-if="full_screen" /></button>
+              <p class="text-xs tracking-wide" v-if="!full_screen">Full Screen</p>
+
+              <font-awesome-icon icon="fa-solid fa-compress" v-if="full_screen" />
+            </button>
           </div>
           <div v-if="pdfSource"
-            :class="{ ' fixed gap-2 top-0 bottom-0 right-0 left-0 z-50 flex flex-col px-5 py-2 bg-gray-700': full_screen, 'flex': !full_screen }"
+            :class="{ 'hidden': !pdfSource, ' fixed gap-2 top-0 bottom-0 right-0 left-0 z-50 flex flex-col px-5 py-2 bg-gray-700': full_screen, 'flex': !full_screen }"
             class="w-full h-full">
             <button :title="!full_screen ? 'Expand' : 'Shrink'" v-if="full_screen" @click="full_screen = !full_screen"
               class=" justify-center px-2 py-1  self-end w-[3rem] shadow-lg rounded-sm text-gray-800 text-sm font-medium bg-white hover:bg-gray-800  hover:text-white "><font-awesome-icon
@@ -207,7 +221,7 @@
               class="absolute  right-[7rem] z-50 bg-[#323639]   py-4 px-1 text-xs items-center justify-center  font-mono tracking-wider text-gray-50 font-medium ">
               VBCRAS</div>
             <div class="w-full h-full bg-[#323639]">
-              <iframe  :src="pdfSource" frameborder="0" class="w-full h-full">
+              <iframe :src="pdfSource" frameborder="0" class="w-full h-full">
               </iframe>
             </div>
             <!-- <PDFViewer ref="PdfViewerRef" :source="pdfSource"
@@ -219,8 +233,11 @@
                 'catalog']" /> -->
           </div>
 
-          <div v-else class="h-full  w-full flex items-center justify-center shadow-sm bg-gray-100 ">
-            <p class="text-gray-600 font-mono text-lg">VBCRAS</p>
+          <div v-else class="h-full  w-full  flex items-center justify-center shadow-sm bg-gray-100 relative">
+            <p class="text-gray-600 font-mono text-lg tracking-wider bottom-[8rem] font-semibold">
+              VBCRAS
+            </p>
+            <!-- <Wave /> -->
           </div>
         </div>
       </div>
@@ -286,7 +303,7 @@ import Alert from "../Alert.vue";
 import { watchDebounced, refDebounced, onStartTyping } from "@vueuse/core";
 import PDFViewer from 'pdf-viewer-vue'
 import { onClickOutside } from '@vueuse/core'
-
+import Wave from '../Wave.vue'
 
 const full_screen = ref(false)
 
@@ -315,15 +332,15 @@ onClickOutside(settings, event =>
 )
 
 
+
 const openlist = ref({
   OpenSideBar: 'Sidebar',
   OpenNewWindow: 'New Window',
 })
 
-const opening_method = ref()
 
-const changeOpenMethod = () => {
-  Documents.changeOpeningMode(opening_method.value)
+const changeOpenMethod = (value) => {
+  Documents.changeOpeningMode(value)
   pdfSource.value = ''
 }
 
@@ -351,6 +368,7 @@ const openFile = async (filepath, filename) => {
 
       if (Documents.OpenMode === 'OpenSideBar') {
         const check = await window.ScannedApi.OpenInSideBar(filepath)
+
         pdfSource.value = 'data:application/pdf;filename=generated.pdf;base64,' + check.fileUrl
         console.log(check)
         if (!check.status) {

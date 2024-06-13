@@ -331,6 +331,24 @@ const router = createRouter({
                     },
                 },
                 {
+                    path: 'cce_approval/:id',
+                    name: 'client_cce_approval',
+                    component: () => import('../views/client/CCE/Approval.vue'),
+                    beforeEnter: async (to, from) => {
+                        const auth = AuthStore()
+                        const authKey = await auth.isAuthenticated()
+                        const con = useHostStore()
+                        const connection = await con.isConnected()
+                        if (connection) {
+                            if (authKey) {
+                                return true
+                            }
+                            return { name: 'client' }
+                        }
+                        return { name: 'client' }
+                    },
+                },
+                {
                     path: 'forms',
                     name: 'client_forms',
                     component: () => import('../views/client/Forms.vue'),

@@ -15,6 +15,7 @@ from flask_jwt_extended import current_user
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
+from werkzeug.exceptions import BadRequest
 from werkzeug.security import generate_password_hash, check_password_hash
 import signal
 
@@ -445,6 +446,63 @@ def remove_record(id):
 
 
 # Petition Records
+@app.route("/petition/<int:id>", methods=["GET"])
+@jwt_required()
+def petition(id):
+    try:
+        petition = Petitions.query.filter_by(id=id).first_or_404()
+        if not petition:
+            return jsonify({"message": "Petition not found"}), 404
+
+        petition_data = {
+            "id": petition.id,
+            "type": petition.type,
+            "document_type": petition.document_type,
+            "petition_number": petition.petition_number,
+            "petitioner_name": petition.petitioner_name,
+            "nationality": petition.nationality,
+            "petitioner_address": petition.petitioner_address,
+            "cce_in": petition.cce_in,
+            "name_owner": petition.name_owner,
+            "relation_owner": petition.relation_owner,
+            "date_of": petition.date_of,
+            "at_city": petition.at_city,
+            "at_province": petition.at_province,
+            "at_country": petition.at_country,
+            "registry_number": petition.registry_number,
+            "reason": petition.reason,
+            "LCRO_city": petition.LCRO_city,
+            "LCRO_province": petition.LCRO_province,
+            "administering_officer": petition.administering_officer,
+            "administering_position": petition.administering_position,
+            "SwornDate": petition.SwornDate,
+            "SwornCity": petition.SwornCity,
+            "Ctc": petition.Ctc,
+            "CtcIssuedOn": petition.CtcIssuedOn,
+            "CtcIssuedAt": petition.CtcIssuedAt,
+            "action": petition.action,
+            "ActionDate": petition.ActionDate,
+            "mcr": petition.mcr,
+            "decision": petition.decision,
+            "or_number": petition.or_number,
+            "amount_paid": petition.amount_paid,
+            "DatePaid": petition.DatePaid,
+            "notice_posting": petition.notice_posting,
+            "certificate_posting_start": petition.certificate_posting_start,
+            "certificate_posting_end": petition.certificate_posting_end,
+            "date_issued": petition.date_issued,
+            "date_granted": petition.date_granted,
+            "filepath": petition.filepath,
+        }
+        return jsonify(petition_data)
+
+    except BadRequest as e:
+        return jsonify({"message": "Invalid petition ID (must be an integer)"}), 400
+
+    except Exception as e:
+        abort(500, f"An error occurred: {str(e)}")
+
+
 @app.route("/petitions", methods=["GET", "POST"])
 @jwt_required()
 def petitions():

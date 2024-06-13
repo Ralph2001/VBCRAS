@@ -42,6 +42,11 @@ import FinalityMessage from "../../../modals/FinalityMessage.vue";
 const showOption = ref(false);
 const status = ref("");
 import Swal from 'sweetalert2'
+import Modal from "../../../client/modal/Modal.vue";
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+
 const finality = ref(false)
 
 const mainBtn = ref(null);
@@ -65,29 +70,29 @@ onClickOutside(mainBtn, (event) => (showOption.value = false));
 
 const ApprovedBtn = () => {
 
-  Swal
-    .fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, approve it!",
-    })
-    .then(async (result) => {
-      if (result.isConfirmed) {
+  console.log(props.params.data)
+  router.push('/client/cce_approval/' + props.params.data.id)
+  // Swal
+  //   .fire({
+  //     title: "Are you sure?",
+  //     text: "You won't be able to revert this!",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Yes, approve it!",
+  //   })
+  //   .then(async (result) => {
+  //     if (result.isConfirmed) {
 
-        const create_finality = await window.ClericalApi.CreateFinality(props.params.data);
+  //       const create_finality = await window.ClericalApi.CreateFinality(props.params.data);
 
-        Approved.value = true;
-        showOption.value = false;
-        status.value = "Approved";
-        finality.value = true
-      }
-    });
-
-
+  //       Approved.value = true;
+  //       showOption.value = false;
+  //       status.value = "Approved";
+  //       finality.value = true
+  //     }
+  //   });
 
 };
 

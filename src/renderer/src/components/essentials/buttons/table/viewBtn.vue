@@ -13,10 +13,7 @@
                 Folder</button>
             <button type="button"
                 class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Details</button>
-            <button type="button"
-                class=" flex flex-row justify-center items-center text-md font-medium hover:bg-gray-100 cursor-not-allowed bg-gray-200 text-gray-400 px-5 w-full">
-                <font-awesome-icon icon="fa-solid fa-rotate-right " class="me-2" /> <span>Generate Again</span>
-            </button>
+
         </div>
     </div>
 </template>

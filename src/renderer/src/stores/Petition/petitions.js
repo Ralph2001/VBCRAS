@@ -5,8 +5,28 @@ export const usePetitions = defineStore('petitions', {
     state: () => ({
         petitions: [],
         latest: null,
+        petitionData: []
     }),
     actions: {
+        async getPetition(id) {
+            try {
+                if (!this.isFetched) {
+                    const hostAdd = localStorage.getItem('host')
+                    let tokenStr = localStorage.getItem('token')
+                    const response = await axios.get(
+                        `http://${hostAdd}:1216/petition/${id}`,
+                        { headers: { Authorization: `Bearer ${tokenStr}` } }
+                    )
+                    return response.data
+                    // console.log(response)
+                } else {
+                    console.log('⚡')
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error)
+            }
+        },
+
         async getPetitions() {
             try {
                 if (!this.isFetched) {
@@ -26,6 +46,7 @@ export const usePetitions = defineStore('petitions', {
                 this.router.push('/login')
             }
         },
+
         async getLatestPetition() {
             try {
                 if (!this.isFetched) {

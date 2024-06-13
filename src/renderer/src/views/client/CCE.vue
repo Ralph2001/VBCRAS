@@ -5,7 +5,7 @@
 }
 </style>
 <template>
-  <div class="flex flex-col relative  justify-center w-full p-10">
+  <div class="flex flex-col relative  justify-center w-full p-10 CCEMAIN">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="modalOpener" />
     </Header>
