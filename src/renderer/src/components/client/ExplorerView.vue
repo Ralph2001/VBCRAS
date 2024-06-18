@@ -304,6 +304,7 @@ import { watchDebounced, refDebounced, onStartTyping } from "@vueuse/core";
 import PDFViewer from 'pdf-viewer-vue'
 import { onClickOutside } from '@vueuse/core'
 import Wave from '../Wave.vue'
+import { RecycleScroller } from "vue-virtual-scroller";
 
 const full_screen = ref(false)
 

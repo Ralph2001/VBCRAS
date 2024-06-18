@@ -64,7 +64,11 @@ import {
     faExpand,
     faCompress,
     faWindowMaximize,
-    faWindowRestore
+    faWindowRestore, 
+    faArrowDown,
+    faUpload,
+    faHandPointer,
+    faPlus
    
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -113,7 +117,11 @@ library.add(
     faExpand, 
     faCompress,
     faWindowMaximize,
-    faWindowRestore
+    faWindowRestore,
+    faArrowDown,
+    faUpload,
+    faHandPointer,
+    faPlus
   
 )
 
