@@ -92,9 +92,7 @@ const hideServerRunning = () => {
 const turnoffServer = async () => {
     const server_off = await server.serverSwitch()
     router.push('/mode/server')
-
 }
-
 
 const formData = reactive({
     key: '',

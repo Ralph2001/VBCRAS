@@ -68,7 +68,11 @@ import {
     faArrowDown,
     faUpload,
     faHandPointer,
-    faPlus
+    faPlus,
+    faUpRightAndDownLeftFromCenter,
+    faLeftRight,
+    faUpDown,
+    faTextHeight
    
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -121,7 +125,11 @@ library.add(
     faArrowDown,
     faUpload,
     faHandPointer,
-    faPlus
+    faPlus,
+    faUpRightAndDownLeftFromCenter,
+    faLeftRight,
+    faUpDown,
+    faTextHeight
   
 )
 

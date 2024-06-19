@@ -65,42 +65,47 @@
 
             <div class="border shadow-md flex p-4 h-[30rem] w-auto flex-col gap-2" v-if="selectfromscanned">
                 <div class="grid grid-cols-2 items-center justify-between w-full ">
-                    Scanned Documents
+                    <p class=" font-medium text-gray-700 tracking-wide"> Scanned Documents</p>
                     <div class="mr-auto w-full flex flex-row gap-2">
 
-                        <input type="text" class="border-gray-300 rounded-md text-gray-700 font-medium w-full">
+                        <input v-model="filter_search" type="text" placeholder="Search"
+                            class="border-gray-300 rounded-md text-gray-700 font-medium w-full placeholder:text-sm placeholder:text-gray-400">
                         <select v-model="filter_type" value="all" class="border border-gray-200 h-10 rounded  text-sm ">
-                            <option value="all" selected disabled>Type</option>
+                            <option value="all" selected>All</option>
                             <option :value="value" v-for="(value, index ) in types" :key="index">{{ value }}</option>
                         </select>
                         <select v-model="filter_year" class="border border-gray-200 h-10 rounded  text-sm ">
-                            <option value="all" selected disabled>Year</option>
+                            <option value="all" selected>All</option>
                             <option :value="value" v-for="(value, index) in years" :key="index">{{ value }}</option>
                         </select>
                     </div>
 
                 </div>
                 <div class="h-full  rounded-md  truncate overflow-x-hidden ">
-                    <RecycleScroller :items="Documents.scanned" class="h-full " :item-size="34" key-field="name"
-                        v-slot="{ item }">
-                        <li :class="{ 'bg-blue-200': selectedscanned === item.name }"
+                    <RecycleScroller :items="data" class="h-full " :item-size="34" key-field="name" v-slot="{ item }"
+                        v-if="data.length > 1">
+                        <li :class="{ 'bg-blue-200': formData.filepath === item.name }"
                             class="w-full overflow-hidden truncate px-3 p-1 hover:bg-blue-100  flex items-center">
-                            <input v-model="selectedscanned" type="radio" class=" rounded-md cursor-pointer"
-                                name="scans" :id="item.id" :value="item.name" :checked="selectedscanned === item.name">
+                            <input v-model="formData.filepath" type="radio" class=" rounded-md cursor-pointer"
+                                name="scans" :id="item.id" :value="item.filepath"
+                                :checked="formData.filepath === item.filepath">
                             <label :for="item.id" class=" cursor-pointer"> <font-awesome-icon
                                     icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
-                                {{ item.name.replace(".pdf", "") }}</label>
+                                {{ item.name.replace(".pdf", "") }} </label>
                         </li>
                     </RecycleScroller>
+                    <div class="h-full w-full flex items-center justify-center" v-if="data.length < 1">
+                        No Result
+                    </div>
                 </div>
                 <div class="mt-auto flex flex-row w-full">
-                    <div>Selected: {{ selectedscanned }}</div>
+                    <!-- <div class="w-full overflow-hidden"><p class=" font-medium text-gray-700 tracking-wide truncate"> Selected: <span class=" font-normal underline">{{ selectedscanned }}</span></p></div> -->
                     <div class="flex flex-row ml-auto gap-2">
                         <button type="button" @click="CancelSelectFromScanned"
                             class=" font-medium text-sm border px-2.5 py-1 rounded bg-red-400 hover:bg-red-500  text-white">
                             Cancel
                         </button>
-                        <button type="button"
+                        <button type="button" @click="submit()"
                             class=" font-medium text-sm border px-2.5 py-1 rounded bg-white hover:bg-gray-200 text-gray-700">
                             Select
                         </button>
@@ -115,28 +120,110 @@
 
                 <button type="button"
                     class="bg-blue-300 py-2 px-10 font-medium rounded-sm text-white cursor-not-allowed">Approve</button>
-                <button type="button"
-                    class="bg-blue-300 py-2 px-10 font-medium rounded-sm text-white cursor-not-allowed">Approve</button>
+
             </div>
         </div>
 
         <!-- <ul v-for="(value, key) in petition.petitionData" :key="key">
             <li>{{ key + ' : ' + value }}</li>
         </ul> -->
+        <div class="fixed bg-white z-[9999] top-0 bottom-0 left-0 right-0 flex flex-col p-4 -full w-full border gap-2 px-10"
+            v-if="AnnotationEditor">
+            <button class="self-end border px-2" @click="AnnotationEditor = !AnnotationEditor">[close]</button>
+            <div class="grid grid-cols-2 w-full h-full gap-5 p-10">
+                <div class="flex h-full  w-full border">
+                    <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
+                </div>
+                <div class="flex flex-col p-4 w-full border rounded-md border-gray-200 shadow-sm">
+                    <p class="text-gray-800 font-medium ml-4 mb-10">Settings here</p>
+                    <div class="h-[13rem] flex flex-col gap-2">
+                        <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
+                        <QuillEditor theme="snow" :toolbar="['bold', 'italic', 'underline']"
+                            v-model:content="formData.annotation" contentType="text" />
 
+
+                    </div>
+
+                    <p class="text-gray-800 text-sm font-medium mt-10 ">Adjustments</p>
+                    <div class="  items-start flex flex-col  p-2 gap-3">
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number"   class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                    icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" /> Form
+                                102
+                                Scale</p>
+                        </div>
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number"  v-model="formData.form_x" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-left-right"
+                                    class="text-xs w-6" /> Form 102
+                                Horizontal Position</p>
+                        </div>
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number" v-model="formData.form_y" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-up-down"
+                                    class="text-xs w-6" /> Form 102 Vertical Position</p>
+                        </div>
+
+                    </div>
+
+                    <div class="  items-start  p-2 gap-2 flex flex-col ">
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                    icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
+                                Annotation
+                                Scale</p>
+                        </div>
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number" v-model="formData.annotation_x" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-left-right"
+                                    class="text-xs w-6" /> Annotation
+                                Horizontal Position</p>
+                        </div>
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number" v-model="formData.annotation_y" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-up-down"
+                                    class="text-xs w-6" /> Annotation Vertical Position</p>
+                        </div>
+
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number" v-model="formData.annotation_font" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                    icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Height</p>
+                        </div>
+                        <div class="flex flex-row items-center gap-3">
+                            <input type="number" v-model="formData.annotation_angle" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                    icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Angle</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto flex justify-items-end">
+                        <button
+                            class="ml-auto tracking-wider border px-2 py-1.5 bg-blue-500 text-white rounded font-medium"
+                            type="button">Done</button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
 
     </div>
 </template>
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { usePetitions } from '../../../stores/Petition/Petitions';
 import ExplorerView from '../../../components/client/ExplorerView.vue';
 import { useFileDialog } from '@vueuse/core'
 import { RecycleScroller } from 'vue-virtual-scroller';
 import { useScannedDocuments } from '../../../stores/scanned';
 import { computed } from 'vue';
+import { QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 const { files, open, reset, onChange } = useFileDialog({
     accept: 'application/pdf',
@@ -145,6 +232,8 @@ const { files, open, reset, onChange } = useFileDialog({
 
 const filter_type = ref('Birth')
 const filter_year = ref(2024)
+const filter_search = ref('')
+const AnnotationEditor = ref(false)
 
 const petition = usePetitions()
 const router = useRouter();
@@ -152,7 +241,8 @@ const route = useRoute();
 const annotated_unannotated = ref(false)
 const selectfromscanned = ref(false)
 const selectedscanned = ref()
-
+const pdfbase64 = ref()
+const annotation_text = ref()
 
 const changetoSelectfromScanned = () => {
     selectfromscanned.value = true
@@ -167,14 +257,28 @@ const types = computed(() => {
     return [...new Set(Documents.scanned.map((data) => data.type))].sort((a, b) => a - b);
 });
 const years = computed(() => {
+
     return [...new Set(Documents.scanned.map((data) => data.year))].sort((a, b) => a - b);
 });
 
 
 const data = computed(() => {
-    return [...new Set(Documents.scanned.map((data) => data))].sort((a, b) => a - b)
-})
+    const TypeFilter = item =>
+        filter_type.value === 'all' ? item.type : item.type === filter_type.value
 
+    const YearFilter = item =>
+        filter_year.value === 'all' ? item.year : item.year === filter_year.value
+
+    if (!filter_search.value) {
+        return Documents.scanned.filter(TypeFilter).filter(YearFilter).sort((a, b) => a - b);
+    }
+
+    const lowerSearch = filter_search.value.toLowerCase();
+    return Documents.scanned.filter(TypeFilter)
+        .filter(YearFilter)
+        .filter(item => item.name.toLowerCase().includes(lowerSearch))
+        .sort((a, b) => a - b);
+});
 
 
 const petitionData = ref()
@@ -186,6 +290,7 @@ const fromScanned = () => {
 const CancelSelectFromScanned = () => {
     selectfromscanned.value = false
     selectedscanned.value = ''
+    data.value = null
 }
 
 onChange((file) => {
@@ -221,6 +326,47 @@ const back = () => {
 }
 
 
+const initialFormData = {
+    filepath: '',
+    annotation: 'Pursuant to the decision rendered by MCR Ismael D. Malicdem Jr. dated 03 November 2022 and affirmed by CRG under OCRG No. 22-2373313, the child\'s first name from "LODOVICO" to "LUDOVIGO" and child\'s date of birth from "MAY 17, 1967" to "APRIL 26, 1967" are hereby corrected.',
+    form_scale: 0.9,
+    form_x: 1.7,
+    form_y: 25,
+
+    // Annotation Adjustments
+    annotation_scale: 0,
+    annotation_x: 600,
+    annotation_y: 450,
+    annotation_font: 12,
+    annotation_angle: -90,
+};
+
+const formData = reactive({ ...initialFormData });
+
+watch(formData, (newValue, oldValue) => {
+   submit()
+})
+
+const submit = async () => {
+    const data = {
+        filepath: formData.filepath,
+        annotation: formData.annotation,
+        form_scale:formData.form_scale,
+        form_x: formData.form_x,
+        form_y: formData.form_y,
+
+        // Annotation
+        annotation: formData.annotation,
+        annotation_x: formData.annotation_x,
+        annotation_y: formData.annotation_y,
+        annotation_font: formData.annotation_font,
+        annotation_angle: formData.annotation_angle
+    }
+    const submit = await window.ClericalApi.CreateAnnotated(data);
+
+    AnnotationEditor.value = true
+    pdfbase64.value = 'data:application/pdf;filename=generated.pdf;base64,' + submit.pdfbase64
+}
 
 </script>
 

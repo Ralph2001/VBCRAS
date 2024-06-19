@@ -7,11 +7,11 @@ import { finality } from '../documents/finality'
 import { generate_form } from '../documents/forms/createForm'
 import { generate_records } from '../documents/records/generate_records'
 import { createPdfForm } from '../documents/forms/createPdfForm'
+import { CreateAnnotated } from '../documents/clerical/generate_annotation'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
 const { dialog } = require('electron')
-
 
 const os = require('os')
 const username = os.userInfo().username
@@ -127,6 +127,19 @@ ipcMain.handle('createForm', async (event, formData) => {
 })
 
 // Clerical IpcMain
+
+ipcMain.handle('CreateAnnotated', async (event, formData) => {
+    try {
+        const user = 'C:\\Users\\' + username
+        const generate_document = await CreateAnnotated(user, formData)
+        return {
+            status: generate_document.status,
+            pdfbase64: generate_document.pdfbase64,
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 ipcMain.handle('printLiveBirth', async (event, formData) => {
     try {
@@ -296,7 +309,6 @@ ipcMain.handle('get-user', async (event) => {
     return username
 })
 
-
 //Scanned Document IPC
 ipcMain.handle('open-scanned-sidebar', async (event, source) => {
     try {
@@ -308,7 +320,6 @@ ipcMain.handle('open-scanned-sidebar', async (event, source) => {
         return { status: false, fileUrl: null }
     } catch (error) {}
 })
-
 
 //Main Window
 function mainWindow() {

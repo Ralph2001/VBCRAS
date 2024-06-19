@@ -16,6 +16,13 @@ if (process.contextIsolated) {
 }
 
 contextBridge.exposeInMainWorld('ClericalApi', {
+    CreateAnnotated: async (formData) => {
+        const result = await ipcRenderer.invoke('CreateAnnotated', formData)
+        return {
+            status: result.status,
+            pdfbase64: result.pdfbase64,
+        }
+    },
     PrintLiveBirth: async (formData) => {
         const result = await ipcRenderer.invoke('printLiveBirth', formData)
         return { status: result.status, filepath: result.filepath }
