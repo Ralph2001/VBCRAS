@@ -147,7 +147,7 @@
                     <p class="text-gray-800 text-sm font-medium mt-10 ">Adjustments</p>
                     <div class="  items-start flex flex-col  p-2 gap-3">
                         <div class="flex flex-row items-center gap-3">
-                            <input type="number"   class="w-[4rem] py-1 border-gray-200 rounded">
+                            <input type="number" v-model="formData.form_scale"   class="w-[4rem] py-1 border-gray-200 rounded">
                             <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                     icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" /> Form
                                 102
@@ -169,7 +169,7 @@
 
                     <div class="  items-start  p-2 gap-2 flex flex-col ">
                         <div class="flex flex-row items-center gap-3">
-                            <input type="number" class="w-[4rem] py-1 border-gray-200 rounded">
+                            <input type="number" v-model="formData.annotation_scale" class="w-[4rem] py-1 border-gray-200 rounded">
                             <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                     icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
                                 Annotation

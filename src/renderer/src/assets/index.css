@@ -440,6 +440,7 @@ body{
 .ql-editor.ql-blank{
     @apply border-t border-[#E5E7EB] !important
 }
+*/
 .ql-editor{
-    @apply border-t border-[#E5E7EB] !important
-} */
+    @apply  font-serif !important
+}
