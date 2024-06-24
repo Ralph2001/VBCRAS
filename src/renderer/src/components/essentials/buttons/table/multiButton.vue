@@ -1,12 +1,11 @@
 <template>
-  <Teleport to="body">
+  <!-- <Teleport to="body">
     <FinalityMessage v-if="finality" @close-modal="finality = false" :data="props.params" />
-  </Teleport>
+  </Teleport> -->
 
-  <div class="flex items-center h-full justify-center relative w-full" :class="{
+  <!-- <div class="flex items-center h-full justify-center relative w-full" :class="{
     'bg-green-200': Approved,
     'bg-red-200': Disapproved,
-    'bg-yellow-200': Impugned,
   }" ref="mainBtn">
     <div class="flex flex-row divide-x" v-if="status === ''">
       <button @click="ApprovedBtn" type="button"
@@ -32,31 +31,23 @@
       </button>
 
     </div>
+  </div> -->
+
+  <div class="w-full flex flex-col items-center justify-center h-full relative">
+    <button type="button" ref="mainBtn" @click="approve_petition()"
+      class="px-3 py-1 text-sm tracking-wide bg-green-500 hover:bg-green-600 text-white active:scale-95  font-medium text-center  rounded-sm   transition-all focus:outline-none">
+      Approve
+    </button>
   </div>
+
+
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { onClickOutside } from "@vueuse/core";
-import FinalityMessage from "../../../modals/FinalityMessage.vue";
-const showOption = ref(false);
-const status = ref("");
-import Swal from 'sweetalert2'
-import Modal from "../../../client/modal/Modal.vue";
+import {  ref } from "vue";
 import { useRouter } from 'vue-router'
 const router = useRouter()
-
-
-const finality = ref(false)
-
 const mainBtn = ref(null);
-const dropdown = () => {
-  showOption.value = !showOption.value;
-};
-
-const Approved = ref(false);
-const Disapproved = ref(false);
-const Impugned = ref(false);
 
 const props = defineProps({
   params: {
@@ -66,12 +57,13 @@ const props = defineProps({
 })
 
 
-onClickOutside(mainBtn, (event) => (showOption.value = false));
-
-const ApprovedBtn = () => {
-
+const approve_petition = () => {
   console.log(props.params.data)
+
+  // Add Validation Here
   router.push('/client/cce_approval/' + props.params.data.id)
+  
+  
   // Swal
   //   .fire({
   //     title: "Are you sure?",
@@ -96,16 +88,6 @@ const ApprovedBtn = () => {
 
 };
 
-const DisapprovedBtn = () => {
-  Disapproved.value = true;
-  status.value = "Disapproved";
-  showOption.value = false;
-};
-const ImpugnedBtn = () => {
-  Impugned.value = true;
-  status.value = "Impugned";
-  showOption.value = false;
-};
 </script>
 
 <style lang="scss" scoped></style>

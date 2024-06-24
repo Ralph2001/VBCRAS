@@ -51,6 +51,16 @@ export async function CreateAnnotated(user, formData) {
         y: page.getHeight() - useAnnotationDocument.height - y_position,
     })
 
+    const rotationAngle = page.getRotation().angle;
+
+    // let maxWidth = 0
+    // if (rotationAngle === 0) {
+    //     maxWidth = 930
+    // } else {
+    //     maxWidth = 606
+    // }
+
+
     const pages = pdfDoc.getPages()
     const firstPage = pages[0]
     const { width, height } = firstPage.getSize()
@@ -89,6 +99,7 @@ export async function CreateAnnotated(user, formData) {
     // )
 
     //   Save Page
+
     pdfBytes = await pdfDoc.saveAsBase64()
 
     return { status: true, pdfbase64: pdfBytes }

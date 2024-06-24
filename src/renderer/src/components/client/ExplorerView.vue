@@ -183,12 +183,12 @@
                 {{ item.name.replace(".pdf", "") }}
               </div>
               <p :class="{ 'text-white  ': ActiveFile === item.name && pdfSource }"
-                class="text-sm italic  font-normal mr-2 text-gray-800">
+                class="text-sm italic  font-normal group-hover:mr-5 mr-2 duration-300  text-gray-800">
                 {{ item.type }} {{ item.month }}
                 {{ item.year }}
-                <font-awesome-icon @click="openFile(item.filepath, item.name)" icon="fa-solid fa-folder-open"
+                <!-- <font-awesome-icon @click="openFile(item.filepath, item.name)" icon="fa-solid fa-folder-open"
                   title="Open file path"
-                  class="ms-1 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
+                  class="ms-1 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" /> -->
               </p>
             </li>
           </RecycleScroller>

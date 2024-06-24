@@ -1,11 +1,11 @@
 <template>
     <div class="relative h-[calc(100vh-100px)] flex sm:flex-wrap  md:lg:flex-row w-full p-4 overflow-y-scroll gap-10">
-        <div class="sm:grow md:lg:basis-[5%]  flex flex-col w-full h-full gap-3">
+        <div class="sm:grow md:lg:basis-[20%]  flex flex-col w-full h-full  gap-3 ">
             <p class="text-4xl text-gray-800 tracking-wider font-medium ml-5">Approval</p>
-            <div class="flex flex-col border p-4 gap-2 bg-white   items-center mt-5 ml-5">
+            <div class="flex flex-col border p-4 gap-2 bg-white overflow-y-scroll h-full items-center mt-5 ml-5">
                 <p class="text-md text-gray-800 tracking-wider font-medium mb-5 self-start "> Details:</p>
-                <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 w-full h-full" v-for="(value, key) in userData"
-                    :key="key">
+                <div class="grid px-5 sm:grid-cols-1 md:lg:grid-cols-2 w-full  overflow-y-scroll"
+                    v-for="(value, key) in userData" :key="key">
                     <div class="text-sm font-normal">{{ key }}</div>
                     <div class="text-md font-medium text-wrap w-full overflow-hidden truncate ">{{ value }} </div>
                 </div>
@@ -15,30 +15,27 @@
             </div>
         </div>
 
-        <div class="md:lg:basis-[60%] sm:basis-[100%] flex flex-col p-4 gap-2">
-            <p class="text-2xl">Attachments</p>
-            <div class="flex items-center">
-                <input disabled checked id="disabled-checked-checkbox" type="checkbox" value=""
+        <!-- Another Half -->
+
+        <div class="sm:w-full md:lg:w-[65%] h-full  bg-gray-100 border-s border-gray-200 flex flex-col p-4 gap-2 ">
+            <p class="font-bold text-2xl">Attachments</p>
+
+            <div class="flex items-center" v-for="attach in attachments" :key="attach">
+                <input disabled checked type="checkbox" value=""
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label for="disabled-checked-checkbox"
-                    class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">Finality</label>
-            </div>
-            <div class="flex items-center">
-                <input disabled checked id="disabled-checked-checkbox" type="checkbox" value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label for="disabled-checked-checkbox"
-                    class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">Endorsement Letter</label>
+                <label class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">{{ attach }}</label>
             </div>
 
 
-            <div class="felx w-full p-1">
+
+            <div class="flex flex-col w-full p-1">
                 <button
-                    :class="{ 'bg-gray-700 text-white hover:text-white hover:bg-gray-800': annotated_unannotated, ' pointer-events-none bg-gray-700 text-white hover:text-white hover:bg-gray-800  ': selectfromscanned }"
-                    class="w-fit text-sm font-semibold px-2.5 py-2 text-gray-700 shadow-md rounded border  items-center flex hover:bg-gray-200"
+                    :class="{ 'bg-gray-700 text-white  hover:text-white hover:bg-gray-800': annotated_unannotated, 'bg-white': !annotated_unannotated, ' pointer-events-none bg-gray-700 text-white hidden hover:text-white hover:bg-gray-800  ': selectfromscanned }"
+                    class="w-fit text-sm font-semibold px-2.5 py-2 text-gray-700 shadow-md rounded border  items-center flex hover:bg-gray-100"
                     type="button" @click="annotated_unannotated = !annotated_unannotated"> Add Requirement
                     <font-awesome-icon icon="fa-solid fa-arrow-down" class="ms-2 text-xs" /></button>
 
-                <div class="h-auto flex flex-col w-fit p-2 border items-start mt-5 gap-3 shadow-md transition-all text-gray-600"
+                <div class="h-auto flex flex-col bg-white w-fit p-2 border items-start mt-5 gap-3 shadow-md transition-all text-gray-600"
                     v-if="annotated_unannotated">
                     <p class="text-sm bg-gray-100 px-1 w-full">Annotated/Form 102</p>
                     <div class="flex flex-col items-start    w-full">
@@ -63,11 +60,11 @@
             </div>
 
 
-            <div class="border shadow-md flex p-4 h-[30rem] w-auto flex-col gap-2" v-if="selectfromscanned">
-                <div class="grid grid-cols-2 items-center justify-between w-full ">
+            <div class="border bg-white  shadow-sm flex px-4 py-3 h-[calc(100vh-310px)] w-full flex-col gap-2"
+                v-if="selectfromscanned">
+                <div class="grid sm:grid-flow-row md:lg:grid-cols-2  items-center justify-between w-full ">
                     <p class=" font-medium text-gray-700 tracking-wide"> Scanned Documents</p>
                     <div class="mr-auto w-full flex flex-row gap-2">
-
                         <input v-model="filter_search" type="text" placeholder="Search"
                             class="border-gray-300 rounded-md text-gray-700 font-medium w-full placeholder:text-sm placeholder:text-gray-400">
                         <select v-model="filter_type" value="all" class="border border-gray-200 h-10 rounded  text-sm ">
@@ -98,7 +95,7 @@
                         No Result
                     </div>
                 </div>
-                <div class="mt-auto flex flex-row w-full">
+                <div class="mt-auto border-t p-1 flex flex-row w-full">
                     <!-- <div class="w-full overflow-hidden"><p class=" font-medium text-gray-700 tracking-wide truncate"> Selected: <span class=" font-normal underline">{{ selectedscanned }}</span></p></div> -->
                     <div class="flex flex-row ml-auto gap-2">
                         <button type="button" @click="CancelSelectFromScanned"
@@ -115,6 +112,8 @@
 
 
             <div class="mt-auto ml-auto bottom-0 right-10 gap-2 flex">
+                <button 
+                    class="border w-[10rem] rounded-sm bg-gray-800 hover:bg-gray-900 text-sm py-2  text-white font-medium shadow-sm transition-all active:scale-95 ">Impugn</button>
                 <button @click="back"
                     class="border w-[10rem] rounded-sm bg-white text-sm py-2 hover:bg-red-400 text-gray-800 font-medium shadow-sm transition-all active:scale-95 hover:text-white">Cancel</button>
 
@@ -129,84 +128,95 @@
         </ul> -->
         <div class="fixed bg-white z-[9999] top-0 bottom-0 left-0 right-0 flex flex-col p-4 -full w-full border gap-2 px-10"
             v-if="AnnotationEditor">
-            <button class="self-end border px-2" @click="AnnotationEditor = !AnnotationEditor">[close]</button>
-            <div class="grid grid-cols-2 w-full h-full gap-5 p-10">
-                <div class="flex h-full  w-full border">
-                    <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
-                </div>
-                <div class="flex flex-col p-4 w-full border rounded-md border-gray-200 shadow-sm">
-                    <p class="text-gray-800 font-medium ml-4 mb-10">Settings here</p>
-                    <div class="h-[13rem] flex flex-col gap-2">
-                        <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
-                        <QuillEditor theme="snow" :toolbar="['bold', 'italic', 'underline']"
-                            v-model:content="formData.annotation" contentType="text" />
 
-
+            <div class="h-full flex flex-col overflow-y-scroll">
+                <button class="self-end border " @click="AnnotationEditor = !AnnotationEditor">[close]</button>
+                <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 w-full h-full gap-5 ">
+                    <div class="flex h-[calc(100vh-100px)]  w-full border">
+                        <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
                     </div>
+                    <div class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm">
+                        <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Settings </p>
+                        <div class="h-auto flex flex-col gap-2">
+                            <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
+                            <QuillEditor theme="snow" :toolbar="['bold', 'italic', 'underline']"
+                                v-model:content="formData.annotation" contentType="text" />
 
-                    <p class="text-gray-800 text-sm font-medium mt-10 ">Adjustments</p>
-                    <div class="  items-start flex flex-col  p-2 gap-3">
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number" v-model="formData.form_scale"   class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                    icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" /> Form
-                                102
-                                Scale</p>
-                        </div>
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number"  v-model="formData.form_x" class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-left-right"
-                                    class="text-xs w-6" /> Form 102
-                                Horizontal Position</p>
-                        </div>
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number" v-model="formData.form_y" class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-up-down"
-                                    class="text-xs w-6" /> Form 102 Vertical Position</p>
                         </div>
 
-                    </div>
+                        <p class="text-gray-800 text-sm font-medium mt-2">Adjustments</p>
+                        <div class="  items-start flex flex-col flex-wrap  p-2 gap-3">
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.form_scale"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
+                                    Form
+                                    102
+                                    Scale</p>
+                            </div>
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.form_x"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-left-right" class="text-xs w-6" /> Form 102
+                                    Horizontal Position</p>
+                            </div>
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.form_y"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-up-down" class="text-xs w-6" /> Form 102 Vertical Position</p>
+                            </div>
 
-                    <div class="  items-start  p-2 gap-2 flex flex-col ">
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number" v-model="formData.annotation_scale" class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                    icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
-                                Annotation
-                                Scale</p>
-                        </div>
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number" v-model="formData.annotation_x" class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-left-right"
-                                    class="text-xs w-6" /> Annotation
-                                Horizontal Position</p>
-                        </div>
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number" v-model="formData.annotation_y" class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon icon="fa-solid fa-up-down"
-                                    class="text-xs w-6" /> Annotation Vertical Position</p>
                         </div>
 
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number" v-model="formData.annotation_font" class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                    icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Height</p>
-                        </div>
-                        <div class="flex flex-row items-center gap-3">
-                            <input type="number" v-model="formData.annotation_angle" class="w-[4rem] py-1 border-gray-200 rounded">
-                            <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                    icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Angle</p>
-                        </div>
-                    </div>
+                        <div class="  items-start  p-2 gap-2 flex flex-col ">
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.annotation_scale"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
+                                    Annotation
+                                    Scale</p>
+                            </div>
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.annotation_x"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation
+                                    Horizontal Position</p>
+                            </div>
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.annotation_y"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Vertical Position
+                                </p>
+                            </div>
 
-                    <div class="mt-auto flex justify-items-end">
-                        <button
-                            class="ml-auto tracking-wider border px-2 py-1.5 bg-blue-500 text-white rounded font-medium"
-                            type="button">Done</button>
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.annotation_font"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Height</p>
+                            </div>
+                            <div class="flex flex-row items-center gap-3">
+                                <input type="number" v-model="formData.annotation_angle"
+                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Angle</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto flex justify-items-end">
+                            <button
+                                class="ml-auto tracking-wider border px-2 py-1.5 bg-blue-500 text-white rounded font-medium"
+                                type="button">Done</button>
+                        </div>
                     </div>
                 </div>
             </div>
-
 
         </div>
 
@@ -229,6 +239,11 @@ const { files, open, reset, onChange } = useFileDialog({
     accept: 'application/pdf',
     directory: false,
 })
+
+const attachments = ref([
+    'Finality',
+    'Endoresement Letter'
+])
 
 const filter_type = ref('Birth')
 const filter_year = ref(2024)
@@ -300,7 +315,10 @@ onChange((file) => {
         return
     }
 
-    alert('This feature is coming soon!')
+    formData.filepath = file[0].path.replace('C:\\Users\\Erika Joyce\\', '')
+
+    // console.log(file[0])
+    submit()
     annotated_unannotated.value = false
 
 })
@@ -343,15 +361,15 @@ const initialFormData = {
 
 const formData = reactive({ ...initialFormData });
 
-watch(formData, (newValue, oldValue) => {
-   submit()
-})
+// watch(formData, (newValue, oldValue) => {
+//     submit()
+// })
 
 const submit = async () => {
     const data = {
         filepath: formData.filepath,
         annotation: formData.annotation,
-        form_scale:formData.form_scale,
+        form_scale: formData.form_scale,
         form_x: formData.form_x,
         form_y: formData.form_y,
 
