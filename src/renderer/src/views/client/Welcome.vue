@@ -1,6 +1,38 @@
 <script setup>
+import { ref } from "vue";
 import Carousel from "../../components/Carousel.vue";
+
+const Vital = ref()
+const Bridge = ref()
+const Civil = ref()
+const Registry = ref()
+const and = ref()
+const Archive = ref()
+const System = ref()
+
+
+const hoverTitle = () => {
+    const refs = [Vital.value, Bridge.value, Civil.value, Registry.value, and.value, Archive.value, System.value];
+    refs.forEach((ref, index) => {
+        setTimeout(() => {
+            ref.classList.add('hovered');
+            setTimeout(() => {
+                ref.classList.remove('hovered')
+            }, 200);
+        }, 100 * (index + 1));
+    });
+  
+};
+
 </script>
+
+<style>
+.hovered {
+    margin-bottom: 20px;
+    transition-duration: 300ms;
+
+}
+</style>
 
 <template>
     <div class="flex flex-col h-[calc(100vh-190px)] relative w-full">
@@ -15,13 +47,13 @@ import Carousel from "../../components/Carousel.vue";
 
                 <div
                     class="flex flex-row gap-2 items-center text-lg uFppercase font-semibold text-nowrap text-gray-800 justify-center h-[5rem]">
-                    <p class="hover:mb-4 duration-300 transition-all">Vital</p>
-                    <p class="hover:mb-4 duration-300 transition-all">Bridge</p>
-                    <p class="hover:mb-4 duration-300 transition-all">Civil</p>
-                    <p class="hover:mb-4 duration-300 transition-all">Registry</p>
-                    <p class="hover:mb-4 duration-300 transition-all">and</p>
-                    <p class="hover:mb-4 duration-300 transition-all">Archive</p>
-                    <p class="hover:mb-4 duration-300 transition-all">System</p>
+                    <p class="transition-all" @mouseover="hoverTitle" ref="Vital">Vital</p>
+                    <p class="transition-all" @mouseover="hoverTitle" ref="Bridge">Bridge</p>
+                    <p class="transition-all" @mouseover="hoverTitle" ref="Civil">Civil</p>
+                    <p class="transition-all" @mouseover="hoverTitle" ref="Registry">Registry</p>
+                    <p class="transition-all" @mouseover="hoverTitle" ref="and">and</p>
+                    <p class="transition-all" @mouseover="hoverTitle" ref="Archive">Archive</p>
+                    <p class="transition-all" @mouseover="hoverTitle" ref="System">System</p>
                 </div>
                 <div class="">
                     <p class="text-md font-normal text-justify leading-7 tracking-wider text-gray-800">

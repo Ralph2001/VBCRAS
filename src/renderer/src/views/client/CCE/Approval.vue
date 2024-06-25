@@ -140,7 +140,7 @@
                         <div class="h-auto flex flex-col gap-2">
                             <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
                             <QuillEditor theme="snow" :toolbar="['bold', 'italic', 'underline']"
-                                v-model:content="formData.annotation" contentType="text" />
+                                v-model:content="formData.annotation" contentType="html" />
 
                         </div>
 
@@ -346,7 +346,7 @@ const back = () => {
 
 const initialFormData = {
     filepath: '',
-    annotation: 'Pursuant to the decision rendered by MCR Ismael D. Malicdem Jr. dated 03 November 2022 and affirmed by CRG under OCRG No. 22-2373313, the child\'s first name from "LODOVICO" to "LUDOVIGO" and child\'s date of birth from "MAY 17, 1967" to "APRIL 26, 1967" are hereby corrected.',
+    annotation: '<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR.</strong> dated 03 November 2022 and affirmed by CRG under OCRG No. 22-2373313, the child\'s first name from "LODOVICO" to "LUDOVIGO" and child\'s date of birth from "MAY 17, 1967" to "APRIL 26, 1967" are hereby corrected.</p>',
     form_scale: 0.9,
     form_x: 1.7,
     form_y: 25,
@@ -361,9 +361,9 @@ const initialFormData = {
 
 const formData = reactive({ ...initialFormData });
 
-// watch(formData, (newValue, oldValue) => {
-//     submit()
-// })
+watch(formData, (newValue, oldValue) => {
+    submit()
+})
 
 const submit = async () => {
     const data = {

@@ -51,8 +51,7 @@
       <div class="flex flex-row gap-1 justify-end pr-5">
         <div :class="{ 'text-gray-600 shadow-custom-inset ': Documents.OpenMode === 'OpenSideBar' }"
           class="bg-white px-1 text-gray-400 rounded hover:cursor-pointer active:scale-95"
-          @click="changeOpenMethod('OpenSideBar')"
-          >
+          @click="changeOpenMethod('OpenSideBar')">
           <font-awesome-icon icon="fa-solid fa-window-maximize" />
         </div>
         <div :class="{ 'text-gray-600 shadow-custom-inset': Documents.OpenMode === 'OpenNewWindow' }"
@@ -186,9 +185,6 @@
                 class="text-sm italic  font-normal group-hover:mr-5 mr-2 duration-300  text-gray-800">
                 {{ item.type }} {{ item.month }}
                 {{ item.year }}
-                <!-- <font-awesome-icon @click="openFile(item.filepath, item.name)" icon="fa-solid fa-folder-open"
-                  title="Open file path"
-                  class="ms-1 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" /> -->
               </p>
             </li>
           </RecycleScroller>
@@ -224,26 +220,77 @@
               <iframe :src="pdfSource" frameborder="0" class="w-full h-full">
               </iframe>
             </div>
-            <!-- <PDFViewer ref="PdfViewerRef" :source="pdfSource"
-              :class="{ 'w-full': full_screen, 'w-[5rem] ': !full_screen }" class="h-full" :controls="[
-                'print',
-                'rotate',
-                'zoom',
-                'switchPage',
-                'catalog']" /> -->
           </div>
 
           <div v-else class="h-full  w-full  flex items-center justify-center shadow-sm bg-gray-100 relative">
             <p class="text-gray-600 font-mono text-lg tracking-wider bottom-[8rem] font-semibold">
               VBCRAS
             </p>
-            <!-- <Wave /> -->
           </div>
         </div>
       </div>
 
       <!-- Search Scroller -->
+
       <div class="h-full flex flex-row" v-if="searchQuery != ''">
+        <div :class="{ 'sm:hidden md:lg:block h-full': pdfSource }" class="h-full grow">
+          <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
+            :item-size="28" key-field="name" v-slot="{ item }">
+            <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
+              class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
+              <div class="block w-[60%] overflow-hidden truncate">
+                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
+                {{ item.name.replace(".pdf", "") }}
+              </div>
+              <p class="text-sm italic text-gray-600 font-normal group-hover:mr-5 duration-300 mr-2">
+                {{ item.type }} {{ item.month }} {{ item.year }}
+                <!-- <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path"
+                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" /> -->
+              </p>
+            </li>
+          </RecycleScroller>
+        </div>
+        <div class="border-s sm:hidden md:lg:block h-full"></div>
+        <div :class="{ 'flex flex-col': pdfSource, 'sm:hidden md:lg:flex': !pdfSource }"
+          class=" h-full w-full flex    p-1  items-center justify-center  gap-2 sm:basis-[100%] md:lg:basis-[50%]"
+          v-if="Documents.OpenMode === 'OpenSideBar'">
+          <div class="flex flex-row items-center w-full h-[2rem] gap-2 " v-if="pdfSource">
+            <button v-if="pdfSource && !full_screen" @click="pdfSource = ''"
+              class="border px-2 py-1.5 h-full self-start w-[5rem] text-white text-xs font-medium bg-red-400 hover:bg-red-500 rounded hover:text-white ">Close</button>
+            <button :title="!full_screen ? 'Expand' : 'Shrink'" v-if="pdfSource" @click="full_screen = !full_screen"
+              class="border sm:hidden h-full md:lg:flex w-auto justify-center px-2 py-1.5 self-start rounded text-gray-800 text-sm font-medium bg-white hover:bg-gray-700 hover:text-white hover:transition-colors duration-300 shadow-sm">
+
+              <p class="text-xs tracking-wide" v-if="!full_screen">Full Screen</p>
+
+              <font-awesome-icon icon="fa-solid fa-compress" v-if="full_screen" />
+            </button>
+          </div>
+          <div v-if="pdfSource"
+            :class="{ 'hidden': !pdfSource, ' fixed gap-2 top-0 bottom-0 right-0 left-0 z-50 flex flex-col px-5 py-2 bg-gray-700': full_screen, 'flex': !full_screen }"
+            class="w-full h-full">
+            <button :title="!full_screen ? 'Expand' : 'Shrink'" v-if="full_screen" @click="full_screen = !full_screen"
+              class=" justify-center px-2 py-1  self-end w-[3rem] shadow-lg rounded-sm text-gray-800 text-sm font-medium bg-white hover:bg-gray-800  hover:text-white "><font-awesome-icon
+                icon="fa-solid fa-expand" v-if="!full_screen" />
+
+              <font-awesome-icon icon="fa-solid fa-compress" v-if="full_screen" /></button>
+
+            <div :class="{ 'top-[3rem]': full_screen, 'top-[4rem]': !full_screen }" v-if="pdfSource"
+              class="absolute  right-[7rem] z-50 bg-[#323639]   py-4 px-1 text-xs items-center justify-center  font-mono tracking-wider text-gray-50 font-medium ">
+              VBCRAS</div>
+            <div class="w-full h-full bg-[#323639]">
+              <iframe :src="pdfSource" frameborder="0" class="w-full h-full">
+              </iframe>
+            </div>
+          </div>
+
+          <div v-else class="h-full  w-full  flex items-center justify-center shadow-sm bg-gray-100 relative">
+            <p class="text-gray-600 font-mono text-lg tracking-wider bottom-[8rem] font-semibold">
+              VBCRAS
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="h-full flex flex-row" v-if="searchQuery != ''">
         <div v-if="!searchData.length && searchQuery != ''"
           class="flex w-full flex-col items-center h-full gap-10 justify-center">
           <p class="text-center text-lg font-bold text-gray-600 font-italic">
@@ -278,17 +325,13 @@
           v-if="searchQuery != '' && searchData.length">
           <button v-if="pdfSource" @click="pdfSource = ''"
             class="border px-2 py-1.5 self-start rounded-sm text-gray-700 text-sm font-medium hover:bg-red-400 hover:text-white ">Close</button>
-          <PDFViewer :source="pdfSource" class="w-[5rem]" v-if="pdfSource" :controls="[
-            'print',
-            'rotate',
-            'zoom',
-
-            'switchPage',]" />
+            <iframe :src="pdfSource" v-if="pdfSource" frameborder="0" class="w-full h-full">
+            </iframe>
           <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100">
             <p class="text-gray-600 font-mono text-lg  ">VBCRAS</p>
           </div>
         </div>
-      </div>
+      </div> -->
 
     </div>
   </div>
