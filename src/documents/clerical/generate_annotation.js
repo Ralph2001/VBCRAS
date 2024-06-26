@@ -94,61 +94,187 @@ export async function CreateAnnotated(user, formData) {
 
     let splitedwidth = 0
     let x_value = 600
+    let isBold = false
 
     const split = formData.annotation.split(' ');
     const filtered = [];
-    let isBold = false
+    let currentArray = [];
+    let totalWidthSoFar = 0;
+    const blankSpaceWidth = 1; // Get the width of a single space
 
     for (let index = 0; index < split.length; index++) {
-        if (split[index].startsWith('<p>')) {
-            isBold = false
+        const text = split[index]; // Use a descriptive variable name for clarity
+        const textWidth = timesRomanFont.widthOfTextAtSize(text, 12);
+
+        // Check if adding the current text would exceed or exactly reach the limit
+        if (totalWidthSoFar + textWidth >= 800) {
+            // If it exceeds or reaches the limit, calculate remaining space and add blanks
+            const remainingSpace = 800 - totalWidthSoFar;
+
+            // Ensure at least one space is added even if remainingSpace < blankSpaceWidth
+            const numBlanks = Math.max(1, Math.floor(remainingSpace / blankSpaceWidth));
+
+            // Push current array and add remaining blanks as separate entries
+            filtered.push(currentArray);
+            for (let i = 0; i < numBlanks; i++) {
+                currentArray.push({ text: ' ', isBold: false, size: blankSpaceWidth });
+            }
+
+            currentArray = []; // Reset the current array for the next line
+            totalWidthSoFar = 0; // Reset the total width for the next line
         }
-        else if (split[index].endsWith('</p>')) {
-            isBold = false
-        }
-        else if (split[index].startsWith('<strong>' || split[index].endsWith('<strong>'))) {
-            isBold = true
-        }
-        else if (split[index].endsWith('</strong>')) {
-            split[index] = split[index].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '');
-            filtered.push({ text: split[index], isBold: true })
-            isBold = false
-            continue;
-        }
-        else if (split[index].startsWith('</strong>')) {
-            split[index] = split[index].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '');
-            filtered.push({ text: split[index], isBold: false })
-            isBold = false
-            continue;
-        }
-        split[index] = split[index].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '');
-        filtered.push({ text: split[index], isBold: isBold })
+
+        // Push the current text with its details
+        currentArray.push({ text, isBold: false, size: textWidth });
+        totalWidthSoFar += textWidth;
     }
 
-    console.log(filtered)
+    if (currentArray.length > 0) {
+        filtered.push(currentArray);
+    }
 
-    for (let index = 0; index < filtered.length; index++) {
 
-        if (splitedwidth > 800) {
-            x_value += -14
+
+
+
+
+    // for (const line of filtered) {
+    //     let totalwidth = 0
+    //     for (const item of line) {
+    //         totalwidth += item.size
+    //     }
+    //     console.log(`Total width of: ${totalwidth}`)
+    //     totalwidth = 0
+    // }
+
+    // console.log(filtered)
+
+    function distributeBlanks(data) {
+        return data.map(array => {
+          // Extract non-blank and blank items
+          const nonBlanks = array.filter(item => item.text.trim() !== '');
+          const blanks = array.filter(item => item.text.trim() === '');
+      
+          // Calculate the number of non-blank items
+          const totalNonBlanks = nonBlanks.length;
+      
+          // Calculate the number of blanks to distribute between each pair of non-blank items
+          const blanksPerGap = Math.floor(blanks.length / (totalNonBlanks - 1));
+          const extraBlanks = blanks.length % (totalNonBlanks - 1);
+      
+          // Distribute blanks
+          let distributedArray = [];
+          let blankIndex = 0;
+      
+          nonBlanks.forEach((item, index) => {
+            distributedArray.push(item);
+      
+            if (index < totalNonBlanks - 1) {
+              for (let i = 0; i < blanksPerGap; i++) {
+                distributedArray.push(blanks[blankIndex++]);
+              }
+      
+              if (index < extraBlanks) {
+                distributedArray.push(blanks[blankIndex++]);
+              }
+            }
+          });
+      
+          return distributedArray;
+        });
+      }
+
+      const sortedData = distributeBlanks(filtered)
+          for (const line of sortedData) {
+        let totalwidth = 0
+        for (const item of line) {
+            totalwidth += item.size
         }
-        if (splitedwidth > 800) {
-            splitedwidth = 0
+        console.log(`Total width of: ${totalwidth}`)
+        totalwidth = 0
+    }
+      console.log(sortedData)
+    // Loop through filtered array and calculate total sizes
+    for (const line of sortedData) {
+
+        for (const item of line) {
+            firstPage.drawText(item.text, {
+                x: x_value,
+                y: height / 2 + annotation_y - splitedwidth,
+                size: 12,
+                font: timesRomanFont,
+                rotate: degrees(annotation_angle),
+                lineHeight: 14
+            })
+            splitedwidth += item.size + 3
         }
-
-
-        firstPage.drawText(filtered[index].text, {
-            x: x_value,
-            y: height / 2 + annotation_y - splitedwidth,
-            size: 12,
-            font: filtered[index].isBold ? timesRomanFontBold : timesRomanFont,
-            rotate: degrees(annotation_angle),
-            lineHeight: 14
-        })
-        let fontStyle = filtered[index].isBold ? timesRomanFontBold : timesRomanFont
-        splitedwidth += fontStyle.widthOfTextAtSize(filtered[index].text, 12) + 3
+        x_value += -14
+        splitedwidth = 0
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // if (split[index].startsWith('<p>')) {
+    //     isBold = false
+    // }
+    // else if (split[index].endsWith('</p>')) {
+    //     isBold = false
+    // }
+    // else if (split[index].startsWith('<strong>' || split[index].endsWith('<strong>'))) {
+    //     isBold = true
+    // }
+    // else if (split[index].endsWith('</strong>')) {
+    //     split[index] = split[index].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '');
+    //     filtered.push({ text: split[index], isBold: true })
+    //     isBold = false
+    //     continue;
+    // }
+    // else if (split[index].startsWith('</strong>')) {
+    //     split[index] = split[index].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '');
+    //     filtered.push({ text: split[index], isBold: false })
+    //     isBold = true
+    //     continue;
+    // }
+    // split[index] = split[index].replace('<p>', '').replace('</p>', '').replace('<strong>', '').replace('</strong>', '');
+    // filtered.push({ text: split[index], isBold: isBold })
+    // }
+
+    // console.log(filtered)
+
+    // for (let index = 0; index < filtered.length; index++) {
+    //     if (splitedwidth > 800) {
+    //         x_value += -14
+    //     }
+    //     if (splitedwidth > 800) {
+    //         splitedwidth = 0
+    //     }
+    //     firstPage.drawText(filtered[index].text, {
+    //         x: x_value,
+    //         y: height / 2 + annotation_y - splitedwidth,
+    //         size: 12,
+    //         font: filtered[index].isBold ? timesRomanFontBold : timesRomanFont,
+    //         rotate: degrees(annotation_angle),
+    //         lineHeight: 14
+    //     })
+    //     let fontStyle = filtered[index].isBold ? timesRomanFontBold : timesRomanFont
+    //     splitedwidth += fontStyle.widthOfTextAtSize(filtered[index].text, 12) + 3
+
+    // }
 
 
     pdfBytes = await pdfDoc.saveAsBase64()

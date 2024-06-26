@@ -69,7 +69,7 @@
           <div class="flex flex-row justify-center items-center">
             <div class="grid md:lg:grid-cols-5 sm:grid-cols-2  sm:gap-3 md:lg:gap-5 w-full">
               <div v-for="uri in type"
-                class="flex sm:w-full md:lg:w-[7.5rem] items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200 transition-all">
+                class="flex sm:w-full md:lg:w-[7.5rem] items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200 bg-white hover:bg-gray-50 duration-100">
                 <fwb-radio :label="uri" :value="uri" v-model="scannedData.type" name="typeBox" class="cursor-pointer" />
               </div>
             </div>

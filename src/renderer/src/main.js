@@ -58,7 +58,6 @@ import {
     faLandmarkDome,
     faFilePen,
     faFileLines,
-    faUser,
     faChevronDown, 
     faMarker,
     faExpand,
@@ -72,11 +71,12 @@ import {
     faUpRightAndDownLeftFromCenter,
     faLeftRight,
     faUpDown,
-    faTextHeight
+    faTextHeight,
+   
    
 } from '@fortawesome/free-solid-svg-icons'
 
-import { faEye } from '@fortawesome/free-regular-svg-icons'
+import { faEye, faUser } from '@fortawesome/free-regular-svg-icons'
 
 /* add icons to the library */
 library.add(
