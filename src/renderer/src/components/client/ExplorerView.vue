@@ -191,7 +191,7 @@
         </div>
         <div class="border-s sm:hidden md:lg:block h-full"></div>
         <div :class="{ 'flex flex-col': pdfSource, 'sm:hidden md:lg:flex': !pdfSource }"
-          class=" h-full w-full flex    p-1  items-center justify-center  gap-2 sm:basis-[100%] md:lg:basis-[50%]"
+          class=" h-full w-full flex    p-1  items-center justify-center  gap-2 sm:basis-[100%] md:lg:basis-[60%]"
           v-if="Documents.OpenMode === 'OpenSideBar'">
           <div class="flex flex-row items-center w-full h-[2rem] gap-2 " v-if="pdfSource">
             <button v-if="pdfSource && !full_screen" @click="pdfSource = ''"

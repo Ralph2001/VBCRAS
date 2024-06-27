@@ -4,7 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-import 'core-js/features/promise/with-resolvers'; 
+import 'core-js/features/promise/with-resolvers';
 import PrimeVue from 'primevue/config'
 import Lara from './assets/presets/lara'
 
@@ -58,12 +58,12 @@ import {
     faLandmarkDome,
     faFilePen,
     faFileLines,
-    faChevronDown, 
+    faChevronDown,
     faMarker,
     faExpand,
     faCompress,
     faWindowMaximize,
-    faWindowRestore, 
+    faWindowRestore,
     faArrowDown,
     faUpload,
     faHandPointer,
@@ -72,8 +72,10 @@ import {
     faLeftRight,
     faUpDown,
     faTextHeight,
-   
-   
+    faArrowsUpDown,
+    faArrowsLeftRight
+
+
 } from '@fortawesome/free-solid-svg-icons'
 
 import { faEye, faUser } from '@fortawesome/free-regular-svg-icons'
@@ -117,8 +119,8 @@ library.add(
     faUser,
     faEye,
     faChevronDown,
-    faMarker, 
-    faExpand, 
+    faMarker,
+    faExpand,
     faCompress,
     faWindowMaximize,
     faWindowRestore,
@@ -129,8 +131,10 @@ library.add(
     faUpRightAndDownLeftFromCenter,
     faLeftRight,
     faUpDown,
-    faTextHeight
-  
+    faTextHeight,
+    faArrowsUpDown,
+    faArrowsLeftRight
+
 )
 
 import './assets/index.css'

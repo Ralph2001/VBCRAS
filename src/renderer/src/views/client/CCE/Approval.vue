@@ -21,9 +21,13 @@
             <p class="font-bold text-2xl">Attachments</p>
 
             <div class="flex items-center" v-for="attach in attachments" :key="attach">
-                <input disabled checked type="checkbox" value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">{{ attach }}</label>
+                <div class="w-[12rem]">
+                    <input disabled type="checkbox" value=""
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">{{ attach }}</label>
+                </div>
+
+                <button class="p-1 border rounded-md bg-white px-3">Create </button>
             </div>
 
 
@@ -112,7 +116,7 @@
 
 
             <div class="mt-auto ml-auto bottom-0 right-10 gap-2 flex">
-                <button 
+                <button
                     class="border w-[10rem] rounded-sm bg-gray-800 hover:bg-gray-900 text-sm py-2  text-white font-medium shadow-sm transition-all active:scale-95 ">Impugn</button>
                 <button @click="back"
                     class="border w-[10rem] rounded-sm bg-white text-sm py-2 hover:bg-red-400 text-gray-800 font-medium shadow-sm transition-all active:scale-95 hover:text-white">Cancel</button>
@@ -132,15 +136,20 @@
             <div class="h-full flex flex-col overflow-y-scroll">
                 <button class="self-end border " @click="AnnotationEditor = !AnnotationEditor">[close]</button>
                 <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 w-full h-full gap-5 ">
-                    <div class="flex h-[calc(100vh-100px)]  w-full border">
+                    <div class="flex h-[calc(100vh-100px)]  w-full border relative">
+                        <div
+                            class="absolute right-[3rem] top-[0.4rem]  h-[3rem] w-[5rem] flex items-center justify-center bg-[#323639] z-[999]">
+                            <p class="text-white text-xs tracking-wider font-medium">VBCRAS</p>
+                        </div>
+                      
                         <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
                     </div>
                     <div class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm">
                         <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Settings </p>
                         <div class="h-auto flex flex-col gap-2">
                             <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
-                            <QuillEditor theme="snow" :toolbar="['bold', 'italic', 'underline']"
-                                v-model:content="formData.annotation" contentType="html" />
+                            <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
+                                contentType="html" />
 
                         </div>
 
@@ -201,9 +210,17 @@
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Height</p>
                             </div>
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.annotation_angle"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                            <div class="flex flex-row items-center gap-2">
+                                <div class="flex flex-row text-gray-700 gap-2">
+                                    <button @click="formData.annotation_angle = -90"
+                                        class="border p-1 rounded hover:bg-gray-100 hover:shadow-sm w-9">
+                                        <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                                    </button>
+                                    <button @click="formData.annotation_angle = 0"
+                                        class="border p-1 rounded hover:bg-gray-100 hover:shadow-sm w-9">
+                                        <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                                    </button>
+                                </div>
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Angle</p>
                             </div>
@@ -242,7 +259,8 @@ const { files, open, reset, onChange } = useFileDialog({
 
 const attachments = ref([
     'Finality',
-    'Endoresement Letter'
+    'Endoresement Letter',
+    'Annotated/Unannotated'
 ])
 
 const filter_type = ref('Birth')
@@ -346,7 +364,7 @@ const back = () => {
 
 const initialFormData = {
     filepath: '',
-    annotation: '<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR.</strong> dated 03 November 2022 and affirmed by CRG under OCRG No. 22-2373313, the child\'s first name from "LODOVICO" to "LUDOVIGO" and child\'s date of birth from "MAY 17, 1967" to "APRIL 26, 1967" are hereby corrected.</p>',
+    annotation: '<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong> dated 03 November 2022 and affirmed by <strong>CRG under OCRG No. 22-2373313,</strong> the child&rsquo;s first name from <strong>"LODOVICO"</strong> to <strong>"LUDOVIGO"</strong> and child&rsquo;s date of birth from <strong>"MAY 17, 1967&rdquo; </strong> to <strong>"APRIL 26, 1967&rdquo; </strong> are hereby corrected.</p>',
     form_scale: 0.9,
     form_x: 1.7,
     form_y: 25,
