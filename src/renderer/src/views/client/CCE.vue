@@ -25,7 +25,7 @@
 
     <Transition enter-active-class="animate__animated animate__fadeIn"
       leave-active-class="animate__animated animate__fadeOut">
-      <Modal medium label="Create a new Document" v-if="document">
+      <Modal large label="Create a new Document" v-if="document">
         <template v-slot:header>
           <ModalCloseButton @click="closeModal" />
         </template>
@@ -45,7 +45,7 @@
             </Box>
 
 
-            <div class="fixed flex flex-col shadow-sm right-[25%]  h-auto z-10 w-[10rem] gap-2">
+            <div class="fixed flex flex-col shadow-sm right-[3%] top-[12%] h-auto z-10 w-[10rem] gap-2">
               <button type="button" v-if="!targetIsVisible" @click="focusDocumentChanger()"
                 class=" bg-blue-400 p-2 rounded-md top-[7rem]   border font-medium text-white flex flex-row items-center text-xs tracking-wide">
                 <font-awesome-icon icon="fa-solid fa-list-check " class="me-2 text-white" />
@@ -59,7 +59,7 @@
             </div>
           </div>
 
-          <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10 ">
+          <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-1 px-10 ">
 
             <div class="w-full flex item-center justify-center p-1 mb-5 transition-all bg-[#F3F4F6]">
               <p class="text-lg uppercase font-semibold tracking-wider text-pretty" v-if="formData.type === 'CCE'">
@@ -190,8 +190,8 @@
                     <div>
                       <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ date_of_label
                         }}</label>
-                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.date_of" auto-apply
-                        :max-date="new Date()"
+                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                        v-model="formData.date_of" auto-apply :max-date="new Date()"
                         input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                         format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                         position="right" />
@@ -510,8 +510,8 @@
                     <div></div>
                     <div>
                       <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date Sworn</label>
-                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.SwornDate" auto-apply
-                        :max-date="new Date()"
+                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                        v-model="formData.SwornDate" auto-apply :max-date="new Date()"
                         input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                         format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                         position="right">
@@ -522,7 +522,8 @@
                     <Input label="Issued at" :error="v$.CtcIssuedAt.$error" v-model="formData.CtcIssuedAt" />
                     <div>
                       <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Issued on</label>
-                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.CtcIssuedOn" auto-apply
+                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                        v-model="formData.CtcIssuedOn" auto-apply
                         input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                         format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                         position="right">
@@ -553,7 +554,8 @@
                     <div class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
                       <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
-                        <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.date_granted" auto-apply
+                        <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                          v-model="formData.date_granted" auto-apply
                           input-class-name="p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                           format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                           position="right">
@@ -601,7 +603,8 @@
                       </div>
                       <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
-                        <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.date_granted" auto-apply
+                        <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                          v-model="formData.date_granted" auto-apply
                           input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                           format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                           position="right">
@@ -641,7 +644,8 @@
 
                     <div>
                       <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date Paid</label>
-                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.DatePaid" auto-apply
+                      <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                        v-model="formData.DatePaid" auto-apply
                         input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                         format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                         position="right">
@@ -658,7 +662,8 @@
                       <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Notice of
                           Posting</label>
-                        <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.notice_posting" auto-apply
+                        <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                          v-model="formData.notice_posting" auto-apply
                           input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                           format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                           position="right">
@@ -672,8 +677,8 @@
                       <div class="flex flex-row w-full justify-evenly relative">
                         <div>
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start</label>
-                          <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.certificate_posting_start"
-                            auto-apply
+                          <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                            v-model="formData.certificate_posting_start" auto-apply
                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                             format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                             position="right">
@@ -682,8 +687,8 @@
                         <p class="absolute top-10 font-bold text-xs">TO</p>
                         <div>
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End</label>
-                          <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.certificate_posting_end"
-                            auto-apply
+                          <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                            v-model="formData.certificate_posting_end" auto-apply
                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                             format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                             position="right">
@@ -696,7 +701,8 @@
                           <div>
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                               Date Issued</label>
-                            <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.date_issued" auto-apply
+                            <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                              v-model="formData.date_issued" auto-apply
                               input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                               format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                               position="right">
@@ -712,7 +718,8 @@
                         <div>
                           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Date Granted</label>
-                          <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions" v-model="formData.date_granted" auto-apply
+                          <VueDatePicker :transitions="false" :auto-position="true" :text-input="dateInputOptions"
+                            v-model="formData.date_granted" auto-apply
                             input-class-name=" p-2.5 pl-8 rounded-sm bg-gray-50 text-sm font-bold border-gray-300 border focus:ring-green-500 focus:border-green-500 focus:bg-green-50"
                             format="MMMM dd, yyyy" model-type="MMMM dd, yyyy" :month-change-on-scroll="false"
                             position="right">
@@ -802,9 +809,11 @@ const LoadingBlock = defineAsyncComponent(() =>
 const TableGrid = defineAsyncComponent(() =>
   import("../../components/TableGrid.vue")
 )
-const Modal = defineAsyncComponent(() =>
-  import("../../components/client/modal/Modal.vue")
-)
+
+import Modal from "../../components/client/modal/Modal.vue";
+// const Modal = defineAsyncComponent(() =>
+//   import("../../components/client/modal/Modal.vue")
+// )
 const ClericalSettings = defineAsyncComponent(() =>
   import("../../components/essentials/settings/ClericalSettings.vue")
 )

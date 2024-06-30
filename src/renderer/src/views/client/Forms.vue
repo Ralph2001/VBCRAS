@@ -12,7 +12,7 @@
             <template v-slot:header>
                 <ModalCloseButton @click="closeModal" />
             </template>
-            <div class="flex flex-col  sm:px-6 md:px-4 h-max  w-full gap-4 relative font-medium" v-if="!isPreview">
+            <div class="flex flex-col  sm:px-6 md:px-4 h-max w-full gap-4 relative font-medium" v-if="!isPreview">
                 <div class="h-full flex flex-col px-10 py-4">
                     <div
                         class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
