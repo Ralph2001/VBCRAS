@@ -3,14 +3,13 @@
     class="overflow-x-hidden h-[calc(100vh)] overflow-y-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
     aria-modal="true" role="dialog">
     <div :class="{
-      ' max-w-[85rem] h-[calc(100vh-20px)] overflow-y-hidden': large,
+      'w-screen h-screen overflow-y-hidden': large,
       'lg:max-w-5xl max-h-full': medium,
       'lg:max-w-2xl max-h-full': dropbox,
       'max-w-lg': small,
-
       'max-w-[35rem] ': titleCard,
-    }" class="relative p-4 w-full">
-      <div class="relative bg-white h-full overflow-y-auto rounded-lg shadow dark:bg-gray-700">
+    }" class="relative p-1 w-full">
+      <div class="relative bg-white h-full rounded-sm w-full overflow-y-auto shadow dark:bg-gray-700">
         <!-- Header -->
         <div class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3  ">
           <h3 v-if="!titleCard" class="text-sm tracking-wide font-semibold text-gray-600 uppercase dark:text-white">
@@ -33,14 +32,15 @@
         <!-- Main Body -->
         <div :class="{
           'h-[19rem]': titleCard,
-          'h-[calc(100vh-180px)]': small || medium || large,
+          'h-[calc(100vh-180px)]': small || medium,
+          'h-[calc(100vh-130px)]': large
         }" class=" overflow-y-scroll relative ">
           <slot> </slot>
         </div>
 
         <!-- Footer -->
-        <div :class="{ ' h-0': titleCard }"
-          class="flex z-50  border-t items-center justify-end p-2 shadow-md inset-20 rounded-b dark:border-gray-600">
+        <div :class="{ ' h-0': titleCard, }"
+          class="flex z-50 h-16 items-center justify-end  p-2 bg-white border-t-2 border-gray-300  rounded-b dark:border-gray-600">
           <slot name="footer"> </slot>
         </div>
       </div>
@@ -60,6 +60,10 @@ const props = defineProps({
   medium: Boolean,
   first: String,
   second: String,
-  dropbox: Boolean
+  dropbox: Boolean,
+  doctype: {
+    type: String,
+    default: ''
+  },
 });
 </script>

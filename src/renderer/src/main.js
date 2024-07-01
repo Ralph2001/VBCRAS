@@ -139,7 +139,7 @@ library.add(
 
 import './assets/index.css'
 import 'flowbite'
-// import 'animate.css'
+import 'animate.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const app = createApp(App)

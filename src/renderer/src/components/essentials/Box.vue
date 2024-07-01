@@ -7,9 +7,9 @@
         </p>
         <slot></slot>
     </div> -->
-    <fieldset :class="width"
-        class="border border-solid border-gray-300 shadow-sm rounded-sm h-full flex items-center flex-wrap px-4 pt-4 pb-7">
-        <legend class=" text-blackabsolute bg-white leading-2 font-bold italic text-sm tracking-wide"> {{ title
+    <fieldset :class="width" class=" bg-gray-50  rounded h-full flex items-center flex-wrap px-10 py-8 "
+        style="box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;">
+        <legend class=" text-blackabsolute bg-transparent leading-2 font-bold italic text-sm tracking-wide text-gray-700"> {{ title
             }} <span class="ms-4 text-red-500 italic text-xs" v-if="error">{{ error }}</span></legend>
         <slot></slot>
     </fieldset>
@@ -30,4 +30,5 @@ const props = defineProps({
     }
 })
 </script>
+
 // box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px

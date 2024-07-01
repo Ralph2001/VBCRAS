@@ -174,8 +174,8 @@
         <div :class="{ 'sm:hidden md:lg:block h-full': pdfSource }" class="h-full grow">
           <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full"
             :item-size="28" key-field="name" v-slot="{ item }">
-            <li @dblclick.prevent="openFile(item.filepath, item.name)" tabindex="0"
-              :class="{ 'bg-blue-500 hover:bg-blue-500 text-white group ': ActiveFile === item.name && pdfSource }"
+            <li @dblclick.prevent="openFile(item.filepath, item.name, item.id)" tabindex="0"
+              :class="{ 'bg-blue-500 hover:bg-blue-500 text-white group ': ActiveFile === item.name && pdfSource, 'bg-blue-100/90 ': matchToOpened(item.id) && ActiveFile !== item.name }"
               class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm relative group">
               <div class="block w-[60%] overflow-hidden truncate">
                 <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
@@ -394,7 +394,18 @@ onStartTyping(() => {
   if (!input.value.active) input.value.focus();
 });
 
-const openFile = async (filepath, filename) => {
+const opened = ref([])
+
+function matchToOpened(id) {
+  for (const open of opened.value) {
+    if (open === id) {
+      return true
+    }
+  }
+}
+
+const openFile = async (filepath, filename, id) => {
+  opened.value.push(id)
   try {
     const device = computer.desktop_name;
 
@@ -433,6 +444,7 @@ const openFile = async (filepath, filename) => {
           showAlert.value = false;
         }, 3000);
       }
+
 
     }
   } catch (error) {
