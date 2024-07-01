@@ -25,7 +25,11 @@
 
     <Transition enter-active-class="animate__animated animate__fadeIn"
       leave-active-class="animate__animated animate__fadeOut">
+<<<<<<< HEAD
       <Modal large label="Create a new Document" v-if="document" :doctype="formData.document_type">
+=======
+      <Modal large label="Create a new Document" v-if="document">
+>>>>>>> 92b42ffec8b4118821f19cb8f3079ee9f44d63ba
         <template v-slot:header>
           <ModalCloseButton @click="closeModal" />
         </template>
@@ -45,9 +49,14 @@
               </div>
             </Box>
 
+<<<<<<< HEAD
             <!-- Need to Fix -->
             <!-- 
             <div class="fixed flex flex-col shadow-sm right-[1%] top-[6.2%]  h-auto z-10 w-[10rem] gap-2">
+=======
+
+            <div class="fixed flex flex-col shadow-sm right-[3%] top-[12%] h-auto z-10 w-[10rem] gap-2">
+>>>>>>> 92b42ffec8b4118821f19cb8f3079ee9f44d63ba
               <button type="button" v-if="!targetIsVisible" @click="focusDocumentChanger()"
                 class=" bg-blue-400 p-2 rounded-md top-[7rem]   border font-medium text-white flex flex-row items-center text-xs tracking-wide">
                 <font-awesome-icon icon="fa-solid fa-list-check " class="me-2 text-white" />
@@ -61,7 +70,12 @@
             </div> -->
           </div>
 
+<<<<<<< HEAD
           <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10 ">
+=======
+          <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-1 px-10 ">
+
+>>>>>>> 92b42ffec8b4118821f19cb8f3079ee9f44d63ba
             <div class="w-full flex item-center justify-center p-1 mb-5 transition-all bg-[#F3F4F6]">
               <p class="text-lg uppercase font-semibold tracking-wider text-pretty" v-if="formData.type === 'CCE'">
                 PETITION FOR CORRECTION OF CLERICAL ERROR IN THE CERTIFICATE OF
@@ -812,6 +826,10 @@ const LoadingBlock = defineAsyncComponent(() =>
 const TableGrid = defineAsyncComponent(() =>
   import("../../components/TableGrid.vue")
 )
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92b42ffec8b4118821f19cb8f3079ee9f44d63ba
 import Modal from "../../components/client/modal/Modal.vue";
 // const Modal = defineAsyncComponent(() =>
 //   import("../../components/client/modal/Modal.vue")

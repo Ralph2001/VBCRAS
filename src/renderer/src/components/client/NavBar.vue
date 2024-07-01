@@ -10,7 +10,7 @@
         </a>
 
         <!-- itong button ahhh -->
-        <button type="button"
+        <button type="button" ref="target"
           class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
           @click="dropdownmenu">
           <span class="sr-only">Open main menu</span>
@@ -20,7 +20,7 @@
           </svg>
         </button>
 
-        <div :class="{ hidden: !dropdown }" ref="menu" tabindex="-1"
+        <div :class="{ hidden: !dropdown }" tabindex="-1" ref="target"
           class="w-full md:block md:w-auto absolute top-[3.5rem] md:static right-0 md:top-0 z-50">
           <ul tabindex="-1"
             class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-200 rounded bg-gray-50 shadow-lg md:shadow-none md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
@@ -78,12 +78,13 @@
                   <li>
                     <button
                       class="w-full  text-left px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                      <font-awesome-icon icon="fa-solid fa-user" class="me-2" />
+                      <!-- <font-awesome-icon icon="fa-solid fa-user" class="me-2" /> -->
                       {{ auth.user }}
                     </button>
                   </li>
                   <li>
-                    <a href="#" class="items-center w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                    <a href="#"
+                      class="items-center w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                       <font-awesome-icon icon="fa-solid fa-gear" class="me-2" />
                       Settings</a>
                   </li>
@@ -109,13 +110,12 @@
 import { onMounted, ref } from "vue";
 import { initFlowbite } from "flowbite";
 import { AuthStore } from "../../stores/clientAuth";
-import { onClickOutside } from "@vueuse/core";
-
+import { onClickOutside } from '@vueuse/core'
 
 const auth = AuthStore();
-
 const dropdown = ref(false);
-const menu = ref(null);
+const target = ref(null)
+onClickOutside(target, event => dropdown.value = false)
 
 const dropdownmenu = () => {
   dropdown.value = !dropdown.value;

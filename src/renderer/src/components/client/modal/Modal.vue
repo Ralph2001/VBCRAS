@@ -3,16 +3,25 @@
     class="overflow-x-hidden h-[calc(100vh)] overflow-y-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
     aria-modal="true" role="dialog">
     <div :class="{
+<<<<<<< HEAD
       'w-screen h-screen overflow-y-hidden': large,
+=======
+      ' max-w-full h-[calc(100vh)] overflow-y-hidden': large,
+>>>>>>> 92b42ffec8b4118821f19cb8f3079ee9f44d63ba
       'lg:max-w-5xl max-h-full': medium,
       'lg:max-w-2xl max-h-full': dropbox,
       'max-w-lg': small,
       'max-w-[35rem] ': titleCard,
+<<<<<<< HEAD
     }" class="relative p-1 w-full">
       <div class="relative bg-white h-full rounded-sm w-full overflow-y-auto shadow dark:bg-gray-700">
+=======
+    }" class="relative  w-full">
+      <div class="relative bg-gray-50 h-full overflow-y-auto shadow dark:bg-gray-700">
+>>>>>>> 92b42ffec8b4118821f19cb8f3079ee9f44d63ba
         <!-- Header -->
         <div class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3  ">
-          <h3 v-if="!titleCard" class="text-sm tracking-wide font-semibold text-gray-600 uppercase dark:text-white">
+          <h3 v-if="!titleCard" class="text-sm tracking-wide font-bold text-gray-800  uppercase dark:text-white">
             {{ label }}
           </h3>
 
@@ -33,7 +42,11 @@
         <div :class="{
           'h-[19rem]': titleCard,
           'h-[calc(100vh-180px)]': small || medium,
+<<<<<<< HEAD
           'h-[calc(100vh-130px)]': large
+=======
+          'h-[calc(100vh-110px)]': large
+>>>>>>> 92b42ffec8b4118821f19cb8f3079ee9f44d63ba
         }" class=" overflow-y-scroll relative ">
           <slot> </slot>
         </div>
