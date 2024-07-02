@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
-const router = useRouter();
+
+
 
 export const useModeStore = defineStore("mode", {
+
   state: () => ({
     mode: localStorage.getItem("mode"),
   }),

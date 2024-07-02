@@ -4,7 +4,6 @@ import { useRouter } from "vue-router";
 import { useHostStore } from "./connection";
 import { ref } from "vue";
 
-const router = useRouter();
 
 export const useServerAuthStore = defineStore("ServerAuth", {
     state: () => ({

@@ -1,3 +1,4 @@
+import devtools from '@vue/devtools'
 import { createApp, markRaw } from 'vue'
 import { createPinia } from 'pinia'
 
@@ -142,6 +143,7 @@ import 'animate.css';
 import 'flowbite'
 import 'animate.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
 
 const app = createApp(App)
 const pinia = createPinia()

@@ -388,7 +388,7 @@ const changeOpenMethod = (value) => {
   pdfSource.value = ''
 }
 
-const search = refDebounced(searchQuery, 2000);
+const search = refDebounced(searchQuery, 500);
 
 onStartTyping(() => {
   if (!input.value.active) input.value.focus();
@@ -455,41 +455,6 @@ const openFile = async (filepath, filename, id) => {
     }, 3000);
   }
 };
-
-
-const openPath = async (filepath, filename) => {
-
-  try {
-    const device = computer.desktop_name;
-    const data = [
-      {
-        name: filename,
-        device_used: device,
-        action: "Opened",
-      },
-    ];
-
-    const add_log = await Documents.add_log(data);
-    if (add_log) {
-      const openpath = await window.LocalCivilApi.openFilePath(filepath);
-
-      if (!openpath) {
-        showAlert.value = true;
-
-        setTimeout(() => {
-          showAlert.value = false;
-        }, 3000);
-      }
-    }
-  } catch (error) {
-    showAlert.value = true;
-    console.log("Error opening file path");
-    setTimeout(() => {
-      showAlert.value = false;
-    }, 3000);
-  }
-};
-
 
 
 const props = defineProps({

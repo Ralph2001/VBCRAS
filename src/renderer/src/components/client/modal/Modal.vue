@@ -9,10 +9,10 @@
       'max-w-lg': small,
       'max-w-[35rem] ': titleCard,
     }" class="relative p-1 w-full">
-      <div class="relative bg-white h-full rounded-sm w-full overflow-y-auto shadow dark:bg-gray-700">
+      <div class="relative bg-white h-full rounded-sm w-full overflow-y-auto dark:bg-gray-700">
         <!-- Header -->
-        <div class="flex items-center top-0 border-b border-gray-200 shadow-sm right-0 left-0 p-3  ">
-          <h3 v-if="!titleCard" class="text-sm tracking-wide font-bold text-gray-800  uppercase dark:text-white">
+        <div class="flex  bg-white  items-center top-0  right-0 left-0 p-3  border-b ">
+          <h3 v-if="!titleCard" class="text-sm tracking-wide font-bold text-gray-800   uppercase dark:text-white">
             {{ label }}
           </h3>
 
@@ -33,14 +33,15 @@
         <div :class="{
           'h-[19rem]': titleCard,
           'h-[calc(100vh-180px)]': small || medium,
-          'h-[calc(100vh-130px)]': large
-        }" class=" overflow-y-scroll relative ">
+          'h-[calc(100vh-129px)]': large
+        }" class=" overflow-y-scroll relative bg-gray-100">
           <slot> </slot>
         </div>
 
         <!-- Footer -->
-        <div :class="{ ' h-0': titleCard, }"
-          class="flex z-50 h-16 items-center justify-end  p-2 bg-white border-t-2 border-gray-300  rounded-b dark:border-gray-600">
+        <div :class="[titleCard ? ' h-0' : '', $attrs.footerBG]"
+          class="flex z-50 h-16 items-center justify-end border-t p-2  rounded-b dark:border-gray-600">
+
           <slot name="footer"> </slot>
         </div>
       </div>
@@ -49,6 +50,8 @@
 </template>
 
 <script setup>
+import { useAttrs } from 'vue'
+const attrs = useAttrs()
 const props = defineProps({
   label: {
     type: String,
@@ -61,6 +64,7 @@ const props = defineProps({
   first: String,
   second: String,
   dropbox: Boolean,
+
   doctype: {
     type: String,
     default: ''
