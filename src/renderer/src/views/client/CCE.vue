@@ -255,7 +255,8 @@
               <div class="basis-[30%]">
                 <Box :title="IHeSheLabel" width="w-full">
                   <div class="grid grid-cols-1 w-full gap-2">
-                    <div>
+                    <DateInput :label="date_of_label"/>
+                    <!-- <div>
                       <label
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >{{ date_of_label }}</label
@@ -273,7 +274,7 @@
                         :month-change-on-scroll="false"
                         position="right"
                       />
-                    </div>
+                    </div> -->
                   </div>
                 </Box>
               </div>
@@ -1615,6 +1616,7 @@ const granted_text_data = computed(() => {
 import { factReason } from "../../composables/FactsReasons.js";
 import { grantedText } from "../../composables/GrantedText.js";
 import MultiInput from "../../components/essentials/inputs/MultiInput.vue";
+import DateInput from "../../components/essentials/inputs/DateInput.vue";
 
 function change_granted_text() {
   const granted = grantedText(granted_text_data.value);
