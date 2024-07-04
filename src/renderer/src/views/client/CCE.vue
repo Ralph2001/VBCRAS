@@ -1390,7 +1390,7 @@ const petition_details = ref("");
 const petition_owner = ref("");
 
 const dateInputOptions = ref({
-  format: "PP",
+  format: "MMMM dd, yyyy",
 });
 
 const Type = ref(["CCE", "CFN"]);

@@ -14,6 +14,7 @@
       <input
         ref="ref_day"
         v-model="day"
+        :onblur="validateDay"
         maxlength="2"
         class="w-[50%] border border-gray-300 text-sm font-semibold placeholder:text-xs"
         type="text"
@@ -31,6 +32,7 @@
 </template>
 
 <script setup>
+// import { esbuildVersion } from "vite";
 import { ref, watch } from "vue";
 
 const day = ref();
@@ -61,21 +63,55 @@ const months = ref([
   "December",
 ]);
 
+const month_num = [
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07",
+  "08",
+  "09",
+  "10",
+  "11",
+  "12",
+];
+
 const validateMonth = () => {
-  if (month.value !== "" || month.value !== null) {
-    const validate = months.value.some(
-      (item) => item.toLowerCase() === month.value.toLowerCase()
-    );
-    if (!validate) {
-      month.value = "";
-    }
-    month.value = month.value.charAt(0).toUpperCase() + month.value.slice(1);
+  if (month.value === null && month.value === "") {
+    return;
+  }
+  const validate = months.value.some(
+    (item) => item.toLowerCase() === month.value.toLowerCase()
+  );
+  if (!validate) {
+    month.value = "";
+  }
+  month.value = month.value.charAt(0).toUpperCase() + month.value.slice(1);
+};
+
+const validateDay = () => {
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth();
+  const maxDate = new Date(year, month + 1, 0).getDate();
+
+  const split = day.value.split("");
+  if (day.value > maxDate) {
+    day.value = "";
+  }
+  if (split.length == 1) {
+    day.value = 0 + day.value;
   }
 };
 
 watch(day, (dayvalue) => {
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth();
+  const maxDate = new Date(year, month + 1, 0).getDate();
+
   const split = dayvalue.split("");
-  if (split.length >= 2) {
+  if (split.length >= 2 && dayvalue <= maxDate) {
     ref_year.value.focus();
   }
 });
@@ -84,8 +120,8 @@ watch(month, (monthvalue) => {
   const isToNext = months.value.some(
     (item) => item.toLowerCase() === month.value.toLowerCase()
   );
-  if(isToNext){
-    ref_day.value.focus()
+  if (isToNext) {
+    ref_day.value.focus();
   }
 });
 </script>
