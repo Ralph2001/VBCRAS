@@ -32,6 +32,7 @@ export async function CreateAnnotated(user, formData) {
   pdfDoc.setCreationDate(new Date())
   pdfDoc.setModificationDate(new Date())
 
+
   const [embeddedPage] = await pdfDoc.embedPdf(firstDoc, [0])
 
   const scale = Number(formData.form_scale)
@@ -322,20 +323,6 @@ export async function CreateAnnotated(user, formData) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // if (split[index].startsWith('<p>')) {
   //     isBold = false
   // }
@@ -382,7 +369,6 @@ export async function CreateAnnotated(user, formData) {
   //     splitedwidth += fontStyle.widthOfTextAtSize(filtered[index].text, 12) + 3
 
   // }
-
 
   pdfBytes = await pdfDoc.saveAsBase64()
 
