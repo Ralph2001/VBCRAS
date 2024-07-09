@@ -4,9 +4,10 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 import { generate } from '../documents/clerical_error'
 import { finality } from '../documents/finality'
-import { generate_form } from '../documents/forms/createForm'
+// import { generate_form } from '../documents/forms/createForm'
 import { generate_records } from '../documents/records/generate_records'
-import { createPdfForm } from '../documents/forms/createPdfForm'
+// import { createPdfForm } from '../documents/forms/createPdfForm'
+import { generate_form } from '../documents/forms/createForm'
 import { CreateAnnotated } from '../documents/clerical/generate_annotation'
 
 const { execFile } = require('child_process')
@@ -80,19 +81,19 @@ ipcMain.handle('GenerateRecords', async (event, formData) => {
 
 ipcMain.handle('createPdfForm', async (event, formData) => {
     try {
-        const generate_record = await createPdfForm(formData)
+        const generate_record = await generate_form(formData)
         if ((generate_record.success = true)) {
             return {
-                status: true,
-                filepath: generate_record.filepath,
-                dataurl: generate_record.dataurl,
+                status: generate_record.status,
+                filepath: true,
+                dataurl: generate_record.pdfbase64,
             }
         }
     } catch (error) {
         console.log(error)
     }
 })
-console.log(process.versions.node) // Outputs the Node.js version
+
 
 ipcMain.handle('open-form', async (event, source) => {
     try {
@@ -318,7 +319,7 @@ ipcMain.handle('open-scanned-sidebar', async (event, source) => {
             return { status: true, fileUrl: data.toString('base64') }
         }
         return { status: false, fileUrl: null }
-    } catch (error) {}
+    } catch (error) { }
 })
 
 //Main Window

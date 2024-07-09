@@ -28,7 +28,7 @@ export async function CreateAnnotated(user, formData) {
   pdfDoc.setSubject('Annotation')
   pdfDoc.setKeywords(['amazing', 'one piece', 'pdf generate'])
   pdfDoc.setProducer('VBCRAS')
-  pdfDoc.setCreator('made by villanuevaralph2001@gmail.com')
+
   pdfDoc.setCreationDate(new Date())
   pdfDoc.setModificationDate(new Date())
 

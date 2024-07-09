@@ -1,199 +1,181 @@
-const PizZip = require('pizzip')
-const Docxtemplater = require('docxtemplater')
-
+import { degrees, PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 const fs = require('fs')
 const path = require('path')
-const dateFns = require('date-fns')
 
-export async function generate_form(formData) {
-    const create_form = await createFormByType(formData)
-    return { success: true, filepath: folderPath }
-}
 
-let folderPath
+export async function generate_form() {
+    let pdfBytes = ''
 
-const FORM1A_PATH = path.resolve(
-    __dirname,
-    '../../resources/documents/Forms/Form 1/Form1A.docx'
-)
-const FORM1B_PATH = path.resolve(
-    __dirname,
-    '../../resources/documents/Forms/Form 1/Form1B.docx'
-)
-const FORM1C_PATH = path.resolve(
-    __dirname,
-    '../../resources/documents/Forms/Form 1/Form1C.docx'
-)
+    const pdfDoc = await PDFDocument.create()
 
-async function createFormByType(data) {
-    console.log(data)
-    if (data.type === 'Form 1A') {
-        createForm1A(data)
-    } else if (data.type === 'Form 1B') {
-        createForm1B(data)
-    } else if (data.type === 'Form 1C') {
-        createForm1C(data)
-    }
-}
+    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
+    const timesRomanFontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold)
+    const TimesRomanBoldItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanBoldItalic)
 
-async function createForm1A(data) {
-    // First Create Folder
-    const create_folder = await folderCreation(data)
+    pdfDoc.setTitle('Form ', {
+        showInWindowTitleBar: true,
+    })
+    pdfDoc.setAuthor('VBCRAS')
+    pdfDoc.setSubject('Form')
+    pdfDoc.setKeywords(['amazing', 'one piece', 'pdf generate'])
+    pdfDoc.setProducer('VBCRAS')
+    pdfDoc.setCreationDate(new Date())
+    pdfDoc.setModificationDate(new Date())
 
-    // After Success Create Document
-    if (create_folder) {
-        // Form 1A Template Path
-        const content = fs.readFileSync(FORM1A_PATH, 'binary')
+    const leftLogoPath = path.resolve(
+        __dirname,
+        '../../resources/images/logo_bayambang.png'
+    )
+    const rightLogoPath = path.resolve(
+        __dirname,
+        '../../resources/images/logo_lcro.png'
+    )
 
-        const zip = new PizZip(content)
-        const doc = new Docxtemplater(zip, {
-            paragraphLoop: true,
-            linebreaks: true,
+    //Logo
+
+    const right_file = fs.readFileSync(rightLogoPath, { encoding: 'utf8' })
+    const right_logo = await pdfDoc.embedPng(right_file)
+
+
+    const right_logo_scale = right_logo.scale(0.5)
+
+
+
+
+
+    const page = pdfDoc.addPage([614, 936]) // Set Page Size Default: 6.5 x 13 converted to points
+
+    const fontSize = 12 // Font Size
+    const { width, height } = page.getSize()
+
+
+
+
+
+    const header = [
+        'Civil Registry Form No. 1A',
+        '(Birth - Available)'
+    ]
+
+    let header_gap = 0
+    for (const item of header) {
+        page.drawText(item, {
+            x: 20,
+            y: height - 2 * fontSize - header_gap,
+            size: fontSize,
+            font: timesRomanFont,
         })
-
-        doc.render({
-            book: data.book_number,
-            page: data.page_number,
-            registry_number: data.registry_number,
-            date_registration: data.date_registration,
-            name_child: data.name_child,
-            sex: data.sex,
-            date_of_birth: data.date_of_birth,
-            place_of_birth: data.place_of_birth,
-            name_mother: data.name_mother,
-            citizenship_mother: data.citizenship_mother,
-            name_father: data.name_father,
-            citizenship_father: data.citizenship_father,
-            date_marriage: data.date_marriage,
-            place_marriage: data.place_marriage,
-            issued_to: data.issued_to,
-            amount: data.amount,
-            or_number: data.or_number,
-            date_paid: data.date_paid,
-
-            date_filed: data.date_filed,
-            verified_by: data.verified_by,
-            position: data.position,
-            mcr: data.mcr,
-        })
-
-        const buf = doc.getZip().generate({
-            type: 'nodebuffer',
-            compression: 'DEFLATE',
-        })
-
-        // Create File in the folder
-        fs.writeFileSync(`${folderPath + '/' + data.name_child}.docx`, buf)
-
-        return true
-    }
-}
-
-async function createForm1B(data) {
-    // First Create Folder
-    const create_folder = await folderCreation(data)
-
-    // After Success Create Document
-    if (create_folder) {
-        // Form Template Path
-        const content = fs.readFileSync(FORM1B_PATH, 'binary')
-
-        const zip = new PizZip(content)
-        const doc = new Docxtemplater(zip, {
-            paragraphLoop: true,
-            linebreaks: true,
-        })
-
-        doc.render({
-            document_owner: data.document_owner,
-            mother: data.name_mother,
-            father: data.name_father,
-            date_of_birth: data.date_of_birth,
-            year_recorded: data.year_recorded,
-
-            issued_to: data.issued_to,
-            amount: data.amount,
-            or_number: data.or_number,
-            date_paid: data.date_paid,
-
-            date_filed: data.date_filed,
-            verified_by: data.verified_by,
-            position: data.position,
-            mcr: data.mcr,
-        })
-
-        const buf = doc.getZip().generate({
-            type: 'nodebuffer',
-            compression: 'DEFLATE',
-        })
-
-        // Create File in the folder
-        fs.writeFileSync(`${folderPath + '/' + data.document_owner}.docx`, buf)
-
-        return true
-    }
-}
-
-async function createForm1C(data) {
-    // First Create Folder
-    const create_folder = await folderCreation(data)
-
-    // After Success Create Document
-    if (create_folder) {
-        // Form Template Path
-        const content = fs.readFileSync(FORM1C_PATH, 'binary')
-
-        const zip = new PizZip(content)
-        const doc = new Docxtemplater(zip, {
-            paragraphLoop: true,
-            linebreaks: true,
-        })
-
-        doc.render({
-            year: data.year,
-            period: data.period,
-            destroyed_by: data.destroyed_by,
-
-            document_owner: data.document_owner,
-            mother: data.name_mother,
-            father: data.name_father,
-            date_of_birth: data.date_of_birth,
-            year_recorded: data.year_recorded,
-
-            issued_to: data.issued_to,
-            amount: data.amount,
-            or_number: data.or_number,
-            date_paid: data.date_paid,
-
-            date_filed: data.date_filed,
-            verified_by: data.verified_by,
-            position: data.position,
-            mcr: data.mcr,
-        })
-
-        const buf = doc.getZip().generate({
-            type: 'nodebuffer',
-            compression: 'DEFLATE',
-        })
-
-        // Create File in the folder
-        fs.writeFileSync(`${folderPath + '/' + data.document_owner}.docx`, buf)
-
-        return true
-    }
-}
-
-async function folderCreation(data) {
-    const date_now = new Date()
-    const doctype = data.type
-
-    var folderCreation = `C:/VBCRAS/${date_now.getFullYear() + '/' + doctype}`
-
-    if (!fs.existsSync(folderCreation)) {
-        fs.mkdirSync(folderCreation, { recursive: true })
+        header_gap += 14
     }
 
-    folderPath = `C:/VBCRAS/${date_now.getFullYear() + '/' + doctype}/`
+    ///////////////////
+    page.drawImage(rightLogoData, {
+        x: page.getWidth() / 2 - right_logo_scale.width / 2,
+        y: page.getHeight() / 2 - right_logo_scale.height / 2 + 250,
+        width: right_logo_scale.width,
+        height: right_logo_scale.height,
+    })
+    //////////////////
 
-    return true
+
+
+    const header_2 = [
+        'Republic of the Philippines',
+        'Province of Pangasinan',
+    ]
+    let header_2_gap = 0
+    for (const item of header_2) {
+        const textWidth = timesRomanFont.widthOfTextAtSize(item, fontSize);
+        const textHeight = timesRomanFont.heightAtSize(fontSize);
+        page.drawText(item, {
+            x: page.getWidth() / 2 - textWidth / 2,
+            y: height - 6 * fontSize - header_2_gap,
+            size: fontSize,
+            font: timesRomanFont,
+        })
+        header_2_gap += 14
+    }
+
+    // Municipality
+    const municipality_width = timesRomanFontBold.widthOfTextAtSize('MUNICIPALITY OF BAYAMBANG', fontSize);
+    page.drawText('MUNICIPALITY OF BAYAMBANG', {
+        x: page.getWidth() / 2 - municipality_width / 2,
+        y: height - 6 * fontSize - 28,
+        size: fontSize,
+        font: timesRomanFontBold,
+    })
+
+    // Local Civil Registry
+    const localcivilregistry_width = timesRomanFontBold.widthOfTextAtSize('LOCAL CIVIL REGISTRY', fontSize);
+    page.drawText('LOCAL CIVIL REGISTRY', {
+        x: page.getWidth() / 2 - localcivilregistry_width / 2,
+        y: height - 6 * fontSize - 56,
+        size: fontSize,
+        font: timesRomanFontBold,
+    })
+
+    // Date Filed
+    page.drawText('July 09, 2024', {
+        x: 490,
+        y: height - 6 * fontSize - 86,
+        size: fontSize,
+        font: timesRomanFont,
+    })
+
+    // TO WHOM IT MAY CONCERN
+    page.drawText('TO WHOM IT MAY CONCERN:', {
+        x: 55,
+        y: height - 6 * fontSize - 116,
+        size: fontSize,
+        font: TimesRomanBoldItalic,
+    })
+
+
+    const table = [
+        { title: "Registry number", data: '2001-16' },
+        { title: "Date of registration", data: 'May 16, 2001' },
+        { title: "Name of child", data: 'RALPH ADVINCULA VILLANUEVA' },
+        { title: "Sex", data: 'Male' },
+        { title: "Date of birth", data: 'May 16, 2001' },
+        { title: "Place of birth", data: 'Alcala, Pangasinan' },
+        { title: "Name of Mother", data: 'Anita A.  Villanueva' },
+        { title: "Citizenship of Mother", data: 'Filipino' },
+        { title: "Name of Father", data: 'Rolando M. Villanueva' },
+        { title: "Citizenship of Father", data: 'Filipino' },
+        { title: "Date of Marriage", data: 'December 28, 1997' },
+        { title: "Place of marriage of parents", data: 'Alcala, Pangasinan' },
+    ]
+
+    let table_gap = 0
+    const table_position_x = 95
+    const table_position_y = 166
+    for (const items of table) {
+        page.drawText(items.title, {
+            x: table_position_x,
+            y: height - 6 * fontSize - (table_position_y + table_gap),
+            size: fontSize,
+            font: timesRomanFont,
+        })
+
+        page.drawText(":", {
+            x: table_position_x + 145,
+            y: height - 6 * fontSize - ((table_position_y - 1) + table_gap),
+            size: fontSize,
+            font: timesRomanFont,
+        })
+        page.drawText(items.data, {
+            x: table_position_x + 155,
+            y: height - 6 * fontSize - (table_position_y + table_gap),
+            size: fontSize,
+            font: timesRomanFontBold,
+        })
+
+
+
+        table_gap += 34
+    }
+
+
+    pdfBytes = await pdfDoc.saveAsBase64()
+    return { status: true, pdfbase64: pdfBytes }
 }

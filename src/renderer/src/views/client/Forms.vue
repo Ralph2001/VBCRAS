@@ -348,12 +348,16 @@
                         </div> upon his/her request.
                     </div>
 
-                    <div class="flex w-full flex-col  items-center justify-center"
+                    <div class="flex w-full flex-col  items-center justify-center "
                         v-if="formData.form_type.includes('A')">
 
-                        <div class="w-full flex flex-row items-center justify-center mt-10 group relative"
+
+                        <button @click="formData.isWithRemarks = true" v-if="!formData.isWithRemarks"
+                            class="text-xs mt-5 border px-2.5 py-1.5 bg-white self-start ml-20  font-mono hover:bg-gray-100 shadow-sm">ADD
+                            REMARKS</button>
+                        <!-- <div class="w-full flex flex-row items-center justify-center mt-10 group relative"
                             title="Add Remarks" v-if="!formData.isWithRemarks">
-                            <p class="absolute -top-1 text-xs  group-hover:cursor-pointer tracking-wider"
+                            <p class="absolute -top-1 text-xs  group-hover:cursor-pointer  font-semibold uppercase  tracking-wider"
                                 @click="formData.isWithRemarks = true">Add
                                 Remarks</p>
                             <font-awesome-icon icon="fa-solid fa-marker"
@@ -362,8 +366,8 @@
                             <div class="w-[30rem] border h-2 bg-blue-100 group-hover:bg-blue-200 group-hover:cursor-pointer  rounded-e-md "
                                 @click="formData.isWithRemarks = true">
                             </div>
-                        </div>
-                      
+                        </div> -->
+
                         <div class="flex-row flex  w-full px-10 gap-2 mt-3" v-if="formData.isWithRemarks">
                             <div class="flex  flex-row items-start gap-1 mb-2">
                                 <div class="flex items-center">
@@ -375,7 +379,7 @@
                                     <p>REMARKS: </p>
                                 </div>
                             </div>
-                            <div class="w-full mt-5">
+                            <div class="w-full mt-5 mb-10">
                                 <QuillEditor ref="remarks" theme="snow" :toolbar="['']"
                                     v-model:content="formData.remarks" contentType="html" @ready="addremarksvalue" />
                                 <!-- {{ formData.remarks }} -->
@@ -427,10 +431,10 @@
             <div class="flex flex-row h-full bg-blue-50 w-full border" v-if="isPreview">
                 <div
                     class="basis-[68%]  flex items-center justify-center h-full bg-gray-600  w-full overflow-y-scroll sm:overflow-x-scroll md:lg:overflow-x-hidden p-1">
-                    <!-- <iframe v-if="isPreview" class="h-full w-full" :src="previewUrl" frameborder="1"
-                        allowfullscreen=""></iframe> -->
-                    <PDFViewer ref="PdfViewerRef" :source="previewUrl" class="w-[5rem]" :zoom="150"
-                        :controls="['zoom']" />
+                    <iframe v-if="isPreview" class="h-full w-full" :src="previewUrl" frameborder="1"
+                        allowfullscreen=""></iframe>
+                    <!-- <PDFViewer ref="PdfViewerRef" :source="previewUrl" class="w-[5rem]" :zoom="150"
+                        :controls="['zoom']" /> -->
                     <!-- <PDF :src="previewUrl" style="width: 100%;"  /> -->
 
                     <!-- <pdf :src="previewUrl" :page="1">
@@ -456,9 +460,9 @@
                     <RangeInput label="certificate_y" v-model="preferences.certificate_y" :max="13"
                         @change="change_preferences" />
 
-                    <RangeInput label="authenticate_y" v-if="formData.isWithAuthenticatedForm" v-model="preferences.authenticate_position_y" :max="13"
-                        @change="change_preferences" />
-                    
+                    <RangeInput label="authenticate_y" v-if="formData.isWithAuthenticatedForm"
+                        v-model="preferences.authenticate_position_y" :max="13" @change="change_preferences" />
+
 
                 </div>
             </div>
@@ -828,8 +832,9 @@ const previewcontent = async () => {
         };
 
         const open = await window.FormApi.createPdfForm(dataToSubmit)
-        previewUrl.value = open.dataurl
-        console.log(open.dataurl)
+        console.log(open)
+        previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + open.dataurl
+
     }
     else {
         previewUrl.value = null
@@ -845,7 +850,7 @@ const change_preferences = async () => {
         };
 
         const open = await window.FormApi.createPdfForm(dataToSubmit)
-        previewUrl.value = open.dataurl
+        previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + open.dataurl
     }
 }
 

@@ -5,8 +5,8 @@
             <span v-if="error" class="text-red-600">*</span>
         </label>
 
-        <input type="text" :readonly="readonly" ref="input" :id="label" :value="modelValue" @input="onChange"
-            :tabindex="skip ? '-1' : ''" :class="{
+        <input type="text" :readonly="readonly" ref="input" :id="label" :value="modelValue" @blur="isOpen = false"
+            @input="onChange" :tabindex="skip ? '-1' : ''" :class="{
                 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
                 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
             }"
