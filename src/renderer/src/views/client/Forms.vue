@@ -428,10 +428,15 @@
 
             </div>
 
-            <div class="flex flex-row h-full bg-blue-50 w-full border" v-if="isPreview">
+            <div class="flex flex-row h-full bg-white w-full border" v-if="isPreview">
                 <div
-                    class="basis-[68%]  flex items-center justify-center h-full bg-gray-600  w-full overflow-y-scroll sm:overflow-x-scroll md:lg:overflow-x-hidden p-1">
-                    <iframe v-if="isPreview" class="h-full w-full" :src="previewUrl" frameborder="1"
+                    class="grow flex items-center justify-center h-full   w-full overflow-y-scroll sm:overflow-x-scroll md:lg:overflow-x-hidden  relative">
+
+                    <div
+                        class="absolute items-center justify-center h-[4rem] flex bg-[#525659] top-0 w-full z-[999999999]">
+                        <p class="font-semibold text-gray-50">Preview Output</p>
+                    </div>
+                    <iframe v-if="isPreview" class="h-full w-full " :src="previewUrl" frameborder="1"
                         allowfullscreen=""></iframe>
                     <!-- <PDFViewer ref="PdfViewerRef" :source="previewUrl" class="w-[5rem]" :zoom="150"
                         :controls="['zoom']" /> -->
@@ -444,7 +449,7 @@
                     </pdf> -->
                     <!-- <VuePdfEmbed annotation-layer print text-layer :source="previewUrl" :width="600" class="mt-24" /> -->
                 </div>
-                <div class=" flex p-4 flex-col h-full grow bg-white items-center">
+                <div v-if="vue" class=" flex p-4 flex-col h-full grow bg-white items-center">
                     <p class="text-md text-gray-800 font-medium mb-10">Adjust Positions</p>
 
                     <RangeInput label="title_x" v-model="preferences.civil_x" :max="8.5" @change="change_preferences" />

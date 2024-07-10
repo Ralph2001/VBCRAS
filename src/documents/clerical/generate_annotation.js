@@ -107,7 +107,6 @@ export async function CreateAnnotated(user, formData) {
   // Good
   for (let index = 0; index < split.length; index++) {
 
-
     const text = split[index]
       .replace(/<[^>]*>/g, '')
       .replace('"', '“')
