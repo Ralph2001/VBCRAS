@@ -13,22 +13,23 @@ export async function generate_form(formData) {
     const TimesRomanBoldItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanBoldItalic)
     const TimesRomanItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic)
 
-
-    pdfDoc.setTitle('Form ', {
+    const form_type = formData.form_type
+    const document_owner = formData.name_of
+    pdfDoc.setTitle(`Form ${form_type} - ${document_owner}`, {
         showInWindowTitleBar: true,
     })
     pdfDoc.setAuthor('VBCRAS')
-    pdfDoc.setSubject('Form')
+    pdfDoc.setSubject(`Form ${form_type} `)
     pdfDoc.setKeywords(['amazing', 'one piece', 'pdf generate'])
     pdfDoc.setProducer('VBCRAS')
     pdfDoc.setCreationDate(new Date())
     pdfDoc.setModificationDate(new Date())
 
-    const leftLogoPath = path.resolve(
+    const rightLogoPath = path.resolve(
         __dirname,
         '../../resources/images/logo_bayambang.png'
     )
-    const rightLogoPath = path.resolve(
+    const leftLogoPath = path.resolve(
         __dirname,
         '../../resources/images/logo_lcro.png'
     )
@@ -60,8 +61,10 @@ export async function generate_form(formData) {
 
 
     const header = [
-        'Civil Registry Form No. 1A',
-        '(Birth - Available)'
+        `Civil Registry Form No. ${formData.form_type}`,
+        formData.form_type === '1A' ? '(Birth - Available)' : formData.form_type === '1B' ? '(Birth-not available)' : formData.form_type === '1C' ? '(Birth – Destroyed)' :
+            formData.form_type === '2A' ? '(Death - Available)' : formData.form_type === '2B' ? '(Dearth-not available)' : formData.form_type === '2C' ? '(Death – Destroyed)' :
+                formData.form_type === '3A' ? '(Marriage - Available)' : formData.form_type === '3B' ? '(Marriage-not available)' : formData.form_type === '3C' ? '(Marriage – Destroyed)' : ''
     ]
 
     let header_gap = 0
@@ -150,12 +153,12 @@ export async function generate_form(formData) {
 
     // This will create 'We Clerify...' if form type is A
     FORM_TYPE.includes('A') ? create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFontBold) : ''
-    FORM_TYPE.includes('A') ? create_info_list(page, height, fontSize, timesRomanFont, timesRomanFontBold) : create_paragraph_format(page, height, fontSize, timesRomanFont, timesRomanFontBold)
+    FORM_TYPE.includes('A') ? create_info_list(page, height, fontSize, timesRomanFont, timesRomanFontBold) : create_paragraph_format(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold)
 
 
     const certification = [
         { text: 'This certification is issued to', isBold: false },
-        { text: ' Ralph A. Villanueva ', isBold: true },
+        { text: ` ${formData.issued_to.replace('"', '“').replace('"', '”')} `, isBold: true },
         { text: ' upon his/her request.', isBold: false },
     ]
     const total_width_certification = timesRomanFont.widthOfTextAtSize(`This certification is issued to Ralph A. Villanueva upon his/her request.`, fontSize)
@@ -360,32 +363,26 @@ function create_info_list(page, height, fontSize, timesRomanFont, timesRomanFont
 }
 
 // Shems loop malala
-function create_paragraph_format(page, height, fontSize, timesRomanFont, timesRomanFontBold) {
-    const data = `We certify that this office has no record of birth of {{EMERITO CURAMENG CASTILLO CASTILLO}} who is alleged to have been born on {{September 22, 1953}} in this municipality, of parents {{Romulo Mamaril Castillo Sr.}} and {{Felicidad Frias Curameng}}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of Live Birth or transcription from the Register of Births.`
-    const data_marriage = 'We certify that this office has no record of marriage between {{ANGEL CALDITO SUELEN}} and {{ROSA BRUSO BUNAO}} who were alleged to have been married on {{December 24, 1968}} in this municipality. Hence, we cannot issue, as requested, a true copy of certificate of Marriage or Transcription from the Register of Marriages. '
+function create_paragraph_format(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
+
+    const record_of = formData.form_type.includes('1') ? 'of birth of ' : formData.form_type.includes('2') ? 'of death of' : formData.form_type.includes('3') ? 'of marriage between' : ''
+    const have_b = formData.form_type.includes('1') ? 'have been born' : formData.form_type.includes('2') ? 'have died' : formData.form_type.includes('3') ? 'have been married' : ''
+    const is_for_1 = formData.form_type.includes('1') ? ', of parents {{UNKNOWN PARENTS}} and {{UNKNOWN PARENTS}}' : '' // With Parents Name kasi
+    const the_who_b = formData.form_type.includes('1') || formData.form_type.includes('2') ? 'who is' : 'who were'
+    const is_for_3 = formData.form_type.includes('3') ? 'and {{UNKNOWN WIFE}}' : ''
+    const certificate_of = formData.form_type.includes('1') ? 'Live Birth' : formData.form_type.includes('2') ? 'Death' : formData.form_type.includes('3') ? 'Marriage' : ''
+    const register_of = formData.form_type.includes('1') ? 'Births' : formData.form_type.includes('2') ? 'Deaths' : formData.form_type.includes('3') ? 'Marriages' : ''
 
 
-    const we_certify_with_line_break = add_line_break(data, page, height, fontSize, timesRomanFont, timesRomanFontBold)
+    const we_clerify_for_b = `We certify that this office has no record ${record_of} {{UNKNOWN NAME}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{UNKNOWN DATE}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
+    const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`
+
+    const we_clerify = formData.form_type.includes('B') ? we_clerify_for_b : we_clerify_for_c
+
+    const we_certify_with_line_break = add_line_break(we_clerify, page, height, fontSize, timesRomanFont, timesRomanFontBold)
     const add_blanks = addBlanks(we_certify_with_line_break)
     const distribute = distributeBlanks(add_blanks)
 
-    /////////
-    // For Debugging
-    /////////
-
-    let widthofit = 0
-    for (const items of we_certify_with_line_break) {
-        for (const item of items) {
-            widthofit += item.size
-        }
-        console.log(widthofit)
-        widthofit = 0
-
-    }
-
-    /////////
-    // For Debugging
-    /////////
 
 
     // Start Typing
@@ -410,19 +407,27 @@ function create_paragraph_format(page, height, fontSize, timesRomanFont, timesRo
     }
 
 
-    const we_also_certify = 'We also certify that the records of births for the year {{1953}} are still intact in the archives of this office'
+    const we_also_certify_records_of_b = formData.form_type.includes('1') ? 'births' : formData.form_type.includes('2') ? 'deaths' : formData.form_type.includes('3') ? 'marriage' : ''
+    const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{2024}} are still intact in the archives of this office`
+    const for_C = `We also certify that for every registered birth, this office submits a copy of the Certificate of Live Birth to the Office of the Civil Registrar General, Philippine Statistics Authority (PSA), East Avenue, Diliman, Quezon City, Metro Manila. In view of this, the interested party is hereby advised to make further verification in the archives of that office.`
+
+    const we_also_certify = formData.form_type.includes('B') ? for_B : for_C
+
     const we_also_certify_with_break = add_line_break(we_also_certify, page, height, fontSize, timesRomanFont, timesRomanFontBold)
+    const we_also_certify_add_blanks = addBlanks(we_also_certify_with_break)
+    const we_also_certify_distribute = distributeBlanks(we_also_certify_add_blanks)
 
     let not_first_certify = false
     let we_also_spacing = 0
     let we_also_gap = 0
 
-    for (const items of we_also_certify_with_break) {
+    const we_also_certify_position_x = formData.form_type.includes('B') ? 500 : 450
+    for (const items of we_also_certify_distribute) {
         const add_tab = not_first_certify ? 0 : 36
         for (const item of items) {
             page.drawText(item.data, {
                 x: (72 + add_tab) + we_also_gap,
-                y: 500 - we_also_spacing,
+                y: we_also_certify_position_x - we_also_spacing,
                 size: fontSize,
                 font: item.isBold ? timesRomanFontBold : timesRomanFont,
                 lineHeight: 14
@@ -438,6 +443,39 @@ function create_paragraph_format(page, height, fontSize, timesRomanFont, timesRo
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////
+// Parangraph Function //
+/////////////////////////
 function add_line_break(data, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
 
     const splitted = data.trim().split(' ')
@@ -447,7 +485,6 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
     let isBold = false
     let this_is_not_the_first = false
 
-
     for (const item of splitted) {
 
         const fontType = isBold ? timesRomanFontBold : timesRomanFont
@@ -455,7 +492,7 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
 
         item.includes('{{') && item.includes('}}') ? isBold = false : item.includes('{{') ? isBold = true : item.includes('}}') ? isBold = false : ''
 
-        const tell_the_max_space = this_is_not_the_first ? 451 : 415
+        const tell_the_max_space = this_is_not_the_first || item !== 'archives' ? 415 : 415
 
         if (totalWidthSoFar + widthofText > tell_the_max_space) {
             filtered.push(currentArray);
@@ -463,7 +500,6 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
             this_is_not_the_first = true
             totalWidthSoFar = 0; // Reset the width
         }
-
 
         if (item.includes('{{') && item.includes('}}')) {
             currentArray.push({ data: item.replace('{{', '').replace('}}', ''), isBold: true, size: widthofText })
@@ -488,6 +524,9 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
         filtered.push(currentArray);
     }
 
+    isBold = false
+    this_is_not_the_first = false
+
     return filtered
 }
 
@@ -495,7 +534,7 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
 
 function addBlanks(data) {
     const targetWidth = 451;
-    const minimumWidthToAddBlanks = 200;
+    const minimumWidthToAddBlanks = 350;
 
     let newData = []
     let this_is_not_the_first = false
@@ -503,12 +542,11 @@ function addBlanks(data) {
     for (const items of data) {
         let totalWidth = items.reduce((acc, item) => acc + item.size, 0);
         const tell_the_max_space = this_is_not_the_first ? targetWidth : 415
-        if (totalWidth < minimumWidthToAddBlanks) {
+        if (totalWidth <= minimumWidthToAddBlanks) {
             newData.push([...items]);
             this_is_not_the_first = true
             continue;
         }
-
         if (totalWidth <= tell_the_max_space) {
 
             let newLine = [...items];
@@ -525,12 +563,10 @@ function addBlanks(data) {
             newData.push([...items]);
             this_is_not_the_first = true
         }
-
-
     }
-
     return newData
 }
+
 
 
 
