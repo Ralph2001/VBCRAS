@@ -361,7 +361,7 @@ function create_info_list(page, height, fontSize, timesRomanFont, timesRomanFont
 
 // Shems loop malala
 function create_paragraph_format(page, height, fontSize, timesRomanFont, timesRomanFontBold) {
-    const data = `We certify that this office has no record of birth of {{EMERITO CURAMENG CASTILLO}} who is alleged to have been born on {{September 22, 1953}} in this municipality, of parents {{Romulo Mamaril Castillo Sr.}} and {{Felicidad Frias Curameng}}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of Live Birth or transcription from the Register of Births.`
+    const data = `We certify that this office has no record of birth of {{EMERITO CURAMENG CASTILLO CASTILLO}} who is alleged to have been born on {{September 22, 1953}} in this municipality, of parents {{Romulo Mamaril Castillo Sr.}} and {{Felicidad Frias Curameng}}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of Live Birth or transcription from the Register of Births.`
     const data_marriage = 'We certify that this office has no record of marriage between {{ANGEL CALDITO SUELEN}} and {{ROSA BRUSO BUNAO}} who were alleged to have been married on {{December 24, 1968}} in this municipality. Hence, we cannot issue, as requested, a true copy of certificate of Marriage or Transcription from the Register of Marriages. '
 
 
@@ -369,7 +369,24 @@ function create_paragraph_format(page, height, fontSize, timesRomanFont, timesRo
     const add_blanks = addBlanks(we_certify_with_line_break)
     const distribute = distributeBlanks(add_blanks)
 
-    console.log(we_certify_with_line_break)
+    /////////
+    // For Debugging
+    /////////
+
+    let widthofit = 0
+    for (const items of we_certify_with_line_break) {
+        for (const item of items) {
+            widthofit += item.size
+        }
+        console.log(widthofit)
+        widthofit = 0
+
+    }
+
+    /////////
+    // For Debugging
+    /////////
+
 
     // Start Typing
     let splitedwidth = 0
@@ -399,6 +416,7 @@ function create_paragraph_format(page, height, fontSize, timesRomanFont, timesRo
     let not_first_certify = false
     let we_also_spacing = 0
     let we_also_gap = 0
+
     for (const items of we_also_certify_with_break) {
         const add_tab = not_first_certify ? 0 : 36
         for (const item of items) {
@@ -427,6 +445,7 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
     let currentArray = [] // Changeable kasi
     let totalWidthSoFar = 0
     let isBold = false
+    let this_is_not_the_first = false
 
 
     for (const item of splitted) {
@@ -436,27 +455,33 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
 
         item.includes('{{') && item.includes('}}') ? isBold = false : item.includes('{{') ? isBold = true : item.includes('}}') ? isBold = false : ''
 
+        const tell_the_max_space = this_is_not_the_first ? 451 : 415
 
-        if (totalWidthSoFar + widthofText >= 451) {
+        if (totalWidthSoFar + widthofText > tell_the_max_space) {
             filtered.push(currentArray);
             currentArray = [];
+            this_is_not_the_first = true
             totalWidthSoFar = 0; // Reset the width
         }
+
 
         if (item.includes('{{') && item.includes('}}')) {
             currentArray.push({ data: item.replace('{{', '').replace('}}', ''), isBold: true, size: widthofText })
             totalWidthSoFar += widthofText;
+            this_is_not_the_first = true
             continue
         }
 
         if (item.includes('}}')) {
             currentArray.push({ data: item.replace('{{', '').replace('}}', ''), isBold: true, size: widthofText })
             totalWidthSoFar += widthofText;
+            this_is_not_the_first = true
             continue
         }
 
         currentArray.push({ data: item.replace('{{', '').replace('}}', ''), isBold: isBold, size: widthofText })
         totalWidthSoFar += widthofText;
+        this_is_not_the_first = true
     }
 
     if (currentArray.length > 0) {
@@ -468,39 +493,46 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
 
 
 
-
 function addBlanks(data) {
     const targetWidth = 451;
-    const minimumWidthToAddBlanks = 430.44;
+    const minimumWidthToAddBlanks = 200;
 
-    let newData = [];
+    let newData = []
+    let this_is_not_the_first = false
 
-    for (let line of data) {
-        let totalWidth = line.reduce((acc, item) => acc + item.size, 0);
-
+    for (const items of data) {
+        let totalWidth = items.reduce((acc, item) => acc + item.size, 0);
+        const tell_the_max_space = this_is_not_the_first ? targetWidth : 415
         if (totalWidth < minimumWidthToAddBlanks) {
-            newData.push([...line]);
+            newData.push([...items]);
+            this_is_not_the_first = true
             continue;
         }
 
-        if (totalWidth < targetWidth) {
-            let newLine = [...line];
-            const remainingSpace = targetWidth - totalWidth;
+        if (totalWidth <= tell_the_max_space) {
+
+            let newLine = [...items];
+            const remainingSpace = tell_the_max_space - totalWidth;
             const blankItem = { data: ' ', isBold: false, size: 1 };
             const numberOfBlanks = Math.ceil(remainingSpace);
+
             for (let i = 0; i < numberOfBlanks; i++) {
                 newLine.push(blankItem);
             }
-
             newData.push(newLine);
+            this_is_not_the_first = true
         } else {
-
-            newData.push([...line]);
+            newData.push([...items]);
+            this_is_not_the_first = true
         }
+
+
     }
 
-    return newData;
+    return newData
 }
+
+
 
 function distributeBlanks(data) {
     return data.map(array => {
