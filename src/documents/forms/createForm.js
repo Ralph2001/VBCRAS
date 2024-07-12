@@ -153,7 +153,7 @@ export async function generate_form(formData) {
 
     // This will create 'We Clerify...' if form type is A
     FORM_TYPE.includes('A') ? create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFontBold) : ''
-    FORM_TYPE.includes('A') ? create_info_list(page, height, fontSize, timesRomanFont, timesRomanFontBold) : create_paragraph_format(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold)
+    FORM_TYPE.includes('A') ? create_info_list(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) : create_paragraph_format(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold)
 
 
     const certification = [
@@ -318,8 +318,8 @@ function create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFon
 }
 
 // Create Info List if type of form is A
-function create_info_list(page, height, fontSize, timesRomanFont, timesRomanFontBold) {
-    const table = [
+function create_info_list(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
+    const table_for_1 = [
         { title: "Registry number", data: '2001-16' },
         { title: "Date of registration", data: 'May 16, 2001' },
         { title: "Name of child", data: 'RALPH ADVINCULA VILLANUEVA' },
@@ -334,29 +334,83 @@ function create_info_list(page, height, fontSize, timesRomanFont, timesRomanFont
         { title: "Place of marriage of parents", data: 'Alcala, Pangasinan' },
     ]
 
+    const table_for_2 = [
+        { title: "Registry number", data: 'DATA' },
+        { title: "Date of registration", data: 'DATA' },
+        { title: "Name of deceased", data: 'RALPH ADVINCULA VILLANUEVA' },
+        { title: "Sex", data: 'DATA' },
+        { title: "Age", data: 'DATA' },
+        { title: "Civil Status", data: 'DATA' },
+        { title: "Citizenship", data: 'DATA' },
+        { title: "Date of Death", data: 'DATA' },
+        { title: "Place of Death", data: 'DATA' },
+        { title: "Cause of Death", data: 'DATA' },
+    ]
+
+    const table_for_3 = [
+        { title: "Name", data: 'HUSBAND DATA', another_data: 'HUSBAND DATA' },
+        { title: "Date of Birth", data: 'HUSBAND DATA', another_data: 'WIFE DATA' },
+        { title: "Age", data: 'HUSBAND DATA', another_data: 'WIFE DATA' },
+        { title: "Citizenship", data: 'HUSBAND DATA', another_data: 'WIFE DATA' },
+        { title: "Civil Status", data: 'HUSBAND DATA', another_data: 'WIFE DATA' },
+        { title: "Mother", data: 'HUSBAND DATA', another_data: 'WIFE DATA' },
+        { title: "Father", data: 'HUSBAND DATA', another_data: 'WIFE DATA' },
+        { title: "Registry Number", data: 'HUSBAND DATA' },
+        { title: "Date of Registration", data: 'HUSBAND DATA' },
+        { title: "Date of Marriage", data: 'HUSBAND DATA' },
+        { title: "Place of Marriage", data: 'HUSBAND DATA' },
+    ]
+
+
+    const table = formData.form_type.includes('1A') ? table_for_1 : formData.form_type.includes('2A') ? table_for_2 : formData.form_type.includes('3A') ? table_for_3 : []
+
     let table_gap = 0
-    const table_position_x = 110 // Make This Dynamic
+    const table_position_x = formData.form_type.includes('1A') || formData.form_type.includes('2A') ? 110 : formData.form_type.includes('3A') ? 54 : ''// Make This Dynamic
+    const form_type = formData.form_type
+
+
+
     const table_position_y = 196 // Make This Dynamic
     for (const items of table) {
+
+        const x_adder_for_dot = form_type === '1A' || form_type === '2A' ? 145 : form_type === '3A' && items.another_data ? 72 : form_type === '3A' ? 107 : 0
+        const x_adder_for_data = form_type === '1A' || form_type === '2A' ? 155 : form_type === '3A' && items.another_data ? 79 : form_type === '3A' ? 127 : 0
+
         page.drawText(items.title, {
             x: table_position_x,
             y: height - 6 * fontSize - (table_position_y + table_gap),
             size: fontSize,
             font: timesRomanFont,
         })
-
+ 
         page.drawText(":", {
-            x: table_position_x + 145,
+            x: table_position_x + x_adder_for_dot,
             y: height - 6 * fontSize - ((table_position_y - 1) + table_gap),
             size: fontSize,
             font: timesRomanFont,
         })
         page.drawText(items.data, {
-            x: table_position_x + 155,
+            x: table_position_x + x_adder_for_data,
             y: height - 6 * fontSize - (table_position_y + table_gap),
             size: fontSize,
             font: timesRomanFontBold,
         })
+        if (form_type === '3A') {
+            if (items.another_data) {
+                page.drawText(":", {
+                    x: table_position_x + 283,
+                    y: height - 6 * fontSize - ((table_position_y - 1) + table_gap),
+                    size: fontSize,
+                    font: timesRomanFont,
+                })
+                page.drawText(items.another_data, {
+                    x: table_position_x + 290,
+                    y: height - 6 * fontSize - (table_position_y + table_gap),
+                    size: fontSize,
+                    font: timesRomanFontBold,
+                })
+            }
+        }
 
         table_gap += 30
     }

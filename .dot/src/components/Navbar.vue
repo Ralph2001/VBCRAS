@@ -91,5 +91,3 @@ onMounted(() => {
   Auth.Profile();
 });
 </script>
-
-

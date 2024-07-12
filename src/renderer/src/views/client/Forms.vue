@@ -431,7 +431,7 @@
             <div class="flex flex-row h-full bg-white w-full border" v-if="isPreview">
                 <div
                     class="grow flex items-center justify-center h-full   w-full overflow-y-scroll sm:overflow-x-scroll md:lg:overflow-x-hidden  relative">
-<!-- 
+                    <!-- 
                     <div
                         class="absolute items-center justify-center h-[4rem] flex bg-[#525659] top-0 w-full z-[999999999]">
                         <p class="font-semibold text-gray-50">Preview Output</p>
