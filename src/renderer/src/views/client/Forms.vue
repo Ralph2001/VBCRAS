@@ -408,7 +408,7 @@
 
                     <div class="flex  flex-col px-2 gap-2 w-[20rem] mt-5">
                         <InputLabel label="Amount Paid">
-                            <InputCurrency v-model="formData.amount_paid" />
+                            <InputforForm width="100%" v-model="formData.amount_paid" />
                             <!-- <InputforForm width="100%" v-model="formData.amount_paid" /> -->
                         </InputLabel>
                         <InputLabel label="O.R. Number">

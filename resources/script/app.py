@@ -142,6 +142,78 @@ class RecordData(db.Model):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
 
+# Forms
+
+class Forms(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String, nullable=False)
+    date_filed = db.Column(db.String, nullable=False)
+    page_number = db.Column(db.String, nullable=False)
+    book_number = db.Column(db.String, nullable=False)
+    registry_number = db.Column(db.String, nullable=False)
+    date_registration = db.Column(db.String, nullable=False)
+    issued_to = db.Column(db.String, nullable=False)
+    mcr = db.Column(db.String, nullable=False)
+    verified_by = db.Column(db.String, nullable=False)
+    amount_paid = db.Column(db.String, nullable=False)
+    o_r_number = db.Column(db.String, nullable=False)
+    date_paid = db.Column(db.String, nullable=False)
+    isAuthenticated = db.Column(db.String, nullable=False)
+    
+class BirthAvailable(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     name_child = db.Column(db.String, nullable=False)
+     sex = db.Column(db.String, nullable=False)
+     date_birth = db.Column(db.String, nullable=False)
+     place_birth = db.Column(db.String, nullable=False)
+     name_mother = db.Column(db.String, nullable=False)
+     citizenship_mother = db.Column(db.String, nullable=False)
+     name_father = db.Column(db.String, nullable=False)
+     citizenship_father = db.Column(db.String, nullable=False)
+     date_marriage_parents = db.Column(db.String, nullable=False)
+     place_marriage_parents = db.Column(db.String, nullable=False)
+     remarks = db.Column(db.String, nullable=False)
+     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+
+    
+     
+class DeathAvailable(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     name_deceased = db.Column(db.String, nullable=False)
+     sex = db.Column(db.String, nullable=False)
+     age = db.Column(db.String, nullable=False)
+     civil_status = db.Column(db.String, nullable=False)
+     cititezenship = db.Column(db.String, nullable=False)
+     date_death = db.Column(db.String, nullable=False)
+     place_death= db.Column(db.String, nullable=False)
+     cause_death = db.Column(db.String, nullable=False)
+     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+
+     
+class MarriageAvailable(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     name_husband = db.Column(db.String, nullable=False)
+     name_wife = db.Column(db.String, nullable=False)
+     date_birth_husband = db.Column(db.String, nullable=False)
+     date_birth_wife = db.Column(db.String, nullable=False)
+     age_husband = db.Column(db.String, nullable=False)
+     age_wife = db.Column(db.String, nullable=False)
+     citizenship_husband = db.Column(db.String, nullable=False)
+     citizenshiP_wife = db.Column(db.String, nullable=False)
+     civil_status_husband = db.Column(db.String, nullable=False)
+     civil_status_wife = db.Column(db.String, nullable=False)
+     husband_mother = db.Column(db.String, nullable=False)
+     wife_mother = db.Column(db.String, nullable=False)
+     husband_father = db.Column(db.String, nullable=False)
+     wife_father = db.Column(db.String, nullable=False)
+     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+
+     
+
+
+    
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(400), unique=True, nullable=False)

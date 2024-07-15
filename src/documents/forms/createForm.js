@@ -135,7 +135,7 @@ export async function generate_form(formData) {
     })
 
     // Date Filed
-    page.drawText('July 09, 2024', {
+    page.drawText(formData.date_filed, {
         x: 465,
         y: height - 6 * fontSize - 95,
         size: fontSize,
@@ -152,7 +152,7 @@ export async function generate_form(formData) {
 
 
     // This will create 'We Clerify...' if form type is A
-    FORM_TYPE.includes('A') ? create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFontBold) : ''
+    FORM_TYPE.includes('A') ? create_we_clerify(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) : ''
     FORM_TYPE.includes('A') ? create_info_list(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) : create_paragraph_format(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold)
 
 
@@ -161,7 +161,7 @@ export async function generate_form(formData) {
         { text: ` ${formData.issued_to.replace('"', '“').replace('"', '”')} `, isBold: true },
         { text: ' upon his/her request.', isBold: false },
     ]
-    const total_width_certification = timesRomanFont.widthOfTextAtSize(`This certification is issued to Ralph A. Villanueva upon his/her request.`, fontSize)
+    const total_width_certification = timesRomanFont.widthOfTextAtSize(`This certification is issued to ${formData.issued_to.replace('"', '“').replace('"', '”')} upon his/her request.`, fontSize)
     let certification_gap = 0
     for (const items of certification) {
         const font = items.isBold ? timesRomanFontBold : timesRomanFont
@@ -196,22 +196,22 @@ export async function generate_form(formData) {
 
     page.drawText('Municipal Civil Registrar', {
         x: (mcr_width / 2 - mcr_position_width / 2) + 360,
-        y: 204, // 72 x 3 - 12 margin
+        y: 204, // 72 x 3 - 12 margin                                                               
         size: fontSize,
         font: TimesRomanItalic,
     })
 
     // Verifier
-    page.drawText('ERIKA JOYCE B. PARAGAS', {
+    page.drawText(formData.verified_by, {
         x: 144,
         y: 165.6,
         size: fontSize,
         font: timesRomanFontBold,
     })
-    const verifier_width = timesRomanFontBold.widthOfTextAtSize('ERIKA JOYCE B. PARAGAS', fontSize);
-    const verifier_position_width = timesRomanFontBold.widthOfTextAtSize('Administrative Aide II', fontSize);
+    const verifier_width = timesRomanFontBold.widthOfTextAtSize(formData.verified_by, fontSize);
+    const verifier_position_width = timesRomanFontBold.widthOfTextAtSize(formData.position, fontSize);
 
-    page.drawText('Administrative Aide II', {
+    page.drawText(formData.position, {
         x: (verifier_width / 2 - verifier_position_width / 2) + 144,
         y: 153.6,
         size: fontSize,
@@ -221,9 +221,9 @@ export async function generate_form(formData) {
     // Billing Section
 
     const billing_info = [
-        { title: "Amount Paid", data: 'P 1, 2000' },
-        { title: "O.R. Number", data: '235125896' },
-        { title: "Date Paid", data: 'July 09, 2024' }
+        { title: "Amount Paid", data: formData.amount_paid },
+        { title: "O.R. Number", data: formData.or_number },
+        { title: "Date Paid", data: formData.date_paid }
     ]
 
     const billing_info_x = 76
@@ -278,10 +278,10 @@ export async function generate_form(formData) {
 
 
 // We Clerify that .... only in forms A
-function create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFontBold) {
+function create_we_clerify(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
 
-    const type = 'birth'
-    const typeofdocument = 'Births'
+    const type = formData.form_type === '1A' ? 'birth' : formData.form_type === '2A' ? 'death' : formData.form_type === '3A' ? 'marriage' : ''
+    const typeofdocument = formData.form_type === '1A' ? 'Births' : formData.form_type === '2A' ? 'Deaths' : formData.form_type === '3A' ? 'Marriage' : ''
 
     page.drawText(`We certify that among others the following facts of ${type} appear in our Register of`, {
         x: 125,
@@ -300,7 +300,7 @@ function create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFon
 
 
     // Page Number
-    page.drawText('16', {
+    page.drawText(formData.page_number, {
         x: 72 + space_page + 20,
         y: height - 6 * fontSize - 167,
         size: fontSize,
@@ -308,7 +308,7 @@ function create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFon
     })
     const space_book = timesRomanFont.widthOfTextAtSize(`${typeofdocument} on page ________ book number`, fontSize);
     // Book Number
-    page.drawText('12', {
+    page.drawText(formData.book_number, {
         x: 72 + space_book + 20,
         y: height - 6 * fontSize - 167,
         size: fontSize,
@@ -320,18 +320,18 @@ function create_we_clerify(page, height, fontSize, timesRomanFont, timesRomanFon
 // Create Info List if type of form is A
 function create_info_list(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
     const table_for_1 = [
-        { title: "Registry number", data: '2001-16' },
-        { title: "Date of registration", data: 'May 16, 2001' },
-        { title: "Name of child", data: 'RALPH ADVINCULA VILLANUEVA' },
-        { title: "Sex", data: 'Male' },
-        { title: "Date of birth", data: 'May 16, 2001' },
-        { title: "Place of birth", data: 'Alcala, Pangasinan' },
-        { title: "Name of Mother", data: 'Anita A.  Villanueva' },
-        { title: "Citizenship of Mother", data: 'Filipino' },
-        { title: "Name of Father", data: 'Rolando M. Villanueva' },
-        { title: "Citizenship of Father", data: 'Filipino' },
-        { title: "Date of Marriage", data: 'December 28, 1997' },
-        { title: "Place of marriage of parents", data: 'Alcala, Pangasinan' },
+        { title: "Registry number", data: formData.registry_number },
+        { title: "Date of registration", data: formData.date_registration },
+        { title: "Name of child", data: formData.name_of },
+        { title: "Sex", data: formData.sex },
+        { title: "Date of birth", data: formData.date_of },
+        { title: "Place of birth", data: formData.place_of },
+        { title: "Name of Mother", data: formData.name_of_mother },
+        { title: "Citizenship of Mother", data: formData.citizenship_mother },
+        { title: "Name of Father", data: formData.name_of_father },
+        { title: "Citizenship of Father", data: formData.citizenship_father },
+        { title: "Date of Marriage", data: formData.date_marriage },
+        { title: "Place of marriage of parents", data: formData.place_of_marriage_parents },
     ]
 
     const table_for_2 = [
@@ -382,7 +382,7 @@ function create_info_list(formData, page, height, fontSize, timesRomanFont, time
             size: fontSize,
             font: timesRomanFont,
         })
- 
+
         page.drawText(":", {
             x: table_position_x + x_adder_for_dot,
             y: height - 6 * fontSize - ((table_position_y - 1) + table_gap),
