@@ -515,7 +515,7 @@ import { required, requiredIf, numeric } from "@vuelidate/validators";
 import { format } from 'date-fns'
 import AutoCompleteAddress from '../../component/FormPageComponents/AutoCompleteAddress.vue'
 import PDFViewer from 'pdf-viewer-vue'
-import VuePdfEmbed from 'vue-pdf-embed'
+// import VuePdfEmbed from 'vue-pdf-embed'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
