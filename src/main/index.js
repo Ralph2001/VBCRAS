@@ -9,6 +9,7 @@ import { generate_records } from '../documents/records/generate_records'
 // import { createPdfForm } from '../documents/forms/createPdfForm'
 import { generate_form } from '../documents/forms/createForm'
 import { CreateAnnotated } from '../documents/clerical/generate_annotation'
+import { generate_ausf } from '../documents/ausf/create_ausf'
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
@@ -94,7 +95,7 @@ ipcMain.handle('createPdfForm', async (event, formData) => {
     }
 })
 
-
+// Form 1, 2, 3 IpcMain
 ipcMain.handle('open-form', async (event, source) => {
     try {
         win = new BrowserWindow({
@@ -115,12 +116,31 @@ ipcMain.handle('open-form', async (event, source) => {
     }
 })
 
-// Form 1, 2, 3 IpcMain
-ipcMain.handle('createForm', async (event, formData) => {
+// ipcMain.handle('createForm', async (event, formData) => {
+//     try {
+//         const createForm = await generate_form(formData)
+//         if ((createForm.success = true)) {
+//             return { status: true, filepath: createForm.filepath }
+//         }
+//     } catch (error) {
+//         console.log(error)
+//     }
+// })
+/////////////
+/////////////
+// AUSF
+/////////////
+/////////////
+
+ipcMain.handle('createAUSF', async (event, formData) => {
     try {
-        const createForm = await generate_form(formData)
-        if ((createForm.success = true)) {
-            return { status: true, filepath: createForm.filepath }
+        const createAUSF = await generate_ausf(formData)
+        if ((createAUSF.success = true)) {
+            return {
+                status: createAUSF.status,
+                filepath: true,
+                dataurl: createAUSF.pdfbase64,
+            }
         }
     } catch (error) {
         console.log(error)

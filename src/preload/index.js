@@ -58,6 +58,19 @@ contextBridge.exposeInMainWorld('FormApi', {
     },
 })
 
+//  AUSF
+contextBridge.exposeInMainWorld('AusfApi', {
+    createAUSF: async (formData) => {
+        const result = await ipcRenderer.invoke('createAUSF', formData)
+        return {
+            status: result.status,
+            filepath: result.filepath,
+            dataurl: result.dataurl,
+        }
+    },
+})
+
+
 contextBridge.exposeInMainWorld('RecordsApi', {
     GenerateRecords: async (formData) => {
         const result = await ipcRenderer.invoke('GenerateRecords', formData)
