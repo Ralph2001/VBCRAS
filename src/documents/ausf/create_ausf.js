@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 export async function generate_ausf(formData) {
-    console.log(formData)
+
 
     const ausf_main_template = path.resolve(__dirname, '../../resources/documents/AUSF/main_ausf_template.pdf')
     const main_template = fs.readFileSync(ausf_main_template)
@@ -98,29 +98,47 @@ export async function generate_ausf(formData) {
 
 
 
-function create_center_text_within_box(firstPage, text, fontSize, font, height, text_position_x, box_width, text_position_y, isDay = false) {
-    console.log(text)
+function create_center_text_within_box(firstPage, text, fontSize, font, height, text_position_x, box_width, text_position_y, isDay) {
+
     const textWidth = font.widthOfTextAtSize(text, fontSize);
     const centeredX = text_position_x + (box_width - textWidth) / 2;
     const centeredY = text_position_y;
 
-    // if (isDay) {
-    //     const split = text.split(' ')
-    //     for (const item of split) {
-    //         const textWidth = font.widthOfTextAtSize(item, fontSize);
-    //         const centeredX = text_position_x + (box_width - textWidth) / 2;
-    //         const centeredY = text_position_y;
-    //         firstPage.drawText(item, {
-    //             x: centeredX,
-    //             y: centeredY,
-    //             size: fontSize,
-    //             font: font,
-    //             alignment: TextAlignment.Left
+    if (isDay) {
 
-    //         })
-    //     }
-    //     return
-    // }
+        const split = text.split('')
+        let totalWidth = 0
+        for (const item of split) {
+            const widthofText = font.widthOfTextAtSize(item, 12);
+            const centerx = text_position_x + (box_width - textWidth) / 2;
+            const centery = text_position_y;
+
+            if (item === 's' || item === 't' || item === 'n' || item === 'd' || item === 'r' || item === 'h') {
+                const widthofText = font.widthOfTextAtSize(item, 6);
+                firstPage.drawText(item, {
+                    x: centerx + totalWidth,
+                    y: centery + 5,
+                    size: 6,
+                    font: font,
+                    alignment: TextAlignment.Left
+
+                })
+                totalWidth += widthofText
+                continue
+            }
+
+            firstPage.drawText(item, {
+                x: centerx + totalWidth,
+                y: centery,
+                size: fontSize,
+                font: font,
+                alignment: TextAlignment.Center
+
+            })
+            totalWidth += widthofText
+        }
+        return
+    }
 
     firstPage.drawText(text, {
         x: centeredX,

@@ -11,10 +11,10 @@
             <iframe v-if="previewUrl" class="h-full w-full " :src="previewUrl" frameborder="1"
                 allowfullscreen=""></iframe>
 
-            <div class="flex flex-col h-full w-full scale-95" v-if="!previewUrl">
-                <div class="grid grid-cols-2 w-full mt-2">
+            <div class="flex flex-col h-full w-full scale-95 " v-if="!previewUrl">
+                <div class="grid grid-cols-2 w-full">
                     <div></div>
-                    <div class="flex flex-col gap-1">
+                    <div class="flex flex-col gap-1 ">
                         <p class="underline text-sm font-neutral font-serif">LEGAL INSTRUMENT</p>
                         <div class="flex flex-row gap-2">
                             <label for="">Registry Number: </label>
@@ -27,19 +27,23 @@
 
                     </div>
                 </div>
-                <div class="w-full flex mt-3 justify-center">
+                <div class="w-full flex  justify-center">
                     <p class="text-center border-b-2 border-gray-400 border-dashed h-fit  font-medium w-fit">AFFIDAVIT
                         TO USE THE
                         SURNAME OF THE FATHER</p>
                 </div>
 
-                <div class="flex flex-col w-full  h-full px-16 ">
+                <div class="flex flex-col w-full  h-full px-16 mt-5 ">
                     <div>
                         <div class="flex flex-row gap-2">
                             <p class=" indent-8">I,</p>
                             <InputButtomBorder v-model="formData.affiant_name" label="Affiant's name" isBold />,
                             <InputButtomBorder v-model="formData.citizenship" label="Citizenship" :width="`5%`" skip />,
-                            <InputButtomBorder v-model="formData.age" label="Age" :width="`5%`" />
+                            <div class="flex flex-row">
+                                <InputButtomBorder v-model="age" @change="change_age_full" label="Age"
+                                    text-position="text-end" :width="`3rem`" />
+                                <InputButtomBorder :width="`6rem`" @change="change_age_full" skip v-model="age_text" />
+                            </div>
                         </div>
                         <div class="flex flex-row w-full">
                             <p class="text-nowrap">and a resident of </p>
@@ -48,7 +52,7 @@
                         </div>
                         <p>sworn in accordance with law, do hereby declare that:</p>
                     </div>
-                    <div class="flex flex-col gap-2 tracking-wide text-gray-800 mt-4">
+                    <div class="flex flex-col gap-2 tracking-wide text-gray-800 ">
                         <div class="flex flex-col gap-2">
                             <div class="flex flex-row"> 1. I am seeking the use of the surname
                                 <InputButtomBorder v-model="formData.surname" :width="'20rem'" isBold /> in:
@@ -146,12 +150,12 @@
                         </div>
                     </div>
 
-                    <div class="mt-10 flex flex-col w-[50%] self-end items-center ">
+                    <div class="mt-5 flex flex-col w-[50%] self-end items-center ">
                         <InputButtomBorder v-model.capitalize="formData.affiant_name" skip isBold />
                         <p class="text-gray-700 text-md">Signature over printed name of Affiant</p>
                     </div>
 
-                    <div class="mt-10 px-20 ">
+                    <div class="mt-10 px-10 ">
                         <div class="flex flex-row gap-2 w-full items-center text-nowrap">
                             <p class=" indent-12 text-gray-700 text-md"> SUBSCRIBED AND SWORN to before me this</p>
                             <InputButtomBorder v-model="formData.sworn_day" skip :width="'10rem'" />
@@ -189,9 +193,13 @@
             </div>
             <template v-slot:footer>
                 <div class="items-center text-nowrap">
-                    <p class="text-gray-800 font-normal" v-if="!previewUrl">Note: On-screen view is not identical to the
-                        final
-                        output <span class="text-xs">(Click Check to see the preview)</span></p>
+                    <p class="text-gray-800 font-normal " v-if="!previewUrl"><span class="font-bold">Note:</span> What
+                        you
+                        see on
+                        screen is not
+                        the final
+                        output. Click 'Check' to preview the actual result.
+                    </p>
                     <p class="text-gray-800" v-if="previewUrl">This is a preview of the output</p>
                 </div>
                 <div class="h-full flex items-center justify-end gap-2 w-full">
@@ -215,17 +223,14 @@ import { format } from 'date-fns';
 const previewUrl = ref() //PDF Base64
 const ausf_modal = ref(false)
 
-const open_ausf = () => {
-    ausf_modal.value = true
-}
-const close_ausf = () => {
-    ausf_modal.value = false
-    previewUrl.value = ''
-}
 
 const date = new Date()
 const year = date.getFullYear()
 const month = date.getMonth()
+
+const age = ref()
+const age_text = ref('yrs. old')
+
 
 const initalForm = {
     registry_number: `${year} -`,
@@ -255,6 +260,20 @@ const initalForm = {
 
 }
 const formData = reactive({ ...initalForm })
+
+function change_age_full() {
+    formData.age = age.value + ' ' + age_text.value
+}
+const open_ausf = () => {
+    ausf_modal.value = true
+}
+const close_ausf = () => {
+    ausf_modal.value = false
+    previewUrl.value = ''
+    Object.assign(formData, initalForm);
+    age.value = ''
+    age_text.value = 'yrs. old'
+}
 
 
 const submit = async () => {

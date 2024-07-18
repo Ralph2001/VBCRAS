@@ -208,11 +208,40 @@ class MarriageAvailable(db.Model):
      wife_father = db.Column(db.String, nullable=False)
      form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
 
-     
-
-
     
-
+class AUSF(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     registry_number = db.Column(db.String, nullable=False)
+     date_registration = db.Column(db.String, nullable=False)
+     affiant_name = db.Column(db.String, nullable=False)
+     citizenship = db.Column(db.String, nullable=False)
+     age = db.Column(db.String, nullable=False)
+     address = db.Column(db.String, nullable=False)
+     surname = db.Column(db.String, nullable=False)
+     in_my_the = db.Column(db.String, nullable=False)
+     child_name = db.Column(db.String, nullable=False)
+     relation = db.Column(db.String, nullable=False)
+     date_birth = db.Column(db.String, nullable=False)
+     at_municipality = db.Column(db.String, nullable=False)
+     at_province = db.Column(db.String, nullable=False)
+     at_country = db.Column(db.String, nullable=False)
+     lcro_at = db.Column(db.String, nullable=False)
+     day_signature = db.Column(db.String, nullable=False)
+     month_signature = db.Column(db.String, nullable=False)
+     sworn_day = db.Column(db.String, nullable=False)
+     sworn_month = db.Column(db.String, nullable=False)
+     sworn_at = db.Column(db.String, nullable=False)
+     exhibiting = db.Column(db.String, nullable=False)
+     exhibiting_number= db.Column(db.String, nullable=False)
+     exhibiting_at = db.Column(db.String, nullable=False)
+     exhibiting_on = db.Column(db.String, nullable=False)
+    # If Applicable
+     ap_phi_registry_number = db.Column(db.String, nullable=False)
+     ap_phi_date_registration = db.Column(db.String, nullable=False)
+     pfsp_of = db.Column(db.String, nullable=False)
+     
+     
+     
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -225,13 +254,12 @@ class User(db.Model):
     def set_password(self, password):
         self.password_hash = generate_password_hash(
             password
-        )  # Use a secure hashing library
+        )  
 
     def check_password(self, password):
         return check_password_hash(
             self.password_hash, password
-        )  # Use a secure hashing library
-
+        ) 
 
 class UserPermissions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
