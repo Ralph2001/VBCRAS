@@ -28,20 +28,20 @@ export const AuthStore = defineStore('auth', {
                         },
                     }
                 )
-                this.token = response.data.token
+                this.token = response.data.access_token
                 localStorage.setItem('token', this.token)
                 this.router.push('/client/welcome')
             } catch (error) {
                 this.error = error.response.data.error
             }
         },
-        async signUp(username, password, position) {
+        async signUp(username, password) {
             try {
                 const host = useHostStore()
                 const hostAddress = host.host
                 const signup = await axios.post(
-                    'http://' + hostAddress + ':1216/signup',
-                    { username, password, position },
+                    'http://' + hostAddress + ':1216/signup ',
+                    { username, password },
                     {
                         headers: {
                             'Content-Type': 'application/json',
@@ -66,9 +66,10 @@ export const AuthStore = defineStore('auth', {
                             headers: { Authorization: `Bearer ${tokenStr}` },
                         }
                     )
+
                     this.user = user.data.username
+                    // this.user_details = user.data
                     // console.log(user)
-                    this.user_details = user.data
                     return true
                 } catch (error) {
                     localStorage.removeItem('token')
@@ -79,7 +80,7 @@ export const AuthStore = defineStore('auth', {
                 return false
             }
         },
-        UserLogout() {
+        logout() {
             this.token = null
             localStorage.removeItem('token')
             this.router.push('/client/login')

@@ -17,7 +17,7 @@ export const useHostStore = defineStore('host', {
             try {
                 const hostAdd = localStorage.getItem('host')
                 const response = await axios.get(
-                    `http://${hostAdd}:1216/connect`,
+                    `http://${hostAdd}:1216/test-server`,
                     {
                         headers: {
                             'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export const useHostStore = defineStore('host', {
         },
         async connectHost(val) {
             try {
-                const response = await axios.get(`http://${val}:1216/connect`, {
+                const response = await axios.get(`http://${val}:1216/test-server`, {
                     headers: {
                         'Content-Type': 'application/json',
                     },

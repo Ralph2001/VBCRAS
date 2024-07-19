@@ -13,7 +13,7 @@ class Users(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     position = db.Column(db.Integer, db.ForeignKey("positions.id"), nullable=True)
     password = db.Column(db.String(120), nullable=False)
-    role = db.Column(db.Integer, nullable=False)
+    role = db.Column(db.Integer, nullable=False, default=2)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -41,7 +41,7 @@ def create_admin():
         try:
             admin = Users(
                 username="Admin",
-                role=2,  
+                role=1,  
             )
             admin.set_password("vbcras")  # Ensure this method hashes the password
             

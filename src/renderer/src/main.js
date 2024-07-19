@@ -76,7 +76,8 @@ import {
     faUpDown,
     faTextHeight,
     faArrowsUpDown,
-    faArrowsLeftRight
+    faArrowsLeftRight,
+    faNetworkWired
 
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -136,7 +137,8 @@ library.add(
     faUpDown,
     faTextHeight,
     faArrowsUpDown,
-    faArrowsLeftRight
+    faArrowsLeftRight,
+    faNetworkWired
 
 )
 

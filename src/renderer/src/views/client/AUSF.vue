@@ -257,7 +257,6 @@ const initalForm = {
     exhibiting_number: '',
     exhibiting_at: 'Bayambang, Pangasinan',
     exhibiting_on: `${format(date, 'MMMM dd, yyyy')}`,
-
 }
 const formData = reactive({ ...initalForm })
 

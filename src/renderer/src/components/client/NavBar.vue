@@ -9,6 +9,7 @@
             class="self-center text-lg text-gray-800 font-semibold whitespace-nowrap dark:text-white">VBCRAS</span>
         </a>
 
+
         <!-- itong button ahhh -->
         <button type="button" ref="target"
           class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -32,20 +33,20 @@
               </router-link>
             </li>
 
-            <li>
+            <!-- <li>
               <router-link tabindex="-1" to="/client/cce"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 class="  block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 Correction in Clerical Error & Change of First Name
               </router-link>
-            </li>
-            <li>
+            </li> -->
+            <!-- <li>
               <router-link tabindex="-1" to="/client/forms"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 class="block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 Forms
               </router-link>
-            </li>
+            </li> -->
             <li>
               <router-link tabindex="-1" to="/client/ausf"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
@@ -53,20 +54,20 @@
                 AUSF
               </router-link>
             </li>
-            <li>
+            <!-- <li>
               <router-link tabindex="-1" to="/client/data_record"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 class="block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 Registry Record
               </router-link>
-            </li>
-            <li v-if="auth.user_details.permissions.scanned">
+            </li> -->
+            <!-- <li>
               <router-link tabindex="-1" to="/client/scanned"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 class="block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 Scanned Documents
               </router-link>
-            </li>
+            </li> -->
 
             <li>
               <button tabindex="-1" id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar"
@@ -84,17 +85,17 @@
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
                   <li>
                     <button
-                      class="w-full  text-left px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      class="w-full  items-center px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                       <!-- <font-awesome-icon icon="fa-solid fa-user" class="me-2" /> -->
                       {{ auth.user }}
                     </button>
                   </li>
-                  <li>
+                  <!-- <li>
                     <a href="#"
                       class="items-center w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                       <font-awesome-icon icon="fa-solid fa-gear" class="me-2" />
                       Settings</a>
-                  </li>
+                  </li> -->
                 </ul>
                 <div class="">
                   <button @click="logout()"
@@ -129,7 +130,7 @@ const dropdownmenu = () => {
 };
 
 const logout = () => {
-  auth.UserLogout();
+  auth.logout();
 };
 
 
