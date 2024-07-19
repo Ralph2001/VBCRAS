@@ -1,5 +1,5 @@
 from ..extensions import db
-from .user import Users  # Assuming users.py is in the same directory
+from .user import Users  
 
 
 class ScannedType(db.Model):

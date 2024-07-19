@@ -1,20 +1,40 @@
 from flask import Flask
-from .extensions import db  # Assuming extensions.py is in a subfolder
-from .models import *
+from .extensions import db, jwt, ma
+from .routes.scanned import scanned
+from .routes.user import user
+from .routes.ausf import ausf
+
 
 
 def create_app():
     app = Flask(__name__)
 
-    # Configure database connection
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-    # Initialize SQLAlchemy with the app
-    db.init_app(app)
+    app.config["JWT_SECRET_KEY"] = "VBCRAS_SECRET_KEY"
     
-
+    
+    # Initialize SQLAlchemy with the app
+    jwt.init_app(app)
+    db.init_app(app)
+    ma.init_app(app)
+    
+    
+    # Blueprints
+    app.register_blueprint(scanned)
+    app.register_blueprint(user)
+    app.register_blueprint(ausf)
+    
+    
+    # Models
+    from .models.scanned import ScannedType, Scans
+    from .models.user import Users, Positions, create_admin
+    from .models.form import Forms, BirthAvailable, DeathAvailable, MarriageAvailable   
+    from .models.ausf import Ausf
+    
+     
     with app.app_context():
         db.create_all()
+        create_admin()
 
     return app

@@ -176,7 +176,6 @@ class BirthAvailable(db.Model):
      form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
 
     
-     
 class DeathAvailable(db.Model):
      id = db.Column(db.Integer, primary_key=True)
      name_deceased = db.Column(db.String, nullable=False)
@@ -261,6 +260,7 @@ class User(db.Model):
             self.password_hash, password
         ) 
 
+# panget neto
 class UserPermissions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
