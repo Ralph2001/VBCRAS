@@ -4,6 +4,12 @@
             <Button label="Create" isActive :class="`rounded`" @click="open_ausf" />
         </Header>
 
+
+        <div class="h-[calc(100vh-250px)]">
+            <TableGrid :data="aufs_.ausf" :dataColumns="colDefs" :suppressRowTransform="true" />
+        </div>
+
+
         <Modal v-if="ausf_modal" medium label="Create a new Affidavit to use the Surname of the Father" footerBG="">
             <template v-slot:header>
                 <ModalCloseButton @click="close_ausf" />
@@ -58,13 +64,13 @@
                                 <InputButtomBorder v-model="formData.surname" :width="'20rem'" isBold /> in:
                             </div>
                             <div class="flex flex-row items-center gap-2">
-                                <input type="radio" value="my" name="in" checked id="my" v-model="formData.in"
-                                    class="border-gray-200 rounded">
+                                <input type="radio" value="my" name="in_my_the" checked id="my"
+                                    v-model="formData.in_my_the" class="border-gray-200 rounded">
                                 <label for="my">My Certificate of Live Birth/Report of Birth, pursuant to R.A. No.
                                     9255.</label>
                             </div>
                             <div class="flex flex-row items-center gap-2 ">
-                                <input type="radio" value="the" name="in" id="the" v-model="formData.in"
+                                <input type="radio" value="the" name="in_my_the" id="the" v-model="formData.in_my_the"
                                     class="border-gray-200 rounded">
                                 <label for="the" class="text-nowrap">The Certificate of Live Birth/Report of Birth
                                     of</label>
@@ -212,7 +218,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
 import Button from '../../components/essentials/buttons/Button.vue';
@@ -220,6 +226,17 @@ import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue
 import InputforForm from '../../component/FormPageComponents/InputforForm.vue';
 import InputButtomBorder from '../../components/essentials/inputs/InputButtomBorder.vue';
 import { format } from 'date-fns';
+import { useAusf } from '../../stores/Ausf';
+import TableGrid from '../../components/TableGrid.vue';
+
+const aufs_ = useAusf()
+
+
+onMounted(() => {
+    aufs_.getAUSF()
+})
+
+
 const previewUrl = ref() //PDF Base64
 const ausf_modal = ref(false)
 
@@ -231,6 +248,48 @@ const month = date.getMonth()
 const age = ref()
 const age_text = ref('yrs. old')
 
+const colDefs = ref([
+    {
+        field: "affiant_name",
+        headerName: "Affiant's Name",
+        flex: 2,
+        filter: true,
+        pinned: "left",
+        lockPinned: true,
+    },
+    {
+        field: "surname",
+        headerName: "Surname",
+        flex: 2,
+        filter: true,
+    },
+    {
+        field: "child_name",
+        headerName: "Child's Name",
+        flex: 2,
+        filter: true,
+    },
+    {
+        field: "relation",
+        headerName: "Relation",
+        flex: 2,
+        filter: true,
+    },
+    {
+        field: "date_birth",
+        headerName: "Date of Birth",
+        flex: 2,
+        filter: true,
+    },
+    {
+        field: "sworn_month",
+        headerName: "Date Filed",
+        flex: 2,
+        filter: true,
+    },
+
+]);
+
 
 const initalForm = {
     registry_number: `${year} -`,
@@ -240,7 +299,7 @@ const initalForm = {
     age: '',
     address: '',
     surname: '',
-    in: 'the',
+    in_my_the: 'the',
     child_name: '',
     relation: '',
     date_birth: '',
@@ -257,6 +316,9 @@ const initalForm = {
     exhibiting_number: '',
     exhibiting_at: 'Bayambang, Pangasinan',
     exhibiting_on: `${format(date, 'MMMM dd, yyyy')}`,
+    ap_phi_registry_number: '',
+    ap_phi_date_registration: '',
+    pfsp_of: ''
 }
 const formData = reactive({ ...initalForm })
 
@@ -277,8 +339,13 @@ const close_ausf = () => {
 
 const submit = async () => {
 
-    const create = await window.AusfApi.createAUSF({ ...formData })
-    previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + create.dataurl
+
+    aufs_.addAusf({ ...formData })
+    close_ausf()
+
+    // const create = await window.AusfApi.createAUSF({ ...formData })
+    // previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + create.dataurl
+
 
 }
 

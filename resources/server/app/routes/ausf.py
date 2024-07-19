@@ -30,7 +30,7 @@ def get_all_ausf():
 @ausf.route("/ausf", methods=["POST"])
 def add_ausf():
     data = request.get_json()
-
+    print(data)
     new_ausf = ausf_schema.load(data, session=db.session)
 
     db.session.add(new_ausf)
