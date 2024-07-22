@@ -49,7 +49,7 @@ export async function generate_ausf(formData) {
     const address = create_center_text_within_box(firstPage, formData.address, fontSize, timesRomanFontBold, height, 140.4, 301.68, 681.84) // text_position_x, box_width, text_position_y
     const surname = create_center_text_within_box(firstPage, formData.surname, fontSize, timesRomanFontBold, height, 249.12, 174.96, 627.68) // text_position_x, box_width, text_position_y
 
-    const certificate_of = formData.in
+    const certificate_of = formData.in_my_the
     if (certificate_of === 'the') {
         const name_child = create_center_text_within_box(firstPage, 'x', fontSize, timesRomanFontBold, height, 54, 19.44, 578) // text_position_x, box_width, text_position_y
     }

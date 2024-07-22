@@ -1,7 +1,9 @@
 from ..extensions import db
 
+
 class Ausf(db.Model):
      id = db.Column(db.Integer, primary_key=True)
+     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
      registry_number = db.Column(db.String, nullable=False)
      date_registration = db.Column(db.String, nullable=False)
      affiant_name = db.Column(db.String, nullable=False)
@@ -32,34 +34,34 @@ class Ausf(db.Model):
      pfsp_of = db.Column(db.String, nullable=False)
      
      
-     def to_dict(self):
-        return {
-            "id": self.id,
-            "registry_number": self.registry_number,
-            "date_registration": self.date_registration,
-            "affiant_name": self.affiant_name,
-            "citizenship": self.citizenship,
-            "age": self.age,
-            "address": self.address,
-            "surname": self.surname,
-            "in_my_the": self.in_my_the,
-            "child_name": self.child_name,
-            "relation": self.relation,
-            "date_birth": self.date_birth,
-            "at_municipality": self.at_municipality,
-            "at_province": self.at_province,
-            "at_country": self.at_country,
-            "lcro_at": self.lcro_at,
-            "day_signature": self.day_signature,
-            "month_signature": self.month_signature,
-            "sworn_day": self.sworn_day,
-            "sworn_month": self.sworn_month,
-            "sworn_at": self.sworn_at,
-            "exhibiting": self.exhibiting,
-            "exhibiting_number": self.exhibiting_number,
-            "exhibiting_at": self.exhibiting_at,
-            "exhibiting_on": self.exhibiting_on,
-            "ap_phi_registry_number": self.ap_phi_registry_number,
-            "ap_phi_date_registration": self.ap_phi_date_registration,
-            "pfsp_of": self.pfsp_of
-        }
+    #  def to_dict(self):
+    #     return {
+    #         "id": self.id,
+    #         "registry_number": self.registry_number,
+    #         "date_registration": self.date_registration,
+    #         "affiant_name": self.affiant_name,
+    #         "citizenship": self.citizenship,
+    #         "age": self.age,
+    #         "address": self.address,
+    #         "surname": self.surname,
+    #         "in_my_the": self.in_my_the,
+    #         "child_name": self.child_name,
+    #         "relation": self.relation,
+    #         "date_birth": self.date_birth,
+    #         "at_municipality": self.at_municipality,
+    #         "at_province": self.at_province,
+    #         "at_country": self.at_country,
+    #         "lcro_at": self.lcro_at,
+    #         "day_signature": self.day_signature,
+    #         "month_signature": self.month_signature,
+    #         "sworn_day": self.sworn_day,
+    #         "sworn_month": self.sworn_month,
+    #         "sworn_at": self.sworn_at,
+    #         "exhibiting": self.exhibiting,
+    #         "exhibiting_number": self.exhibiting_number,
+    #         "exhibiting_at": self.exhibiting_at,
+    #         "exhibiting_on": self.exhibiting_on,
+    #         "ap_phi_registry_number": self.ap_phi_registry_number,
+    #         "ap_phi_date_registration": self.ap_phi_date_registration,
+    #         "pfsp_of": self.pfsp_of
+    #     }

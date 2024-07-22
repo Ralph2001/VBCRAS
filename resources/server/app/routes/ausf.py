@@ -30,7 +30,6 @@ def get_all_ausf():
 @ausf.route("/ausf", methods=["POST"])
 def add_ausf():
     data = request.get_json()
-    print(data)
     new_ausf = ausf_schema.load(data, session=db.session)
 
     db.session.add(new_ausf)
@@ -55,3 +54,10 @@ def get_ausf(id):
 #########
 # Delete
 #########
+
+@ausf.route("/ausf/<int:id>", methods=["DELETE"])
+def delete_ausf(id):
+    ausf_record = Ausf.query.get_or_404(id)
+    db.session.delete(ausf_record)
+    db.session.commit()
+    return jsonify({"message": "Ausf record deleted successfully."}), 200

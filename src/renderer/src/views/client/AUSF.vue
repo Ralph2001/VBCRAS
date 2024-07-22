@@ -9,6 +9,7 @@
             <TableGrid :data="aufs_.ausf" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
+  
 
         <Modal v-if="ausf_modal" medium label="Create a new Affidavit to use the Surname of the Father" footerBG="">
             <template v-slot:header>
@@ -228,12 +229,15 @@ import InputButtomBorder from '../../components/essentials/inputs/InputButtomBor
 import { format } from 'date-fns';
 import { useAusf } from '../../stores/Ausf';
 import TableGrid from '../../components/TableGrid.vue';
+import TableAction from '../../components/essentials/action/TableAction.vue';
+import { AuthStore } from '../../stores/clientAuth';
 
 const aufs_ = useAusf()
-
+const auth = AuthStore()
 
 onMounted(() => {
     aufs_.getAUSF()
+    auth.isAuthenticated()
 })
 
 
@@ -261,6 +265,7 @@ const colDefs = ref([
         field: "surname",
         headerName: "Surname",
         flex: 2,
+        cellClass: "font-medium tracking-wider w-full text-gray-800",
         filter: true,
     },
     {
@@ -287,11 +292,28 @@ const colDefs = ref([
         flex: 2,
         filter: true,
     },
+    {
+        field: "created_by_user.username",
+        headerName: "Created by",
+        flex: 2,
+        filter: true,
+    },
+    {
+        headerName: "",
+        flex: 1,
+        pinned: "right",
+        lockPinned: true,
+        resizable: false,
+        cellRenderer: TableAction,
+        cellStyle: { overflow: "visible", border: "none" },
+        sortable: false,
+    },
 
 ]);
 
 
 const initalForm = {
+    created_by: "2",
     registry_number: `${year} -`,
     date_registration: `${format(date, 'MMMM')}      , ${year}`,
     affiant_name: '',
@@ -340,11 +362,11 @@ const close_ausf = () => {
 const submit = async () => {
 
 
-    aufs_.addAusf({ ...formData })
-    close_ausf()
 
-    // const create = await window.AusfApi.createAUSF({ ...formData })
-    // previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + create.dataurl
+    const create = await window.AusfApi.createAUSF({ ...formData })
+    previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + create.dataurl
+    // aufs_.addAusf({ ...formData })
+    // close_ausf()
 
 
 }

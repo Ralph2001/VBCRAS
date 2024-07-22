@@ -11,6 +11,8 @@ export const AuthStore = defineStore('auth', {
         token: localStorage.getItem('token'),
         user: '',
         user_details: [],
+        user_id: '',
+        user_role: '',
         error: '',
     }),
     getters: {},
@@ -68,8 +70,11 @@ export const AuthStore = defineStore('auth', {
                     )
 
                     this.user = user.data.username
-                    // this.user_details = user.data
+                    this.user_id = user.data.id
+                    this.user_role = user.data.role
                     // console.log(user)
+                    // // this.user_details = user.data
+                    // // console.log(user)
                     return true
                 } catch (error) {
                     localStorage.removeItem('token')
