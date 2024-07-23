@@ -7,9 +7,10 @@
 
         <div class="h-[calc(100vh-250px)]">
             <TableGrid :data="aufs_.ausf" :dataColumns="colDefs" :suppressRowTransform="true" />
+
         </div>
 
-  
+
 
         <Modal v-if="ausf_modal" medium label="Create a new Affidavit to use the Surname of the Father" footerBG="">
             <template v-slot:header>
@@ -44,17 +45,21 @@
                     <div>
                         <div class="flex flex-row gap-2">
                             <p class=" indent-8">I,</p>
-                            <InputButtomBorder v-model="formData.affiant_name" label="Affiant's name" isBold />,
-                            <InputButtomBorder v-model="formData.citizenship" label="Citizenship" :width="`5%`" skip />,
+                            <InputButtomBorder :error="v$.affiant_name.$error" v-model="formData.affiant_name"
+                                label="Affiant's name" isBold />,
+                            <InputButtomBorder :error="v$.citizenship.$error" v-model="formData.citizenship"
+                                label="Citizenship" :width="`5%`" skip />,
                             <div class="flex flex-row">
-                                <InputButtomBorder v-model="age" @change="change_age_full" label="Age"
-                                    text-position="text-end" :width="`3rem`" />
-                                <InputButtomBorder :width="`6rem`" @change="change_age_full" skip v-model="age_text" />
+                                <InputButtomBorder v-model="age" :error="v$.age.$error" type="number"
+                                    @change="change_age_full" label="Age" text-position="text-end" :width="`4rem`" />
+                                <InputButtomBorder :width="`6rem`" :error="v$.age.$error" @change="change_age_full" skip
+                                    v-model="age_text" />
                             </div>
                         </div>
                         <div class="flex flex-row w-full">
                             <p class="text-nowrap">and a resident of </p>
-                            <InputButtomBorder v-model="formData.address" label="Complete Address" />
+                            <InputButtomBorder :error="v$.address.$error" v-model="formData.address"
+                                label="Complete Address" />
                             <p class="text-nowrap">after having been duly</p>
                         </div>
                         <p>sworn in accordance with law, do hereby declare that:</p>
@@ -62,7 +67,9 @@
                     <div class="flex flex-col gap-2 tracking-wide text-gray-800 ">
                         <div class="flex flex-col gap-2">
                             <div class="flex flex-row"> 1. I am seeking the use of the surname
-                                <InputButtomBorder v-model="formData.surname" :width="'20rem'" isBold /> in:
+                                <InputButtomBorder :error="v$.surname.$error" v-model="formData.surname"
+                                    :width="'20rem'" isBold />
+                                in:
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <input type="radio" value="my" name="in_my_the" checked id="my"
@@ -75,12 +82,13 @@
                                     class="border-gray-200 rounded">
                                 <label for="the" class="text-nowrap">The Certificate of Live Birth/Report of Birth
                                     of</label>
-                                <InputButtomBorder v-model="formData.child_name" isBold />
+                                <InputButtomBorder :error="v$.child_name.$error" v-model="formData.child_name" isBold />
                             </div>
                             <div class="flex flex-row items-center">
                                 <p class="text-nowrap"> who is my
                                 </p>
-                                <InputButtomBorder :width="'13rem'" v-model="formData.relation" />
+                                <InputButtomBorder :error="v$.relation.$error" :width="'13rem'"
+                                    v-model="formData.relation" />
                                 <p class="text-nowrap">pursuant to R.A. No.
                                     9255.</p>
 
@@ -88,10 +96,15 @@
                         </div>
                         <div class="flex flex-col w-full">
                             <div class="flex flex-row text-nowrap"> 2. I/He/She was born on
-                                <InputButtomBorder v-model="formData.date_birth" :width="'13rem'" /> at
-                                <InputButtomBorder v-model="formData.at_municipality" :width="'6.2rem'" skip />,
-                                <InputButtomBorder v-model="formData.at_province" :width="'6.1rem'" skip />,
-                                <InputButtomBorder v-model="formData.at_country" :width="'6.2rem'" skip />.
+                                <InputButtomBorder :error="v$.date_birth.$error" v-model="formData.date_birth"
+                                    :width="'13rem'" />
+                                at
+                                <InputButtomBorder :error="v$.at_municipality.$error" v-model="formData.at_municipality"
+                                    :width="'6.2rem'" skip />,
+                                <InputButtomBorder :error="v$.at_province.$error" v-model="formData.at_province"
+                                    :width="'6.1rem'" skip />,
+                                <InputButtomBorder :error="v$.at_country.$error" v-model="formData.at_country"
+                                    :width="'6.2rem'" skip />.
                             </div>
                         </div>
                         <div class="flex flex-col">
@@ -127,7 +140,7 @@
                                 <p class=" tracking-widest">
                                     5. I am filing this AUSF at the Local Civil Registrar’s Office
                                     of</p>
-                                <InputButtomBorder v-model="formData.lcro_at" skip />
+                                <InputButtomBorder :error="v$.lcro_at.$error" v-model="formData.lcro_at" skip />
                                 <p>in</p>
 
                             </div>
@@ -150,30 +163,34 @@
                             <div class="flex flex-row text-justify">
                                 <p class=" text-nowrap">7. In witness whereof, I have hereby affix my
                                     signature on this</p>
-                                <InputButtomBorder v-model="formData.day_signature" skip :width="'6.2rem'" />
+                                <InputButtomBorder :error="v$.day_signature.$error" v-model="formData.day_signature"
+                                    skip :width="'6.2rem'" />
                                 <p class=" text-nowrap">day of</p>
-                                <InputButtomBorder v-model="formData.month_signature" skip :width="'6.2rem'" />.
+                                <InputButtomBorder :error="v$.month_signature.$error" v-model="formData.month_signature"
+                                    skip :width="'6.2rem'" />.
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-5 flex flex-col w-[50%] self-end items-center ">
-                        <InputButtomBorder v-model.capitalize="formData.affiant_name" skip isBold />
+                        <InputButtomBorder :error="v$.affiant_name.$error" v-model.capitalize="formData.affiant_name"
+                            skip isBold />
                         <p class="text-gray-700 text-md">Signature over printed name of Affiant</p>
                     </div>
 
                     <div class="mt-10 px-10 ">
                         <div class="flex flex-row gap-2 w-full items-center text-nowrap">
                             <p class=" indent-12 text-gray-700 text-md"> SUBSCRIBED AND SWORN to before me this</p>
-                            <InputButtomBorder v-model="formData.sworn_day" skip :width="'10rem'" />
+                            <InputButtomBorder :error="v$.sworn_day.$error" v-model="formData.sworn_day" skip
+                                :width="'10rem'" />
                             <p class=" text-gray-700 text-md">day of</p>
-                            <InputButtomBorder v-model="formData.sworn_month" skip />
+                            <InputButtomBorder :error="v$.sworn_month.$error" v-model="formData.sworn_month" skip />
                             <p class=" text-gray-700 text-md">in</p>
                             <p class=" text-gray-700 text-md"> the</p>
                         </div>
                         <div class="flex flex-row gap-2 w-full items-center text-nowrap">
                             <p class=" text-gray-700 text-md">city/municipality of</p>
-                            <InputButtomBorder v-model="formData.sworn_at" skip />
+                            <InputButtomBorder :error="v$.sworn_at.$error" v-model="formData.sworn_at" skip />
                             <p class=" text-gray-700 text-md">, affiant exhibiting his/</p>
                         </div>
                         <div class="flex flex-row gap-2 w-full items-center text-nowrap">
@@ -211,15 +228,18 @@
                 </div>
                 <div class="h-full flex items-center justify-end gap-2 w-full">
                     <Button label="Edit" v-if="previewUrl" @click="previewUrl = ''" />
-                    <Button :label="previewUrl ? 'Submit' : 'Check'" @click="submit" />
+                    <Button v-if="!previewUrl" :label="'Check'" @click="check" />
+                    <Button v-if="previewUrl" :label="'Submit'" @click="submit" />
+
                 </div>
             </template>
         </Modal>
+
     </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
 import Button from '../../components/essentials/buttons/Button.vue';
@@ -231,6 +251,9 @@ import { useAusf } from '../../stores/Ausf';
 import TableGrid from '../../components/TableGrid.vue';
 import TableAction from '../../components/essentials/action/TableAction.vue';
 import { AuthStore } from '../../stores/clientAuth';
+import { useVuelidate } from "@vuelidate/core";
+import { required, requiredIf, numeric } from "@vuelidate/validators";
+
 
 const aufs_ = useAusf()
 const auth = AuthStore()
@@ -311,9 +334,8 @@ const colDefs = ref([
 
 ]);
 
-
 const initalForm = {
-    created_by: "2",
+    created_by: auth.user_id,
     registry_number: `${year} -`,
     date_registration: `${format(date, 'MMMM')}      , ${year}`,
     affiant_name: '',
@@ -344,6 +366,36 @@ const initalForm = {
 }
 const formData = reactive({ ...initalForm })
 
+
+const rules = computed(() => ({
+    created_by: { required },
+    date_registration: { required },
+    affiant_name: { required },
+    citizenship: { required },
+    age: { required },
+    address: { required },
+    surname: { required },
+    in_my_the: { required },
+    child_name: { required },
+    relation: { required },
+    date_birth: { required },
+    at_municipality: { required },
+    at_province: { required },
+    at_country: { required },
+    lcro_at: { required },
+    day_signature: { required },
+    month_signature: { required },
+    sworn_day: { required },
+    sworn_month: { required },
+    sworn_at: { required },
+    day_signature: { required },
+    month_signature: { required },
+}))
+
+const v$ = useVuelidate(rules, formData);
+
+
+
 function change_age_full() {
     formData.age = age.value + ' ' + age_text.value
 }
@@ -358,17 +410,23 @@ const close_ausf = () => {
     age_text.value = 'yrs. old'
 }
 
-
-const submit = async () => {
-
-
-
+const check = async () => {
+    const isFormValid = await v$.value.$validate();
+    console.log(v$.value)
+    if (!isFormValid) {
+        return
+    }
     const create = await window.AusfApi.createAUSF({ ...formData })
     previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + create.dataurl
-    // aufs_.addAusf({ ...formData })
-    // close_ausf()
+}
 
-
+const submit = async () => {
+    const isFormValid = await v$.value.$validate();
+    console.log(v$.value)
+    if (isFormValid) {
+        aufs_.addAusf({ ...formData })
+        close_ausf()
+    }
 }
 
 </script>
