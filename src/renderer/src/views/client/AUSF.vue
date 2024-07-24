@@ -182,7 +182,7 @@
                         <div class="flex flex-row gap-2 w-full items-center text-nowrap">
                             <p class=" indent-12 text-gray-700 text-md"> SUBSCRIBED AND SWORN to before me this</p>
                             <InputButtomBorder :error="v$.sworn_day.$error" v-model="formData.sworn_day" skip
-                                :width="'10rem'" />
+                                :width="'13rem'" />
                             <p class=" text-gray-700 text-md">day of</p>
                             <InputButtomBorder :error="v$.sworn_month.$error" v-model="formData.sworn_month" skip />
                             <p class=" text-gray-700 text-md">in</p>

@@ -140,4 +140,10 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
             return true
         }
     },
+    printPDFBase64: async (base64Data) => {
+        const result = await ipcRenderer.invoke('PrintThisPDF', base64Data)
+        if (result) {
+            return true
+        }
+    },
 })

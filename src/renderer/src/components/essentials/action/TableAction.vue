@@ -13,9 +13,39 @@
                         <p class="text-sm  text-white">AUSF - {{ data.child_name }}
                         </p>
                     </div>
-                    <button class="border ml-auto text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
-                        @click="previewPDF">Close</button>
+                    <div class="flex flex-row gap-3 ml-auto">
+                        <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
+                            @click="printPDF">Print</button>
+                        <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
+                            @click="previewPDF">Close</button>
+                    </div>
                 </div>
+                <!-- <div
+                    class="absolute left-0 h-full w-[15rem] bg-[#525659]  flex-col items-center justify-between py-20 sm:hidden md:lg:flex">
+                    <div class="h-[80%] w-[90%] flex flex-col gap-1 items-center font-medium text-sm text-gray-800">
+                        <button
+                            class="p-2 flex transition-all items-start w-full justify-start bg-blue-500 text-white rounded-sm shadow-md">
+                            Petition
+                        </button>
+                        <button
+                            class="p-2 flex hover:bg-gray-100 transition-all items-start w-full justify-start bg-white rounded-sm shadow-md">
+                            Petition
+                        </button>
+                        <button
+                            class="p-2 flex hover:bg-gray-100 transition-all items-start w-full justify-start bg-white rounded-sm shadow-md">
+                            Endorsement Letter
+                        </button>
+                        <button
+                            class="p-2 flex hover:bg-gray-100 transition-all items-start w-full justify-start bg-white rounded-sm shadow-md">
+                            Notice of Posting
+                        </button>
+                        <button
+                            class="p-2 flex hover:bg-gray-100 transition-all items-start w-full justify-start bg-white rounded-sm shadow-md">
+                            Certificate of Posting
+                        </button>
+                    </div>
+
+                </div> -->
 
                 <div class="h-screen w-full">
                     <iframe v-if="previewUrl" class="h-full w-full " :src="previewUrl" frameborder="1"
@@ -28,7 +58,7 @@
             v-if="isClick">
             <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Preview
                 PDF</button>
-            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium">Print</button>
+            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium">Report</button>
             <!-- Why? -->
             <!-- <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium"
                 v-if="auth_.user_id === data.created_by || auth_.user_role === 1">Edit</button> -->
@@ -111,6 +141,16 @@ const previewPDF = async () => {
     const create = await window.AusfApi.createAUSF({ ...value })
     previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + create.dataurl
 
+}
+
+const printPDF = async () => {
+
+    const create = await window.AusfApi.createAUSF({ ...value })
+
+    if (create) {
+        const base64Data = create.dataurl
+        const open = await window.LocalCivilApi.printPDFBase64(base64Data)
+    }
 }
 
 

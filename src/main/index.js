@@ -11,6 +11,7 @@ import { generate_form } from '../documents/forms/createForm'
 import { CreateAnnotated } from '../documents/clerical/generate_annotation'
 import { generate_ausf } from '../documents/ausf/create_ausf'
 
+
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
 const { dialog } = require('electron')
@@ -19,6 +20,10 @@ const os = require('os')
 const username = os.userInfo().username
 const fse = require('fs-extra')
 const fs = require('fs')
+
+
+const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe');
+
 
 var interfaces = os.networkInterfaces()
 
@@ -32,8 +37,82 @@ for (var k in interfaces) {
     }
 }
 
-let dialogOpen = false
 
+function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+
+// Create Print Window without gui
+
+
+ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
+
+    // const pdfWindow = new BrowserWindow();
+    const randomFileName = `temp_${generateRandomString(20)}.pdf`;
+    const pdfPath = join(__dirname, '../../resources/temp/', randomFileName);
+
+    fs.writeFile(pdfPath, Buffer.from(base64Data, 'base64'), (err) => {
+        if (err) {
+            console.error('Failed to write PDF to file', err);
+            return;
+        }
+
+        const printProcess = spawn(sumatraPath, ['-print-to-default', pdfPath]);
+
+        printProcess.on('error', (error) => {
+            console.error('Failed to start SumatraPDF process:', error);
+        });
+
+        printProcess.on('close', (code) => {
+            if (code === 0) {
+                console.log('Printed successfully');
+            } else {
+                console.error(`SumatraPDF process exited with code ${code}`);
+            }
+
+            // Remove the temp file
+            fs.unlink(pdfPath, (err) => {
+                if (err) {
+                    console.error('Failed to delete temp PDF file', err);
+                } else {
+                    console.log('Temp PDF file deleted successfully');
+                }
+            });
+        });
+        // pdfWindow.loadFile(pdfPath);
+
+        // pdfWindow.webContents.on('did-finish-load', () => {
+        //     pdfWindow.webContents.print({}, (success, errorType) => {
+        //         if (!success) {
+        //             console.error('Failed to print PDF', errorType);
+        //         }
+
+        //         pdfWindow.close();
+
+        //         fs.unlink(pdfPath, (err) => {
+        //             if (err) {
+        //                 console.error('Failed to delete temp PDF file', err);
+        //             } else {
+        //                 console.log('Temp PDF file deleted successfully');
+        //             }
+        //         });
+        //     });
+        // });
+    });
+});
+
+//  
+
+
+
+let dialogOpen = false
 let pythonProcess = null
 async function startServer() {
     try {

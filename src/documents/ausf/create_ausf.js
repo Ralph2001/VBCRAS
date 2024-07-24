@@ -1,4 +1,8 @@
-import { degrees, PageSizes, PDFDocument, rgb, StandardFonts, TextAlignment } from 'pdf-lib'
+import {
+    PDFDocument,
+    StandardFonts,
+    TextAlignment,
+} from 'pdf-lib'
 const fs = require('fs')
 const path = require('path')
 
@@ -17,6 +21,7 @@ export async function generate_ausf(formData) {
 
     pdfDoc.setTitle(`AUSF - ${formData.child_name}`, {
         showInWindowTitleBar: true,
+        
     })
     pdfDoc.setAuthor('VBCRAS')
     pdfDoc.setKeywords(['amazing', 'one piece', 'pdf generate'])
@@ -29,6 +34,9 @@ export async function generate_ausf(formData) {
     const firstPage = pages[0]
     const { width, height } = firstPage.getSize()
     const fontSize = 12
+
+
+
 
     firstPage.drawText('Bayambang, Pangasinan', {
         x: 57.6,
