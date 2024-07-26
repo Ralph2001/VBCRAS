@@ -10,6 +10,7 @@ import {
     createMemoryHistory,
     createWebHashHistory,
 } from 'vue-router'
+import { useSetup } from '../stores/Setting/setup'
 
 const router = createRouter({
     history: createMemoryHistory(),
@@ -27,6 +28,32 @@ const router = createRouter({
                     return { name: storedMode } // if (mode) { return to mode client || server } else { return to Home }
                 }
                 return true
+            },
+        },
+        {
+            path: '/setup',
+            name: 'Setup',
+            component: () => import('../views/configure_setup.vue'),
+            beforeEnter: async (to, from) => {
+                const auth = AuthStore()
+                const setup = useSetup()
+                const con = useHostStore()
+
+                const isSetupDone = await setup.getSystemSetting()
+                const authKey = await auth.isAuthenticated()
+                const connection = await con.isConnected()
+                if (connection) {
+                    if (authKey) {
+                        if (isSetupDone) {
+                            console.log('yes')
+                            return { name: 'client_welcome' }
+                        }
+                        console.log(setup)
+                        return true
+                    }
+                    return { name: 'client' }
+                }
+                return { name: 'client' }
             },
         },
         {
@@ -128,12 +155,19 @@ const router = createRouter({
                     component: () => import('../views/client/Welcome.vue'),
                     beforeEnter: async (to, from) => {
                         const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
                         const con = useHostStore()
+                        const setup = useSetup()
+
+                        const isSetupDone = await setup.getSystemSetting()
+                        const authKey = await auth.isAuthenticated()
                         const connection = await con.isConnected()
                         if (connection) {
                             if (authKey) {
-                                return true
+                                if (isSetupDone) {
+                                    return true
+                                }
+                                return { name: 'Setup' }
+                                // return true
                             }
                             return { name: 'client' }
                         }

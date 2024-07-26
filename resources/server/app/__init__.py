@@ -37,6 +37,7 @@ def create_app():
     from .models.user import Users, Positions, create_admin
     from .models.form import Forms, BirthAvailable, DeathAvailable, MarriageAvailable   
     from .models.ausf import Ausf
+    from .models.system import SystemSettings
     
      
     with app.app_context():

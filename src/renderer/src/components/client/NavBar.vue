@@ -4,7 +4,7 @@
       class="bg-white  shadow-sm text-sm font-sans tracking-tighter  border-gray-200 dark:bg-gray-900 dark:border-gray-700">
       <div tabindex="-1" class="w-full flex flex-wrap items-center justify-between mx-auto p-3.5 relative">
         <a tabindex="-1" href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
-          <img tabindex="-1" src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" />
+          <!-- <img tabindex="-1" src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" /> -->
           <span tabindex="-1"
             class="self-center text-lg text-gray-800 font-semibold whitespace-nowrap dark:text-white">VBCRAS</span>
         </a>

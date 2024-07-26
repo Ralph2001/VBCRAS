@@ -7,7 +7,7 @@ FixedPageUI [
 	WindowMargin = 2 4 2 4
 	PageSpacing = 4 4
 	InvertColors = false
-	HideScrollbars = false
+	HideScrollbars = true
 ]
 ComicBookUI [
 	WindowMargin = 0 0 0 0
@@ -48,9 +48,9 @@ Annotations [
 	DefaultAuthor = 
 ]
 
-RememberOpenedFiles = true
-RememberStatePerDocument = true
-RestoreSession = true
+RememberOpenedFiles = false
+RememberStatePerDocument = false
+RestoreSession = false
 UiLanguage = en
 EnableTeXEnhancements = false
 DefaultDisplayMode = automatic
@@ -63,8 +63,8 @@ ReloadModifiedDocuments = true
 
 MainWindowBackground = #80fff200
 FullPathInTitle = false
-ShowMenubar = true
-ShowToolbar = true
+ShowMenubar = false
+ShowToolbar = false
 ShowFavorites = false
 ShowToc = true
 NoHomeTab = false
@@ -76,18 +76,14 @@ TreeFontSize = 0
 TreeFontWeightOffset = 0
 TreeFontName = automatic
 SmoothScroll = false
-ShowStartPage = true
+ShowStartPage = false
 CheckForUpdates = false
-WindowState = 1
-WindowPos = 0 0 0 0
-UseTabs = true
+WindowState = 4
+WindowPos = 652 136 803 1040
+UseTabs = false
 UseSysColors = false
 CustomScreenDPI = 0
 
-FileStates [
-]
-SessionData [
-]
 TimeOfLastUpdateCheck = 0 0
 OpenCountWeek = 707
 

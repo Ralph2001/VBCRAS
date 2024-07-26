@@ -48,7 +48,7 @@
                 </div> -->
 
                 <div class="h-screen w-full">
-                    <iframe v-if="previewUrl" class="h-full w-full " :src="previewUrl" frameborder="1"
+                    <iframe v-if="previewUrl" ref="iframeRef" class="h-full w-full " :src="previewUrl" frameborder="1"
                         allowfullscreen=""></iframe>
                 </div>
             </div>
@@ -58,7 +58,7 @@
             v-if="isClick">
             <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Preview
                 PDF</button>
-            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium">Report</button>
+            <!-- <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium">Report</button> -->
             <!-- Why? -->
             <!-- <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium"
                 v-if="auth_.user_id === data.created_by || auth_.user_role === 1">Edit</button> -->
@@ -79,6 +79,7 @@ const auth_ = AuthStore()
 const aufs_ = useAusf()
 const isViewingPdf = ref(false)
 const previewUrl = ref()
+const iframeRef = ref(null)
 
 const isClick = ref(false)
 const button = ref()
@@ -144,6 +145,8 @@ const previewPDF = async () => {
 }
 
 const printPDF = async () => {
+
+
 
     const create = await window.AusfApi.createAUSF({ ...value })
 

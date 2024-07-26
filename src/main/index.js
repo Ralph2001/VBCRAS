@@ -57,6 +57,7 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     // const pdfWindow = new BrowserWindow();
     const randomFileName = `temp_${generateRandomString(20)}.pdf`;
     const pdfPath = join(__dirname, '../../resources/temp/', randomFileName);
+    const fileDirectory = join(__dirname, '../../resources/temp/')
 
     fs.writeFile(pdfPath, Buffer.from(base64Data, 'base64'), (err) => {
         if (err) {
@@ -64,7 +65,7 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
             return;
         }
 
-        const printProcess = spawn(sumatraPath, ['-print-to-default', pdfPath]);
+        const printProcess = spawn(sumatraPath, ['-print-dialog', '-exit-when-done', pdfPath]);
 
         printProcess.on('error', (error) => {
             console.error('Failed to start SumatraPDF process:', error);
@@ -85,6 +86,8 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
                     console.log('Temp PDF file deleted successfully');
                 }
             });
+
+            fse.emptyDirSync(fileDirectory);
         });
         // pdfWindow.loadFile(pdfPath);
 
