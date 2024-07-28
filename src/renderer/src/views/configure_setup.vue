@@ -1,11 +1,13 @@
 <template>
-    <div class="h-full w-full  relative">
-        <div class="fixed bottom-0 right-0 p-10">
-            <button class="px-4 py-2 border font-medium tracking-wider shadow bg-blue-500 rounded text-white"
-                @click="submit">Save
-                Setttings</button>
-        </div>
-        <div class=" flex h-full flex-col gap-5 p-10">
+    <div class="h-full w-full  ">
+
+        <div class=" flex h-full flex-col gap-5 p-10 relative">
+
+            <div class="fixed bottom-0 right-0 p-4">
+                <button class="px-4 py-1.5 border font-medium tracking-wider shadow bg-blue-500 rounded text-white"
+                    @click="submit">Save
+                    Setttings</button>
+            </div>
             <!-- <p class="text-2xl uppercase font-medium text-gray-800">Welcome to VBCRAS</p> -->
 
             <div class=" flex flex-row px-10 py-5 w-full items-center justify-between">
@@ -13,20 +15,20 @@
                 <p class="italic text-gray-500">(Define Global Settings)</p>
             </div>
             <div
-                class=" flex flex-col sm:px-3 md:lg:px-40 py-5 gap-10 border rounded h-[calc(100vh-240px)] overflow-scroll  w-full items-center justify-between">
-                <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-5 items-start bg-gray-50 p-4 w-full">
+                class=" flex flex-col sm:px-3 md:lg:px-40 py-5 gap-10 border rounded h-[calc(100vh-200px)] overflow-scroll  w-full items-center justify-between">
+                <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-5 items-start     p-4 w-full">
                     <p class="text-lg font-semibold ">Applications</p>
                     <div class="flex flex-col gap-5">
-                        <div class="flex flex-auto gap-2">
+                        <div class="grid grid-cols-2 items-center gap-2">
                             <div v-for="app in system_apps" :key="app"
-                                class="flex flex-row flex-wrap grow rounded gap-2  items-center shadow-sm bg-white  hover:bg-gray-50 hover:cursor-pointer  border px-5 py-2">
-                                <input type="checkbox" checked disabled class="border-gray-300 rounded " name=""
+                                class="flex flex-row flex-wrap grow rounded gap-2 sm:w-full  h-[5rem] items-center shadow-sm bg-white  hover:bg-gray-50 hover:cursor-pointer  border px-5 py-2">
+                                <input type="checkbox" checked disabled class="border-gray-300 rounded disabled:bg-blue-300" name=""
                                     :id="app">
                                 <label :for="app" class="text-gray-800 text-sm font-medium">{{ app }}</label>
                             </div>
 
                         </div>
-                        <div class="flex flex-col gap-2">
+                        <div class="flex flex-col gap-2 bg-yellow-50  p-2">
                             <!-- <p class="text-sm text-justify"><span class="font-medium">The CCE&CFN System</span>
                                 streamlines the process of correcting clerical errors and changing first names. It
                                 automatically tracks the days required for posting and generates PDF documents, ensuring
@@ -60,17 +62,7 @@
 
                     </div>
                 </div>
-                <!-- <div class="grid grid-cols-2 gap-5 items-start w-full ">
-                    <p class="text-lg font-semibold">File</p>
-                    <div class="flex flex-col gap-2">
-                        <div class="flex flex-col gap-2">
-                            <label for="" class="text-sm font-semibold">Generated File Type</label>
-                            <select name="" id="" class="w-[8rem] text-xs font-semibold border-gray-300 rounded">
-                                <option value="" class="">.pdf</option>
-                            </select>
-                        </div>
-                    </div>
-                </div> -->
+                
                 <div class="grid grid-cols-2 gap-5 items-start w-full ">
                     <p class="text-lg font-semibold">Templates</p>
                     <div class="flex flex-col gap-2">
@@ -95,6 +87,9 @@
 import { onMounted, reactive, ref } from 'vue';
 import Input from '../components/essentials/inputs/Input.vue'
 import { useSetup } from '../stores/Setting/setup';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const system_setting = useSetup()
 
@@ -117,8 +112,11 @@ const formData = reactive({
 })
 
 const submit = () => {
+    
     const change_setting = system_setting.setSystemSetting(formData)
-
+    if(change_setting){
+        router.push('/client/welcome')
+    }
 }
 </script>
 

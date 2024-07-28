@@ -12,7 +12,8 @@
 
 
 
-        <Modal v-if="ausf_modal" medium label="Create a new Affidavit to use the Surname of the Father" footerBG="">
+        <Modal v-if="ausf_modal" large label="Create a new Affidavit to use the Surname of the Father"
+            footerBG="">
             <template v-slot:header>
                 <ModalCloseButton @click="close_ausf" />
             </template>
