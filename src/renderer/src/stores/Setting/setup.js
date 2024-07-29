@@ -7,7 +7,8 @@ export const useSetup = defineStore('useSetup', {
         isSetupDone: false,
         municipal_civil_registrar: '',
         mayor: '',
-        municipality_province: ''
+        municipality_province: '',
+        user_positions: []
     }),
     actions: {
         async getSystemSetting() {
@@ -28,21 +29,8 @@ export const useSetup = defineStore('useSetup', {
                 this.mayor = response.data[0].mayor
                 this.municipality_province = response.data[0].municipality_province
 
-
-
-                console.log(response.data)
-
                 this.isSetupDone = true
                 return true
-
-
-                // if (response.data) {
-                //     this.isSetupDone = true
-                // }
-
-                // else {
-                //     this.isSetupDone = false
-                // }
 
 
             } catch (error) {
@@ -65,5 +53,56 @@ export const useSetup = defineStore('useSetup', {
                 this.router.push('/login')
             }
         },
+        // async getUserPositions() {
+        //     try {
+        //         const hostAdd = localStorage.getItem('host')
+        //         let tokenStr = localStorage.getItem('token')
+        //         const response = await axios.get(
+        //             `http://${hostAdd}:1216/get-positions`,
+        //             { headers: { Authorization: `Bearer ${tokenStr}` } }
+        //         )
+
+        //         this.user_positions = response.data
+
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error)
+        //         this.router.push('/login')
+        //     }
+        // },
+        // async addUserPositions(data) {
+        //     try {
+        //         const hostAdd = localStorage.getItem('host')
+        //         let tokenStr = localStorage.getItem('token')
+        //         const response = await axios.post(
+        //             `http://${hostAdd}:1216/add-positions`,
+        //             data,
+        //             { headers: { Authorization: `Bearer ${tokenStr}` } }
+        //         )
+        //         console.log(response)
+        //         this.refreshPosition()
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error)
+        //         this.router.push('/login')
+        //     }
+        // },
+        // async removeUserPositions(data) {
+        //     try {
+        //         const hostAdd = localStorage.getItem('host')
+        //         let tokenStr = localStorage.getItem('token')
+        //         const response = await axios.delete(
+        //             `http://${hostAdd}:1216/add-position`,
+        //             data,
+        //             { headers: { Authorization: `Bearer ${tokenStr}` } }
+        //         )
+        //         this.refreshPosition()
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error)
+        //         this.router.push('/login')
+        //     }
+        // },
+        // async refreshPosition() {
+        //     this.getUserPositions()
+        // },
+
     },
 })

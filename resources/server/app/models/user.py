@@ -4,16 +4,17 @@ from ..extensions import IntegrityError
 from .ausf import Ausf
 
 
-class Positions(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(420), unique=True, nullable=False)
-    users = db.relationship("Users", backref="position_ref", lazy=True)
+# class Positions(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(420), unique=True, nullable=False)
+#     users = db.relationship("Users", backref="position_ref", lazy=True)
 
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    position = db.Column(db.Integer, db.ForeignKey("positions.id"), nullable=True)
+    # position = db.Column(db.Integer, db.ForeignKey("positions.id"), nullable=True)
+    position = db.Column(db.String(50), nullable=True)
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.Integer, nullable=False, default=2)
     ausf = db.relationship(Ausf, backref='users', lazy=True)

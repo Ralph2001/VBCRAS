@@ -1,7 +1,7 @@
 <template>
   <div class="h-full relative">
-    <Sidebar header="Connect to Server" />
-    <div class="flex flex-col h-full justify-center items-center p-4 md:ml-[50%] lg:ml-[30%] relative">
+    <!-- <Sidebar header="Connect to Server"  /> -->
+    <div class="flex flex-col h-full justify-center items-center p-4   relative">
       <Transition enter-active-class="animate__animated animate__fadeInDown"
         leave-active-class="animate__animated animate__fadeOutUp">
         <Alert v-if="error" message="Error: Unable to connect to host." error />
