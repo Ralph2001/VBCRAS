@@ -30,5 +30,7 @@
 - Easy track data entry
 - Easy Print Documents
 
+<h2>Documentation</h2>
+
 ## Correction of Clerical Error Change of First Name
 
