@@ -2,7 +2,11 @@
 
 
 
-
+### TODO
+- [ ] Fix Forms
+- [ ] Fix Correction of Clerical Error & Change of First Name
+- [ ] Fix Scanned Documents
+- [ ] Fix AUSF
 
 <br />
 
@@ -17,12 +21,12 @@
 - Registry Records
 
 <br />
-<br />
 
 
 ## Features
 
 - Start/Join Local Server
+- User Login/Authentication
 - Generate PDF 
 - Easy track data entry
 - Easy Print Documents
