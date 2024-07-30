@@ -10,8 +10,6 @@
 
         </div>
 
-
-
         <Modal v-if="ausf_modal" medium label=" Affidavit to use the Surname of the Father" footerBG="bg-white">
             <template v-slot:header>
                 <ModalCloseButton @click="close_ausf" />
@@ -19,7 +17,8 @@
             <!-- <iframe v-if="previewUrl" class="h-full w-full " :src="previewUrl" frameborder="1"
                 allowfullscreen=""></iframe> -->
             <div class="h-full" v-if="previewUrl">
-                <PDFViewer :pdf="previewUrl" @cancel-btn="previewUrl = ''" @save-print="submit" :status="document_status"/>
+                <PDFViewer :pdf="previewUrl" @cancel-btn="previewUrl = ''" @save-print="submit"
+                    :status="document_status" @exit-btn="close_ausf()" />
             </div>
             <div class="flex flex-col h-full w-full scale-95 " v-if="!previewUrl">
                 <div class="grid grid-cols-2 w-full">
@@ -406,15 +405,17 @@ function change_age_full() {
 const open_ausf = () => {
     ausf_modal.value = true
 }
+const document_status = ref(false)
 const close_ausf = () => {
     ausf_modal.value = false
     previewUrl.value = ''
+    document_status.value = false
     Object.assign(formData, initalForm);
     age.value = ''
     age_text.value = 'yrs. old'
+    v$.reset
 }
 
-const document_status = ref(false)
 
 const check = async () => {
     const isFormValid = await v$.value.$validate();

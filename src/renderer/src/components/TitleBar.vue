@@ -3,7 +3,7 @@
         class="fixed z-[999999999999999999999999999999] ring-0  top-0 bg-gray-800  h-6 shadow-none outline-none  w-full  flex white items-center flex-row ">
         <!-- <p class="text-xs text-gray-50">Created by Ralph</p> -->
         <div class="h-full px-4 items-center flex flex-row gap-2">
-            <p class="text-xs text-yellow-100 ">Development Mode</p>
+            <p class="text-xs text-gray-300 ">Development Mode </p>
             <!-- <p class="text-xs text-gray-500 ">{{ time }}</p> -->
         </div>
         <div class="grid grid-cols-3 w-[5rem]  h-full ml-auto  text-xs items-center text-gray-50 ">
