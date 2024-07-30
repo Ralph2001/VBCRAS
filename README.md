@@ -13,8 +13,7 @@
 
 ## Applications
 
-- Correction of Clerical Error 
-- Change of First Name
+-  [Correction of Clerical Error & Change of First Name](#Correction of Clerical Error & Change of First Name)
 - Scanned Documents
 - Forms
 - AUSF
@@ -30,3 +29,6 @@
 - Generate PDF 
 - Easy track data entry
 - Easy Print Documents
+
+## Correction of Clerical Error & Change of First Name
+
