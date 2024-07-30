@@ -27,7 +27,9 @@
 - Start/Join Local Server
 - User Login/Authentication
 - Generate PDF 
-- Easy track data entry
+- Easy track records
+- View Records
+- Auto Backup Database
 - Easy Print Documents
 - Configure Fields Positions
 
