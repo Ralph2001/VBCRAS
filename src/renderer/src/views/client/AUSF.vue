@@ -12,14 +12,15 @@
 
 
 
-        <Modal v-if="ausf_modal" medium label="Create a new Affidavit to use the Surname of the Father"
-            footerBG="">
+        <Modal v-if="ausf_modal" medium label=" Affidavit to use the Surname of the Father" footerBG="bg-white">
             <template v-slot:header>
                 <ModalCloseButton @click="close_ausf" />
             </template>
-            <iframe v-if="previewUrl" class="h-full w-full " :src="previewUrl" frameborder="1"
-                allowfullscreen=""></iframe>
-
+            <!-- <iframe v-if="previewUrl" class="h-full w-full " :src="previewUrl" frameborder="1"
+                allowfullscreen=""></iframe> -->
+            <div class="h-full" v-if="previewUrl">
+                <PDFViewer :pdf="previewUrl" @cancel-btn="previewUrl = ''" @save-print="submit" :status="document_status"/>
+            </div>
             <div class="flex flex-col h-full w-full scale-95 " v-if="!previewUrl">
                 <div class="grid grid-cols-2 w-full">
                     <div></div>
@@ -218,14 +219,15 @@
             </div>
             <template v-slot:footer>
                 <div class="items-center text-nowrap">
-                    <p class="text-gray-800 font-normal " v-if="!previewUrl"><span class="font-bold">Note:</span> What
+                    <p class="text-gray-500 font-normal text-xs " v-if="!previewUrl"><span
+                            class="font-bold">Note:</span> What
                         you
                         see on
                         screen is not
                         the final
                         output. Click 'Check' to preview the actual result.
                     </p>
-                    <p class="text-gray-800" v-if="previewUrl">This is a preview of the output</p>
+                    <p class="text-gray-500 font-normal text-xs " v-if="previewUrl">This is a preview of the output</p>
                 </div>
                 <div class="h-full flex items-center justify-end gap-2 w-full">
                     <Button label="Edit" v-if="previewUrl" @click="previewUrl = ''" />
@@ -254,6 +256,7 @@ import TableAction from '../../components/essentials/action/TableAction.vue';
 import { AuthStore } from '../../stores/clientAuth';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
+import PDFViewer from '../../components/PDFViewer.vue';
 
 
 const aufs_ = useAusf()
@@ -353,7 +356,7 @@ const initalForm = {
     at_country: 'Philippines',
     lcro_at: 'Bayambang, Pangasinan',
     day_signature: `${format(date, 'do')}`,
-    month_signature: `${format(date, 'MMMM')}, ${year}`,
+    month_signature: `${format(date, 'MMMM')} ${year}`,
     sworn_day: `${format(date, 'do')}`,
     sworn_month: `${format(date, 'MMMM')} ${year}`,
     sworn_at: 'Bayambang, Pangasinan',
@@ -411,6 +414,8 @@ const close_ausf = () => {
     age_text.value = 'yrs. old'
 }
 
+const document_status = ref(false)
+
 const check = async () => {
     const isFormValid = await v$.value.$validate();
     console.log(v$.value)
@@ -423,10 +428,12 @@ const check = async () => {
 
 const submit = async () => {
     const isFormValid = await v$.value.$validate();
-    console.log(v$.value)
+
     if (isFormValid) {
-        aufs_.addAusf({ ...formData })
-        close_ausf()
+        const add = aufs_.addAusf({ ...formData })
+        if (add) {
+            document_status.value = true
+        }
     }
 }
 

@@ -430,6 +430,8 @@ function mainWindow() {
         width: 1060,
         height: 670,
         show: false,
+        frame: false,
+
 
         autoHideMenuBar: true,
         ...(process.platform === 'linux' ? { icon } : {}),

@@ -8,7 +8,7 @@
             <div
                 class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
 
-                <div class="w-full bg-[#525659] flex  absolute p-4 top-0 z-[99999]">
+                <div class="w-full bg-[#525659] flex  absolute  p-4 top-5 z-[99999]">
                     <div>
                         <p class="text-sm  text-white">AUSF - {{ data.child_name }}
                         </p>
@@ -20,6 +20,9 @@
                             @click="previewPDF">Close</button>
                     </div>
                 </div>
+
+                <div class="absolute sm:w-[1.5rem] md:lg:w-[2rem] right-0 bg-[#525659] z-[99998] mt-[7.5rem] h-full"></div>
+
                 <!-- <div
                     class="absolute left-0 h-full w-[15rem] bg-[#525659]  flex-col items-center justify-between py-20 sm:hidden md:lg:flex">
                     <div class="h-[80%] w-[90%] flex flex-col gap-1 items-center font-medium text-sm text-gray-800">
@@ -145,9 +148,6 @@ const previewPDF = async () => {
 }
 
 const printPDF = async () => {
-
-
-
     const create = await window.AusfApi.createAUSF({ ...value })
 
     if (create) {
@@ -158,5 +158,3 @@ const printPDF = async () => {
 
 
 </script>
-
-<style lang="scss" scoped></style>
