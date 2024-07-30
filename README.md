@@ -13,10 +13,10 @@
 
 ## Applications
 
-- [Correction of Clerical Error & Change of First Name](#correction-of-clerical-error-change-of-first-name)
+- Correction of Clerical Error & Change of First Name
 - Scanned Documents
 - Forms
-- AUSF
+- [AUSF](#ausf)
 - Registry Records
 
 <br />
@@ -29,8 +29,10 @@
 - Generate PDF 
 - Easy track data entry
 - Easy Print Documents
+- Configure Fields Positions
 
 <h2>Documentation</h2>
 
-## Correction of Clerical Error Change of First Name
+
+## AUSF
 
