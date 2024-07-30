@@ -13,7 +13,7 @@
 
 ## Applications
 
--  [Correction of Clerical Error & Change of First Name](#Correction of Clerical Error & Change of First Name)
+- [Correction of Clerical Error & Change of First Name](#correction-of-clerical-error-&-change-of-first-name)
 - Scanned Documents
 - Forms
 - AUSF
