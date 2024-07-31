@@ -7,13 +7,18 @@ from ..extensions import (
     render_template,
 )
 
-from ..schemas.system_schema import SystemSchema
+from ..schemas.system_schema import SystemSchema, ScannedTypeSchema
 from ..models.system import SystemSettings
+from ..models.scanned import ScannedType
+
 # from ..models.user import Positions
 
 # All System Configuration API
 system_schema = SystemSchema()
 systems_schema = SystemSchema(many=True)
+
+scanned_schema = ScannedTypeSchema()
+scans_schema = ScannedTypeSchema(many=True)
 
 # position_schema = PositionSchema()
 # positions_schema = PositionSchema(many=True)
@@ -48,6 +53,26 @@ def get_system_settings():
     system_setting = SystemSettings.query.all()
     result = systems_schema.dump(system_setting)
     return jsonify(result), 200
+
+
+# Add Scanned Types
+
+@configuration.route("/get-scanned-type", methods=["GET"])
+def get_scanned_type():
+    scanned_types = ScannedType.query.all()
+    result = scans_schema.dump(scanned_types)
+    return jsonify(result), 200
+
+@configuration.route("/add-scanned-type", methods=["POST"])
+def add_scanned_type():
+    data = request.get_json()
+    add_scanned_type = scanned_schema.load(data, session=db.session)
+    
+    db.session.add(add_scanned_type)
+    db.session.commit()
+
+    result = scanned_schema.dump(add_scanned_type)
+    return jsonify(result), 201
 
 
 # User Positions

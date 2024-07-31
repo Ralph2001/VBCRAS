@@ -8,14 +8,6 @@
 .zoom_in-leave-to {
   opacity: 0;
 }
-
-.ag-theme-quartz {
-  --ag-range-selection-border-color: none;
-  --ag-range-selection-border-style: none;
-  --ag-range-selection-background-color: none;
-  --ag-row-border-width: 1px;
-  --ag-row-border-color: #f5f5f5;
-}
 </style>
 
 <template>
@@ -38,14 +30,19 @@
           </div>
         </div>
       </Transition>
+      <!--  <TableGrid :data="Documents.scanned" :dataColumns="colDefs" v-if="Documents.viewMode" /> -->
+      <!-- <ExplorerView :data="Documents.scanned" v-if="!Documents.viewMode" /> -->
 
-      <TableGrid :data="Documents.scanned" :dataColumns="colDefs" v-if="Documents.viewMode" />
-      <ExplorerView :data="Documents.scanned" v-if="!Documents.viewMode" />
+
+      <div v-for="scanned in Documents.scanned">
+        {{ scanned.name }}
+      </div>
     </div>
 
-    <DropZone v-if="dropzone && !auth.user_details.permissions.scanned_add" @dragleave="handleDragLeave()"
-      @drop="handleDrop" @dragover.prevent />
+    <DropZone v-if="dropzone" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
 
+
+    <!-- Modal -->
     <Transition mode="out-in" name="zoom_in">
       <Modal label="Scanned Documents" v-if="modal" dropbox>
         <template v-slot:header>
@@ -67,19 +64,15 @@
 
           <p class="text-sm font-bold">Type</p>
           <div class="flex flex-row justify-center items-center">
-            <div class="grid md:lg:grid-cols-5 sm:grid-cols-2  sm:gap-3 md:lg:gap-5 w-full">
-              <div v-for="uri in type"
+            <div class="grid md:lg:grid-cols-5 sm:grid-cols-2  sm:gap-3 md:lg:gap-3 w-full">
+              <div v-for="uri in Documents.scanned_types"
                 class="flex sm:w-full md:lg:w-[7.5rem] items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200 bg-white hover:bg-gray-50 duration-100">
-                <fwb-radio :label="uri" :value="uri" v-model="scannedData.type" name="typeBox" class="cursor-pointer" />
+                <fwb-radio :label="uri.name" :value="uri.id" v-model="scannedData.type" name="typeBox"
+                  class="cursor-pointer" />
               </div>
             </div>
-            <!-- <TypeBox :options="type" v-model="scannedData.type" :error="v$.type.$error" :ischeck="scannedData.type" /> -->
-            <!-- <TypeBox label="Death" value="Death" v-model="scannedData.type" :error="v$.type.$error" />
-                        <TypeBox label="Marriage" value="Marriage" v-model="scannedData.type" :error="v$.type.$error" />
-                        <TypeBox label="Legal Instrument" value="Legal Instrument" v-model="scannedData.type"
-                            :error="v$.type.$error" />
-                        <TypeBox label="Other" value="Other" v-model="scannedData.type" :error="v$.type.$error" /> -->
           </div>
+
           <div class="flex md:flex-row flex-col gap-2 mt-3">
             <Dropdown label="Month" :optionData="months" v-model="scannedData.month" :error="v$.month.$error" />
             <Dropdown label="Year" :optionData="years" v-model="scannedData.year" :error="v$.year.$error" />
@@ -109,91 +102,60 @@
     </Transition>
 
     <!-- Footer -->
-    <div class="pr-10 h-auto flex flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
+    <div class="px-10  h-auto flex flex-row bottom-0 fixed w-full left-0 p-2 justify-between items-center mx-auto">
       <div class="flex flex-row items-center gap-2">
-        <button class="rounded-full py-2 px-3 text-gray-500 active:bg-gray-200 hover:bg-gray-200"
-          @click="changeViewMode()" title="Change Mode">
-          <font-awesome-icon icon="fa-solid fa-repeat" />
-        </button>
-
-        <p class="text-sm font-normal text-gray-400 italic">
+        <p class="text-sm font-normal text-gray-500 italic">
           <font-awesome-icon icon="fa-solid fa-desktop" class="text-italic" />
           {{ desktop.desktop_name }}
         </p>
       </div>
 
-      <p class="text-sm font-medium text-gray-900 select-all" v-if="!Documents.viewMode">
+      <p class="text-sm font-medium text-gray-900 select-all">
         <!-- <span class="italic font-normal text-gray-500">As of {{ Documents.asOf }},</span>  -->
-
         Total Records (<span class="text-blue-600">
           {{ Number(Documents.totalCount).toLocaleString() }}</span>)
       </p>
     </div>
+
+
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref, reactive, computed, defineAsyncComponent } from "vue";
 import { useScannedDocuments } from "../../stores/scanned";
-import ScannedDatatable from "../../components/client/ScannedDatatable.vue";
 import { useComputerStore } from "../../stores/computer";
 import DropZone from "../../components/client/DropZone.vue";
 import { AuthStore } from "../../stores/clientAuth";
-import TypeBox from "../../components/client/TypeBox.vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 import Dropdown from "../../components/client/inputs/Dropdown.vue";
 import Swal from "sweetalert2";
-import ActionBtn from "../../components/ActionBtn.vue";
-import Tag from "../../components/Tag.vue";
-import TypeFilter from "../../components/TypeFilter.vue";
 import { FwbRadio } from "flowbite-vue";
-import HandleButton from "../../components/mode/HandleButton.vue";
 
-// import Swal from 'sweetalert2'
-
-// import ExplorerView from "../../components/client/ExplorerView.vue";
-// import Modal from "../../components/client/modal/Modal.vue";
-// import TableGrid from "../../components/TableGrid.vue";
-
-const TableGrid = defineAsyncComponent(() =>
-  import("../../components/TableGrid.vue")
-)
 const Modal = defineAsyncComponent(() =>
   import("../../components/client/modal/Modal.vue")
 )
 const ExplorerView = defineAsyncComponent(() =>
   import("../../components/client/ExplorerView.vue")
 )
+
 onMounted(() => {
   Documents.getScanned();
-  Documents.getTime();
+  Documents.getScannedType();
+  // Documents.getTime();
   desktop.getUserName();
   auth.isAuthenticated();
 });
 
+const auth = AuthStore();
+const Documents = useScannedDocuments();
+const desktop = useComputerStore();
+
 const isSubmitting = ref(false);
 const submit = ref("Save");
 
-const colDefs = ref([
-  {
-    field: "name",
-    flex: 2,
-    filter: true,
-    floatingFilter: true,
-    cellClass: "font-semibold text-md",
-  },
-  { field: "type", flex: 1, cellRenderer: Tag, filter: TypeFilter },
-  { field: "year", flex: 1, filter: true, cellClass: "font-semibold" },
-  {
-    headerName: "Action",
-    field: "filepath",
-    flex: 1,
-    cellRenderer: ActionBtn,
-    cellClass: "my-class",
-  },
-]);
 
 const months = [
   "January",
@@ -210,7 +172,10 @@ const months = [
   "December",
 ];
 
-const type = ["Birth", "Marriage", "Death", "Legal Instruments", "Other"];
+// All Scanned Types.
+
+const type = Documents.scanned_types
+
 
 const years = computed(() => {
   const year_S = new Date().getFullYear();
@@ -231,13 +196,8 @@ const Toast = Swal.mixin({
   },
 });
 
-const changeViewMode = () => {
-  Documents.changeViewMode();
-};
 
-const auth = AuthStore();
-const Documents = useScannedDocuments();
-const desktop = useComputerStore();
+
 
 const modal = ref(false);
 const dropzone = ref(false);
@@ -271,7 +231,7 @@ function handleDrop(event) {
   event.preventDefault();
   const files = event.dataTransfer.files;
 
-  const uploaded_by = auth.user;
+  const uploaded_by = auth.user_id;
   const device_used = desktop.desktop_name;
 
   for (const file of files) {
@@ -361,14 +321,14 @@ const submitScanned = async () => {
 
   isSubmitting.value = true;
   submit.value = "Saving";
-  const type = scannedData.type;
+  const type_id = scannedData.type;
   const month = scannedData.month;
   const year = scannedData.year;
 
   const updatedArray = [...data.value];
 
   for (let item of updatedArray) {
-    item.type = type;
+    item.type_id = type_id;
     item.month = month;
     item.year = year;
   }

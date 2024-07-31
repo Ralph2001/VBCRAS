@@ -1,9 +1,9 @@
 from flask import Flask
 from .extensions import db, jwt, ma, CORS, timedelta
-from .routes.scanned import scanned
 from .routes.user import user
 from .routes.ausf import ausf
 from .routes.config_route import configuration
+from .routes.scanned import scans
 
 
 
@@ -25,10 +25,11 @@ def create_app():
     
     
     # Blueprints
-    app.register_blueprint(scanned)
+
     app.register_blueprint(user)
     app.register_blueprint(ausf)
     app.register_blueprint(configuration)
+    app.register_blueprint(scans)
     
     
     

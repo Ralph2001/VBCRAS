@@ -8,13 +8,11 @@
                 </p>
             </div>
             <div class="flex flex-row gap-3 ml-auto">
-                <button v-if="status" class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
-                    @click="">Print
-                    Again</button>
+
+                <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
+                    @click="save_print">{{ props.status ? 'Print Again' : 'Save and Print' }}</button>
                 <button v-if="status" @click="exit_btn"
                     class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Exit</button>
-                <button v-if="!status" class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
-                    @click="save_print">Save and Print</button>
                 <button v-if="!status" class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
                     @click="cancel">Return</button>
             </div>
@@ -33,6 +31,7 @@
 </template>
 
 <script setup>
+
 const emit = defineEmits(['cancel-btn', 'save-print', 'exit-btn']);
 
 const props = defineProps({
@@ -57,6 +56,8 @@ const save_print = () => {
 const exit_btn = () => {
     emit('exit-btn')
 }
+
+
 </script>
 
 <style lang="scss" scoped></style>

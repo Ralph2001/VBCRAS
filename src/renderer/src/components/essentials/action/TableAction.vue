@@ -57,14 +57,12 @@
             </div>
         </Teleport>
 
-        <div class=" absolute flex flex-col items-center border shadow-sm h-auto bg-white top-[95%] z-[99999] w-[10rem]"
+        <div class=" absolute flex flex-col items-center  border shadow-sm h-auto bg-white top-[95%] z-[99999] w-[10rem]"
             v-if="isClick">
-            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Preview
-                PDF</button>
-            <!-- <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium">Report</button> -->
-            <!-- Why? -->
-            <!-- <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium"
-                v-if="auth_.user_id === data.created_by || auth_.user_role === 1">Edit</button> -->
+            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Open</button>
+            <!-- <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Info</button>
+            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Flag</button> -->
+        
             <button class="w-full hover:bg-red-300 flex items-center px-5 font-medium" v-if="auth_.user_role === 1"
                 @click="removeItem">Remove</button>
         </div>

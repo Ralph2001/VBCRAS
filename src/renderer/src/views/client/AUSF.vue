@@ -268,6 +268,7 @@ onMounted(() => {
 
 
 const previewUrl = ref() //PDF Base64
+const printValue = ref()
 const ausf_modal = ref(false)
 
 
@@ -406,6 +407,7 @@ const open_ausf = () => {
     ausf_modal.value = true
 }
 const document_status = ref(false)
+
 const close_ausf = () => {
     ausf_modal.value = false
     previewUrl.value = ''
@@ -424,18 +426,29 @@ const check = async () => {
         return
     }
     const create = await window.AusfApi.createAUSF({ ...formData })
+
     previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + create.dataurl
+    printValue.value = create.dataurl
 }
 
 const submit = async () => {
     const isFormValid = await v$.value.$validate();
-
-    if (isFormValid) {
+    if (isFormValid && !document_status.value) {
         const add = aufs_.addAusf({ ...formData })
         if (add) {
             document_status.value = true
+         
+            printPDF()
         }
+        return
     }
+    printPDF()
+}
+
+
+const printPDF = async () => {
+    // Add function that adds to logs
+    const print = await window.LocalCivilApi.printPDFBase64(printValue.value)
 }
 
 </script>

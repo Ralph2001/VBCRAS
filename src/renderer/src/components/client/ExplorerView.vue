@@ -63,7 +63,7 @@
         </div>
       </div> -->
 
-      <div class="flex flex-row gap-1 justify-end pr-5">
+      <!-- <div class="flex flex-row gap-1 justify-end pr-5">
         <div
           :class="{
             'text-gray-600 shadow-custom-inset ': Documents.OpenMode === 'OpenSideBar',
@@ -82,7 +82,7 @@
         >
           <font-awesome-icon icon="fa-solid fa-window-restore" />
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div

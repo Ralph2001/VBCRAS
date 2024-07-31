@@ -8,7 +8,8 @@ export const useSetup = defineStore('useSetup', {
         municipal_civil_registrar: '',
         mayor: '',
         municipality_province: '',
-        user_positions: []
+        user_positions: [],
+        scanned_types: []
     }),
     actions: {
         async getSystemSetting() {
@@ -52,6 +53,46 @@ export const useSetup = defineStore('useSetup', {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
             }
+        },
+        async addScannedType(data) {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.post(
+                    `http://${hostAdd}:1216/add-scanned-type`,
+                    data,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                this.refreshScannedTypes()
+
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
+        },
+        async getScannedType() {
+            try {
+                if (!this.isFetched) {
+                    const hostAdd = localStorage.getItem('host')
+                    let tokenStr = localStorage.getItem('token')
+                    const response = await axios.get(
+                        `http://${hostAdd}:1216/get-scanned-type`,
+                        { headers: { Authorization: `Bearer ${tokenStr}` } }
+
+                    )
+                    this.scanned_types = response.data
+                    console.log(response)
+                } else {
+                    console.log('Error')
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
+        },
+
+        async refreshScannedTypes() {
+            this.getScannedType()
         },
         // async getUserPositions() {
         //     try {
