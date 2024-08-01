@@ -7,10 +7,10 @@ export const useScannedDocuments = defineStore('scanned', {
         scanned_types: [],
         loading: false,
         isFetched: false,
-        viewMode: localStorage.getItem('SviewMode'),
-        OpenMode: localStorage.getItem('SOpenMode')
-            ? localStorage.getItem('SOpenMode')
-            : 'OpenSideBar',
+        // viewMode: localStorage.getItem('SviewMode'),
+        // OpenMode: localStorage.getItem('SOpenMode')
+        //     ? localStorage.getItem('SOpenMode')
+        //     : 'OpenSideBar',
     }),
     getters: {
         totalCount: (state) => {
@@ -32,7 +32,7 @@ export const useScannedDocuments = defineStore('scanned', {
                     console.log(response)
                     this.scanned = response.data
                     this.loading = false
-                    // this.isFetched = true
+                    this.isFetched = true
                     // this.scanned = response.data.scans
                 } else {
                     console.log('⚡')

@@ -22,7 +22,13 @@
             </div>
             <div class="flex flex-col h-full w-full scale-95 " v-if="!previewUrl">
                 <div class="grid grid-cols-2 w-full">
-                    <div></div>
+                    <div class="flex p-4">
+                        <div class="flex flex-row items-center gap-2">
+                            <input type="checkbox" id="assertation" class="border rounded border-gray-400"
+                                v-model="formData.isWithAttestation">
+                            <label for="assertation" class="text-sm">With Sworn Attestation</label>
+                        </div>
+                    </div>
                     <div class="flex flex-col gap-1 ">
                         <p class="underline text-sm font-neutral font-serif">LEGAL INSTRUMENT</p>
                         <div class="flex flex-row gap-2">
@@ -192,7 +198,7 @@
                         <div class="flex flex-row gap-2 w-full items-center text-nowrap">
                             <p class=" text-gray-700 text-md">city/municipality of</p>
                             <InputButtomBorder :error="v$.sworn_at.$error" v-model="formData.sworn_at" skip />
-                            <p class=" text-gray-700 text-md">, affiant exhibiting his/</p>
+                            <p class=" text-gray-700 text-md">, affiant exhibiting his/her</p>
                         </div>
                         <div class="flex flex-row gap-2 w-full items-center text-nowrap">
                             <InputButtomBorder v-model="formData.exhibiting" skip />
@@ -214,18 +220,117 @@
                                 thereof.</p>
                         </div>
                     </div>
+
+                    <!-- ///////////////////////// -->
+                    <!-- ///////////////////////// -->
+                    <!-- Sworn Attestation -->
+                    <!-- ///////////////////////// -->
+                    <!-- ///////////////////////// -->
+                    <div class="flex flex-col gap-1 py-10 tracking-widest text-gray-800 font-semibold"
+                        v-if="formData.isWithAttestation">
+                        <div class=" w-full border-dashed border-gray-600 mb-10  border-2">
+                        </div>
+                        <p class="text-gray-800 text-center font-bold tracking-widest">SWORN ATTESTATION</p>
+
+                        <div class="flex flex-row mt-5 gap-1">
+                            <p class=" indent-12">I,</p>
+                            <InputButtomBorder v-model="formData.attestation_name" />
+                            <p class="text-nowrap">Filipino citizen, of legal age, with address at </p>
+                        </div>
+                        <div class="flex flex-row gap-1">
+
+                            <InputButtomBorder v-model="formData.attestation_address" />
+                            <p class="text-nowrap">after being sworn in accordance with law, do </p>
+                        </div>
+                        <div>
+                            <p class="text-nowrap  w-full">hereby depose and state that I am the mother of the affiant
+                                in the
+                                Affidavit to
+                                Use the
+                                Surname of
+                                the </p>
+                        </div>
+                        <div class="flex flex-row gap-1">
+                            <p class="text-nowrap ">Father (AUSF); that my </p>
+                            <InputButtomBorder v-model="formData.attestation_relation" :width="'6.2rem'" />
+                            <p class="text-nowrap"> is
+                                fully aware of the consequences of the use of the
+                                surname of</p>
+
+                        </div>
+                        <div class="flex flex-row">
+                            <p class="text-nowrap">his father </p>
+                        </div>
+
+                        <div class="mt-2 flex flex-col">
+                            <div class="flex flex-row gap-1">
+                                <p class="text-nowrap indent-12">In witness whereof, I hereby affixed my signature on
+                                    this
+                                </p>
+                                <p class="text-nowrap">
+                                    <InputButtomBorder v-model="formData.attestation_signature_day" :width="'6.2rem'" />
+                                </p>
+                                <p class="text-nowrap">day of </p>
+                                <p class="text-nowrap">
+                                    <InputButtomBorder v-model="formData.attestation_signature_month"
+                                        :width="'6.2rem'" />
+                                </p>
+                                <p>at</p>
+                            </div>
+                            <div>
+                                <p>Bayambang, Pangasinan, Philippines.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-10 flex flex-col w-[50%] self-end items-center ">
+                            <InputButtomBorder v-model="formData.attestation_signature" />
+                            <p class="text-gray-700 text-md">Signature over printed name of Affiant</p>
+                        </div>
+                        <div class="flex flex-col mt-10 gap-1">
+                            <div class="flex flex-row gap-1">
+                                <p class="text-nowrap indent-12">
+                                    SUBSCRIBED AND SWORN to before me this</p>
+                                <InputButtomBorder v-model="formData.attestation_ss_day" />
+                                <p class="text-nowrap">day of </p>
+                                <InputButtomBorder v-model="formData.attestation_ss_month_year" />
+                                <p class="text-nowrap">in the </p>
+                            </div>
+                            <div class="flex flex-row gap-1">
+                                <p class="text-nowrap">city/municipality of Bayambang, Pangasinan affiant exhibiting her
+                                </p>
+                                <InputButtomBorder v-model="formData.attestation_exhibiting_her" />
+                            </div>
+                            <div class="flex flex-row gap-1">
+
+                                <InputButtomBorder v-model="formData.attestation_exhibiting_number" />
+                                <p class="text-nowrap">issued at </p>
+                                <InputButtomBorder v-model="formData.attestation_issued_at" />
+                                <p class="text-nowrap">on </p>
+                                <InputButtomBorder v-model="formData.attestation_issued_on" />.
+                            </div>
+                            <div class="mt-10">
+                                <p class="text-wrap indent-12">I certify that I personally examined the affiant and that
+                                    she
+                                    voluntarily executed the
+                                    foregoing
+                                    affidavit and understood the contents thereof.</p>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
             <template v-slot:footer>
                 <div class="items-center text-nowrap">
-                    <p class="text-gray-500 font-normal text-xs " v-if="!previewUrl"><span
+                    <!-- <p class="text-gray-500 font-normal text-xs " v-if="!previewUrl"><span
                             class="font-bold">Note:</span> What
                         you
                         see on
                         screen is not
                         the final
                         output. Click 'Check' to preview the actual result.
-                    </p>
+                    </p> -->
                     <p class="text-gray-500 font-normal text-xs " v-if="previewUrl">This is a preview of the output</p>
                 </div>
                 <div class="h-full flex items-center justify-end gap-2 w-full">
@@ -256,6 +361,7 @@ import { AuthStore } from '../../stores/clientAuth';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import PDFViewer from '../../components/PDFViewer.vue';
+import { assert } from '@vueuse/core/index.cjs';
 
 
 const aufs_ = useAusf()
@@ -366,7 +472,20 @@ const initalForm = {
     exhibiting_on: `${format(date, 'MMMM dd, yyyy')}`,
     ap_phi_registry_number: '',
     ap_phi_date_registration: '',
-    pfsp_of: ''
+    pfsp_of: '',
+    isWithAttestation: false,
+    attestation_name: '',
+    attestation_address: '',
+    attestation_relation: '',
+    attestation_signature_day: '',
+    attestation_signature_month: '',
+    attestation_signature: '',
+    attestation_ss_day: '',
+    attestation_ss_month_year: '',
+    attestation_exhibiting_her: '',
+    attestation_exhibiting_number: '',
+    attestation_issued_at: '',
+    attestation_issued_on: '',
 }
 const formData = reactive({ ...initalForm })
 
@@ -437,7 +556,7 @@ const submit = async () => {
         const add = aufs_.addAusf({ ...formData })
         if (add) {
             document_status.value = true
-         
+
             printPDF()
         }
         return

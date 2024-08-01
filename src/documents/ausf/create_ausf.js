@@ -14,7 +14,18 @@ export async function generate_ausf(formData) {
     const ausf_main_template = path.resolve(__dirname, '../../resources/documents/AUSF/main_ausf_template.pdf')
     const main_template = fs.readFileSync(ausf_main_template)
 
+
+
+    const attestation_template = path.resolve(__dirname, '../../resources/documents/AUSF/attestation_template.pdf')
+    const attestation = fs.readFileSync(attestation_template)
+
     const pdfDoc = await PDFDocument.load(main_template)
+
+    if (formData.isWithAttestation) {
+        const attestationDoc = await PDFDocument.load(attestation)
+        const [AttestationPage] = await pdfDoc.copyPages(attestationDoc, [0])
+        pdfDoc.insertPage(1, AttestationPage)
+    }
 
     const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
     const timesRomanFontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold)
@@ -34,6 +45,8 @@ export async function generate_ausf(formData) {
 
     const pages = pdfDoc.getPages()
     const firstPage = pages[0]
+    const SecondPage = pages[1]
+
     const { width, height } = firstPage.getSize()
     const fontSize = 12
 
@@ -96,13 +109,31 @@ export async function generate_ausf(formData) {
     const sworn_month = create_center_text_within_box(firstPage, formData.sworn_month, fontSize, timesRomanFontBold, height, 421.2, 100.8, 169.92 + 32.4) // text_position_x, box_width, text_position_y
     const sworn_municipality = create_center_text_within_box(firstPage, formData.sworn_at, fontSize, timesRomanFontBold, height, 190.8, 185.76, 156.24 + 32.4) // text_position_x, box_width, text_position_y
 
-    const exhibiting_his_her = create_center_text_within_box(firstPage, formData.exhibiting + ' ' + formData.exhibiting_number, fontSize, timesRomanFontBold, height, 56.88, 245.52 , 141.84 + 32.4) // text_position_x, box_width, text_position_y
+    const exhibiting_his_her = create_center_text_within_box(firstPage, formData.exhibiting + ' ' + formData.exhibiting_number, fontSize, timesRomanFontBold, height, 56.88, 245.52, 141.84 + 32.4) // text_position_x, box_width, text_position_y
     // const exhibiting_number = create_center_text_within_box(firstPage, formData.exhibiting_number, fontSize, timesRomanFontBold, height, 231.12, 76.32, 141.84) // text_position_x, box_width, text_position_y
-    const exhibiting_issued_at = create_center_text_within_box(firstPage, formData.exhibiting_at, fontSize, timesRomanFontBold, height, 374.4, 156.24, 141.84  + 32.4) // text_position_x, box_width, text_position_y
+    const exhibiting_issued_at = create_center_text_within_box(firstPage, formData.exhibiting_at, fontSize, timesRomanFontBold, height, 374.4, 156.24, 141.84 + 32.4) // text_position_x, box_width, text_position_y
     const exhibiting_issued_on = create_center_text_within_box(firstPage, formData.exhibiting_on, fontSize, timesRomanFontBold, height, 56.88, 108, 127.44 + 32.4) // text_position_x, box_width, text_position_y
+
+
+
+
+
+
+    // For Attestation 
+
+    formData.isWithAttestation ? AttestationData(SecondPage, formData, fontSize, timesRomanFontBold) : ''
+
+
+
 
     const pdfBytes = await pdfDoc.saveAsBase64()
     return { status: true, pdfbase64: pdfBytes }
+}
+
+function AttestationData(SecondPage, formData, fontSize, font) {
+    
+    const attestation_name = create_center_text_within_box(SecondPage, formData.attestation_name, fontSize, font, 105.12, 208.8, 765.36) // text_position_x, box_width, text_position_y
+
 }
 
 

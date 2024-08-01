@@ -9,4 +9,4 @@ class AusfSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         include_fk = True
 
-    created_by_user = ma.Nested(CreatedUserSchema, attribute="users")  # Include related User
+    created_by_user = ma.Nested(CreatedUserSchema, attribute="users")  

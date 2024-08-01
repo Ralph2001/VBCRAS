@@ -7,7 +7,7 @@ import router from './router'
 
 import 'core-js/features/promise/with-resolvers';
 import PrimeVue from 'primevue/config'
-import Lara from './assets/presets/lara'
+// import Lara from './assets/presets/lara'
 
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
@@ -168,6 +168,6 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(VueSweetalert2)
 app.component('VueDatePicker', VueDatePicker)
 
-app.use(PrimeVue, { unstyled: true, pt: Lara })
+app.use(PrimeVue, { unstyled: true })
 
 app.mount('#app')

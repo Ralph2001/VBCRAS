@@ -31,12 +31,12 @@
         </div>
       </Transition>
       <!--  <TableGrid :data="Documents.scanned" :dataColumns="colDefs" v-if="Documents.viewMode" /> -->
-      <!-- <ExplorerView :data="Documents.scanned" v-if="!Documents.viewMode" /> -->
+      <ExplorerView :data="Documents.scanned" />
 
 
-      <div v-for="scanned in Documents.scanned">
+      <!-- <div v-for="scanned in Documents.scanned">
         {{ scanned.name }}
-      </div>
+      </div> -->
     </div>
 
     <DropZone v-if="dropzone" @dragleave="handleDragLeave()" @drop="handleDrop" @dragover.prevent />
@@ -250,12 +250,12 @@ function handleDrop(event) {
             scannedData.month = inmonth;
           }
         }
-        for (const intype of type) {
-          const intypetolower = intype.toLowerCase();
-          if (reptolower === intypetolower) {
-            scannedData.type = intype;
-          }
-        }
+        // for (const intype of type) {
+        //   const intypetolower = type ? intype.toLowerCase() : '';
+        //   if (reptolower === intypetolower) {
+        //     scannedData.type = intype;
+        //   }
+        // }
       }
       if (scannedData.type === "") {
         scannedData.type = "Other";

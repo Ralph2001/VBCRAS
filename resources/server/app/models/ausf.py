@@ -33,6 +33,20 @@ class Ausf(db.Model):
      ap_phi_date_registration = db.Column(db.String, nullable=False)
      pfsp_of = db.Column(db.String, nullable=False)
      
+     isWithAttestation = db.Column(db.Boolean, nullable=False)   
+     attestation_name = db.Column(db.String, nullable=True)   
+     attestation_address = db.Column(db.String, nullable=True)   
+     attestation_relation = db.Column(db.String, nullable=True)   
+     attestation_signature_day = db.Column(db.String, nullable=True)   
+     attestation_signature_month = db.Column(db.String, nullable=True)   
+     attestation_signature = db.Column(db.String, nullable=True)   
+     attestation_ss_day = db.Column(db.String, nullable=True)   
+     attestation_ss_month_year = db.Column(db.String, nullable=True)   
+     attestation_exhibiting_her = db.Column(db.String, nullable=True)   
+     attestation_exhibiting_number = db.Column(db.String, nullable=True)   
+     attestation_issued_at = db.Column(db.String, nullable=True)   
+     attestation_issued_on = db.Column(db.String, nullable=True)   
+     # attestation_ = db.Column(db.String, nullable=True)   
      
     #  def to_dict(self):
     #     return {

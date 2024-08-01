@@ -2,7 +2,7 @@ from ..extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..extensions import IntegrityError
 from .ausf import Ausf
-
+from .scanned import Scans
 
 # class Positions(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +17,10 @@ class Users(db.Model):
     position = db.Column(db.String(50), nullable=True)
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.Integer, nullable=False, default=2)
+    
+    # Relationship
     ausf = db.relationship(Ausf, backref='users', lazy=True)
+    scans = db.relationship(Scans, backref='users', lazy=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
