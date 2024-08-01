@@ -121,7 +121,7 @@ export async function generate_ausf(formData) {
 
     // For Attestation 
 
-    formData.isWithAttestation ? AttestationData(SecondPage, formData, fontSize, timesRomanFontBold) : ''
+    formData.isWithAttestation ? AttestationData(SecondPage, formData, fontSize, timesRomanFontBold, height) : ''
 
 
 
@@ -130,16 +130,32 @@ export async function generate_ausf(formData) {
     return { status: true, pdfbase64: pdfBytes }
 }
 
-function AttestationData(SecondPage, formData, fontSize, font) {
+function AttestationData(SecondPage, formData, fontSize, font, height) {
+
+    const attestation_name = create_center_text_within_box(SecondPage, formData.attestation_name, fontSize, font, height, 105.12, 208.8, 765.36) // text_position_x, box_width, text_position_y
+    const attestation_address = create_center_text_within_box(SecondPage, formData.attestation_address, fontSize, font, height, 54.72, 259.2, 743.76) // text_position_x, box_width, text_position_y
+    const attestation_relation = create_center_text_within_box(SecondPage, formData.attestation_relation, fontSize, font, height, 174.24, 303.84, 704.16) // text_position_x, box_width, text_position_y
+    const attestation_signature_day = create_center_text_within_box(SecondPage, formData.attestation_signature_day, fontSize, font, height, 374.4, 37.44, 642.96, true) // text_position_x, box_width, text_position_y
+    const attestation_signature_month = create_center_text_within_box(SecondPage, formData.attestation_signature_month, fontSize, font, height, 453.6, 92.88, 642.86, ) // text_position_x, box_width, text_position_y
     
-    const attestation_name = create_center_text_within_box(SecondPage, formData.attestation_name, fontSize, font, 105.12, 208.8, 765.36) // text_position_x, box_width, text_position_y
+    const attestation_signature = create_center_text_within_box(SecondPage, formData.attestation_signature, fontSize, font, height, 344.88, 208.08, 538.56 ) // text_position_x, box_width, text_position_y
+    
+    const attestation_ss_day = create_center_text_within_box(SecondPage, formData.attestation_ss_day, fontSize, font, height, 327.6, 38.88, 438.48, true) // text_position_x, box_width, text_position_y
+    const attestation_ss_month_year = create_center_text_within_box(SecondPage, formData.attestation_ss_month_year, fontSize, font, height, 403.92, 102.96, 438.48) // text_position_x, box_width, text_position_y
+    
+    const attestation_exhibiting_her = create_center_text_within_box(SecondPage, formData.attestation_exhibiting_her, fontSize, font, height, 375.84, 166.32, 424.8) // text_position_x, box_width, text_position_y
+    
+    const attestation_exhibiting_number = create_center_text_within_box(SecondPage, formData.attestation_exhibiting_number, fontSize, font, height, 56.16, 77.04, 406.08) // text_position_x, box_width, text_position_y
+    const attestation_issued_at = create_center_text_within_box(SecondPage, formData.attestation_issued_at, fontSize, font, height, 181.44, 195.84, 406.08) // text_position_x, box_width, text_position_y
+    const attestation_issued_on = create_center_text_within_box(SecondPage, formData.attestation_issued_on, fontSize, font, height, 393.12, 151.92, 406.08) // text_position_x, box_width, text_position_y
+
 
 }
 
 
 
 
-function create_center_text_within_box(firstPage, text, fontSize, font, height, text_position_x, box_width, text_position_y, isDay) {
+function create_center_text_within_box(page, text, fontSize, font, height, text_position_x, box_width, text_position_y, isDay) {
 
     const textWidth = font.widthOfTextAtSize(text, fontSize);
     const centeredX = text_position_x + (box_width - textWidth) / 2;
@@ -155,7 +171,7 @@ function create_center_text_within_box(firstPage, text, fontSize, font, height, 
 
             if (item === 's' || item === 't' || item === 'n' || item === 'd' || item === 'r' || item === 'h') {
                 const widthofText = font.widthOfTextAtSize(item, 6);
-                firstPage.drawText(item, {
+                page.drawText(item, {
                     x: centerx + totalWidth,
                     y: centery + 5,
                     size: 6,
@@ -167,7 +183,7 @@ function create_center_text_within_box(firstPage, text, fontSize, font, height, 
                 continue
             }
 
-            firstPage.drawText(item, {
+            page.drawText(item, {
                 x: centerx + totalWidth,
                 y: centery,
                 size: fontSize,
@@ -180,7 +196,7 @@ function create_center_text_within_box(firstPage, text, fontSize, font, height, 
         return
     }
 
-    firstPage.drawText(text, {
+    page.drawText(text, {
         x: centeredX,
         y: centeredY,
         size: fontSize,
