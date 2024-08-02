@@ -23,7 +23,7 @@
         <ModalCloseButton @click="closeModal" />
       </template>
 
-      <div class="flex flex-col sm:px-6 md:px-4 h-max w-full gap-4 relative" :style="bgTexture">
+      <div class="flex flex-col sm:px-4 md:lg:px-[20rem] h-max w-full gap-4 relative" :style="bgTexture">
         <div class="flex items-center justify-center p-2" ref="isFormVisible">
           <Box title="Document" width="w-fit ">
             <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
@@ -38,7 +38,7 @@
         </div>
 
         <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
-          <div class="w-full flex item-center justify-center p-1 mb-5 transition-all shadow bg-[#F3F4F6]">
+          <div class="w-full flex item-center justify-center p-1 mb-5 transition-all shadow-md bg-white">
             <p class="text-lg uppercase font-semibold tracking-wider text-pretty" v-if="formData.type === 'CCE'">
               PETITION FOR CORRECTION OF CLERICAL ERROR IN THE CERTIFICATE OF
               {{ documentTypeLabel }}
@@ -48,7 +48,7 @@
             </p>
           </div>
 
-          <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4">
             <Box title="Petition Details" width="w-full">
               <div class="grid grid-cols-1 w-full gap-3">
                 <div class="w-full flex flex-col">
@@ -66,10 +66,12 @@
             </Box>
 
             <Box title="Petitioner Nationality & Complete Address" width="w-full">
-              <div class="grid grid-cols-1 w-full gap-2">
+              <div class="grid grid-cols-3 w-full gap-2">
                 <Input label="Nationality" :error="v$.nationality.$error" v-model="formData.nationality" skip />
-                <AutoComplete label="Petitioner Address" v-model="formData.petitioner_address"
-                  :error="v$.petitioner_address.$error" />
+                <div class=" col-span-2">
+                  <AutoComplete label="Petitioner Address" v-model="formData.petitioner_address"
+                    :error="v$.petitioner_address.$error" />
+                </div>
               </div>
             </Box>
           </div>
@@ -90,13 +92,8 @@
 
             <div class="basis-[60%] grow">
               <Box title="Document Owner & Relationship to the Owner" width="w-full">
-                <div class="flex sm:flex-col md:lg:flex-row w-full gap-2">
-                  <div :class="{
-                    grow:
-                      (formData.document_type === 'Marriage' &&
-                        formData.cce_in === 'my') ||
-                      (formData.document_type === 'Marriage' && formData.cce_in === ''),
-                  }" class="basis-[70%]">
+                <div class=" grid grid-cols-1 w-full gap-2">
+                  <div class="w-full">
                     <Input :error="v$.name_owner.$error" :label="formData.document_type === 'Marriage' && formData.cce_in === 'my'
                       ? 'Complete Name of Spouse'
                       : 'Document Owner'
@@ -108,7 +105,7 @@
                           : false || formData.cce_in === ''
                           " @input="formData.name_owner = $event.target.value.toUpperCase()" />
                   </div>
-                  <div class="grow" v-if="
+                  <div v-if="
                     formData.document_type === 'Birth' ||
                     formData.document_type === 'Death' ||
                     (formData.document_type === 'Marriage' && formData.cce_in === 'the')
@@ -190,8 +187,8 @@
                       </p>
                     </div>
                     <div class="grow">
-                      <InputSuggestions  @change="change_granted_text()"
-                        nolabel v-model="formData.clerical_errors.description[index]" :items="DescriptionSuggestions"
+                      <InputSuggestions @change="change_granted_text()" nolabel
+                        v-model="formData.clerical_errors.description[index]" :items="DescriptionSuggestions"
                         @keyup.ctrl.space="addItem()" />
                     </div>
                     <div class="grow">
@@ -662,11 +659,11 @@ const closePreference = (event, value) => {
 const petitions = usePetitions();
 
 onMounted(async () => {
-  petitions.getPetitions();
-  const latest = await petitions.getLatestPetition();
-  if (latest) {
-    getTheLatestPetitionNumber();
-  }
+  // petitions.getPetitions();
+  // const latest = await petitions.getLatestPetition();
+  // if (latest) {
+  //   getTheLatestPetitionNumber();
+  // }
 });
 
 // Get Latest Petition Number

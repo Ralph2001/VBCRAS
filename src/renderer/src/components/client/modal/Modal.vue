@@ -50,7 +50,7 @@
             'h-[calc(100vh-180px)]': small || medium,
             'h-[calc(100vh-129px)]': large,
           }"
-          class="overflow-y-scroll relative bg-gray-100"
+          class="overflow-y-scroll relative bg-white"
         >
           <slot> </slot>
         </div>

@@ -8,17 +8,17 @@
         </div>
         <div class="grid grid-cols-3 w-[5rem]  h-full ml-auto  text-xs items-center text-gray-50 ">
             <div class="titlebar-button  h-full  flex items-center justify-center">
-                <button class="flex  hover:text-gray-800 hover:bg-white h-full items-center justify-center  w-full">
+                <button tabindex="-1" class="flex  hover:text-gray-800 hover:bg-white h-full items-center justify-center  w-full">
                     <font-awesome-icon icon="fa-solid fa-window-minimize " class="pb-[0.5rem]" />
                 </button>
             </div>
             <div class="titlebar-button   flex h-full items-center justify-center">
-                <button class="flex  hover:text-gray-800 hover:bg-white h-full items-center justify-center  w-full">
+                <button tabindex="-1" class="flex  hover:text-gray-800 hover:bg-white h-full items-center justify-center  w-full">
                     <font-awesome-icon icon="fa-regular fa-window-maximize" />
                 </button>
             </div>
             <div class="titlebar-button h-full flex items-center justify-center ">
-                <button title="Close App"
+                <button tabindex="-1" title="Close App"
                     class="flex  hover:text-gray-800 hover:bg-red-300 h-full   items-center justify-center w-full">
                     <font-awesome-icon icon="fa-solid fa-xmark" />
                 </button>

@@ -21,6 +21,8 @@ export async function generate_ausf(formData) {
 
     const pdfDoc = await PDFDocument.load(main_template)
 
+    console.log(formData)
+
     if (formData.isWithAttestation) {
         const attestationDoc = await PDFDocument.load(attestation)
         const [AttestationPage] = await pdfDoc.copyPages(attestationDoc, [0])

@@ -4,13 +4,20 @@
             class=" border px-4 h-8 flex items-center  transition-all font-medium rounded-sm"
             @click="showOptions">Action</button>
 
+        <Teleport to="body" v-if="isDialogVisible">
+            <Transition>
+                <Dialog :data="data_information" @cancel-dialog="cancel_removal" @proceed-removal="proceed_removal" />
+            </Transition>
+        </Teleport>
         <Teleport to="body" v-if="isViewingPdf">
             <div
                 class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
 
                 <div class="w-full bg-[#525659] flex  absolute  p-4 top-5 z-[99999]">
                     <div>
-                        <p class="text-sm  text-white">AUSF - {{ data.child_name }}
+                        <p class="text-sm  text-white">AUSF {{ data.isWithAttestation ? ' WITH SWORN ATTESTATION' : ''
+                            }} -
+                            {{ data.child_name }}
                         </p>
                     </div>
                     <div class="flex flex-row gap-3 ml-auto">
@@ -21,7 +28,8 @@
                     </div>
                 </div>
 
-                <div class="absolute sm:w-[1.5rem] md:lg:w-[2rem] right-0 bg-[#525659] z-[99998] mt-[7.5rem] h-full"></div>
+                <div class="absolute sm:w-[1.5rem] md:lg:w-[2rem] right-0 bg-[#525659] z-[99998] mt-[7.5rem] h-full">
+                </div>
 
                 <!-- <div
                     class="absolute left-0 h-full w-[15rem] bg-[#525659]  flex-col items-center justify-between py-20 sm:hidden md:lg:flex">
@@ -59,10 +67,11 @@
 
         <div class=" absolute flex flex-col items-center  border shadow-sm h-auto bg-white top-[95%] z-[99999] w-[10rem]"
             v-if="isClick">
-            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Open</button>
+            <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium"
+                @click="previewPDF">Open</button>
             <!-- <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Info</button>
             <button class="w-full hover:bg-blue-100 flex items-center px-5 font-medium" @click="previewPDF">Flag</button> -->
-        
+
             <button class="w-full hover:bg-red-300 flex items-center px-5 font-medium" v-if="auth_.user_role === 1"
                 @click="removeItem">Remove</button>
         </div>
@@ -75,6 +84,7 @@ import { reactive, ref } from 'vue';
 import { useAusf } from '../../../stores/Ausf';
 import { AuthStore } from '../../../stores/clientAuth';
 import { Modal } from 'flowbite';
+import Dialog from '../../Dialog.vue';
 
 const auth_ = AuthStore()
 const aufs_ = useAusf()
@@ -84,6 +94,8 @@ const iframeRef = ref(null)
 
 const isClick = ref(false)
 const button = ref()
+const isDialogVisible = ref(false)
+
 
 const props = defineProps({
     data: {
@@ -92,15 +104,31 @@ const props = defineProps({
     }
 })
 
+
+
 const data = props.params.data
+
+const data_information = ref([
+    { label: 'Type:', value: data.isWithAttestation ? 'AUSF WITH SWORN ATTESTATION' : 'AUSF' },
+    { label: 'Document Owner:', value: data.child_name },
+    { label: 'Affiant Name:', value: data.affiant_name },
+    { label: 'Create at:', value: '10:12 AM on July 31, 2024' },
+    { label: 'Filled by:', value: data.created_by_user.username }
+])
+
 
 onClickOutside(button, (event) => (isClick.value = false));
 
 const showOptions = () => {
     isClick.value = !isClick.value
 }
-
 const removeItem = () => {
+    isDialogVisible.value = true
+}
+const cancel_removal = () => {
+    isDialogVisible.value = false
+}
+const proceed_removal = () => {
     aufs_.removeAusf(data.id)
 }
 
@@ -133,7 +161,22 @@ const value = reactive({
     exhibiting_on: data.exhibiting_on,
     ap_phi_registry_number: data.ap_phi_registry_number,
     ap_phi_date_registration: data.ap_phi_date_registration,
-    pfsp_of: data.pfsp_of
+    pfsp_of: data.pfsp_of,
+
+    isWithAttestation: data.isWithAttestation,
+
+    attestation_ss_month_year: data.attestation_ss_month_year,
+    attestation_ss_day: data.attestation_ss_day,
+    attestation_signature_month: data.attestation_signature_month,
+    attestation_signature_day: data.attestation_signature_day,
+    attestation_signature: data.attestation_signature,
+    attestation_relation: data.attestation_relation,
+    attestation_name: data.attestation_name,
+    attestation_issued_on: data.attestation_issued_on,
+    attestation_issued_at: data.attestation_issued_at,
+    attestation_exhibiting_number: data.attestation_exhibiting_number,
+    attestation_exhibiting_her: data.attestation_exhibiting_her,
+    attestation_address: data.attestation_address,
 })
 
 

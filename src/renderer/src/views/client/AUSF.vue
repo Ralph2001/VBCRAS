@@ -6,28 +6,30 @@
 
 
         <div class="h-[calc(100vh-250px)]">
+         
             <TableGrid :data="aufs_.ausf" :dataColumns="colDefs" :suppressRowTransform="true" />
-
         </div>
 
         <Modal v-if="ausf_modal" medium label=" Affidavit to use the Surname of the Father" footerBG="bg-white">
             <template v-slot:header>
                 <ModalCloseButton @click="close_ausf" />
             </template>
+            <div class="fixed flex flex-row items-center p-3 shadow-sm z-50 bg-white gap-2 top-[5rem]">
+                <input type="checkbox" id="assertation" class="border rounded border-gray-400"
+                    v-model="formData.isWithAttestation">
+                <label for="assertation" class="text-sm">With Sworn Attestation</label>
+            </div>
             <!-- <iframe v-if="previewUrl" class="h-full w-full " :src="previewUrl" frameborder="1"
                 allowfullscreen=""></iframe> -->
             <div class="h-full" v-if="previewUrl">
                 <PDFViewer :pdf="previewUrl" @cancel-btn="previewUrl = ''" @save-print="submit"
                     :status="document_status" @exit-btn="close_ausf()" />
             </div>
-            <div class="flex flex-col h-full w-full scale-95 " v-if="!previewUrl">
+            <div class="flex flex-col h-full w-full scale-95 relative " v-if="!previewUrl">
+
                 <div class="grid grid-cols-2 w-full">
-                    <div class="flex p-4">
-                        <div class="flex flex-row items-center gap-2">
-                            <input type="checkbox" id="assertation" class="border rounded border-gray-400"
-                                v-model="formData.isWithAttestation">
-                            <label for="assertation" class="text-sm">With Sworn Attestation</label>
-                        </div>
+                    <div class="flex p-4 ">
+
                     </div>
                     <div class="flex flex-col gap-1 ">
                         <p class="underline text-sm font-neutral font-serif">LEGAL INSTRUMENT</p>
@@ -89,12 +91,14 @@
                                     class="border-gray-200 rounded">
                                 <label for="the" class="text-nowrap">The Certificate of Live Birth/Report of Birth
                                     of</label>
-                                <InputButtomBorder :error="v$.child_name.$error" v-model="formData.child_name" isBold />
+                                <InputButtomBorder :error="v$.child_name.$error"
+                                    :disabled="isChildNameAndRelationDisabled" v-model="formData.child_name" isBold />
                             </div>
                             <div class="flex flex-row items-center">
                                 <p class="text-nowrap"> who is my
                                 </p>
-                                <InputButtomBorder :error="v$.relation.$error" :width="'13rem'"
+                                <InputButtomBorder :error="v$.relation.$error"
+                                    :disabled="isChildNameAndRelationDisabled" :width="'13rem'"
                                     v-model="formData.relation" />
                                 <p class="text-nowrap">pursuant to R.A. No.
                                     9255.</p>
@@ -102,7 +106,7 @@
                             </div>
                         </div>
                         <div class="flex flex-col w-full">
-                            <div class="flex flex-row text-nowrap"> 2. I/He/She was born on
+                            <div class="flex flex-row text-nowrap gap-1"> 2. I/He/She was born on
                                 <InputButtomBorder :error="v$.date_birth.$error" v-model="formData.date_birth"
                                     :width="'13rem'" />
                                 at
@@ -115,7 +119,7 @@
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <div class="flex flex-row text-nowrap"> 3. The birth was recorded under Registry No.
+                            <div class="flex flex-row text-nowrap gap-1"> 3. The birth was recorded under Registry No.
                                 <InputButtomBorder :width="'6.2rem'" v-model="formData.registry_number" skip /> on
                                 <InputButtomBorder :width="'6.2rem'" v-model="formData.date_registration" skip />.
                             </div>
@@ -234,12 +238,14 @@
 
                         <div class="flex flex-row mt-5 gap-1">
                             <p class=" indent-12">I,</p>
-                            <InputButtomBorder v-model="formData.attestation_name" />
+                            <InputButtomBorder v-model="formData.attestation_name"
+                                :error="v$.attestation_name.$error" />
                             <p class="text-nowrap">Filipino citizen, of legal age, with address at </p>
                         </div>
                         <div class="flex flex-row gap-1">
 
-                            <InputButtomBorder v-model="formData.attestation_address" />
+                            <InputButtomBorder v-model="formData.attestation_address"
+                                :error="v$.attestation_address.$error" />
                             <p class="text-nowrap">after being sworn in accordance with law, do </p>
                         </div>
                         <div>
@@ -252,7 +258,8 @@
                         </div>
                         <div class="flex flex-row gap-1">
                             <p class="text-nowrap ">Father (AUSF); that my </p>
-                            <InputButtomBorder v-model="formData.attestation_relation" :width="'6.2rem'" />
+                            <InputButtomBorder :error="v$.attestation_relation.$error"
+                                v-model="formData.attestation_relation" :width="'6.2rem'" />
                             <p class="text-nowrap"> is
                                 fully aware of the consequences of the use of the
                                 surname of</p>
@@ -268,12 +275,13 @@
                                     this
                                 </p>
                                 <p class="text-nowrap">
-                                    <InputButtomBorder v-model="formData.attestation_signature_day" :width="'6.2rem'" />
+                                    <InputButtomBorder skip :error="v$.attestation_signature_day.$error"
+                                        v-model="formData.attestation_signature_day" :width="'6.2rem'" />
                                 </p>
                                 <p class="text-nowrap">day of </p>
                                 <p class="text-nowrap">
-                                    <InputButtomBorder v-model="formData.attestation_signature_month"
-                                        :width="'6.2rem'" />
+                                    <InputButtomBorder skip :error="v$.attestation_signature_month.$error"
+                                        v-model="formData.attestation_signature_month" :width="'6.2rem'" />
                                 </p>
                                 <p>at</p>
                             </div>
@@ -283,30 +291,37 @@
                         </div>
 
                         <div class="mt-10 flex flex-col w-[50%] self-end items-center ">
-                            <InputButtomBorder v-model="formData.attestation_signature" />
+                            <InputButtomBorder skip v-model="formData.attestation_signature"
+                                :error="v$.attestation_signature.$error" />
                             <p class="text-gray-700 text-md">Signature over printed name of Affiant</p>
                         </div>
                         <div class="flex flex-col mt-10 gap-1">
                             <div class="flex flex-row gap-1">
                                 <p class="text-nowrap indent-12">
                                     SUBSCRIBED AND SWORN to before me this</p>
-                                <InputButtomBorder v-model="formData.attestation_ss_day" />
+                                <InputButtomBorder skip v-model="formData.attestation_ss_day"
+                                    :error="v$.attestation_ss_day.$error" />
                                 <p class="text-nowrap">day of </p>
-                                <InputButtomBorder v-model="formData.attestation_ss_month_year" />
+                                <InputButtomBorder skip v-model="formData.attestation_ss_month_year"
+                                    :error="v$.attestation_ss_month_year.$error" />
                                 <p class="text-nowrap">in the </p>
                             </div>
                             <div class="flex flex-row gap-1">
                                 <p class="text-nowrap">city/municipality of Bayambang, Pangasinan affiant exhibiting her
                                 </p>
-                                <InputButtomBorder v-model="formData.attestation_exhibiting_her" />
+                                <InputButtomBorder v-model="formData.attestation_exhibiting_her"
+                                    :error="v$.attestation_exhibiting_her.$error" />
                             </div>
                             <div class="flex flex-row gap-1">
 
-                                <InputButtomBorder v-model="formData.attestation_exhibiting_number" />
+                                <InputButtomBorder v-model="formData.attestation_exhibiting_number"
+                                    :error="v$.attestation_exhibiting_number.$error" />
                                 <p class="text-nowrap">issued at </p>
-                                <InputButtomBorder v-model="formData.attestation_issued_at" />
+                                <InputButtomBorder skip v-model="formData.attestation_issued_at"
+                                    :error="v$.attestation_issued_at.$error" />
                                 <p class="text-nowrap">on </p>
-                                <InputButtomBorder v-model="formData.attestation_issued_on" />.
+                                <InputButtomBorder skip v-model="formData.attestation_issued_on"
+                                    :error="v$.attestation_issued_on.$error" />.
                             </div>
                             <div class="mt-10">
                                 <p class="text-wrap indent-12">I certify that I personally examined the affiant and that
@@ -346,7 +361,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
 import Button from '../../components/essentials/buttons/Button.vue';
@@ -361,7 +376,6 @@ import { AuthStore } from '../../stores/clientAuth';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import PDFViewer from '../../components/PDFViewer.vue';
-import { assert } from '@vueuse/core/index.cjs';
 
 
 const aufs_ = useAusf()
@@ -384,6 +398,9 @@ const month = date.getMonth()
 
 const age = ref()
 const age_text = ref('yrs. old')
+
+
+
 
 const colDefs = ref([
     {
@@ -499,8 +516,8 @@ const rules = computed(() => ({
     address: { required },
     surname: { required },
     in_my_the: { required },
-    child_name: { required },
-    relation: { required },
+    child_name: { required: requiredIf(formData.in_my_the === 'the') },
+    relation: { required: requiredIf(formData.in_my_the === 'the') },
     date_birth: { required },
     at_municipality: { required },
     at_province: { required },
@@ -513,15 +530,69 @@ const rules = computed(() => ({
     sworn_at: { required },
     day_signature: { required },
     month_signature: { required },
+
+    attestation_name: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_address: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_relation: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_signature_day: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_signature_month: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_signature: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_ss_day: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_ss_month_year: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_exhibiting_her: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_exhibiting_number: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_issued_at: { required: requiredIf(formData.isWithAttestation ? true : false) },
+    attestation_issued_on: { required: requiredIf(formData.isWithAttestation ? true : false) },
 }))
 
 const v$ = useVuelidate(rules, formData);
+const isChildNameAndRelationDisabled = ref(false)
 
+
+watch(
+    () => formData.in_my_the,
+    (data) => {
+        if (data === 'my') {
+            formData.child_name = ''
+            formData.relation = ''
+            isChildNameAndRelationDisabled.value = true
+
+
+        }
+        else {
+            formData.child_name = ''
+            formData.relation = ''
+            isChildNameAndRelationDisabled.value = false
+        }
+    }
+)
+watch(() => formData.isWithAttestation, (data) => {
+    if (data) {
+        // Set Attestation Value
+        formData.attestation_signature_day = `${format(date, 'do')}`
+        formData.attestation_signature_month = `${format(date, 'MMMM')} ${year}`
+        formData.attestation_ss_day = `${format(date, 'do')}`
+        formData.attestation_ss_month_year = `${format(date, 'MMMM')} ${year}`
+        formData.attestation_issued_at = 'Bayambang, Pangasinan'
+        formData.attestation_issued_on = `${format(date, 'MMMM dd, yyyy')}`
+    }
+    else {
+        formData.attestation_signature_day = ''
+        formData.attestation_signature_month = ''
+        formData.attestation_ss_day = ''
+        formData.attestation_ss_month_year = ''
+        formData.attestation_issued_at = ''
+        formData.attestation_issued_on = ''
+    }
+})
 
 
 function change_age_full() {
     formData.age = age.value + ' ' + age_text.value
 }
+
+
+
 const open_ausf = () => {
     ausf_modal.value = true
 }
@@ -534,7 +605,7 @@ const close_ausf = () => {
     Object.assign(formData, initalForm);
     age.value = ''
     age_text.value = 'yrs. old'
-    v$.reset
+    v$.value.$reset()
 }
 
 

@@ -79,7 +79,8 @@ import {
     faNetworkWired, 
     faBars, 
     faWindowMinimize,
-    faCircleCheck
+    faCircleCheck, 
+    faTriangleExclamation
 
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -143,7 +144,8 @@ library.add(
     faNetworkWired,
     faBars,
     faWindowMinimize,
-    faCircleCheck
+    faCircleCheck,
+    faTriangleExclamation
 
 )
 
