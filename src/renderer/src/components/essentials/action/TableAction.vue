@@ -112,7 +112,7 @@ const data_information = ref([
     { label: 'Type:', value: data.isWithAttestation ? 'AUSF WITH SWORN ATTESTATION' : 'AUSF' },
     { label: 'Document Owner:', value: data.child_name },
     { label: 'Affiant Name:', value: data.affiant_name },
-    { label: 'Create at:', value: '10:12 AM on July 31, 2024' },
+    { label: 'Created at:', value: '10:12 AM on July 31, 2024' },
     { label: 'Filled by:', value: data.created_by_user.username }
 ])
 

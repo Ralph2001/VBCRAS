@@ -1,5 +1,3 @@
-import { faSpa } from '@fortawesome/free-solid-svg-icons'
-
 const PizZip = require('pizzip')
 const Docxtemplater = require('docxtemplater')
 
@@ -84,18 +82,23 @@ async function document_folder(data) {
     const doctype = data.type
     const petitioner_name = data.petitioner_name
 
-    folderPath = path.join(
+
+    var folderCreation = path.join(
         __dirname,
         '../../resources/documents/Generated/Correction of Clerical Error'
     )
+
+    if (!fs.existsSync(folderCreation)) {
+        fs.mkdirSync(folderCreation, { recursive: true })
+    }
+
+    folderPath = folderCreation
 
     // var folderCreation = `C:/VBCRAS/${
     //     date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
     // }`
 
-    // if (!fs.existsSync(folderCreation)) {
-    //     fs.mkdirSync(folderCreation, { recursive: true })
-    // }
+
 
     // folderPath = `C:/VBCRAS/${
     //     date_now.getFullYear() + '/' + doctype + ' ' + petitioner_name
@@ -154,13 +157,15 @@ async function endorsement_letter(data) {
 
     const buf = doc.getZip().generate({
         type: 'nodebuffer',
-        compression: 'DEFLATE',
+        // compression: 'DEFLATE',
     })
 
-    const convertit = await Convert(buf, 'Endorsement Letter')
-    if (convertit) {
-        return true
-    }
+    fs.writeFileSync(folderPath + "/Endorsement Letter.docx", buf);
+
+    // const convertit = await Convert(buf, 'Endorsement Letter')
+    // if (convertit) {
+    //     return true
+    // }
 }
 async function petition(data) {
     const content = await PetitionFile(data.ra, data.type, data.document_type)
@@ -205,8 +210,6 @@ async function petition(data) {
         })),
     }
 
-    console.log(reasons)
-    console.log(supporting_documents)
 
     const dataactions = JSON.parse(data.action_taken)
     const actions = {
@@ -327,13 +330,15 @@ async function petition(data) {
 
     const buf = doc.getZip().generate({
         type: 'nodebuffer',
-        compression: 'DEFLATE',
+        // compression: 'DEFLATE',
     })
 
-    const convertit = await Convert(buf, 'Petition')
-    if (convertit) {
-        return true
-    }
+    fs.writeFileSync(folderPath + "/Petition.docx", buf);
+
+    // const convertit = await Convert(buf, 'Petition')
+    // if (convertit) {
+    //     return true
+    // }
 }
 
 async function record_sheet(data) {
@@ -411,13 +416,15 @@ async function record_sheet(data) {
 
     const buf = doc.getZip().generate({
         type: 'nodebuffer',
-        compression: 'DEFLATE',
+        // compression: 'DEFLATE',
     })
+    fs.writeFileSync(folderPath + "/Record Sheet.docx", buf);
 
-    const convertit = await Convert(buf, 'Record Sheet')
-    if (convertit) {
-        return true
-    }
+
+    // const convertit = await Convert(buf, 'Record Sheet')
+    // if (convertit) {
+    //     return true
+    // }
 }
 
 async function posting(data) {
@@ -498,16 +505,18 @@ async function posting(data) {
 
     const buf = doc.getZip().generate({
         type: 'nodebuffer',
-        compression: 'DEFLATE',
+        // compression: 'DEFLATE',
     })
+    fs.writeFileSync(folderPath + "/Posting.docx", buf);
 
-    const convertit = await Convert(
-        buf,
-        'Cert. of Posting and Notice of Posting'
-    )
-    if (convertit) {
-        return true
-    }
+
+    // const convertit = await Convert(
+    //     buf,
+    //     'Cert. of Posting and Notice of Posting'
+    // )
+    // if (convertit) {
+    //     return true
+    // }
 }
 
 async function Convert(file, fileName) {

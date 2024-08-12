@@ -14,7 +14,7 @@
             <template v-slot:header>
                 <ModalCloseButton @click="close_ausf" />
             </template>
-            <div class="fixed flex flex-row items-center p-3 shadow-sm z-50 bg-white gap-2 top-[5rem]">
+            <div class="fixed flex flex-row items-center p-3 shadow-sm z-50 bg-white gap-2 top-[6.6rem] border-b border-e">
                 <input type="checkbox" id="assertation" class="border rounded border-gray-400"
                     v-model="formData.isWithAttestation">
                 <label for="assertation" class="text-sm">With Sworn Attestation</label>

@@ -112,6 +112,52 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
 });
 
 //  
+// Convert Docx to PDF 
+
+const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe');
+const originalDirectory = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/');
+const outputDirectory = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/');
+
+// Conversion arguments
+const convertArgs = [
+    '-f', originalDirectory,
+    '-O', outputDirectory,
+    '-T', 'wdFormatPDF',
+    '-OX', '.pdf'
+];
+
+// Deletion arguments
+const deleteArgs = [
+    '-f', originalDirectory,
+    '-O', outputDirectory,
+    '-T', 'wdFormatPDF',
+    '-OX', '.pdf',
+    '-R', 'true'
+];
+
+function executeCommand(commandPath, args) {
+    return new Promise((resolve, reject) => {
+        const process = spawn(commandPath, args);
+        let output = '';
+        let error = '';
+
+        process.stdout.on('data', (data) => {
+            output += data.toString();
+        });
+
+        process.stderr.on('data', (data) => {
+            error += data.toString();
+        });
+
+        process.on('close', (code) => {
+            if (code === 0) {
+                resolve(output);
+            } else {
+                reject(new Error(`Process failed with code ${code}: ${error}`));
+            }
+        });
+    });
+}
 
 
 
@@ -246,7 +292,23 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
 
 ipcMain.handle('printLiveBirth', async (event, formData) => {
     try {
+
         const generate_document = await generate(formData)
+
+        executeCommand(doctoPath, convertArgs)
+            .then((output) => {
+                console.log('Conversion successful:', output);
+
+                // Delete original files if conversion was successful
+                return executeCommand(doctoPath, deleteArgs);
+            })
+            .then((output) => {
+                console.log('Original files deleted successfully:', output);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
         if ((generate_document.success = true)) {
             return { status: true, filepath: generate_document.filepath }
         }
@@ -274,6 +336,24 @@ ipcMain.handle('open-clerical', async (event, source) => {
         return false
     }
 })
+
+ipcMain.handle('open-clerical-files', async (event, source) => {
+    const petition = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Petition.pdf')).toString('base64')
+    const endorsement_letter = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Endorsement Letter.pdf')).toString('base64')
+    const record_sheet = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Record Sheet.pdf')).toString('base64')
+    const posting = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Posting.pdf')).toString('base64')
+
+
+    const data = [
+        { name: 'Petition', link: petition },
+        { name: 'Posting', link: posting },
+        { name: 'Endorsement Letter', link: endorsement_letter  },
+        { name: 'Record Sheet', link: record_sheet },
+    ]
+
+    return data
+})
+
 
 ipcMain.handle('is-server-running', async (event) => {
     try {

@@ -2,9 +2,12 @@
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="modalOpener" />
+      <button class="text-gray-600"><font-awesome-icon icon="fa-solid fa-gear" /></button>
+      <button class="text-gray-600" @click="openSample">Sample</button>
     </Header>
 
     <div class="h-[calc(100vh-250px)]">
+      <PDFViewerCCE v-if="sample" :pdf_data="data_pdfs" @exit-btn="sample = false" />
       <Suspense>
         <template #default>
           <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
@@ -23,7 +26,7 @@
         <ModalCloseButton @click="closeModal" />
       </template>
 
-      <div class="flex flex-col sm:px-4 md:lg:px-[20rem] h-max w-full gap-4 relative" :style="bgTexture">
+      <div class="flex flex-col sm:px-4 md:lg:px-[20rem] h-max w-full gap-4 relative bg-slate-100" :style="bgTexture">
         <div class="flex items-center justify-center p-2" ref="isFormVisible">
           <Box title="Document" width="w-fit ">
             <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
@@ -566,8 +569,10 @@
       </div>
 
       <template v-slot:footer>
-        <div class="h-full flex items-center justify-end gap-2 w-full">
-          <Button @click="submitForm()" label="Submit" />
+        <div class="h-full flex items-center justify-end gap-2 w-full px-5 rounded-md font-medium ">
+          <button type="button" class="bg-white px-3 py-1.5 hover:bg-blue-500 hover:text-white"
+            @click="submitForm()">Submit</button>
+          <!-- <Button @click="submitForm()" label="Submit" /> -->
         </div>
       </template>
     </Modal>
@@ -619,6 +624,7 @@ import DateInput from "../../components/essentials/inputs/DateInput.vue";
 import Button from "../../components/essentials/buttons/Button.vue";
 import { format } from "date-fns";
 import TextArea from "../../components/essentials/inputs/TextArea.vue";
+import PDFViewerCCE from "../../components/PDFViewerCCE.vue";
 
 
 
@@ -642,6 +648,32 @@ const document_owner = ref("");
 const ra10172 = ref("");
 const petition_number = ref("0000");
 const year = ref(date.getFullYear());
+
+
+// 
+// This is Sample only
+// 
+const sample = ref(false)
+const data_pdfs = ref()
+
+const openSample = async () => {
+
+  const check = await window.ClericalApi.OpenClericalFiles();
+  data_pdfs.value = check
+
+
+  console.log(data_pdfs.value)
+  sample.value = !sample.value
+}
+// 
+
+
+
+
+
+
+
+
 
 const settings = ref(false);
 
@@ -667,20 +699,20 @@ onMounted(async () => {
 });
 
 // Get Latest Petition Number
-async function getTheLatestPetitionNumber() {
-  let latest_petition_number = petitions.latest.CCE.split("-");
+// async function getTheLatestPetitionNumber() {
+//   let latest_petition_number = petitions.latest.CCE.split("-");
 
-  if (formData.type === "CCE") {
-    latest_petition_number = petitions.latest.CCE.split("-");
-  } else if (formData.type === "CFN") {
-    latest_petition_number = petitions.latest.CFN.split("-");
-  }
+//   if (formData.type === "CCE") {
+//     latest_petition_number = petitions.latest.CCE.split("-");
+//   } else if (formData.type === "CFN") {
+//     latest_petition_number = petitions.latest.CFN.split("-");
+//   }
 
-  const get_second_value = parseInt(latest_petition_number[1], 10);
-  const incrementedNumber = get_second_value + 1;
-  const paddedNumber = incrementedNumber.toString().padStart(4, "0");
-  petition_number.value = paddedNumber;
-}
+//   const get_second_value = parseInt(latest_petition_number[1], 10);
+//   const incrementedNumber = get_second_value + 1;
+//   const paddedNumber = incrementedNumber.toString().padStart(4, "0");
+//   petition_number.value = paddedNumber;
+// }
 
 // Petition Number
 
@@ -1097,11 +1129,10 @@ const RA9048 = ref(false);
 
 const modalOpener = async () => {
   add_petition_date();
-  const latest = await petitions.getLatestPetition();
-  if (latest) {
-    getTheLatestPetitionNumber();
-  }
-
+  // const latest = await petitions.getLatestPetition();
+  // if (latest) {
+  //   getTheLatestPetitionNumber();
+  // }
   document.value = !document.value;
 };
 
@@ -1193,10 +1224,6 @@ const validate_action_taken_decision = computed(() => {
 
   return false;
 });
-
-function someFunction() {
-  return true
-}
 
 const validate = computed(() => {
   return {
@@ -1301,15 +1328,20 @@ const validate = computed(() => {
 const v$ = useVuelidate(validate, formData);
 
 const submitForm = async () => {
-  v$.value.$touch();
+  // Validate 
+  // v$.value.$touch();
 
-  if (v$.value.$error) {
-    console.log(v$.value);
-    return;
-  }
+  // if (v$.value.$error) {
+  //   console.log(v$.value);
+  //   return;
+  // }
+
+
+  // Fix This
+
   const OOXML = toOOXML(formData.decision);
 
-  closeModal();
+  // closeModal();
   const clerical_errors = ref({
     description: formData.clerical_errors.description,
     from: formData.clerical_errors.from,
@@ -1356,6 +1388,7 @@ const submitForm = async () => {
     ra: formData.ra,
     type: formData.type,
     document_type: formData.document_type,
+
     petition_number: formData.petition_number,
     petitioner_name: formData.petitioner_name,
     nationality: formData.nationality,
@@ -1419,115 +1452,117 @@ const submitForm = async () => {
     action_taken: actionsdata,
   };
 
-  processing.value = true;
-  isProcessInfoLoading.value = true;
-
   const check = await window.ClericalApi.PrintLiveBirth(data);
 
-  if (check) {
-    // const convert = await window.LocalCivilApi.ConvertFile()
+  console.log(data)
+  console.log(check)
+  // processing.value = true;
+  // isProcessInfoLoading.value = true;
 
-    const database = {
-      ra: formData.ra,
-      type: formData.type,
-      document_type: formData.document_type,
-      petition_number: formData.petition_number,
-      petitioner_name: formData.petitioner_name,
-      nationality: formData.nationality,
+  // if (check) {
+  //   // const convert = await window.LocalCivilApi.ConvertFile()
 
-      // petitioner_province: formData.petitioner_province,
-      // petitioner_city: formData.petitioner_city,
-      // petitioner_barangay: formData.petitioner_barangay,
+  //   const database = {
+  //     ra: formData.ra,
+  //     type: formData.type,
+  //     document_type: formData.document_type,
+  //     petition_number: formData.petition_number,
+  //     petitioner_name: formData.petitioner_name,
+  //     nationality: formData.nationality,
 
-      petitioner_address: formData.petitioner_address,
-      cce_in: formData.cce_in,
+  //     // petitioner_province: formData.petitioner_province,
+  //     // petitioner_city: formData.petitioner_city,
+  //     // petitioner_barangay: formData.petitioner_barangay,
 
-      name_owner: formData.name_owner,
-      relation_owner: formData.relation_owner,
-      date_of: formData.date_of,
+  //     petitioner_address: formData.petitioner_address,
+  //     cce_in: formData.cce_in,
 
-      at_city: formData.at_city,
-      at_province: formData.at_province,
-      at_country: formData.at_country,
+  //     name_owner: formData.name_owner,
+  //     relation_owner: formData.relation_owner,
+  //     date_of: formData.date_of,
 
-      registry_number: formData.registry_number,
+  //     at_city: formData.at_city,
+  //     at_province: formData.at_province,
+  //     at_country: formData.at_country,
 
-      clerical_errors: errors,
-      supportingDocuments: supports,
+  //     registry_number: formData.registry_number,
 
-      // Change First Name
-      grounds: grounds_filing,
-      from: formData.from,
-      to: formData.to,
-      ground_b: formData.ground_b,
-      ground_f: formData.ground_f,
-      // Change First Name
+  //     clerical_errors: errors,
+  //     supportingDocuments: supports,
 
-      reason: formData.reason,
-      LCRO_city: formData.LCRO_city,
-      LCRO_province: formData.LCRO_province,
+  //     // Change First Name
+  //     grounds: grounds_filing,
+  //     from: formData.from,
+  //     to: formData.to,
+  //     ground_b: formData.ground_b,
+  //     ground_f: formData.ground_f,
+  //     // Change First Name
 
-      administering_officer: formData.administering_officer,
-      administering_position: formData.administering_position,
+  //     reason: formData.reason,
+  //     LCRO_city: formData.LCRO_city,
+  //     LCRO_province: formData.LCRO_province,
 
-      SwornDate: formData.SwornDate,
-      SwornCity: formData.SwornCity,
+  //     administering_officer: formData.administering_officer,
+  //     administering_position: formData.administering_position,
 
-      Ctc: formData.Ctc,
-      CtcIssuedOn: formData.CtcIssuedOn,
-      CtcIssuedAt: formData.CtcIssuedAt,
+  //     SwornDate: formData.SwornDate,
+  //     SwornCity: formData.SwornCity,
 
-      action: formData.action,
-      ActionDate: formData.ActionDate,
-      mcr: formData.mcr,
-      decision: formData.decision,
+  //     Ctc: formData.Ctc,
+  //     CtcIssuedOn: formData.CtcIssuedOn,
+  //     CtcIssuedAt: formData.CtcIssuedAt,
 
-      or_number: formData.or_number,
-      amount_paid: formData.amount_paid,
-      DatePaid: formData.DatePaid,
+  //     action: formData.action,
+  //     ActionDate: formData.ActionDate,
+  //     mcr: formData.mcr,
+  //     decision: formData.decision,
 
-      notice_posting: formData.notice_posting,
-      certificate_posting_start: formData.certificate_posting_start,
-      certificate_posting_end: formData.certificate_posting_end,
+  //     or_number: formData.or_number,
+  //     amount_paid: formData.amount_paid,
+  //     DatePaid: formData.DatePaid,
 
-      date_issued: formData.date_issued,
-      date_granted: formData.date_granted,
+  //     notice_posting: formData.notice_posting,
+  //     certificate_posting_start: formData.certificate_posting_start,
+  //     certificate_posting_end: formData.certificate_posting_end,
 
-      // CCE 10172
-      reasons: reasons,
-      action_taken: actionsdata,
-      filepath: check.filepath,
-    };
+  //     date_issued: formData.date_issued,
+  //     date_granted: formData.date_granted,
 
-    const add = await petitions.addPetition(database);
-    if (add) {
-      v$.value.$reset();
+  //     // CCE 10172
+  //     reasons: reasons,
+  //     action_taken: actionsdata,
+  //     filepath: check.filepath,
+  //   };
 
-      const latest = await petitions.getLatestPetition();
-      if (latest) {
-        getTheLatestPetitionNumber();
-      }
-    }
-  }
+  //   const add = await petitions.addPetition(database);
+  //   if (add) {
+  //     v$.value.$reset();
 
-  isProcessInfoLoading.value = false;
+  //     const latest = await petitions.getLatestPetition();
+  //     if (latest) {
+  //       getTheLatestPetitionNumber();
+  //     }
+  //   }
+  // }
 
-  folderpath.value = check.filepath;
-  let document_owner =
-    formData.name_owner === "N/A" ? formData.petitioner_name : formData.name_owner;
+  // isProcessInfoLoading.value = false;
 
-  if (check) {
-    petition_details.value =
-      "R.A " +
-      formData.ra +
-      " " +
-      formData.type +
-      " " +
-      formData.document_type +
-      ",  " +
-      formData.petitioner_name;
-    petition_owner.value = document_owner;
-  }
+  // folderpath.value = check.filepath;
+  // let document_owner =
+  //   formData.name_owner === "N/A" ? formData.petitioner_name : formData.name_owner;
+
+  // if (check) {
+  //   petition_details.value =
+  //     "R.A " +
+  //     formData.ra +
+  //     " " +
+  //     formData.type +
+  //     " " +
+  //     formData.document_type +
+  //     ",  " +
+  //     formData.petitioner_name;
+  //   petition_owner.value = document_owner;
+  // }
 };
 
 const bgTexture = ref(

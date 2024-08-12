@@ -1,6 +1,6 @@
 <template>
   <div
-    class="overflow-x-hidden h-[calc(100vh)] overflow-y-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
+    class="overflow-x-hidden h-full pt-10 overflow-y-hidden fixed top-10 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
     aria-modal="true"
     role="dialog"
   >
@@ -48,7 +48,7 @@
           :class="{
             'h-[19rem]': titleCard,
             'h-[calc(100vh-180px)]': small || medium,
-            'h-[calc(100vh-129px)]': large,
+            'h-[calc(100vh-145px)]': large,
           }"
           class="overflow-y-scroll relative bg-white"
         >
@@ -82,7 +82,6 @@ const props = defineProps({
   first: String,
   second: String,
   dropbox: Boolean,
-
   doctype: {
     type: String,
     default: "",
