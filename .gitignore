@@ -2,6 +2,7 @@ node_modules
 dist
 out
 resources/App/
+resources/tools/
 resources/server/env
 resources/server/app/__pycache__
 *.log*
