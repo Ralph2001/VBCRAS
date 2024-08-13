@@ -48,24 +48,24 @@ export const usePetitions = defineStore('petitions', {
         },
 
         async getLatestPetition() {
-            try {
-                if (!this.isFetched) {
-                    const hostAdd = localStorage.getItem('host')
-                    let tokenStr = localStorage.getItem('token')
-                    const response = await axios.get(
-                        `http://${hostAdd}:1216/petitions/latest/petition_number`,
-                        { headers: { Authorization: `Bearer ${tokenStr}` } }
-                    )
-                    this.latest = response.data.petitions
-                    console.log(this.latest)
-                    return true
-                } else {
-                    return false
-                    console.log('⚡')
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error)
-            }
+            // try {
+            //     if (!this.isFetched) {
+            //         const hostAdd = localStorage.getItem('host')
+            //         let tokenStr = localStorage.getItem('token')
+            //         const response = await axios.get(
+            //             `http://${hostAdd}:1216/petitions/latest/petition_number`,
+            //             { headers: { Authorization: `Bearer ${tokenStr}` } }
+            //         )
+            //         this.latest = response.data.petitions
+            //         console.log(this.latest)
+            //         return true
+            //     } else {
+            //         return false
+            //         console.log('⚡')
+            //     }
+            // } catch (error) {
+            //     console.error('Error fetching data:', error)
+            // }
         },
         async addPetition(data) {
             try {

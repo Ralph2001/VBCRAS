@@ -33,6 +33,11 @@
             <iframe ref="iframeRef" class="h-full w-full" v-if="active_pdf_link" :src="base64(active_pdf_link)"
                 frameborder="1" allowfullscreen=""></iframe>
         </div>
+        <!-- <div class="absolute right-20 top-20 z-[9999999] flex flex-col w-[20rem] bg-white items-center p-4">
+            <p class="font-medium">Summary</p>
+
+            <div class="grid"></div>
+        </div> -->
     </div>
 </template>
 

@@ -31,8 +31,9 @@
           <Box title="Document" width="w-fit ">
             <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
               tabindex="-1">
+              <!-- @change="getTheLatestPetitionNumber()" -->
               <Select skip :options="RepublicAct" v-model="formData.ra" label="Republic Act" :error="v$.ra.$error" />
-              <Select skip @change="getTheLatestPetitionNumber()" :options="Type" label="Type" :error="v$.type.$error"
+              <Select skip  :options="Type" label="Type" :error="v$.type.$error"
                 v-model="formData.type" />
               <Select skip :options="DocumentType" label="Document Type" v-model="formData.document_type"
                 :error="v$.document_type.$error" />
@@ -130,7 +131,7 @@
             <div class="basis-[30%]">
               <Box :title="IHeSheLabel" width="w-full">
                 <div class="grid grid-cols-1 w-full gap-2">
-                  <DateInput :label="date_of_label" v-model="formData.date_of" />
+                  <DateInput  :label="date_of_label" v-model="formData.date_of" />
                   <!-- {{ formData.date_of }} -->
                 </div>
               </Box>
@@ -431,13 +432,13 @@
               <Box title="SUBSCRIBE AND SWORN" width="w-ful">
                 <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 w-full gap-2">
                   <div></div>
-                  <DateInput label="Date Sworn" v-model="formData.SwornDate" />
+                  <DateInput skip label="Date Sworn" v-model="formData.SwornDate" />
 
                   <Input label="City/Municipality" :error="v$.SwornCity.$error" skip v-model="formData.SwornCity" />
                   <Input label="Community Tax Certificate No." :error="v$.Ctc.$error" v-model="formData.Ctc" />
-                  <Input label="Issued at" :error="v$.CtcIssuedAt.$error" v-model="formData.CtcIssuedAt" />
+                  <Input label="Issued at" skip :error="v$.CtcIssuedAt.$error" v-model="formData.CtcIssuedAt" />
 
-                  <DateInput label="Issued on" v-model="formData.CtcIssuedOn" />
+                  <DateInput skip label="Issued on" v-model="formData.CtcIssuedOn" />
                 </div>
               </Box>
             </div>
@@ -461,7 +462,7 @@
                       class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                   </div>
                   <div class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
-                    <DateInput label="Date" v-model="formData.date_granted" />
+                    <DateInput skip label="Date" v-model="formData.date_granted" />
 
                     <Input label="Municipal Civil Registrar" skip v-model="formData.mcr" :error="v$.mcr.$error"
                       @input="formData.mcr = $event.target.value.toUpperCase()" />
@@ -505,7 +506,7 @@
                       <Radio :options="action_options" v-model="formData.action" :error="v$.action.$error"
                         name="action" />
                     </div>
-                    <DateInput label="Date" v-model="formData.date_granted" />
+                    <DateInput skip label="Date" v-model="formData.date_granted" />
 
                     <Input label="Municipal Civil Registrar" skip :error="v$.mcr.$error" v-model="formData.mcr"
                       @input="formData.mcr = $event.target.value.toUpperCase()" />
@@ -521,7 +522,7 @@
                 <div class="grid grid-cols-1 w-full gap-2">
                   <Input label="O.R. No." type="text" v-model="formData.or_number" />
                   <InputCurrency label="Amount Paid" v-model="formData.amount_paid" />
-                  <DateInput label="Date Paid" v-model="formData.DatePaid" />
+                  <DateInput skip label="Date Paid" v-model="formData.DatePaid" />
                 </div>
               </Box>
             </div>
@@ -530,8 +531,8 @@
               <Box title="DATE PREVIEW" width="w-ful">
                 <div class="flex flex-col w-full gap-2 items-start">
                   <div class="w-[50%]">
-                    <!-- <DateInput /> -->
-                    <DateInput label="Notice of Posting" v-model="formData.notice_posting" />
+                    <!-- <DateInput skip /> -->
+                    <DateInput skip label="Notice of Posting" v-model="formData.notice_posting" />
                   </div>
 
                   <div class="flex flex-col items-center w-full gap-2 bg-yellow-100/20 mt-3">
@@ -539,18 +540,18 @@
                     <p class="font-bold text-center uppercase">Certificate of Posting</p>
                     <div class="flex flex-row w-full justify-evenly relative">
                       <div>
-                        <DateInput label="Start" v-model="formData.certificate_posting_start" />
+                        <DateInput skip label="Start" v-model="formData.certificate_posting_start" />
                       </div>
 
                       <p class="absolute top-10 font-bold text-xs">TO</p>
                       <div>
-                        <DateInput label="End" v-model="formData.certificate_posting_end" />
+                        <DateInput skip label="End" v-model="formData.certificate_posting_end" />
                       </div>
                     </div>
 
                     <div class="flex items-center">
                       <div class="w-auto">
-                        <DateInput label="Date Issued" v-model="formData.date_issued" />
+                        <DateInput skip label="Date Issued" v-model="formData.date_issued" />
                       </div>
                     </div>
                     <div class="border border-dashed border-yellow-400 w-full mt-5"></div>
@@ -558,7 +559,7 @@
 
                   <div class="flex flex-col justify-start gap-5 mt-3 items-start w-full">
                     <div class="w-[50%]">
-                      <DateInput label="Date Granted " v-model="formData.date_granted" />
+                      <DateInput skip label="Date Granted " v-model="formData.date_granted" />
                     </div>
                   </div>
                 </div>
@@ -923,11 +924,13 @@ const date_of_granted = ref(add_date_granted());
 function add_petition_date() {
   formData.SwornDate = format(new Date(), "MMMM dd, yyyy");
   formData.DatePaid = format(new Date(), "MMMM dd, yyyy");
-  formData.notice_posting = date_notice;
-  formData.certificate_posting_start = date_certificate_start;
-  formData.certificate_posting_end = date_certificate_end;
-  formData.date_issued = date_of_issued;
-  formData.date_granted = date_of_granted;
+  formData.CtcIssuedOn = format(new Date(), "MMMM dd, yyyy");
+  formData.notice_posting = date_notice.value;
+  formData.certificate_posting_start = date_certificate_start.value;
+  formData.certificate_posting_end = date_certificate_end.value;
+  formData.date_issued = date_of_issued.value;
+  formData.date_granted = date_of_granted.value;
+
 }
 
 // v-model
@@ -1138,6 +1141,7 @@ const modalOpener = async () => {
 
 function closeModal() {
   document.value = false;
+  Object.assign(formData, { ...initialData });
 }
 
 const items = ref([1]);

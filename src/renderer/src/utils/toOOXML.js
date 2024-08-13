@@ -9,11 +9,17 @@ function toOOXML(data) {
         }
 
         const formattedWord = `
-        <w:r><w:rPr>${
-            inQuotes ? '<w:b/>' : ''
-        }<w:rFonts w:ascii="Arial"/><w:sz w:val="22"/></w:rPr><w:t>${word
-            .replace(/[\u201C\u201D]/g, '&quot;')
-            .replace(/"/g, '&quot;')}&#160;</w:t></w:r> 
+        <w:r>
+            <w:rPr>
+            ${inQuotes ? '<w:b/>' : ''}
+                <w:rFonts w:ascii="Arial"/>
+                    <w:sz w:val="22"/>
+                </w:rPr>
+                <w:t>
+                ${word.replace(`"`, '“').replace(`"`, '”')}&#160;
+                </w:t>
+        </w:r>
+
       ` // Notice the change within <w:t>
 
         textFormatted += formattedWord
