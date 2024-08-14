@@ -19,7 +19,7 @@ export async function generate(formData) {
 
     // const convertThisToPDF = await ConvertMultipleFiles()
 
-    return { success: true, filepath: folderPath }
+    return { status: true, filepath: folderPath }
 }
 
 const LIVEBIRTH_PATH = path.resolve(
@@ -166,6 +166,8 @@ async function endorsement_letter(data) {
     // if (convertit) {
     //     return true
     // }
+
+    return true
 }
 async function petition(data) {
     const content = await PetitionFile(data.ra, data.type, data.document_type)
@@ -339,6 +341,8 @@ async function petition(data) {
     // if (convertit) {
     //     return true
     // }
+
+    return true
 }
 
 async function record_sheet(data) {
@@ -425,6 +429,8 @@ async function record_sheet(data) {
     // if (convertit) {
     //     return true
     // }
+
+    return true
 }
 
 async function posting(data) {
@@ -517,20 +523,25 @@ async function posting(data) {
     // if (convertit) {
     //     return true
     // }
+
+    return true
 }
 
-async function Convert(file, fileName) {
-    const ext = '.pdf'
-    const outputPath = folderPath + '/' + fileName + ext
-    try {
-        let pdfBuf = await libre.convertAsync(file, ext, undefined)
-        await fsp.writeFile(outputPath, pdfBuf)
-        return true
-    } catch (err) {
-        console.error(`Error converting ${fileName}: ${err}`)
-        return false
-    }
-}
+
+// Fix this or delete this
+
+// async function Convert(file, fileName) {
+//     const ext = '.pdf'
+//     const outputPath = folderPath + '/' + fileName + ext
+//     try {
+//         let pdfBuf = await libre.convertAsync(file, ext, undefined)
+//         await fsp.writeFile(outputPath, pdfBuf)
+//         return true
+//     } catch (err) {
+//         console.error(`Error converting ${fileName}: ${err}`)
+//         return false
+//     }
+// }
 
 // async function ConvertFile(filePath, ext = '.pdf') {
 //     const inputPath = filePath

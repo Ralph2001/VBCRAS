@@ -135,6 +135,7 @@ const deleteArgs = [
     '-R', 'true'
 ];
 
+
 function executeCommand(commandPath, args) {
     return new Promise((resolve, reject) => {
         const process = spawn(commandPath, args);
@@ -292,30 +293,30 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
 
 ipcMain.handle('printLiveBirth', async (event, formData) => {
     try {
+        const generate_document = await generate(formData);
 
-        const generate_document = await generate(formData)
+        if (generate_document.status) {
+            const convert_files_and_delete = await executeCommand(doctoPath, convertArgs)
+                .then(async (output) => {
+                    await executeCommand(doctoPath, deleteArgs);
+                    return true;
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    return false;
+                });
 
-        executeCommand(doctoPath, convertArgs)
-            .then((output) => {
-                console.log('Conversion successful:', output);
-
-                // Delete original files if conversion was successful
-                return executeCommand(doctoPath, deleteArgs);
-            })
-            .then((output) => {
-                console.log('Original files deleted successfully:', output);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-
-        if ((generate_document.success = true)) {
-            return { status: true, filepath: generate_document.filepath }
+            if (convert_files_and_delete) {
+                return { status: generate_document.status, filepath: generate_document.filepath };
+            }
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-})
+    return false;  // Return false if something went wrong
+});
+
+
 ipcMain.handle('createFinality', async (event, formData) => {
     try {
         const create_finality = await finality(formData)
@@ -347,7 +348,7 @@ ipcMain.handle('open-clerical-files', async (event, source) => {
     const data = [
         { name: 'Petition', link: petition },
         { name: 'Posting', link: posting },
-        { name: 'Endorsement Letter', link: endorsement_letter  },
+        { name: 'Endorsement Letter', link: endorsement_letter },
         { name: 'Record Sheet', link: record_sheet },
     ]
 

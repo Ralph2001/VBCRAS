@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     },
     PrintLiveBirth: async (formData) => {
         const result = await ipcRenderer.invoke('printLiveBirth', formData)
+       
         return { status: result.status, filepath: result.filepath }
     },
     CreateFinality: async (formData) => {

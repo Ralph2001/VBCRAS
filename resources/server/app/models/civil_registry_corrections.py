@@ -91,11 +91,13 @@ class Ra9048CfnRecords(db.Model):
     community_tax_certificate = db.Column(db.String, nullable=False),
     issued_at = db.Column(db.String, nullable=False),
     issued_on = db.Column(db.String, nullable=False),
+    
     # Action
     action_taken = db.Column(db.String, nullable=False),
     action_taken_date = db.Column(db.String, nullable=False),
     action_taken_decision = db.Column(db.String, nullable=False),
     municipal_civil_registrar = db.Column(db.String, nullable=False),
+    
     # Payment
     o_r_number = db.Column(db.String, nullable=False),
     amount_paid = db.Column(db.String, nullable=False),

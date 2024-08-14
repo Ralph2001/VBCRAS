@@ -1,23 +1,37 @@
 <template>
-  <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN">
+  <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="modalOpener" />
-      <button class="text-gray-600"><font-awesome-icon icon="fa-solid fa-gear" /></button>
-      <button class="text-gray-600" @click="openSample">Sample</button>
+      <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
+      <!-- <button class="text-gray-600" @click="openSample">Sample</button> -->
     </Header>
 
-    <div class="h-[calc(100vh-250px)]">
+
+    <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
+
+    <!-- Datatable -->
+    <div class="h-[calc(100vh-250px)] relative">
       <PDFViewerCCE v-if="sample" :pdf_data="data_pdfs" @exit-btn="sample = false" />
-      <Suspense>
-        <template #default>
-          <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
-        </template>
-        <template #fallback>
-          <div class="flex h-full w-full justify-center items-center bg-gray-5/90 border rounded-md">
-            <p class="text-md font-normal italic">Loading...</p>
-          </div>
-        </template>
-      </Suspense>
+      <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
+    </div>
+
+    <div role="dialog" aria-modal="true" v-if="is_creating"
+      class="fixed top-0 bottom-0 left-0 right-0 h-full items-center justify-center flex p-4 z-50 backdrop-blur-sm backdrop-brightness-[0.7]"
+      tabindex="-1">
+      <div
+        class="h-auto w-[25rem] gap-1 bg-white border rounded-md border-gray-300 shadow-sm flex flex-col p-4 items-center justify-center ">
+        <!-- <Loading /> -->
+
+        <div
+          class="relative h-[10rem] w-full bg-gray-100 rounded-lg brightness-95 hover:border-gray-300 border   transition-all hover:brightness-100"
+          title="wave">
+          <Wave />
+        </div>
+        <p class="text-2xl text-gray-800 mt-5">Creating Document</p>
+        <p class="text-sm text-gray-600">
+          Please wait...
+        </p>
+      </div>
     </div>
 
     <Modal large label="Create a new Document" footerBG="bg-slate-300" v-if="document"
@@ -33,8 +47,7 @@
               tabindex="-1">
               <!-- @change="getTheLatestPetitionNumber()" -->
               <Select skip :options="RepublicAct" v-model="formData.ra" label="Republic Act" :error="v$.ra.$error" />
-              <Select skip  :options="Type" label="Type" :error="v$.type.$error"
-                v-model="formData.type" />
+              <Select skip :options="Type" label="Type" :error="v$.type.$error" v-model="formData.type" />
               <Select skip :options="DocumentType" label="Document Type" v-model="formData.document_type"
                 :error="v$.document_type.$error" />
             </div>
@@ -131,7 +144,7 @@
             <div class="basis-[30%]">
               <Box :title="IHeSheLabel" width="w-full">
                 <div class="grid grid-cols-1 w-full gap-2">
-                  <DateInput  :label="date_of_label" v-model="formData.date_of" />
+                  <DateInput :label="date_of_label" v-model="formData.date_of" />
                   <!-- {{ formData.date_of }} -->
                 </div>
               </Box>
@@ -533,6 +546,7 @@
                   <div class="w-[50%]">
                     <!-- <DateInput skip /> -->
                     <DateInput skip label="Notice of Posting" v-model="formData.notice_posting" />
+
                   </div>
 
                   <div class="flex flex-col items-center w-full gap-2 bg-yellow-100/20 mt-3">
@@ -578,10 +592,7 @@
       </template>
     </Modal>
 
-    <PetitionInfo v-if="processing" :petition_details="petition_details" :petition_owner="petition_owner"
-      :folderpath="folderpath" :isLoading="isProcessInfoLoading" @close-modal="processing = false" />
 
-    <ClericalSettings v-if="settings" @close-modal="closePreference" />
   </div>
 </template>
 
@@ -594,7 +605,9 @@ import Select from "../../components/essentials/inputs/Select.vue";
 import Input from "../../components/essentials/inputs/Input.vue";
 import InputSuggestions from "../../components/essentials/inputs/InputSuggestions.vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
+import Loading from "../../components/essentials/others/Loading.vue";
 import "@vuepic/vue-datepicker/dist/main.css";
+import Wave from '../../components/Wave.vue'
 
 import {
   now_date,
@@ -614,7 +627,7 @@ import CheckBox from "../../components/essentials/buttons/CheckBox.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { helpers, required, requiredIf } from "@vuelidate/validators";
 import toOOXML from "../../utils/toOOXML.js";
-import PetitionInfo from "../../components/essentials/modal/PetitionInfo.vue";
+
 import Box from "../../components/essentials/Box.vue";
 import Modal from "../../components/client/modal/Modal.vue";
 
@@ -626,18 +639,16 @@ import Button from "../../components/essentials/buttons/Button.vue";
 import { format } from "date-fns";
 import TextArea from "../../components/essentials/inputs/TextArea.vue";
 import PDFViewerCCE from "../../components/PDFViewerCCE.vue";
+import ClericalErrorSettings from "../../components/client/ClericalErrorSettings.vue";
 
 
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue"));
-const ClericalSettings = defineAsyncComponent(() =>
-  import("../../components/essentials/settings/ClericalSettings.vue")
-);
-
 const AutoComplete = defineAsyncComponent(() =>
   import("../../components/essentials/inputs/AutoComplete.vue")
 );
 
+const settings = ref(false)
 const documentChanger = ref(null);
 const isFormVisible = ref(null);
 
@@ -650,6 +661,8 @@ const ra10172 = ref("");
 const petition_number = ref("0000");
 const year = ref(date.getFullYear());
 
+
+const is_creating = ref(false)
 
 // 
 // This is Sample only
@@ -668,25 +681,13 @@ const openSample = async () => {
 }
 // 
 
-
-
-
-
-
-
-
-
-const settings = ref(false);
-
 // Letter List
 function indexToLetter(index) {
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
   return alphabet[index].toLowerCase();
 }
 
-const closePreference = (event, value) => {
-  settings.value = false;
-};
+
 
 // Petition Data
 const petitions = usePetitions();
@@ -809,12 +810,8 @@ const colDefs = ref([
   },
 ]);
 
-// Petition Info
-const folderpath = ref("");
-const processing = ref(false);
-const isProcessInfoLoading = ref(false);
-const petition_details = ref("");
-const petition_owner = ref("");
+
+
 
 const Type = ref(["CCE", "CFN"]);
 const DocumentType = ref(["Birth", "Death", "Marriage"]);
@@ -1141,6 +1138,8 @@ const modalOpener = async () => {
 
 function closeModal() {
   document.value = false;
+}
+function removeValue() {
   Object.assign(formData, { ...initialData });
 }
 
@@ -1340,22 +1339,19 @@ const submitForm = async () => {
   //   return;
   // }
 
+  closeModal();
 
   // Fix This
+  is_creating.value = true
 
-  const OOXML = toOOXML(formData.decision);
+  const OOXML = toOOXML(formData.decision); // Converting Text to XML. Docxtemplater
 
-  // closeModal();
   const clerical_errors = ref({
     description: formData.clerical_errors.description,
     from: formData.clerical_errors.from,
     to: formData.clerical_errors.to,
   });
 
-  // action_taken: {
-  //   action: [],
-  //   decision: [],
-  // },
   const actions = ref({
     action: formData.action_taken.action,
     decision: formData.action_taken.decision,
@@ -1383,10 +1379,6 @@ const submitForm = async () => {
   }
 
   const decisionFormatted = "<w:p>" + OOXML + "</w:p>";
-
-  // petitioner_province: formData.petitioner_province,
-  // petitioner_city: formData.petitioner_city,
-  // petitioner_barangay: formData.petitioner_barangay,
 
   const data = {
     ra: formData.ra,
@@ -1456,120 +1448,28 @@ const submitForm = async () => {
     action_taken: actionsdata,
   };
 
+  console.log(data)
+
+  // This is what creating the files and converting it
   const check = await window.ClericalApi.PrintLiveBirth(data);
 
-  console.log(data)
-  console.log(check)
-  // processing.value = true;
-  // isProcessInfoLoading.value = true;
+  if (check.status) {
+    is_creating.value = false
+    removeValue()
+    openSample()
 
-  // if (check) {
-  //   // const convert = await window.LocalCivilApi.ConvertFile()
+  }
+  else {
+    is_creating.value = false
+    removeValue()
+  }
 
-  //   const database = {
-  //     ra: formData.ra,
-  //     type: formData.type,
-  //     document_type: formData.document_type,
-  //     petition_number: formData.petition_number,
-  //     petitioner_name: formData.petitioner_name,
-  //     nationality: formData.nationality,
 
-  //     // petitioner_province: formData.petitioner_province,
-  //     // petitioner_city: formData.petitioner_city,
-  //     // petitioner_barangay: formData.petitioner_barangay,
 
-  //     petitioner_address: formData.petitioner_address,
-  //     cce_in: formData.cce_in,
-
-  //     name_owner: formData.name_owner,
-  //     relation_owner: formData.relation_owner,
-  //     date_of: formData.date_of,
-
-  //     at_city: formData.at_city,
-  //     at_province: formData.at_province,
-  //     at_country: formData.at_country,
-
-  //     registry_number: formData.registry_number,
-
-  //     clerical_errors: errors,
-  //     supportingDocuments: supports,
-
-  //     // Change First Name
-  //     grounds: grounds_filing,
-  //     from: formData.from,
-  //     to: formData.to,
-  //     ground_b: formData.ground_b,
-  //     ground_f: formData.ground_f,
-  //     // Change First Name
-
-  //     reason: formData.reason,
-  //     LCRO_city: formData.LCRO_city,
-  //     LCRO_province: formData.LCRO_province,
-
-  //     administering_officer: formData.administering_officer,
-  //     administering_position: formData.administering_position,
-
-  //     SwornDate: formData.SwornDate,
-  //     SwornCity: formData.SwornCity,
-
-  //     Ctc: formData.Ctc,
-  //     CtcIssuedOn: formData.CtcIssuedOn,
-  //     CtcIssuedAt: formData.CtcIssuedAt,
-
-  //     action: formData.action,
-  //     ActionDate: formData.ActionDate,
-  //     mcr: formData.mcr,
-  //     decision: formData.decision,
-
-  //     or_number: formData.or_number,
-  //     amount_paid: formData.amount_paid,
-  //     DatePaid: formData.DatePaid,
-
-  //     notice_posting: formData.notice_posting,
-  //     certificate_posting_start: formData.certificate_posting_start,
-  //     certificate_posting_end: formData.certificate_posting_end,
-
-  //     date_issued: formData.date_issued,
-  //     date_granted: formData.date_granted,
-
-  //     // CCE 10172
-  //     reasons: reasons,
-  //     action_taken: actionsdata,
-  //     filepath: check.filepath,
-  //   };
-
-  //   const add = await petitions.addPetition(database);
-  //   if (add) {
-  //     v$.value.$reset();
-
-  //     const latest = await petitions.getLatestPetition();
-  //     if (latest) {
-  //       getTheLatestPetitionNumber();
-  //     }
-  //   }
-  // }
-
-  // isProcessInfoLoading.value = false;
-
-  // folderpath.value = check.filepath;
-  // let document_owner =
-  //   formData.name_owner === "N/A" ? formData.petitioner_name : formData.name_owner;
-
-  // if (check) {
-  //   petition_details.value =
-  //     "R.A " +
-  //     formData.ra +
-  //     " " +
-  //     formData.type +
-  //     " " +
-  //     formData.document_type +
-  //     ",  " +
-  //     formData.petitioner_name;
-  //   petition_owner.value = document_owner;
-  // }
 };
 
 const bgTexture = ref(
   "background-image: url(data:image/png;base64,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)"
 );
+
 </script>
