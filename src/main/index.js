@@ -291,30 +291,48 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
     }
 })
 
-ipcMain.handle('printLiveBirth', async (event, formData) => {
+ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const generate_document = await generate(formData);
-
         if (generate_document.status) {
-            const convert_files_and_delete = await executeCommand(doctoPath, convertArgs)
-                .then(async (output) => {
-                    await executeCommand(doctoPath, deleteArgs);
-                    return true;
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    return false;
-                });
+            const source = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Petition.docx')
+            const open_file = await shell.openExternal(source)
 
-            if (convert_files_and_delete) {
-                return { status: generate_document.status, filepath: generate_document.filepath };
+            if (!open_file) {
+                return { status: false, filepath: null };
             }
         }
+        return { status: true, filepath: null };
     } catch (error) {
         console.log(error);
     }
     return false;  // Return false if something went wrong
 });
+
+
+ipcMain.handle('proceedCreatePetition', async (event, formData) => {
+    try {
+        const convert_files_and_delete = await executeCommand(doctoPath, convertArgs)
+            .then(async (output) => {
+                await executeCommand(doctoPath, deleteArgs);
+                return true;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                return false;
+            });
+
+        if (convert_files_and_delete) {
+            return { status: true, filepath: null };
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+    return false;  // Return false if something went wrong
+});
+
+
 
 
 ipcMain.handle('createFinality', async (event, formData) => {

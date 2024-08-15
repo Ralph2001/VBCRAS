@@ -23,11 +23,17 @@ contextBridge.exposeInMainWorld('ClericalApi', {
             pdfbase64: result.pdfbase64,
         }
     },
-    PrintLiveBirth: async (formData) => {
-        const result = await ipcRenderer.invoke('printLiveBirth', formData)
+    createPetitionDocument: async (formData) => {
+        const result = await ipcRenderer.invoke('createPetitionDocument', formData)
        
         return { status: result.status, filepath: result.filepath }
     },
+    proceedCreatePetition: async (formData) => {
+        const result = await ipcRenderer.invoke('proceedCreatePetition', formData)
+       
+        return { status: result.status, filepath: result.filepath }
+    },
+    
     CreateFinality: async (formData) => {
         const result = await ipcRenderer.invoke('createFinality', formData)
         return { status: result.status, filepath: result.filepath }

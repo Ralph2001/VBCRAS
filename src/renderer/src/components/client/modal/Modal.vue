@@ -6,7 +6,7 @@
       'w-screen h-screen overflow-y-hidden': large,
       'lg:max-w-5xl max-h-full': medium,
       'lg:max-w-2xl max-h-full': dropbox,
-      'max-w-lg': small,
+      'max-w-lg p-10': small,
       'max-w-[35rem] ': titleCard,
     }" class="relative p-1 w-full" tabindex="-1">
       <div class="relative bg-white h-full rounded-sm w-full overflow-y-auto dark:bg-gray-700">
