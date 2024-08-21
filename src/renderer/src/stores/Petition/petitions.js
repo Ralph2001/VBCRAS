@@ -69,18 +69,19 @@ export const usePetitions = defineStore('petitions', {
         },
         async addPetition(data) {
             try {
-                const hostAdd = localStorage.getItem('host')
-                let tokenStr = localStorage.getItem('token')
-                await axios.post(`http://${hostAdd}:1216/petitions/add`, data, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${tokenStr}`,
-                    },
-                })
-                const status = true
-                this.refresh()
+                console.log(data)
+                // const hostAdd = localStorage.getItem('host')
+                // let tokenStr = localStorage.getItem('token')
+                // await axios.post(`http://${hostAdd}:1216/petitions/add`, data, {
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         Authorization: `Bearer ${tokenStr}`,
+                //     },
+                // })
+                // const status = true
+                // this.refresh()
 
-                return { status }
+                // return { status }
             } catch (error) {
                 const status = false
                 return { error, status }

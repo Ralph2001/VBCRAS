@@ -7,7 +7,7 @@ class Petitions(db.Model):
 
     date_filed = db.Column(db.String)
     republic_act_number = db.Column(db.String)
-    document_type = db.Column(db.String)  # CCE or CFN
+    petition_type = db.Column(db.String)  # CCE or CFN
     event_type = db.Column(db.String)  # Birth, Death and Marriage
     # Petition Detail
     petition_number = db.Column(db.String)
@@ -69,23 +69,6 @@ class PetitionClericalErrors(db.Model):
     description = db.Column(db.String)
     error_description_from  = db.Column(db.String)
     error_description_to  = db.Column(db.String)
-
-
-class PetitionChangeFirstName(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    petition_id = db.Column(db.Integer, db.ForeignKey('petitions.id'), nullable=False)
-    
-    first_name_from = db.Column(db.String, nullable=False)
-    first_name_to = db.Column(db.String, nullable=False)
-    ground_a = db.Column(db.Boolean, nullable=True, default=False)
-    ground_b = db.Column(db.Boolean, nullable=True, default=False)
-    ground_c = db.Column(db.Boolean, nullable=True, default=False)
-    ground_d = db.Column(db.Boolean, nullable=True, default=False)
-    ground_e = db.Column(db.Boolean, nullable=True, default=False)
-    ground_f = db.Column(db.Boolean, nullable=True, default=False)
-    ground_b_data = db.Column(db.String, nullable=True)
-    ground_f_data = db.Column(db.String, nullable=True)
-
 
 class PetitionSupportingDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)

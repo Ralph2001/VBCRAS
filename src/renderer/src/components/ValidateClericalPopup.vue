@@ -1,7 +1,7 @@
 <template>
     <div
         class="fixed top-0 bottom-0 right-0 left-0 z-50 backdrop-blur-sm backdrop-brightness-75 flex justify-center items-center">
-        <div class=" h-auto w-2/5 rounded-md border shadow  bg-white p-7 flex flex-col gap-2">
+        <div class=" h-auto w-[50rem] rounded-md border shadow  bg-white p-7 flex flex-col gap-2">
             <p class="text-lg font-medium text-gray-700">Validate Layout</p>
             <p class="text-justify text-gray-900 font-normal">Check the output layout and design before proceeding. The petition
                 will open in Microsoft Word or another editor for you to fix any errors. After editing, save and close

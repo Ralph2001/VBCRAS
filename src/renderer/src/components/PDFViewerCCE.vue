@@ -9,7 +9,9 @@
             <div class="flex flex-row gap-3 ml-auto">
                 <!-- <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Print All</button> -->
                 <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
-                    v-if="active_pdf_link" @click="printPDF">Print</button>
+                    v-if="active_pdf_link" @click="printAllPDF">Print All</button>
+                <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
+                    v-if="active_pdf_link" @click="printPDF">Print Active Document</button>
                 <button @click="exit_btn"
                     class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Exit</button>
             </div>
@@ -90,6 +92,10 @@ const exit_btn = () => {
 const printPDF = async () => {
     const base64Data = active_pdf_link.value
     const open = await window.LocalCivilApi.printPDFBase64(base64Data)
+}
+
+const printAllPDF = () => {
+    // alert('Not Available yet')
 }
 
 </script>
