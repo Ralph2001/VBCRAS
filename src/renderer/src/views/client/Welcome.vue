@@ -92,7 +92,7 @@ import { useSetup } from "../../stores/Setting/setup.js";
 const system_setting = useSetup()
 
 onMounted(() => {
-  system_setting.getSystemSetting()
+  // system_setting.getSystemSetting()
 })
 
 const Vital = ref();

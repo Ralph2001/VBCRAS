@@ -35,8 +35,8 @@
 
   <div class="w-full flex flex-col items-center justify-center h-full relative">
     <button type="button" ref="mainBtn" @click="approve_petition()"
-      class="px-3 py-1 text-sm tracking-wide bg-green-500 hover:bg-green-600 text-white active:scale-95  font-medium text-center  rounded-sm   transition-all focus:outline-none">
-      Approve
+      class="px-3 py-1 text-sm tracking-wide bg-green-400 hover:bg-green-600 text-white active:scale-95 font-medium text-center    transition-all focus:outline-none">
+      OPEN
     </button>
   </div>
 
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import {  ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const mainBtn = ref(null);
@@ -62,8 +62,8 @@ const approve_petition = () => {
 
   // Add Validation Here
   router.push('/client/cce_approval/' + props.params.data.id)
-  
-  
+
+
   // Swal
   //   .fire({
   //     title: "Are you sure?",

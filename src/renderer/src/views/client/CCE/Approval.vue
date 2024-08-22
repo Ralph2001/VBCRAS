@@ -2,16 +2,14 @@
     <div class="relative h-[calc(100vh-100px)] flex sm:flex-wrap  md:lg:flex-row w-full p-4 overflow-y-scroll gap-10">
         <div class="sm:grow md:lg:basis-[20%]  flex flex-col w-full h-full  gap-3 ">
             <p class="text-4xl text-gray-800 tracking-wider font-medium ml-5">Approval</p>
-            <div class="flex flex-col border p-4 gap-2 bg-white overflow-y-scroll h-full items-center mt-5 ml-5">
+            <div class="flex flex-col border p-4 gap-2 bg-white overflow-y-scroll h-full items-center mt-5 ml-5 relative">
                 <p class="text-md text-gray-800 tracking-wider font-medium mb-5 self-start "> Details:</p>
-                <div class="grid px-5 sm:grid-cols-1 md:lg:grid-cols-2 w-full  overflow-y-scroll"
-                    v-for="(value, key) in userData" :key="key">
+                <div class="grid px-5 sm:grid-cols-1 md:lg:grid-cols-2 w-full  " v-for="(value, key) in user_data"
+                    :key="key">
                     <div class="text-sm font-normal">{{ key }}</div>
                     <div class="text-md font-medium text-wrap w-full overflow-hidden truncate ">{{ value }} </div>
                 </div>
-                <div
-                    class="w-full flex items-center justify-end text-xs text-blue-500 hover:text-blue-600 hover:cursor-pointer">
-                    [Full Details]</div>
+
             </div>
         </div>
 
@@ -127,7 +125,7 @@
             </div>
         </div>
 
-        <!-- <ul v-for="(value, key) in petition.petitionData" :key="key">
+        <!-- <ul v-for="(value, key) in petition.petition_data" :key="key">
             <li>{{ key + ' : ' + value }}</li>
         </ul> -->
         <div class="fixed bg-white z-[9999] top-0 bottom-0 left-0 right-0 flex flex-col p-4 -full w-full border gap-2 px-10"
@@ -141,7 +139,7 @@
                             class="absolute right-[3rem] top-[0.4rem]  h-[3rem] w-[5rem] flex items-center justify-center bg-[#323639] z-[999]">
                             <p class="text-white text-xs tracking-wider font-medium">VBCRAS</p>
                         </div>
-                      
+
                         <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
                     </div>
                     <div class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm">
@@ -314,8 +312,8 @@ const data = computed(() => {
 });
 
 
-const petitionData = ref()
-const userData = ref({})
+const petition_data = ref()
+const user_data = ref({})
 
 const fromScanned = () => {
 
@@ -341,18 +339,10 @@ onChange((file) => {
 
 })
 onMounted(async () => {
-    const data = await petition.getPetition(route.params.id)
+    const data = await petition.get_petition_by_id(route.params.id)
     if (data) {
-        petitionData.value = data
-        userData.value = {
-            "Petitione Number": petitionData.value.petition_number,
-            "Petitioner Name": petitionData.value.petitioner_name,
-            "Document Owner": petitionData.value.name_owner === 'N/A' ? petitionData.value.petitioner_name : petitionData.value.name_owner,
-            "Relation to Owner": petitionData.value.relation_owner === 'N/A' ? 'Owner' : petitionData.value.relation_owner,
-            "Date Filed": petitionData.value.DatePaid,
-            "Date Granted": petitionData.value.date_granted,
-            "Document Type": petitionData.value.type + ' ' + petitionData.value.document_type,
-        }
+        petition_data.value = data
+        user_data.value = data
     }
 })
 

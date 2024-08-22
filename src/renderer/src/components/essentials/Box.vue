@@ -7,9 +7,10 @@
         </p>
         <slot></slot>
     </div> -->
-    <fieldset :class="width" class=" bg-gray-50  rounded h-full flex items-center flex-wrap px-10 py-8 "
-        style="box-shadow: rgba(0, 0, 0, 0.06) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;">
-        <legend class=" text-blackabsolute bg-transparent leading-2 font-bold italic text-sm tracking-wide text-gray-700"> {{ title
+    <fieldset :class="width"
+        class=" border border-gray-300  bg-gray-50  rounded h-full flex items-center flex-wrap px-10 py-8 ">
+        <legend class=" z-50  px-2  bg-transparent leading-2 font-semibold italic text-sm tracking-wide text-gray-600">
+            {{ title
             }} <span class="ms-4 text-red-500 italic text-xs" v-if="error">{{ error }}</span></legend>
         <slot></slot>
     </fieldset>

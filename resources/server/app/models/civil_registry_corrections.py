@@ -42,9 +42,14 @@ class Petitions(db.Model):
     amount_paid = db.Column(db.String)
     date_paid = db.Column(db.String)
 
+    # Petition Dates
+    notice_posting = db.Column(db.String)
+    certificate_posting_start = db.Column(db.String)
+    certificate_posting_end = db.Column(db.String)
+    petition_date_issued = db.Column(db.String)
+    petition_date_granted = db.Column(db.String)
 
-  
-  # Change of First Name fields (nullable, for CFN document type only)
+    # Change of First Name fields (nullable, for CFN document type only)
     first_name_from = db.Column(db.String, nullable=True)
     first_name_to = db.Column(db.String, nullable=True)
     ground_a = db.Column(db.Boolean, nullable=True, default=False)
@@ -57,27 +62,39 @@ class Petitions(db.Model):
     ground_f_data = db.Column(db.String, nullable=True)
 
     # Relationships (nullable for CFN document type)
-    clerical_errors = db.relationship('PetitionClericalErrors', backref='petition', lazy=True)
-    supporting_documents = db.relationship('PetitionSupportingDocuments', backref='petition', lazy=True)
-    petition_actions = db.relationship('PetitionActions', backref='petition', lazy=True)
-    
-    
+    clerical_errors = db.relationship(
+        "PetitionClericalErrors", backref="petition", lazy=True
+    )
+    supporting_documents = db.relationship(
+        "PetitionSupportingDocuments", backref="petition", lazy=True
+    )
+    petition_actions = db.relationship("PetitionActions", backref="petition", lazy=True)
+
 
 class PetitionClericalErrors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    petition_id = db.Column(db.Integer, db.ForeignKey('petitions.id'), nullable=False)
+    petition_id = db.Column(db.Integer, db.ForeignKey("petitions.id"), nullable=False)
     description = db.Column(db.String)
-    error_description_from  = db.Column(db.String)
-    error_description_to  = db.Column(db.String)
+    error_description_from = db.Column(db.String)
+    error_description_to = db.Column(db.String)
+
 
 class PetitionSupportingDocuments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    petition_id = db.Column(db.Integer, db.ForeignKey('petitions.id'), nullable=False)
+    petition_id = db.Column(db.Integer, db.ForeignKey("petitions.id"), nullable=False)
     document_name = db.Column(db.String)
+
 
 class PetitionActions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    petition_id = db.Column(db.Integer, db.ForeignKey('petitions.id'), nullable=False)
-    error_num = db.Column(db.String)
+    petition_id = db.Column(db.Integer, db.ForeignKey("petitions.id"), nullable=False)
+    error_num = db.Column(db.Integer)
     action_decision = db.Column(db.String)
     action_text = db.Column(db.String)
+    
+class PetitionReasons(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    petition_id = db.Column(db.Integer, db.ForeignKey("petitions.id"), nullable=False)
+    error_num = db.Column(db.String)
+    reason = db.Column(db.String)
+  

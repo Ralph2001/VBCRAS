@@ -5,20 +5,35 @@ export const usePetitions = defineStore('petitions', {
     state: () => ({
         petitions: [],
         latest: null,
-        petitionData: []
+        petitionData: [],
+
     }),
     actions: {
-        async getPetition(id) {
+        async get_all_petitions() {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/petitions`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                this.petitions = response.data
+
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
+        },
+        async get_petition_by_id(id) {
             try {
                 if (!this.isFetched) {
                     const hostAdd = localStorage.getItem('host')
                     let tokenStr = localStorage.getItem('token')
                     const response = await axios.get(
-                        `http://${hostAdd}:1216/petition/${id}`,
+                        `http://${hostAdd}:1216/petitions/get-petition/${id}`,
                         { headers: { Authorization: `Bearer ${tokenStr}` } }
                     )
                     return response.data
-                    // console.log(response)
                 } else {
                     console.log('⚡')
                 }
@@ -26,69 +41,60 @@ export const usePetitions = defineStore('petitions', {
                 console.error('Error fetching data:', error)
             }
         },
-
-        async getPetitions() {
+        async add_petition(data) {
             try {
-                if (!this.isFetched) {
-                    const hostAdd = localStorage.getItem('host')
-                    let tokenStr = localStorage.getItem('token')
-                    const response = await axios.get(
-                        `http://${hostAdd}:1216/petitions`,
-                        { headers: { Authorization: `Bearer ${tokenStr}` } }
-                    )
-                    this.petitions = response.data.petitions
-                    console.log(response)
-                } else {
-                    console.log('⚡')
-                }
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.post(`http://${hostAdd}:1216/petitions/add-petition`, data, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${tokenStr}`,
+                    },
+                })
+
+                this.refresh()
+
+            } catch (error) {
+                console.error('Error inserting data:', error)
+
+            }
+        },
+
+        async get_latest_cce() {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/petitions/latest-cce`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                console.log(response)
+                return response
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
+        },
+        async get_latest_cfn() {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/petitions/latest-cfn`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                console.log(response)
+
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
             }
         },
 
-        async getLatestPetition() {
-            // try {
-            //     if (!this.isFetched) {
-            //         const hostAdd = localStorage.getItem('host')
-            //         let tokenStr = localStorage.getItem('token')
-            //         const response = await axios.get(
-            //             `http://${hostAdd}:1216/petitions/latest/petition_number`,
-            //             { headers: { Authorization: `Bearer ${tokenStr}` } }
-            //         )
-            //         this.latest = response.data.petitions
-            //         console.log(this.latest)
-            //         return true
-            //     } else {
-            //         return false
-            //         console.log('⚡')
-            //     }
-            // } catch (error) {
-            //     console.error('Error fetching data:', error)
-            // }
-        },
-        async addPetition(data) {
-            try {
-                console.log(data)
-                // const hostAdd = localStorage.getItem('host')
-                // let tokenStr = localStorage.getItem('token')
-                // await axios.post(`http://${hostAdd}:1216/petitions/add`, data, {
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //         Authorization: `Bearer ${tokenStr}`,
-                //     },
-                // })
-                // const status = true
-                // this.refresh()
 
-                // return { status }
-            } catch (error) {
-                const status = false
-                return { error, status }
-            }
-        },
+
         async refresh() {
-            this.getPetitions()
+            this.get_all_petitions()
         },
     },
 })

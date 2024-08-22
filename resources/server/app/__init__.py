@@ -4,6 +4,7 @@ from .routes.user import user
 from .routes.ausf import ausf
 from .routes.config_route import configuration
 from .routes.scanned import scans
+from .routes.petition import petitions
 
 
 
@@ -30,6 +31,7 @@ def create_app():
     app.register_blueprint(ausf)
     app.register_blueprint(configuration)
     app.register_blueprint(scans)
+    app.register_blueprint(petitions)
     
     
     
@@ -39,6 +41,7 @@ def create_app():
     from .models.form import Forms, BirthAvailable, DeathAvailable, MarriageAvailable   
     from .models.ausf import Ausf
     from .models.system import SystemSettings
+    from .models.civil_registry_corrections import Petitions
     
      
     with app.app_context():
