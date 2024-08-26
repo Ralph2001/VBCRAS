@@ -2,7 +2,7 @@
   <div>
     <label v-if="!nolabel" :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
       <span v-if="error" class="text-red-600">*</span></label>
-    <input :type="type" :id="label" :value="modelValue" @input="emit('update:modelValue', $event.target.value)"
+    <input :type="type" :id="label" :value="modelValue"  @input="value_toUpperCase($event.target.value)"
       :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
         'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
         'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
@@ -43,8 +43,26 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  cap: {
+    type: Boolean,
+    default: false,
+  }
 
 });
+
+const value_toUpperCase = (value) => {
+  if (props.cap) {
+    const uppercase_this = value
+    emit('update:modelValue', uppercase_this.toUpperCase())
+    //
+    return
+  }
+
+  emit('update:modelValue', value)
+}
 </script>
+
+
+
 
 <style lang="scss" scoped></style>

@@ -6,7 +6,7 @@ export const usePetitions = defineStore('petitions', {
         petitions: [],
         latest: null,
         petitionData: [],
-
+        relation_to_document_owner: ['Brother', 'Mother', 'Father', 'Sister']
     }),
     actions: {
         async get_all_petitions() {
@@ -18,7 +18,6 @@ export const usePetitions = defineStore('petitions', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.petitions = response.data
-
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -45,18 +44,20 @@ export const usePetitions = defineStore('petitions', {
             try {
                 const hostAdd = localStorage.getItem('host')
                 let tokenStr = localStorage.getItem('token')
-                const response = await axios.post(`http://${hostAdd}:1216/petitions/add-petition`, data, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${tokenStr}`,
-                    },
-                })
+                const response = await axios.post(
+                    `http://${hostAdd}:1216/petitions/add-petition`,
+                    data,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`
+                        }
+                    }
+                )
 
                 this.refresh()
-
             } catch (error) {
                 console.error('Error inserting data:', error)
-
             }
         },
 
@@ -84,17 +85,14 @@ export const usePetitions = defineStore('petitions', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 console.log(response)
-
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
             }
         },
 
-
-
         async refresh() {
             this.get_all_petitions()
-        },
-    },
+        }
+    }
 })

@@ -19,16 +19,16 @@
 
       <!-- Input Fields -->
       <div :class="[backround_per_event]"
-        class="flex flex-col sm:px-10 md:lg:px-[20rem] object-cover bg-slate-50 overflow-y-scroll h-max w-full gap-4 relative pb-10"
+        class="flex flex-col sm:px-10 md:lg:px-[12rem] object-cover bg-slate-50 overflow-y-scroll h-max w-full gap-4 relative pb-10"
         :style="bgTexture">
 
 
         <!-- Debugging -->
-        <div class="fixed right-10 top-20 flex flex-col w-[30rem]">
+        <!-- <div class="fixed right-10 top-20 flex flex-col w-[30rem]">
           <p v-for="(value, key) in formData" class="text-blue-500 text-xs">"{{ key }}" - <span
               class="text-gray-800 font-medium">{{
                 value }}</span></p>
-        </div>
+        </div> -->
         <!-- Debugging -->
 
 
@@ -58,8 +58,7 @@
                   :republic_act="is_default_republic_act" :type="is_default_petition_type"
                   :petition_number_value="is_default_petitioner_number" />
               </div>
-              <Input label="Petitioner Name" v-model="formData.petitioner_name"
-                @input="formData.petitioner_name = $event.target.value.toUpperCase()" />
+              <Input label="Petitioner Name" v-model="formData.petitioner_name" cap />
             </div>
           </Box>
 
@@ -105,13 +104,14 @@
                   formData.event_type === 'Death' ||
                   (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
                 ">
-                  <Input label="Relation" v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
-                    ? true
-                    : false || formData.petitioner_error_in === ''
-                    " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                  <InputAutoComplete :suggestion_data="petitions.relation_to_document_owner" label="Relation"
+                    v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                       ? true
                       : false || formData.petitioner_error_in === ''
-                      " />
+                      " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                        ? true
+                        : false || formData.petitioner_error_in === ''
+                        " />
                 </div>
               </div>
             </Box>
@@ -130,7 +130,9 @@
           <div class="basis-[45%]">
             <Box title=", at" width="w-full ">
               <div class="grid sm:grid-cols-1 lg:grid-cols-2 w-full gap-2">
-                <Input label="Country" v-model="formData.event_country" skip />
+                <InputAutoComplete label="Country" v-model="formData.event_country"
+                  :suggestion_data="countryList.countryList" />
+                <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
                 <Input label="Province" v-model="formData.event_province" />
                 <Input label="Municipalty" v-model="formData.event_municipality" />
               </div>
@@ -183,13 +185,14 @@
                   </div>
 
                   <div class="grow">
-                    <Input nolabel v-model="formData.clerical_errors[index].description" />
+                    <InputAutoComplete nolabel :suggestion_data="clerical_error_descriptions"
+                      v-model="formData.clerical_errors[index].description" />
                   </div>
                   <div class="grow">
-                    <Input nolabel v-model="formData.clerical_errors[index].error_description_from" />
+                    <Input nolabel cap v-model="formData.clerical_errors[index].error_description_from" />
                   </div>
                   <div class="grow">
-                    <Input nolabel v-model="formData.clerical_errors[index].error_description_to" />
+                    <Input nolabel cap v-model="formData.clerical_errors[index].error_description_to" />
                   </div>
                 </div>
                 <div class="flex justify-end gap-2 mt-3">
@@ -513,15 +516,14 @@ import CheckBox from "../../components/essentials/buttons/CheckBox.vue";
 import TextArea from "../../components/essentials/inputs/TextArea.vue";
 import ViewBTn from "../../components/essentials/buttons/table/viewBTn.vue";
 import MultiButton from "../../components/essentials/buttons/table/multiButton.vue";
-
-
+import InputAutoComplete from "../../components/InputAutoComplete.vue";
+import countryList from '../../utils/country.js'
 
 const system_setting = useSetup() // System Settings, Default Values
 const AutoComplete = defineAsyncComponent(() =>
   import("../../components/essentials/inputs/AutoComplete.vue")
 );
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
-
 
 
 const petitions = usePetitions();
@@ -548,6 +550,11 @@ const close_modal = () => {
 const supporting_items = ref([0])
 const clerical_errors_items = ref([0])
 
+
+const clerical_error_descriptions = ref(
+  ["Child's first name",
+    "Child's middle name",
+    "Child's last name"])
 const republic_act = ref(['9048', '10172'])
 const petition_type = ref(["CCE", "CFN"])
 const event_type = ref(['Birth', 'Death', 'Marriage'])
@@ -631,6 +638,7 @@ const IHeSheLabel = computed(() => {
 
 
 
+
 const action_options = ref({
   Granted: "Granted",
   Denied: "Denied (Provide the basis for denial)",
@@ -708,7 +716,7 @@ const initialForm = {
   document_owner: '',
   relation_owner: '',
   event_date: '',
-  event_country: 'Philippines',
+  event_country: '',
   event_province: '',
   event_municipality: '',
   registry_number: '',
