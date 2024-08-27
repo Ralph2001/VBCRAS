@@ -6,14 +6,17 @@
             Manage
         </button>
 
-        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-auto"
+        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-[10rem]"
             v-if="dropdown">
-            <button @click="openfolder(props.params.data.filepath)" type="button"
+            <!-- <button @click="openfolder(props.params.data.filepath)" type="button"
                 class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Folder</button>
             <button type="button"
-                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Details</button>
-
+                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Details</button> -->
+            <button type="button" v-for="(value, index) in commands" :key="index"
+                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">{{ value.label }} {{ index +
+                    1
+                }}</button>
         </div>
     </div>
 </template>
@@ -32,6 +35,14 @@ const props = defineProps({
 
     }
 })
+
+const commands = ref([
+    { label: 'Option', cmd: 'option_cmd' },
+    { label: 'Option', cmd: 'option_cmd' },
+    { label: 'Option', cmd: 'option_cmd' },
+])
+
+
 
 const openfolder = async (filepath) => {
     const open = await window.ClericalApi.OpenClerical(filepath)

@@ -1,36 +1,70 @@
-function toOOXML(data) {
-    const words = data.split(' ')
-    let textFormatted = ''
-    let inQuotes = false
+// function toOOXML(data) {
+//     const words = data.split(' ')
+//     let textFormatted = ''
+//     let inQuotes = false
 
-    words.forEach((word) => {
+//     words.forEach((word) => {
+//         if (word.startsWith('"')) {
+//             inQuotes = true
+//         }
+
+//         const formattedWord = `
+//         <w:r>
+//             <w:rPr>
+//             ${inQuotes ? '<w:b/>' : ''}
+//                 <w:rFonts w:ascii="Arial"/>
+//                     <w:sz w:val="22"/>
+//                 </w:rPr>
+//                 <w:t>
+//                 ${word.replace(`"`, '“').replace(`"`, '”')}&#160;
+//                 </w:t>
+//         </w:r>
+
+//       ` // Notice the change within <w:t>
+
+//         textFormatted += formattedWord
+
+//         if (word.endsWith('"') || word.endsWith('";') || word.endsWith('".')) {
+//             inQuotes = false
+//         }
+//     })
+
+//     return textFormatted
+// }
+
+export function toOOXML(data) {
+    const words = data.split(' ');
+    let inQuotes = false;
+
+    const formattedWords = words.map((word) => {
+        // Start of a quoted phrase
         if (word.startsWith('"')) {
-            inQuotes = true
+            inQuotes = true;
         }
 
+        // Format the word
         const formattedWord = `
-        <w:r>
-            <w:rPr>
-            ${inQuotes ? '<w:b/>' : ''}
-                <w:rFonts w:ascii="Arial"/>
+            <w:r>
+                <w:rPr>
+                    ${inQuotes ? '<w:b/>' : ''}
+                    <w:rFonts w:ascii="Arial"/>
                     <w:sz w:val="22"/>
                 </w:rPr>
-                <w:t>
-                ${word.replace(`"`, '“').replace(`"`, '”')}&#160;
-                </w:t>
-        </w:r>
+                <w:t>${word.replace(`"`, '“').replace(`"`, '”')}&#160;</w:t>
+            </w:r>
+        `;
 
-      ` // Notice the change within <w:t>
-
-        textFormatted += formattedWord
-
+        // End of a quoted phrase
         if (word.endsWith('"') || word.endsWith('";') || word.endsWith('".')) {
-            inQuotes = false
+            inQuotes = false;
         }
-    })
 
-    return textFormatted
+        return  formattedWord ;
+    });
+
+    return formattedWords.join('');
 }
+
 
 // function format() {
 //     const fromTextAndtoText = computed(() => {

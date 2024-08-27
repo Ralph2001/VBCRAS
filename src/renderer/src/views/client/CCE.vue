@@ -24,8 +24,8 @@
 
 
         <!-- Debugging -->
-        <!-- <div class="fixed right-10 top-20 flex flex-col w-[30rem]">
-          <p v-for="(value, key) in formData" class="text-blue-500 text-xs">"{{ key }}" - <span
+        <!-- <div class="fixed top-10 bottom-10 right-10 flex flex-col w-[30rem] z-50 justify-center">
+          <p v-for="(value, key) in formData" class="text-blue-500 text-xs text-center">"{{ key }}" - <span
               class="text-gray-800 font-medium">{{
                 value }}</span></p>
         </div> -->
@@ -216,9 +216,9 @@
           ">
             <Box title="The first name to be change  " width="w-full">
               <div class="grid grid-cols-2 gap-2 w-full">
-                <Input label="From" @input="formData.first_name_from = $event.target.value.toUpperCase()"
+                <Input label="From" @change="generate_granted_text()" @input="formData.first_name_from = $event.target.value.toUpperCase()"
                   v-model="formData.first_name_from" />
-                <Input @input="formData.first_name_to = $event.target.value.toUpperCase()" label="To"
+                <Input @change="generate_granted_text()" @input="formData.first_name_to = $event.target.value.toUpperCase()" label="To"
                   v-model="formData.first_name_to" />
               </div>
             </Box>
@@ -497,7 +497,8 @@
 
 <script setup>
 
-import { usePetitions } from "../../stores/Petition/Petitions.js";
+// import { usePetitions } from "../../stores/Petition/Petitions.js";
+import { usePetitions } from "../../stores/Petition/petitions.js";
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
 import { ref, onMounted, reactive, computed, defineAsyncComponent } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -519,6 +520,19 @@ import MultiButton from "../../components/essentials/buttons/table/multiButton.v
 import InputAutoComplete from "../../components/InputAutoComplete.vue";
 import countryList from '../../utils/country.js'
 
+import {
+  now_date,
+  add_date_notice,
+  add_date_certificate_start,
+  add_date_certificate_end,
+  add_date_issued,
+  add_date_granted,
+} from "../../utils/DayPosting.js";
+
+import { grantedText } from "../../composables/GrantedText.js";
+
+
+
 const system_setting = useSetup() // System Settings, Default Values
 const AutoComplete = defineAsyncComponent(() =>
   import("../../components/essentials/inputs/AutoComplete.vue")
@@ -536,13 +550,22 @@ onMounted(async () => {
 
 });
 
+
+
 const open_modal = async () => {
   const cce = await petitions.get_latest_cce()
   const latest = cce.data.petition_number.split('-')
   is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
 
-
   petition_modal.value = true
+
+  formData.notice_posting = add_date_notice().toString()
+  formData.certificate_posting_start = add_date_certificate_start().toString()
+  formData.certificate_posting_end = add_date_certificate_end().toString()
+  formData.petition_date_issued = add_date_issued().toString()
+  formData.petition_date_granted = add_date_granted().toString()
+  formData.action_taken_date = add_date_granted().toString()
+
 }
 const close_modal = () => {
   petition_modal.value = false
@@ -552,12 +575,44 @@ const clerical_errors_items = ref([0])
 
 
 const clerical_error_descriptions = ref(
-  ["Child's first name",
+  [
+    "Child's first name",
     "Child's middle name",
-    "Child's last name"])
+    "Child's last name"
+  ])
+
+
+// Document Changer Value
 const republic_act = ref(['9048', '10172'])
-const petition_type = ref(["CCE", "CFN"])
-const event_type = ref(['Birth', 'Death', 'Marriage'])
+const petition_type = computed(() => {
+  switch (formData.republic_act_number) {
+    case "9048":
+      return ['CCE', 'CFN']
+    case "10172":
+      formData.petition_type = 'CCE'
+      return ['CCE']
+    default:
+      return []
+  }
+})
+const event_type = computed(() => {
+  if (formData.republic_act_number === '9048') {
+    switch (formData.petition_type) {
+      case "CCE":
+        return ['Birth', 'Death', 'Marriage']
+      case "CFN":
+        formData.event_type = 'Birth'
+        return ['Birth']
+
+      default:
+        return []
+    }
+  }
+  else {
+    formData.event_type = 'Birth'
+    return ['Birth']
+  }
+})
 
 // Petitioner Number Variables
 const is_default_petition_type = computed(() => {
@@ -568,6 +623,23 @@ const is_default_petitioner_year = ref(new Date().getFullYear())
 const is_default_republic_act = computed(() => {
   return formData.republic_act_number === '9048' ? '9048' : '10172'
 })
+
+// Granted Text
+const granted_text_data = computed(() => {
+  const data = ref({
+    from: formData.first_name_from,
+    to: formData.first_name_to,
+    event_type: formData.event_type,
+    petition_type: formData.petition_type,
+    clerical_errors: formData.clerical_errors,
+  });
+  const granted = grantedText(data);
+  return granted;
+});
+
+function generate_granted_text() {
+  formData.petition_actions[0].action_text = granted_text_data.value
+}
 
 // Petitiner Number Values
 function change_petitioner_number(e) {
@@ -703,6 +775,7 @@ function remove_supporting_documents() {
 }
 
 
+
 const initialForm = {
   date_filed: new Date().toISOString().split('T')[0],
   republic_act_number: '9048',
@@ -724,17 +797,17 @@ const initialForm = {
   filing_province: system_setting.municipality_province.split(',')[1],
   administering_officer_name: '',
   administering_officer_position: '',
-  subscribe_sworn_date: '',
+  subscribe_sworn_date: new Date().toISOString().split('T')[0],
   subscribe_sworn_city_municipality: system_setting.municipality_province,
   community_tax_certificate: '',
   issued_at: system_setting.municipality_province,
-  issued_on: '',
+  issued_on: new Date().toISOString().split('T')[0],
   action_taken_date: '',
   municipal_civil_registrar: system_setting.municipal_civil_registrar,
   // Payment
   o_r_number: '',
   amount_paid: '',
-  date_paid: '',
+  date_paid: new Date().toISOString().split('T')[0],
 
   // Change of First Name. Nullable Data
   first_name_from: '',
@@ -785,8 +858,6 @@ const initialForm = {
 const formData = reactive({ ...initialForm })
 
 const submitForm = async () => {
-
-
 
   const petition_ = {
     date_filed: formData.date_filed,
@@ -840,15 +911,12 @@ const submitForm = async () => {
     reasons: formData.reasons,
   }
 
-
   // Create a function that will generate all documents using the petition data
+  const generate_ = await window.ClericalApi.createPetitionDocument(JSON.stringify(petition_));
 
   // Validate Layouts
 
-
-  const submit_ = petitions.add_petition(petition_)
-
-
+  // const submit_ = petitions.add_petition(petition_)
 
 };
 
