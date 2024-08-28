@@ -39,7 +39,8 @@
               tabindex="-1">
               <Select skip :options="republic_act" v-model="formData.republic_act_number" label="Republic Act" />
               <Select skip :options="petition_type" v-model="formData.petition_type" label="Petition Type" />
-              <Select skip :options="event_type" v-model="formData.event_type" label="Document Type" />
+              <Select skip :options="event_type" v-model="formData.event_type" label="Document Type"
+                @change="change_event_selected_error_in()" />
             </div>
           </Box>
         </div>
@@ -80,7 +81,8 @@
           ">
             <Box title="seeking for correction of the clerical error in: " width="w-full">
               <div class="grid grid-rows-2 gap-2 w-full">
-                <Radio :options="seeking_options" v-model="formData.petitioner_error_in" name="cce_in" />
+                <Radio @change_="change_document_owner_relation()" :options="seeking_options"
+                  v-model="formData.petitioner_error_in" name="cce_in" />
               </div>
             </Box>
           </div>
@@ -216,9 +218,11 @@
           ">
             <Box title="The first name to be change  " width="w-full">
               <div class="grid grid-cols-2 gap-2 w-full">
-                <Input label="From" @change="generate_granted_text()" @input="formData.first_name_from = $event.target.value.toUpperCase()"
+                <Input label="From" @change="generate_granted_text()"
+                  @input="formData.first_name_from = $event.target.value.toUpperCase()"
                   v-model="formData.first_name_from" />
-                <Input @change="generate_granted_text()" @input="formData.first_name_to = $event.target.value.toUpperCase()" label="To"
+                <Input @change="generate_granted_text()"
+                  @input="formData.first_name_to = $event.target.value.toUpperCase()" label="To"
                   v-model="formData.first_name_to" />
               </div>
             </Box>
@@ -404,8 +408,21 @@
           <div class="basis-[100%]">
             <Box title="ACTION TAKEN BY THE C/MCR" width="w-full ">
               <div class="grid grid-cols-1 w-full gap-2">
+                <!-- Subpart 1: Shows when republic act is 9048 -->
+                <div v-if="formData.republic_act_number === '9048'" class="flex flex-col">
+                  <div class="flex flex-row justify-evenly">
+                    <Radio :options="action_options" :name="'action_' + 0"
+                      v-model="formData.petition_actions[0].action_decision" />
+                  </div>
+                  <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
+                    <textarea id="message" rows="6" v-model="formData.petition_actions[0].action_text"
+                      class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                  </div>
+                </div>
+
                 <!-- Subpart 1: Shows when republic act is 10172 -->
-                <div class="flex flex-col" v-for="(value, index) in clerical_errors_items" :key="index">
+                <div v-if="formData.republic_act_number === '10172'" class="flex flex-col"
+                  v-for="(value, index) in clerical_errors_items" :key="index">
                   <div class="flex flex-row justify-evenly">
                     <Radio :options="action_options" :name="'action_' + index"
                       v-model="formData.petition_actions[index].action_decision" />
@@ -530,6 +547,7 @@ import {
 } from "../../utils/DayPosting.js";
 
 import { grantedText } from "../../composables/GrantedText.js";
+import { factReason } from "../../composables/FactsReasons.js";
 
 
 
@@ -709,8 +727,6 @@ const IHeSheLabel = computed(() => {
 });
 
 
-
-
 const action_options = ref({
   Granted: "Granted",
   Denied: "Denied (Provide the basis for denial)",
@@ -720,6 +736,7 @@ function indexToLetter(index) {
   return alphabet[index].toLowerCase();
 }
 
+// Function that adds clerical error field
 function add_clerical_error() {
   clerical_errors_items.value.push('');
   const newClericalError = {
@@ -730,23 +747,23 @@ function add_clerical_error() {
 
   formData.clerical_errors.push(newClericalError);
 
-  if (!formData.republic_act_number === '10172') {
-    return
-  }
-  // Reason
-  const newReason = {
-    error_num: clerical_errors_items.value.length.toString(),
-    reason: ''
-  }
-  formData.reasons.push(newReason)
+  if (formData.republic_act_number === '10172') {
+    // Reason
+    const newReason = {
+      error_num: clerical_errors_items.value.length.toString(),
+      reason: ''
+    }
+    formData.reasons.push(newReason)
 
-  // Actions
-  const newActions = {
-    error_num: clerical_errors_items.value.length.toString(),
-    action_decision: '',
-    action_text: ''
+    // Actions
+    const newActions = {
+      error_num: clerical_errors_items.value.length.toString(),
+      action_decision: '',
+      action_text: ''
+    }
+    formData.petition_actions.push(newActions);
   }
-  formData.petition_actions.push(newActions);
+
 }
 function remove_clerical_error() {
   if (clerical_errors_items.value.length > 1) {
@@ -774,6 +791,20 @@ function remove_supporting_documents() {
   }
 }
 
+// Document Changer Dynamically Change the Error in 
+function change_event_selected_error_in() {
+  formData.event_type === 'Birth' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'N/A') :
+    formData.event_type === 'Death' ? (formData.petitioner_error_in = 'the', formData.document_owner = '', formData.relation_owner = '') :
+      formData.event_type === 'Marriage' ? (formData.petitioner_error_in = 'my', formData.document_owner = '', formData.relation_owner = 'Spouse') : ''
+}
+function change_document_owner_relation() {
+  if (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my') {
+    formData.document_owner = ''
+    formData.relation_owner = 'Spouse'
+    return
+  }
+  formData.petitioner_error_in === 'my' ? (formData.document_owner = 'N/A', formData.relation_owner = 'N/A') : formData.petitioner_error_in === 'the' ? (formData.document_owner = '', formData.relation_owner = '') : ''
+}
 
 
 const initialForm = {
@@ -785,9 +816,9 @@ const initialForm = {
   petitioner_name: '',
   nationality: 'Filipino',
   petitioner_address: '',
-  petitioner_error_in: '',
-  document_owner: '',
-  relation_owner: '',
+  petitioner_error_in: 'my',
+  document_owner: 'N/A',
+  relation_owner: 'N/A',
   event_date: '',
   event_country: '',
   event_province: '',

@@ -217,7 +217,10 @@ async function petition(data) {
         petitioner_address: data.petitioner_address,
         my: error_in_my,
         the: error_in_the,
+
+        spouse: data.document_owner, // for 9048 CCE Marriage
         document_owner: data.document_owner,
+        
         relation_owner: data.relation_owner,
         event_date: data.event_date,
         event_country: data.event_country,

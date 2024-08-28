@@ -1,13 +1,17 @@
 <template>
     <div class="relative h-[calc(100vh-100px)] flex sm:flex-wrap  md:lg:flex-row w-full p-4 overflow-y-scroll gap-10">
-        <div class="sm:grow md:lg:basis-[20%]  flex flex-col w-full h-full  gap-3 ">
+        <div class="sm:grow md:lg:basis-[20%]  flex flex-col w-full h-full  gap-2">
             <p class="text-4xl text-gray-800 tracking-wider font-medium ml-5">Approval</p>
-            <div class="flex flex-col border p-4 gap-2 bg-white overflow-y-scroll h-full items-center mt-5 ml-5 relative">
-                <p class="text-md text-gray-800 tracking-wider font-medium mb-5 self-start "> Details:</p>
-                <div class="grid px-5 sm:grid-cols-1 md:lg:grid-cols-2 w-full  " v-for="(value, key) in user_data"
-                    :key="key">
-                    <div class="text-sm font-normal">{{ key }}</div>
-                    <div class="text-md font-medium text-wrap w-full overflow-hidden truncate ">{{ value }} </div>
+            <div class="flex flex-col border  gap-2 bg-white  h-full items-center  relative">
+                <div class="w-full flex items-start justify-center p-4 flex-col bg-gray-100 shadow">
+                    <p class="text-md text-gray-800 tracking-wider font-medium  "> Details:</p>
+                </div>
+                <div class=" w-full h-fit overflow-scroll">
+                    <div class="grid px-5 sm:grid-cols-1 md:lg:grid-cols-2 " v-for="(value, key) in user_data"
+                        :key="key">
+                        <div class="text-sm font-normal">{{ key }}</div>
+                        <div class="text-md font-medium text-wrap w-full overflow-hidden truncate ">{{ value }} </div>
+                    </div>
                 </div>
 
             </div>
@@ -241,7 +245,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
-import { usePetitions } from '../../../stores/Petition/Petitions';
+import { usePetitions } from '../../../stores/Petition/petitions';
 import ExplorerView from '../../../components/client/ExplorerView.vue';
 import { useFileDialog } from '@vueuse/core'
 import { RecycleScroller } from 'vue-virtual-scroller';
