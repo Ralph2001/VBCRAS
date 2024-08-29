@@ -220,6 +220,8 @@ async function petition(data) {
 
 
         // Fix This
+        // if 9048 CCE Marriage Document Owner will acts as a Spouse
+    
         spouse: data.document_owner, // for 9048 CCE Marriage
         document_owner: data.document_owner,
         relation_owner: data.relation_owner,
