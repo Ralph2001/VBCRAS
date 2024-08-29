@@ -6,7 +6,7 @@
             </button>
 
         </div>
-        <Transition mode="out-in" >
+        <Transition mode="out-in">
             <div v-if="more_option"
                 class="absolute flex flex-col gap-2 top-10 right-4 items-start justify-center border shadow-sm  rounded-sm bg-white">
                 <button

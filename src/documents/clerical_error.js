@@ -218,10 +218,13 @@ async function petition(data) {
         my: error_in_my,
         the: error_in_the,
 
+
+        // Fix This
         spouse: data.document_owner, // for 9048 CCE Marriage
         document_owner: data.document_owner,
-        
         relation_owner: data.relation_owner,
+
+
         event_date: data.event_date,
         event_country: data.event_country,
         event_province: data.event_province,
@@ -260,6 +263,23 @@ async function petition(data) {
         o_r_number: data.o_r_number,
         amount_paid: data.amount_paid,
         date_paid: data.date_paid,
+
+        // Change of First Name Tags
+        from: data.first_name_from,
+        to: data.first_name_to,
+        a: data.ground_a,
+        b: data.ground_b,
+        c: data.ground_c,
+        d: data.ground_d,
+        e: data.ground_e,
+        f: data.ground_f,
+        b_data: data.ground_b_data,
+        f_data: data.ground_f_data,
+
+        // CCE 10172
+        reasons: data.reasons,
+        actions: data.petition_actions
+
     })
 
     // doc.render({
