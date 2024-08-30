@@ -276,7 +276,11 @@ ipcMain.handle('createAUSF', async (event, formData) => {
     }
 })
 
-// Clerical IpcMain
+/////////////
+/////////////
+// Clerical
+/////////////
+/////////////
 
 ipcMain.handle('CreateAnnotated', async (event, formData) => {
     try {
@@ -294,15 +298,15 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
 ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const generate_document = await generate(formData);
-        // if (generate_document.status) {
-        //     const source = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Petition.docx')
-        //     const open_file = await shell.openExternal(source)
+        if (generate_document.status) {
+            const source = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Petition.docx')
+            const open_file = await shell.openExternal(source)
 
-        //     if (!open_file) {
-        //         return { status: false, filepath: null };
-        //     }
-        // }
-        // return { status: true, filepath: null };
+            if (!open_file) {
+                return { status: false, filepath: null };
+            }
+        }
+        return { status: true, filepath: null };
     } catch (error) {
         console.log(error);
     }
@@ -529,7 +533,7 @@ function mainWindow() {
         width: 1060,
         height: 670,
         show: false,
-        frame: false,
+        frame: true,
 
 
         autoHideMenuBar: true,

@@ -8,15 +8,15 @@
 
         <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-[10rem]"
             v-if="dropdown">
-            <!-- <button @click="openfolder(props.params.data.filepath)" type="button"
-                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
+            <button type="button" disabled
+                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
+                Document</button>
+            <button type="button" disabled
+                class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Folder</button>
-            <button type="button"
-                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Details</button> -->
-            <button type="button" v-for="(value, index) in commands" :key="index"
-                class=" flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">{{ value.label }} {{ index +
-                    1
-                }}</button>
+            <button  type="button" disabled 
+                class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete</button>
+                <!-- @click="delete_cmd(props.params.data)" -->
         </div>
     </div>
 </template>
@@ -24,29 +24,30 @@
 <script setup>
 import { ref } from 'vue';
 import { onClickOutside } from "@vueuse/core";
+import { usePetitions } from '../../../../stores/Petition/petitions';
+
+const petitions = usePetitions()
 
 const mainBtn = ref(null)
 onClickOutside(mainBtn, (event) => (dropdown.value = false));
 const dropdown = ref(false)
 
 const props = defineProps({
-    data: {
-        type: Object
-
+    params: {
+        type: Object,
+        required: true
     }
 })
 
-const commands = ref([
-    { label: 'Option', cmd: 'option_cmd' },
-    { label: 'Option', cmd: 'option_cmd' },
-    { label: 'Option', cmd: 'option_cmd' },
-])
-
-
-
 const openfolder = async (filepath) => {
     const open = await window.ClericalApi.OpenClerical(filepath)
+}
 
+const delete_cmd = async (data) => {
+    const remove_data = await petitions.remove_petition(data.id)
+    console.log(remove_data
+
+    )
 }
 
 </script>

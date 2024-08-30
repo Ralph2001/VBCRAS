@@ -4,7 +4,7 @@ import axios from 'axios'
 export const usePetitions = defineStore('petitions', {
     state: () => ({
         petitions: [],
-        latest: null,
+        latest: '',
         petitionData: [],
         relation_to_document_owner: ['Brother', 'Mother', 'Father', 'Sister']
     }),
@@ -69,11 +69,10 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petitions/latest-cce`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-                console.log(response)
+                this.latest = response
                 return response
             } catch (error) {
-                console.error('Error fetching data:', error)
-                this.router.push('/login')
+                return false
             }
         },
         async get_latest_cfn() {
@@ -84,10 +83,29 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petitions/latest-cfn`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-                console.log(response)
+                this.latest = response
+                return response
+
             } catch (error) {
-                console.error('Error fetching data:', error)
-                this.router.push('/login')
+                return false
+                // console.error('Error fetching data:', error)
+                // this.router.push('/login')
+            }
+        },
+
+        async remove_petition(id) {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.delete(
+                    `http://${hostAdd}:1216/petition/${id}`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                console.log(response)
+                this.refresh()
+                return true
+            } catch (error) {
+                return false
             }
         },
 

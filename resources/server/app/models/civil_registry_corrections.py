@@ -62,13 +62,11 @@ class Petitions(db.Model):
     ground_f_data = db.Column(db.String, nullable=True)
 
     # Relationships (nullable for CFN document type)
-    clerical_errors = db.relationship(
-        "PetitionClericalErrors", backref="petition", lazy=True
-    )
-    supporting_documents = db.relationship(
-        "PetitionSupportingDocuments", backref="petition", lazy=True
-    )
+    clerical_errors = db.relationship("PetitionClericalErrors", backref="petition", lazy=True)
+    supporting_documents = db.relationship( "PetitionSupportingDocuments", backref="petition", lazy=True)
     petition_actions = db.relationship("PetitionActions", backref="petition", lazy=True)
+    petition_reasons = db.relationship("PetitionReasons", backref="petition", lazy=True)
+
 
 
 class PetitionClericalErrors(db.Model):
@@ -91,10 +89,10 @@ class PetitionActions(db.Model):
     error_num = db.Column(db.Integer)
     action_decision = db.Column(db.String)
     action_text = db.Column(db.String)
-    
+
+
 class PetitionReasons(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     petition_id = db.Column(db.Integer, db.ForeignKey("petitions.id"), nullable=False)
     error_num = db.Column(db.String)
     reason = db.Column(db.String)
-  

@@ -21,13 +21,14 @@ def get_all_petitions():
     result = petitions_list_schema.dump(petitions_records)
     return jsonify(result), 200
 
+
 @petitions.route("/petitions/get-petition/<int:id>", methods=["GET"])
 def get_petition_by_id(id):
     petition_record = Petitions.query.get(id)
-    
+
     if not petition_record:
         return jsonify({"message": "Petition not found"}), 404
-    
+
     result = petition_schema.dump(petition_record)
     return jsonify(result), 200
 
@@ -35,21 +36,31 @@ def get_petition_by_id(id):
 # Get Latest Petitions
 @petitions.route("/petitions/latest-cce", methods=["GET"])
 def get_latest_cce_petition():
-    latest_petition = Petitions.query.filter_by(petition_type="CCE").order_by(Petitions.date_filed.desc()).first()
+    latest_petition = (
+        Petitions.query.filter_by(petition_type="CCE")
+        .order_by(Petitions.date_filed.desc())
+        .first()
+    )
     if latest_petition:
         result = {"petition_number": latest_petition.petition_number}
         return jsonify(result), 200
     else:
         return jsonify({"message": "No CCE petition found"}), 404
 
+
 @petitions.route("/petitions/latest-cfn", methods=["GET"])
 def get_latest_cfn_petition():
-    latest_petition = Petitions.query.filter_by(petition_type="CFN").order_by(Petitions.date_filed.desc()).first()
+    latest_petition = (
+        Petitions.query.filter_by(petition_type="CFN")
+        .order_by(Petitions.date_filed.desc())
+        .first()
+    )
     if latest_petition:
         result = {"petition_number": latest_petition.petition_number}
         return jsonify(result), 200
     else:
         return jsonify({"message": "No CFN petition found"}), 404
+
 
 #########
 # Insert
@@ -66,4 +77,14 @@ def add_petition():
     return jsonify(result), 201
 
 
+#########
+# Delete
+#########
 
+
+@petitions.route("/petition/<int:id>", methods=["DELETE"])
+def delete_ausf(id):
+    delete_petition = Petitions.query.get_or_404(id)
+    db.session.delete(delete_petition)
+    db.session.commit()
+    return jsonify({"message": "Petition record deleted successfully."}), 200

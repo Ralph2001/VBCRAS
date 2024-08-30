@@ -1,7 +1,7 @@
 <template>
   <div
-    class="overflow-x-hidden h-full pt-10 overflow-y-hidden fixed top-10 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
-    aria-modal="true" tabindex="-1" role="dialog">
+    class="overflow-x-hidden h-full  overflow-y-hidden fixed top-10 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
+    aria-modal="true" tabindex="-1" role="dialog" >
     <div :class="{
       'w-screen h-screen overflow-y-hidden': large,
       'lg:max-w-5xl max-h-full': medium,
@@ -9,7 +9,7 @@
       'max-w-lg p-10': small,
       'max-w-[35rem] ': titleCard,
     }" class="relative p-1 w-full" tabindex="-1">
-      <div class="relative bg-white h-full rounded-sm w-full overflow-y-auto dark:bg-gray-700">
+      <div class="relative  h-full rounded-sm w-full overflow-y-auto dark:bg-gray-700">
         <!-- Header -->
         <div class="flex bg-white items-center top-0 right-0 left-0 p-3 border-b">
           <h3 v-if="!titleCard" class="text-sm tracking-wide font-bold text-gray-800 uppercase dark:text-white">
@@ -33,7 +33,7 @@
         <div :class="{
           'h-[19rem]': titleCard,
           'h-[calc(100vh-180px)]': small || medium,
-          'h-[calc(100vh-145px)]': large,
+          'h-[calc(100vh-130px)]': large,
         }" class="overflow-y-scroll relative bg-white">
           <slot> </slot>
         </div>
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { useAttrs } from "vue";
+import { ref, useAttrs } from "vue";
 const attrs = useAttrs();
 const props = defineProps({
   label: {
@@ -68,4 +68,6 @@ const props = defineProps({
     default: "",
   },
 });
+
+
 </script>

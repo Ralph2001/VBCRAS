@@ -599,7 +599,7 @@
 
 <script setup>
 import Radio from "../../components/essentials/inputs/Radio.vue";
-import { usePetitions } from "../../stores/Petition/Petitions.js";
+import { usePetitions } from "../../stores/Petition/petitions.js";
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
 import { ref, reactive, computed, onMounted, watch, defineAsyncComponent } from "vue";
 import Select from "../../components/essentials/inputs/Select.vue";
@@ -1514,10 +1514,6 @@ const submitForm = async () => {
 
 
   const submit_ = petitions.addPetition(petition_)
-
-
-
-
 
 
   // if (check.status) {
