@@ -62,15 +62,24 @@
             {{ data_name }}
           </p>
 
-          <p class="text-sm font-bold">Type</p>
+          <p class="text-sm font-bold">Available Types</p>
           <div class="flex flex-row justify-center items-center">
-            <div class="grid md:lg:grid-cols-5 sm:grid-cols-2  sm:gap-3 md:lg:gap-3 w-full">
-              <div v-for="uri in Documents.scanned_types"
+            <div class="flex flex-row flex-wrap items-center justify-center gap-3 w-full">
+              <div v-for="uri in types"
                 class="flex sm:w-full md:lg:w-[7.5rem] items-center p-2 px-2 h-[3.5rem]  rounded-lg dark:border-gray-700 cursor-pointer typebox border border-gray-200 bg-white hover:bg-gray-50 duration-100">
                 <fwb-radio :label="uri.name" :value="uri.id" v-model="scannedData.type" name="typeBox"
                   class="cursor-pointer" />
               </div>
             </div>
+            <p class="w-full px-2 text-red-500" v-if="!types.length">
+              No Available type
+            </p>
+          </div>
+          <div class="flex flex-col  p-2 gap-2">
+            <p class="font-medium">Add New Type</p>
+            <Input v-model="formData.new_type" :error="validate_new_type.new_type.$error" />
+            <button @click="create_new_type"
+              class="border w-max ml-auto px-2 rounded bg-blue-500 text-white hover:bg-blue-600">Add</button>
           </div>
 
           <div class="flex md:flex-row flex-col gap-2 mt-3">
@@ -133,6 +142,11 @@ import { required } from "@vuelidate/validators";
 import Dropdown from "../../components/client/inputs/Dropdown.vue";
 import Swal from "sweetalert2";
 import { FwbRadio } from "flowbite-vue";
+import Input from "../../components/essentials/inputs/Input.vue";
+import { useSetup } from "../../stores/Setting/setup";
+
+
+const setup = useSetup()
 
 const Modal = defineAsyncComponent(() =>
   import("../../components/client/modal/Modal.vue")
@@ -143,11 +157,16 @@ const ExplorerView = defineAsyncComponent(() =>
 
 onMounted(() => {
   Documents.getScanned();
-  Documents.getScannedType();
   // Documents.getTime();
   desktop.getUserName();
   auth.isAuthenticated();
+  setup.getScannedType()
+  // console.log(setup.getScannedType())
 });
+
+const formData = reactive({
+  new_type: ''
+})
 
 const auth = AuthStore();
 const Documents = useScannedDocuments();
@@ -155,6 +174,16 @@ const desktop = useComputerStore();
 
 const isSubmitting = ref(false);
 const submit = ref("Save");
+
+const example_type = ref([
+  // { name: 'Birth', id: '' },
+  // { name: 'Death', id: '' },
+  // { name: 'Marriage', id: '' },
+  // { name: 'Legal Instrument', id: '' },
+  // { name: 'Other Documents', id: '' },
+  // { name: 'Book Scan', id: '' },
+])
+
 
 
 const months = [
@@ -174,7 +203,7 @@ const months = [
 
 // All Scanned Types.
 
-const type = Documents.scanned_types
+const types = ref(setup.scanned_types)
 
 
 const years = computed(() => {
@@ -195,8 +224,6 @@ const Toast = Swal.mixin({
     toast.onmouseleave = Swal.resumeTimer;
   },
 });
-
-
 
 
 const modal = ref(false);
@@ -361,4 +388,27 @@ const submitScanned = async () => {
     submit.value = "Save";
   }
 };
+
+const formDatarule = computed(() => {
+  return {
+    new_type: { required },
+  };
+});
+
+const validate_new_type = useVuelidate(formDatarule, formData);
+
+const create_new_type = async () => {
+  validate_new_type.value.$touch();
+  if (validate_new_type.value.$error) {
+    console.log(validate_new_type);
+    return;
+  }
+  const name = {
+    name: formData.new_type
+  }
+
+  const response = await setup.addScannedType(name)
+  formData.new_type = ''
+  setup.getScannedType()
+}
 </script>

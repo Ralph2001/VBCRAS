@@ -60,7 +60,7 @@ export const useScannedDocuments = defineStore('scanned', {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error)
-                this.router.push('/login')
+                // this.router.push('/login')
             }
         },
         async refresh() {

@@ -10,8 +10,8 @@
     <!-- Crtl + F -->
     <Menu />
     <div
-      class="bg-transparent rounded-sm flex md:flex-row sm:flex-col p-4 h-[calc(100vh-139px)] items-center flex-wrap">
-      <div class="flex flex-col md:basis-[35%] items-center h-full justify-center gap-10 px-10">
+      class="bg-transparent rounded-sm flex md:flex-row sm:flex-col p-4 h-[calc(100vh-139px)] sm:px-10 md:lg:px-40 items-center flex-wrap">
+      <div class="flex flex-col grow items-center h-full justify-center px-10">
         <!-- <p class="text-lg tracking-wide font-normal text-justify text-pretty">For I know the plans I have for you,
           declares the Lord, plans for welfare and
           not for evil,
@@ -29,25 +29,25 @@
           <p class="transition-all" @mouseover="hoverTitle" ref="System">System</p>
         </div>
         <div class="">
-          <p class="text-md font-normal text-justify leading-7 tracking-wider text-gray-800">
-            <span class="font-bold hover:scale-95 font-mono text-lg">"Vital Bridge"</span>
+          <p class="text-md font-normal text-center leading-7 tracking-wider text-gray-800">
+            <span class="font-bold hover:scale-95 font-mono text-2xl">Vital Bridge</span>
             suggests a connection or link that is essential or crucial. In the context of
             a birth, death, and marriage record system, it could signify the pivotal role
             of the system in connecting and managing vital life events, serving as a
             bridge between individuals and official records. The term
-            <span class="font-bold font-mono text-lg tracking-wider">"vital"</span>
+            <span class="font-bold font-mono text-lg tracking-wider">vital</span>
             emphasizes the importance or significance of the information being bridged,
             while
-            <span class="font-bold font-mono text-lg tracking-wider">"bridge"</span>
+            <span class="font-bold font-mono text-lg tracking-wider">bridge</span>
             implies the facilitation or connection between different components or
             entities.
           </p>
         </div>
       </div>
 
-      <div class="grow h-[calc(100vh-300px)] sm:hidden md:block">
+      <!-- <div class="md:basis-[35%] h-[calc(100vh-300px)] sm:hidden md:block">
         <Carousel />
-      </div>
+      </div> -->
     </div>
 
     <div class="fixed flex flex-row sm:gap-5 md:gap-[5rem] bottom-0 right-0 left-0 px-10 py-2 bg-slate-50">

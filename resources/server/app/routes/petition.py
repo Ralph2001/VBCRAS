@@ -38,7 +38,7 @@ def get_petition_by_id(id):
 def get_latest_cce_petition():
     latest_petition = (
         Petitions.query.filter_by(petition_type="CCE")
-        .order_by(Petitions.date_filed.desc())
+        .order_by(Petitions.created_at.desc())
         .first()
     )
     if latest_petition:
@@ -52,7 +52,7 @@ def get_latest_cce_petition():
 def get_latest_cfn_petition():
     latest_petition = (
         Petitions.query.filter_by(petition_type="CFN")
-        .order_by(Petitions.date_filed.desc())
+        .order_by(Petitions.created_at.desc())
         .first()
     )
     if latest_petition:
@@ -70,6 +70,14 @@ def get_latest_cfn_petition():
 @petitions.route("/petitions/add-petition", methods=["POST"])
 def add_petition():
     data = request.get_json()
+
+    # Validate petition_number uniqueness
+    existing_petition = Petitions.query.filter_by(
+        petition_number=data["petition_number"]
+    ).first()
+    if existing_petition:
+        return jsonify({"error": "Petition number already exists"}), 400
+
     new_petition = petition_schema.load(data, session=db.session)
     db.session.add(new_petition)
     db.session.commit()
@@ -83,8 +91,27 @@ def add_petition():
 
 
 @petitions.route("/petition/<int:id>", methods=["DELETE"])
-def delete_ausf(id):
-    delete_petition = Petitions.query.get_or_404(id)
-    db.session.delete(delete_petition)
-    db.session.commit()
-    return jsonify({"message": "Petition record deleted successfully."}), 200
+def delete_petition(id):
+    petition = Petitions.query.get(id)
+    if petition:
+        # Delete related data (optional)
+        for clerical_error in petition.clerical_errors:
+            db.session.delete(clerical_error)
+
+        for supporting_document in petition.supporting_documents:
+            db.session.delete(supporting_document)
+
+        for petition_action in petition.petition_actions:
+            db.session.delete(petition_action)
+
+        for petition_reason in petition.petition_reasons:
+            db.session.delete(petition_reason)
+
+        # Delete the petition itself
+        db.session.delete(petition)
+        db.session.commit()
+
+        return jsonify({"message": "Petition record deleted successfully."}), 200
+    else:
+        return jsonify({"message": "Petition record not found."}), 404
+    # return jsonify({"message": "Petition record deleted successfully."}), 200

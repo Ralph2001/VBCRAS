@@ -35807,7 +35807,7 @@ const philippines = [
                 },
             },
         },
-        10: {
+        '10': {
             region_name: 'REGION X',
             province_list: {
                 BUKIDNON: {
@@ -38226,7 +38226,7 @@ const philippines = [
                 },
             },
         },
-        11: {
+        '11': {
             region_name: 'REGION XI',
             province_list: {
                 'COMPOSTELA VALLEY': {
@@ -39609,7 +39609,7 @@ const philippines = [
                 },
             },
         },
-        12: {
+        '12': {
             region_name: 'REGION XII',
             province_list: {
                 'COTABATO (NORTH COT.)': {
@@ -40984,7 +40984,7 @@ const philippines = [
                 },
             },
         },
-        13: {
+        '13': {
             region_name: 'REGION XIII',
             province_list: {
                 'AGUSAN DEL NORTE': {
@@ -42612,7 +42612,7 @@ const philippines = [
                 },
             },
         },
-        BARMM: {
+        'BARMM': {
             region_name: 'BARMM',
             province_list: {
                 BASILAN: {
@@ -45688,7 +45688,7 @@ const philippines = [
                 },
             },
         },
-        CAR: {
+        'CAR': {
             region_name: 'CAR',
             province_list: {
                 ABRA: {
@@ -47201,7 +47201,7 @@ const philippines = [
                 },
             },
         },
-        NCR: {
+        'NCR': {
             region_name: 'NCR',
             province_list: {
                 'NATIONAL CAPITAL REGION - FOURTH DISTRICT': {

@@ -4,7 +4,7 @@ import axios from 'axios'
 export const usePetitions = defineStore('petitions', {
     state: () => ({
         petitions: [],
-        latest: '',
+        latest: null,
         petitionData: [],
         relation_to_document_owner: ['Brother', 'Mother', 'Father', 'Sister']
     }),

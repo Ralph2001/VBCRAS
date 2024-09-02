@@ -2,15 +2,17 @@
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
-      <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
+      <!-- <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button> -->
     </Header>
 
-    <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
+    <!-- <ClericalErrorSettings v-if="settings" @close-setting="settings = false" /> -->
     <ValidateClericalPopup @proceed="create_validated_document" v-if="is_validating" />
+    <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
       <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
       <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
+
     </div>
 
     <div role="dialog" aria-modal="true" v-if="is_creating"
@@ -58,7 +60,8 @@
             <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
               tabindex="-1">
               <Select skip :options="republic_act" v-model="formData.republic_act_number" label="Republic Act" />
-              <Select skip :options="petition_type" v-model="formData.petition_type" label="Petition Type" />
+              <Select skip :options="petition_type" v-model="formData.petition_type" label="Petition Type"
+                @change="petition_by_type_retriever" />
               <Select skip :options="event_type" v-model="formData.event_type" label="Document Type"
                 @change="change_event_selected_error_in()" />
             </div>
@@ -87,7 +90,9 @@
             <div class="grid grid-cols-3 w-full gap-2">
               <Input label="Nationality" v-model="formData.nationality" skip />
               <div class=" col-span-2">
-                <Input label="Petitioner Address" v-model="formData.petitioner_address" />
+                <InputAutoComplete label="Petitioner Address" v-model="formData.petitioner_address" :wait="true"
+                  :suggestion_data="all_" />
+            
               </div>
             </div>
           </Box>
@@ -154,9 +159,13 @@
               <div class="grid sm:grid-cols-1 lg:grid-cols-2 w-full gap-2">
                 <InputAutoComplete label="Country" v-model="formData.event_country"
                   :suggestion_data="countryList.countryList" />
+                <InputAutoComplete label="Province" @change="formData.event_municipality = ''"
+                  v-model="formData.event_province" :suggestion_data="province" />
+                <InputAutoComplete label="Municipality" v-model="formData.event_municipality"
+                  :suggestion_data="municipality" />
                 <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
-                <Input label="Province" v-model="formData.event_province" />
-                <Input label="Municipalty" v-model="formData.event_municipality" />
+                <!-- <Input label="Province" v-model="formData.event_province" /> -->
+                <!-- <Input label="Municipalty" v-model="formData.event_municipality" /> -->
               </div>
             </Box>
           </div>
@@ -573,6 +582,13 @@ import PDFViewerCCE from "../../components/PDFViewerCCE.vue";
 import Wave from "../../components/Wave.vue";
 import ClericalErrorSettings from "../../components/client/ClericalErrorSettings.vue";
 
+import { all_address, complete_municipality, complete_province } from '../../utils/address'
+
+const province = ref(complete_province())
+const municipality = computed(() => {
+  return complete_municipality(formData.event_province)
+})
+const all_ = ref(all_address())
 
 
 const system_setting = useSetup() // System Settings, Default Values
@@ -606,7 +622,7 @@ const open_modal = async () => {
     is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
   }
   else {
-    is_default_petitioner_number.value = '0000'
+    is_default_petitioner_number.value = '0001'
   }
 
   petition_modal.value = true
@@ -617,8 +633,35 @@ const open_modal = async () => {
   formData.petition_date_issued = add_date_issued().toString()
   formData.petition_date_granted = add_date_granted().toString()
   formData.action_taken_date = add_date_granted().toString()
-
 }
+
+// Retrieve Latest Petitioner Number
+// CCE and CFN
+const petition_by_type_retriever = computed(async () => {
+  if (formData.petition_type === 'CCE') {
+    const cce = await petitions.get_latest_cce()
+    console.log(cce)
+    if (cce) {
+      const latest = cce.data.petition_number.split('-')
+      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
+    }
+    else {
+      is_default_petitioner_number.value = '0001'
+    }
+  }
+  else if (formData.petition_type === 'CFN') {
+    const cfn = await petitions.get_latest_cfn()
+    if (cfn) {
+      const latest = cfn.data.petition_number.split('-')
+      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
+    }
+    else {
+      is_default_petitioner_number.value = '0001'
+    }
+  }
+})
+
+
 const close_modal = () => {
   petition_modal.value = false
 }
@@ -847,31 +890,31 @@ const initialForm = {
   petition_type: 'CCE',
   event_type: 'Birth',
   petition_number: petitioner_number,
-  petitioner_name: 'RALPH ADVINCULA VILLANUEVA', // TESTING
+  petitioner_name: '', // TESTING
   nationality: 'Filipino',
-  petitioner_address: 'Anulid, Alcala, Pangasinan', // Testing 
+  petitioner_address: '', // Testing 
   petitioner_error_in: 'my',
   document_owner: 'N/A',
   relation_owner: 'N/A',
-  event_date: '2001-05-16',// Testing 
-  event_country: 'Philippines',// Testing 
-  event_province: 'Pangasinan',// Testing 
-  event_municipality: 'Alcala',// Testing 
-  registry_number: '200-16',// Testing 
+  event_date: '',// Testing 
+  event_country: 'Philippines',
+  event_province: '',// Testing 
+  event_municipality: '',// Testing 
+  registry_number: '',// Testing 
   filing_city_municipality: system_setting.municipality_province.split(',')[0],
   filing_province: system_setting.municipality_province.split(',')[1],
   administering_officer_name: 'ISMAEL D. MALICDEM, JR.', // Testing 
   administering_officer_position: 'Municipal Civil Registrar', // Testing
   subscribe_sworn_date: new Date().toISOString().split('T')[0],
   subscribe_sworn_city_municipality: system_setting.municipality_province,
-  community_tax_certificate: '0374689345',// Testing
+  community_tax_certificate: '',// Testing
   issued_at: system_setting.municipality_province,
   issued_on: new Date().toISOString().split('T')[0],
-  action_taken_date: '2024-08-30',// Testing
+  action_taken_date: '',// Testing
   municipal_civil_registrar: system_setting.municipal_civil_registrar,
   // Payment
-  o_r_number: '958245082',// Testing
-  amount_paid: '1200',// Testing
+  o_r_number: '',// Testing
+  amount_paid: '',// Testing
   date_paid: new Date().toISOString().split('T')[0],
 
   // Change of First Name. Nullable Data

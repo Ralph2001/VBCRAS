@@ -3,12 +3,12 @@
         <Header label="Local Civil Registry Forms">
             <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
         </Header>
-        <div class="h-[calc(100vh-250px)] relative flex flex-col items-center justify-center border rounded-sm ">
+        <div class="h-[calc(100vh-200px)] relative flex flex-col items-center justify-center border rounded-sm ">
             <p class="italic font-thin text-sm  font-mono">Table Here</p>
 
         </div>
 
-        <Modal medium label="Create a new Document" v-if="isFormOpen">
+        <Modal medium label="Create a new Document" footerBG="bg-white" v-if="isFormOpen">
             <template v-slot:header>
                 <ModalCloseButton @click="closeModal" />
             </template>

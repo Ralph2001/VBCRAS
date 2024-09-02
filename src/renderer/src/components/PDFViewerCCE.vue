@@ -1,6 +1,6 @@
 <template>
     <div class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
-        <div class="w-full bg-[#525659] flex  absolute  p-4 top-5 z-[99999]">
+        <div class="w-full bg-[#525659] flex  absolute  p-4 top-0 z-[99999]">
             <div class="flex flex-row gap-2 items-center">
                 <p class="text-sm  text-gray-100 font-medium  italic">
                     Correction of Clerical Error - Ralph Advincula Villanueva
@@ -16,12 +16,16 @@
                     class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Exit</button>
             </div>
         </div>
-        <div class="absolute top-[5rem] left-5 w-[20rem] p-2 px-6 items-center gap-2  z-[9999999] flex flex-col">
-            <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
-                :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
-                class="p-2 shadow-inner outline-none ring-0 w-full font-medium text-sm rounded-sm flex items-start">
-                {{ item.name }}
-            </button>
+        <div
+            class="absolute top-0 bottom-0 left-0 w-[20rem] p-2 px-6 py-20 items-center gap-2 bg-[#525659] z-40 flex flex-col">
+          
+            <div class=" w-full flex flex-col gap-2">
+                <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
+                    :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
+                    class="p-2 shadow-inner outline-none ring-0 w-full font-medium text-sm rounded-sm flex items-start">
+                    {{ item.name }}
+                </button>
+            </div>
         </div>
 
         <div class="absolute right-0 w-[2rem] h-full block bg-[#525659] ">

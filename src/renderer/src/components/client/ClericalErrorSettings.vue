@@ -6,7 +6,7 @@
                 <button class="ml-auto" @click="close_setting">[close]</button>
             </div>
 
-            <div class="mt-5   h-full grid grid-cols-4 gap-2">
+            <div class=" h-full grid grid-cols-4 gap-2">
                 <div class="flex flex-col  py-10 gap-2  text-gray-800 font-medium text-md">
                     <button type=""
                         class="w-full  px-2 py-2.5 items-start flex  hover:bg-blue-500 hover:text-white rounded-sm  ">Automatic
@@ -16,12 +16,10 @@
                     <button type=""
                         class="w-full  px-2 py-2.5 items-start flex  hover:bg-blue-500 hover:text-white rounded-sm  ">Guide</button>
                 </div>
-                <div class="col-span-3 border border-gray-300 rounded-md p-4">
+                <div class="col-span-3 border border-gray-300 rounded-md p-4 h-auto overflow-y-scroll ">
                     <div class="flex flex-col h-full">
-
                         <p class="font-mono text-xs text-gray-800">Adjustments</p>
-
-                        <p class="font-mono p-4 ml-6 mt-10">The Output will be: </p>
+                        <p class="font-mono p-4  ">The Output will be: </p>
                         <div class="flex flex-row p-2 items-center justify-center">
                             <div class="flex flex-col p-2 w-[10rem] items-center" v-for="date in dates" :key="date">
                                 <p class="font-medium text-sm text-gray-700">{{ date.name }}</p>
@@ -74,7 +72,7 @@
                             </div>
                         </div>
 
-                        
+
                         <div class="flex flex-col mt-10">
                             <p class="underline">Certificate of Posting End</p>
                             <div class="flex flex-row items-center gap-4">

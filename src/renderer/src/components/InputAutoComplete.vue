@@ -10,7 +10,7 @@
             class="bg-gray-50 tracking-wide rounded read-only:bg-gray-100 read-only:text-gray-400 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200 border border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" />
 
         <div v-if="suggestions_ && result.length > 0" ref="suggestion_box"
-            class="absolute w-full z-[9999999999] bg-white    max-h-40 overflow-y-scroll scroll-m-0 flex flex-col border shadow-md" >
+            class="absolute w-full z-[9999999999] bg-white    max-h-40 overflow-y-scroll scroll-m-0 flex flex-col border shadow-md">
             <button v-for="suggestion in result" :key="suggestion + '_unique'" @click="i_choose_this(suggestion)"
                 class="w-full flex items-center hover:bg-gray-200  h-8 text-sm py-1 justify-start px-2 font-medium outline-none focus:bg-green-200">{{
                     suggestion
@@ -22,7 +22,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { onClickOutside } from '@vueuse/core'
+import { onClickOutside, useDebounceFn } from '@vueuse/core'
 
 
 // Example Array of Data
@@ -65,7 +65,11 @@ const props = defineProps({
     cap: {
         type: Boolean,
         default: false,
-    }
+    },
+    wait: {
+        type: Boolean,
+        default: false,
+    },
 
 
 })

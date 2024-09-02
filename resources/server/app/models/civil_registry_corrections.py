@@ -1,5 +1,5 @@
 from ..extensions import db
-
+import datetime
 
 class Petitions(db.Model):
 
@@ -61,6 +61,8 @@ class Petitions(db.Model):
     ground_b_data = db.Column(db.String, nullable=True)
     ground_f_data = db.Column(db.String, nullable=True)
 
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now)
+ 
     # Relationships (nullable for CFN document type)
     clerical_errors = db.relationship("PetitionClericalErrors", backref="petition", lazy=True)
     supporting_documents = db.relationship( "PetitionSupportingDocuments", backref="petition", lazy=True)

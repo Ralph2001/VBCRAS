@@ -1,11 +1,11 @@
 <template>
   <div
     class="overflow-x-hidden h-full  overflow-y-hidden fixed top-10 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 flex backdrop-blur-sm backdrop-brightness-[0.5]"
-    aria-modal="true" tabindex="-1" role="dialog" >
+    aria-modal="true" tabindex="-1" role="dialog">
     <div :class="{
       'w-screen h-screen overflow-y-hidden': large,
       'lg:max-w-5xl max-h-full': medium,
-      'lg:max-w-2xl max-h-full': dropbox,
+      'lg:max-w-2xl max-h-full sm:px-20': dropbox,
       'max-w-lg p-10': small,
       'max-w-[35rem] ': titleCard,
     }" class="relative p-1 w-full" tabindex="-1">
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Footer -->
-        <div :class="[titleCard ? ' h-0' : '', $attrs.footerBG]"
+        <div :class="[titleCard ? ' h-0' : '', $attrs.footerBG ? $attrs.footerBG : 'bg-white']"
           class="flex z-50 h-16 items-center justify-end   p-2  dark:border-gray-600">
           <slot name="footer"> </slot>
         </div>

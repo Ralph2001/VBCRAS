@@ -13,31 +13,31 @@ export const useSetup = defineStore('useSetup', {
     }),
     actions: {
         async getSystemSetting() {
-            // try {
-            //     const hostAdd = localStorage.getItem('host')
-            //     let tokenStr = localStorage.getItem('token')
-            //     const response = await axios.get(
-            //         `http://${hostAdd}:1216/system-settings`,
-            //         { headers: { Authorization: `Bearer ${tokenStr}` } }
-            //     )
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/system-settings`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
 
 
-            //     if (response.data < 1) {
-            //         this.isSetupDone = false
-            //         return false
-            //     }
-            //     this.municipal_civil_registrar = response.data[0].municipal_civil_registrar
-            //     this.mayor = response.data[0].mayor
-            //     this.municipality_province = response.data[0].municipality_province
+                if (response.data < 1) {
+                    this.isSetupDone = false
+                    return false
+                }
+                this.municipal_civil_registrar = response.data[0].municipal_civil_registrar
+                this.mayor = response.data[0].mayor
+                this.municipality_province = response.data[0].municipality_province
 
-            //     this.isSetupDone = true
-            //     return true
+                this.isSetupDone = true
+                return true
 
 
-            // } catch (error) {
-            //     console.error('Error fetching data:', error)
-            //     this.router.push('/login')
-            // }
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
             return true
         },
         async setSystemSetting(data) {
@@ -62,7 +62,12 @@ export const useSetup = defineStore('useSetup', {
                 const response = await axios.post(
                     `http://${hostAdd}:1216/add-scanned-type`,
                     data,
-                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`
+                        }
+                    }
                 )
                 this.refreshScannedTypes()
 
@@ -95,56 +100,56 @@ export const useSetup = defineStore('useSetup', {
         async refreshScannedTypes() {
             this.getScannedType()
         },
-        // async getUserPositions() {
-        //     try {
-        //         const hostAdd = localStorage.getItem('host')
-        //         let tokenStr = localStorage.getItem('token')
-        //         const response = await axios.get(
-        //             `http://${hostAdd}:1216/get-positions`,
-        //             { headers: { Authorization: `Bearer ${tokenStr}` } }
-        //         )
+        async getUserPositions() {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/get-positions`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
 
-        //         this.user_positions = response.data
+                this.user_positions = response.data
 
-        //     } catch (error) {
-        //         console.error('Error fetching data:', error)
-        //         this.router.push('/login')
-        //     }
-        // },
-        // async addUserPositions(data) {
-        //     try {
-        //         const hostAdd = localStorage.getItem('host')
-        //         let tokenStr = localStorage.getItem('token')
-        //         const response = await axios.post(
-        //             `http://${hostAdd}:1216/add-positions`,
-        //             data,
-        //             { headers: { Authorization: `Bearer ${tokenStr}` } }
-        //         )
-        //         console.log(response)
-        //         this.refreshPosition()
-        //     } catch (error) {
-        //         console.error('Error fetching data:', error)
-        //         this.router.push('/login')
-        //     }
-        // },
-        // async removeUserPositions(data) {
-        //     try {
-        //         const hostAdd = localStorage.getItem('host')
-        //         let tokenStr = localStorage.getItem('token')
-        //         const response = await axios.delete(
-        //             `http://${hostAdd}:1216/add-position`,
-        //             data,
-        //             { headers: { Authorization: `Bearer ${tokenStr}` } }
-        //         )
-        //         this.refreshPosition()
-        //     } catch (error) {
-        //         console.error('Error fetching data:', error)
-        //         this.router.push('/login')
-        //     }
-        // },
-        // async refreshPosition() {
-        //     this.getUserPositions()
-        // },
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
+        },
+        async addUserPositions(data) {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.post(
+                    `http://${hostAdd}:1216/add-positions`,
+                    data,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                console.log(response)
+                this.refreshPosition()
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
+        },
+        async removeUserPositions(data) {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.delete(
+                    `http://${hostAdd}:1216/add-position`,
+                    data,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                this.refreshPosition()
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
+        },
+        async refreshPosition() {
+            this.getUserPositions()
+        },
 
     },
 })

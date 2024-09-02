@@ -14,9 +14,9 @@
             <button type="button" disabled
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Folder</button>
-            <button  type="button" disabled 
+            <button type="button" @click="delete_cmd(props.params.data)"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete</button>
-                <!-- @click="delete_cmd(props.params.data)" -->
+            <!-- @click="delete_cmd(props.params.data)" -->
         </div>
     </div>
 </template>
@@ -44,10 +44,9 @@ const openfolder = async (filepath) => {
 }
 
 const delete_cmd = async (data) => {
-    const remove_data = await petitions.remove_petition(data.id)
-    console.log(remove_data
+    const id  = Number(data.id)
+    const remove_data = await petitions.remove_petition(id)
 
-    )
 }
 
 </script>

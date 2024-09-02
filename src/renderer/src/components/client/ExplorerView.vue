@@ -316,48 +316,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="h-full flex flex-row" v-if="searchQuery != ''">
-        <div v-if="!searchData.length && searchQuery != ''"
-          class="flex w-full flex-col items-center h-full gap-10 justify-center">
-          <p class="text-center text-lg font-bold text-gray-600 font-italic">
-            No files found.
-          </p>
-
-          <div>
-            <img src="../../assets/no result.png" alt="" class="h-[15rem]" srcset="" />
-          </div>
-        </div>
-
-        <div class="h-full grow">
-          <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
-            :item-size="28" key-field="name" v-slot="{ item }">
-            <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
-              class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
-              <div class="block w-[60%] overflow-hidden truncate">
-                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
-                {{ item.name.replace(".pdf", "") }}
-              </div>
-              <p class="text-sm italic text-gray-600 font-normal mr-2">
-                {{ item.type }} {{ item.month }} {{ item.year }}
-
-                <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path"
-                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" />
-              </p>
-            </li>
-          </RecycleScroller>
-        </div>
-
-        <div class="basis-[50%] h-full w-full flex  border-s p-1  items-center justify-center  gap-2"
-          v-if="searchQuery != '' && searchData.length">
-          <button v-if="pdfSource" @click="pdfSource = ''"
-            class="border px-2 py-1.5 self-start rounded-sm text-gray-700 text-sm font-medium hover:bg-red-400 hover:text-white ">Close</button>
-            <iframe :src="pdfSource" v-if="pdfSource" frameborder="0" class="w-full h-full">
-            </iframe>
-          <div v-else class="h-full w-full flex items-center justify-center shadow-sm bg-gray-100">
-            <p class="text-gray-600 font-mono text-lg  ">VBCRAS</p>
-          </div>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -426,51 +384,51 @@ function matchToOpened(id) {
 
 const openFile = async (filepath, filename, id) => {
   opened.value.push(id);
+  ActiveFile.value = filename;
+  const check = await window.LocalCivilApi.checkFile(filepath);
   try {
-    const device = computer.desktop_name;
+    // const device = computer.desktop_name;
+    // const data = [
+    //   {
+    //     name: filename,
+    //     device_used: device,
+    //     action: "Opened",
+    //   },
+    // ];
+    // const add_log = await Documents.add_log(data);
+    // if (add_log) {
+    //   if (Documents.OpenMode === "OpenSideBar") {
+    //     const check = await window.ScannedApi.OpenInSideBar(filepath);
 
-    ActiveFile.value = filename;
-    const data = [
-      {
-        name: filename,
-        device_used: device,
-        action: "Opened",
-      },
-    ];
+    //     pdfSource.value =
+    //       "data:application/pdf;filename=generated.pdf;base64," + check.fileUrl;
+    //     console.log(check);
+    //     if (!check.status) {
+    //       showAlert.value = true;
+    //       pdfSource.value = "";
+    //       setTimeout(() => {
+    //         showAlert.value = false;
+    //       }, 3000);
+    //     }
+    //     return;
+    //   }
 
-    const add_log = await Documents.add_log(data);
-    if (add_log) {
-      if (Documents.OpenMode === "OpenSideBar") {
-        const check = await window.ScannedApi.OpenInSideBar(filepath);
-
-        pdfSource.value =
-          "data:application/pdf;filename=generated.pdf;base64," + check.fileUrl;
-        console.log(check);
-        if (!check.status) {
-          showAlert.value = true;
-          pdfSource.value = "";
-          setTimeout(() => {
-            showAlert.value = false;
-          }, 3000);
-        }
-        return;
-      }
-
-      const check = await window.LocalCivilApi.checkFile(filepath);
-      if (!check) {
-        showAlert.value = true;
-        pdfSource.value = "";
-        setTimeout(() => {
-          showAlert.value = false;
-        }, 3000);
-      }
-    }
+    //   const check = await window.LocalCivilApi.checkFile(filepath);
+    //   if (!check) {
+    //     showAlert.value = true;
+    //     pdfSource.value = "";
+    //     setTimeout(() => {
+    //       showAlert.value = false;
+    //     }, 3000);
+    //   }
+    // }
   } catch (error) {
-    showAlert.value = true;
-    pdfSource.value = "";
-    setTimeout(() => {
-      showAlert.value = false;
-    }, 3000);
+    console.log(error)
+    //   showAlert.value = true;
+    //   pdfSource.value = "";
+    //   setTimeout(() => {
+    //     showAlert.value = false;
+    //   }, 3000);
   }
 };
 

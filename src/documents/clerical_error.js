@@ -144,7 +144,7 @@ async function endorsement_letter(data) {
         subject_code: subject_code
     })
 
-    saveDocument(doc, "Endorsement Letter", main_folder_path);
+    saveDocument(doc, "Endorsement Letter.docx", main_folder_path);
     return true
 }
 
@@ -181,6 +181,13 @@ async function petition(data) {
     const denied = data.petition_actions[0].action_decision === 'Denied' ? true : false
 
 
+    // Dates formatted
+    const event_date = dateFns.format(data.event_date, 'MMMM dd, yyyy')
+    const issued_on = dateFns.format(data.issued_on, 'MMMM dd, yyyy')
+    const date_granted = dateFns.format(data.action_taken_date, 'MMMM dd, yyyy')
+    const date_paid = dateFns.format(data.date_paid, 'MMMM dd, yyyy')
+
+
     doc.render({
         petition_number: data.petition_number,
         petitioner_name: data.petitioner_name,
@@ -196,7 +203,7 @@ async function petition(data) {
         relation_owner: relation_owner,
 
         // Event 
-        event_date: data.event_date,
+        event_date: event_date,
         event_country: data.event_country,
         event_province: data.event_province,
         event_municipality: data.event_municipality,
@@ -219,7 +226,7 @@ async function petition(data) {
         subscribe_sworn: data.subscribe_sworn_city_municipality,
         community_tax_certificate: data.community_tax_certificate,
         issued_at: data.issued_at,
-        issued_on: data.issued_on,
+        issued_on: issued_on,
 
         administering_officer: data.administering_officer_name,
         administering_position: data.administering_officer_position,
@@ -227,13 +234,13 @@ async function petition(data) {
         granted: granted,
         denied: denied,
 
-        action_date: data.action_taken_date,
+        action_date: date_granted,
         decision: '<w:p>' + toOOXML(data.petition_actions[0].action_text) + '</w:p>',
         municipal_civil_registrar: data.municipal_civil_registrar,
 
         o_r_number: data.o_r_number,
         amount_paid: data.amount_paid,
-        date_paid: data.date_paid,
+        date_paid: date_paid,
 
         // Change of First Name {{Tags}}
         from: data.first_name_from,
@@ -268,7 +275,7 @@ async function record_sheet(data) {
         paragraphLoop: true,
         linebreaks: true,
     })
-
+    const date_paid = dateFns.format(data.petition_date_granted, 'MMMM dd, yyyy')
     const document_owner = data.document_owner === 'N/A' || data.document_owner === '' ? data.petitioner_name : data.document_owner
     const type_of_document = data.event_type === 'Birth' ? 'Certificate of Live Birth' : data.event_type === 'Marriage' ? 'Certificate of Marriage' : data.event_type === 'Death' ? 'Certificate of Death' : ''
     const type_of_petition = data.petition_type === 'CCE' ? 'Correction of Clerical Error' : data.petition_type === 'CFN' ? 'Change of First Name' : ''
@@ -278,7 +285,7 @@ async function record_sheet(data) {
 
     doc.render({
         petition_number: data.petition_number,
-        date_receipt: data.date_paid,
+        date_receipt: date_paid,
         petitioner_name: data.petitioner_name,
         document_owner: document_owner,
         type_document: type_of_document,
