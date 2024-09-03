@@ -430,12 +430,9 @@ ipcMain.handle('select-folder', async (event) => {
         dialogOpen = true
         const { canceled, filePaths } = await dialog.showOpenDialog({
             properties: ['openDirectory'],
-            defaultPath:
-                'C:\\Users\\' +
-                username +
-                '\\SynologyDrive\\Joan\\SCANNED DOCUMENTS',
         })
-        return { canceled, filePaths }
+        const file_path = filePaths[0].replace('C:\\Users\\' + username + '\\', '')
+        return file_path
     } catch (err) {
         console.error('There was an error', err)
     } finally {

@@ -187,6 +187,10 @@ async function petition(data) {
     const date_granted = dateFns.format(data.action_taken_date, 'MMMM dd, yyyy')
     const date_paid = dateFns.format(data.date_paid, 'MMMM dd, yyyy')
 
+    // Could be better?
+    // Task: Auto Bold text inside quotation marks
+    // Or Nah
+    const solo_action = data.petition_actions[0].action_text.replace(`"`, '“').replace(`"`, '”')
 
     doc.render({
         petition_number: data.petition_number,
@@ -235,7 +239,8 @@ async function petition(data) {
         denied: denied,
 
         action_date: date_granted,
-        decision: '<w:p>' + toOOXML(data.petition_actions[0].action_text) + '</w:p>',
+        decision: solo_action,
+        // decision: '<w:p>' + toOOXML(data.petition_actions[0].action_text) + '</w:p>',
         municipal_civil_registrar: data.municipal_civil_registrar,
 
         o_r_number: data.o_r_number,

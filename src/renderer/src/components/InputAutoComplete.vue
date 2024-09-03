@@ -83,7 +83,7 @@ onClickOutside(suggestion_box, event => suggestions_.value = false)
 
 const typing_input = (e) => {
     emit('update:modelValue', e.target.value)
-    genereate_suggestions(e.target.value)
+    generate_suggestions(e.target.value)
 }
 function i_choose_this(value) {
     suggestions_.value = false
@@ -94,13 +94,27 @@ function hide_suggestions_() {
     suggestions_.value = false
 }
 
-function genereate_suggestions(e) {
+// Define the debounced function once
+const debouncedFn = useDebounceFn((e) => {
+    result.value = props.suggestion_data.filter(suggestion_item =>
+        suggestion_item.toLowerCase().includes(e.toLowerCase())
+    );
+    suggestions_.value = true;
+}, 1000);
+
+function generate_suggestions(e) {
     if (props.suggestion_data) {
-        suggestions_.value = true
-        result.value = props.suggestion_data.filter(suggestion_item => suggestion_item.toLowerCase().includes(e.toLowerCase()))
+        if (props.wait) {
+            debouncedFn(e);
+            return;
+        }
+
+        result.value = props.suggestion_data.filter(suggestion_item =>
+            suggestion_item.toLowerCase().includes(e.toLowerCase())
+        );
+        suggestions_.value = true;
     }
 }
-
 
 </script>
 

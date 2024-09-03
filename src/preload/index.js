@@ -25,15 +25,15 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     },
     createPetitionDocument: async (formData) => {
         const result = await ipcRenderer.invoke('createPetitionDocument', formData)
-       
+
         return { status: result.status, filepath: result.filepath }
     },
     proceedCreatePetition: async (formData) => {
         const result = await ipcRenderer.invoke('proceedCreatePetition', formData)
-       
+
         return { status: result.status, filepath: result.filepath }
     },
-    
+
     CreateFinality: async (formData) => {
         const result = await ipcRenderer.invoke('createFinality', formData)
         return { status: result.status, filepath: result.filepath }
@@ -117,9 +117,8 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
         return result
     },
     selectFolder: async () => {
-        const { canceled, filePaths } =
-            await ipcRenderer.invoke('select-folder')
-        return canceled ? null : filePaths[0]
+        const result = await ipcRenderer.invoke('select-folder')
+        return result
     },
     selectFile: async () => {
         const { canceled, filePaths } = await ipcRenderer.invoke('select-file')

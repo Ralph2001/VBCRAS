@@ -2,10 +2,10 @@
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
-      <!-- <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button> -->
+      <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
     </Header>
 
-    <!-- <ClericalErrorSettings v-if="settings" @close-setting="settings = false" /> -->
+    <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
     <ValidateClericalPopup @proceed="create_validated_document" v-if="is_validating" />
     <!--  v-if="is_validating"  -->
 
@@ -47,6 +47,7 @@
 
         <!-- Debugging -->
         <!-- <div class="fixed top-10 bottom-10 right-10 flex flex-col w-[30rem] z-50 justify-center">
+          {{ fact_reason_data }}
           <p v-for="(value, key) in formData" class="text-blue-500 text-xs text-center">"{{ key }}" - <span
               class="text-gray-800 font-medium">{{
                 value }}</span></p>
@@ -92,7 +93,7 @@
               <div class=" col-span-2">
                 <InputAutoComplete label="Petitioner Address" v-model="formData.petitioner_address" :wait="true"
                   :suggestion_data="all_" />
-            
+
               </div>
             </div>
           </Box>
@@ -131,7 +132,8 @@
                   formData.event_type === 'Death' ||
                   (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
                 ">
-                  <InputAutoComplete :suggestion_data="petitions.relation_to_document_owner" label="Relation"
+                  <InputAutoComplete @input="generate_fact_reason_text()"
+                    :suggestion_data="petitions.relation_to_document_owner" label="Relation"
                     v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                       ? true
                       : false || formData.petitioner_error_in === ''
@@ -216,14 +218,17 @@
                   </div>
 
                   <div class="grow">
-                    <InputAutoComplete nolabel :suggestion_data="clerical_error_descriptions"
+                    <InputAutoComplete @change="generate_granted_text()" nolabel
+                      :suggestion_data="clerical_error_descriptions"
                       v-model="formData.clerical_errors[index].description" />
                   </div>
                   <div class="grow">
-                    <Input nolabel cap v-model="formData.clerical_errors[index].error_description_from" />
+                    <Input nolabel @change="generate_granted_text()" cap
+                      v-model="formData.clerical_errors[index].error_description_from" />
                   </div>
                   <div class="grow">
-                    <Input nolabel cap v-model="formData.clerical_errors[index].error_description_to" />
+                    <Input nolabel @change="generate_granted_text()" cap
+                      v-model="formData.clerical_errors[index].error_description_to" />
                   </div>
                 </div>
                 <div class="flex justify-end gap-2 mt-3">
@@ -720,6 +725,8 @@ const is_default_republic_act = computed(() => {
 })
 
 // Granted Text
+// MAIN FUNCTION THAT GENERATES GRANTED TEXT
+// NOTE: MAKE THIS WORK IN 10172
 const granted_text_data = computed(() => {
   const data = ref({
     from: formData.first_name_from,
@@ -735,6 +742,30 @@ const granted_text_data = computed(() => {
 function generate_granted_text() {
   formData.petition_actions[0].action_text = granted_text_data.value
 }
+
+
+// FACT AND REASON AUTO GENERATE FUNCTION
+// MAIN FUNCTION THAT GENERATES FACT AND REASON
+// NOTE: MAKE THIS WORK IN 10172
+const fact_reason_data = computed(() => {
+  const data = ref({
+    petitioner_error_in: formData.petitioner_error_in,
+    petition_type: formData.petition_type,
+    event_type: formData.event_type,
+    relation_owner: formData.relation_owner
+  })
+
+  const fact_reason = factReason(data)
+  return fact_reason
+})
+
+function generate_fact_reason_text() {
+  formData.reasons[0].reason = fact_reason_data.value.message
+}
+
+
+
+
 
 // Petitiner Number Values
 function change_petitioner_number(e) {
@@ -880,7 +911,16 @@ function change_document_owner_relation() {
     formData.relation_owner = 'Spouse'
     return
   }
-  formData.petitioner_error_in === 'my' ? (formData.document_owner = 'N/A', formData.relation_owner = 'N/A') : formData.petitioner_error_in === 'the' ? (formData.document_owner = '', formData.relation_owner = '') : ''
+  if (formData.petitioner_error_in === 'my') {
+    formData.document_owner = 'N/A'
+    formData.relation_owner = 'N/A'
+  }
+  else if (formData.petitioner_error_in === 'the') {
+    formData.document_owner = ''
+    formData.relation_owner = ''
+  }
+  generate_fact_reason_text()
+
 }
 
 
@@ -893,9 +933,9 @@ const initialForm = {
   petitioner_name: '', // TESTING
   nationality: 'Filipino',
   petitioner_address: '', // Testing 
-  petitioner_error_in: 'my',
-  document_owner: 'N/A',
-  relation_owner: 'N/A',
+  petitioner_error_in: '',
+  document_owner: '',
+  relation_owner: '',
   event_date: '',// Testing 
   event_country: 'Philippines',
   event_province: '',// Testing 
@@ -938,7 +978,7 @@ const initialForm = {
   // Actions, Checked
 
   petition_actions: [
-    { error_num: '1', action_decision: '', action_text: '' }
+    { error_num: '1', action_decision: 'Granted', action_text: '' }
   ],
 
   // Supporting Documents, Checked

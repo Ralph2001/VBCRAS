@@ -1,113 +1,133 @@
 <template>
-    <div class="fixed top-5 bottom-0 left-0 right-0 z-50 backdrop-blur-sm backdrop-brightness-75 p-10">
-        <div class="h-full w-full flex rounded-lg bg-gray-50 flex-col p-6">
-            <div class="flex flex-row w-full items-center">
-                <p class="text-2xl">Settings and Preferences</p>
-                <button class="ml-auto" @click="close_setting">[close]</button>
-            </div>
-
-            <div class=" h-full grid grid-cols-4 gap-2">
-                <div class="flex flex-col  py-10 gap-2  text-gray-800 font-medium text-md">
-                    <button type=""
-                        class="w-full  px-2 py-2.5 items-start flex  hover:bg-blue-500 hover:text-white rounded-sm  ">Automatic
-                        Date Counts</button>
-                    <button type=""
-                        class="w-full  px-2 py-2.5 items-start flex  hover:bg-blue-500 hover:text-white rounded-sm  ">Templates</button>
-                    <button type=""
-                        class="w-full  px-2 py-2.5 items-start flex  hover:bg-blue-500 hover:text-white rounded-sm  ">Guide</button>
-                </div>
-                <div class="col-span-3 border border-gray-300 rounded-md p-4 h-auto overflow-y-scroll ">
-                    <div class="flex flex-col h-full">
-                        <p class="font-mono text-xs text-gray-800">Adjustments</p>
-                        <p class="font-mono p-4  ">The Output will be: </p>
-                        <div class="flex flex-row p-2 items-center justify-center">
-                            <div class="flex flex-col p-2 w-[10rem] items-center" v-for="date in dates" :key="date">
-                                <p class="font-medium text-sm text-gray-700">{{ date.name }}</p>
-                                <div
-                                    class="w-full bg-gray-100 border shadow-inner p-2 flex items-center justify-center">
-                                    <p class="text-sm">{{ date.date }}</p>
-                                </div>
+    <div class="fixed top-0 bottom-0 left-0 right-0 z-50 backdrop-blur-sm backdrop-brightness-75 p-10">
+        <div class="h-full w-full flex rounded-lg bg-gray-50 flex-col p-6 relative">
+            <button @click="emit('close-setting')"
+                class="absolute right-10 border px-2 rounded outline-none bg-red-500 font-medium text-white">Exit</button>
+            <p class="font-medium p-4">Preferences</p>
+            <TabsWrapper>
+                <Tab title="File Path And Templates">
+                    <div class="flex flex-col p-4">
+                        <div class="flex flex-col gap-2">
+                            <p class="p-2 font-medium text-2xl">Default File Save Path</p>
+                            <p class="text-sm">All petitions will be saved to the specified path. Please ensure that
+                                this path is set to a shared drive so that other users can access and open the petitions
+                                as needed.</p>
+                            <!-- <Input label="Selected File Path" @click="open" v-model="file_path" readonly /> -->
+                            <div class="w-full flex flex-col mt-5">
+                                <label for="path" class="font-medium mb-2 text-sm">Selected File Path</label>
+                                <input id="path" readonly type="text"
+                                    class="w-full border border-gray-300 rounded shadow-sm font-semibold text-gray-800 text-sm"
+                                    @click="open" v-model="file_path">
                             </div>
-
+                            <Button label="Save" class="w-max border ml-auto" />
                         </div>
+                        <div class="flex h-full flex-col">
+                            <p class="p-2 font-medium text-2xl">Templates</p>
+                            <TabsWrapper>
+                                <Tab title="Petition">
+                                    <div class="w-full flex flex-col gap-4 ">
+                                        <div class="flex flex-row gap-2 items-center justify-center">
+                                            <div v-for="type in petition_types" :key="type"
+                                                class="h-[8rem] border border-gray-200 w-[8rem]  rounded-md bg-green-50 flex flex-col items-center  justify-center shadow-sm">
+                                                <p class="text-center font-semibold text-sm mt-auto">{{ type }}</p>
+                                                <button
+                                                    class="w-full mt-auto text-xs py-1.5 bg-gray-50 border border-gray-300">Open</button>
+                                            </div>
+                                        </div>
 
-
-                        <div class="flex flex-col">
-                            <p class="underline">Notice of Posting</p>
-                            <div class="flex flex-row items-center gap-4">
-                                <p>Day/s to add after date filed</p>
-                                <div class="flex flex-row items-center gap-1">
-                                    <p>+</p>
-                                    <input type="number" class="w-[4rem] py-1.5 border border-gray-200" name="" id="">
-                                    <p>day/s</p>
-                                </div>
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Skip Weekends in count</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Skip Holidays in count</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col mt-10">
-                            <p class="underline">Certificate of Posting Start</p>
-                            <div class="flex flex-row items-center gap-4">
-                                <p>Day/s to add after date of posting</p>
-                                <div class="flex flex-row items-center gap-1">
-                                    <p>+</p>
-                                    <input type="number" class="w-[4rem] py-1.5 border border-gray-200" name="" id="">
-                                    <p>day/s</p>
-                                </div>
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Skip Weekends in count</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Skip Holidays in count</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
-                        </div>
-
-
-                        <div class="flex flex-col mt-10">
-                            <p class="underline">Certificate of Posting End</p>
-                            <div class="flex flex-row items-center gap-4">
-                                <p>Day/s to add after start of certificate of posting</p>
-                                <div class="flex flex-row items-center gap-1">
-                                    <p>+</p>
-                                    <input type="number" class="w-[4rem] py-1.5 border border-gray-200" name="" id="">
-                                    <p>day/s</p>
-                                </div>
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Skip Weekends in count</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Skip Holidays in count</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Result should not be in Weekends</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <p>Result should not be in Holidays</p>
-                                <input type="checkbox" name="" id="" class="border-gray-400 rounded-sm">
-                            </div>
+                                        <div class="flex flex-col items-center">
+                                            <div class="flex flex-col gap-2 items-center justify-center">
+                                                <p class="text-2xl font-medium">How to?</p>
+                                                <p class="text-justify text-md tracking-wide">
+                                                    To customize the template, start by clicking "Open" and paste your
+                                                    custom template into the designated folder or editing the document,
+                                                    ensuring that the file
+                                                    is named petition.docx. It is important that this file is saved in
+                                                    the specified path, not in any other location, to ensure proper
+                                                    functionality. Within your template, you can insert tags such as
+                                                    <span class="font-bold">`{tag_name}`</span> at specific locations
+                                                    where you want the
+                                                    system to
+                                                    automatically insert data. These tags correspond to specific fields
+                                                    and will be replaced with the appropriate information provided by
+                                                    the system during processing. By doing this, you can ensure that
+                                                    your document is accurately populated with all necessary details,
+                                                    maintaining consistency and correctness throughout the generated
+                                                    petitions.
+                                                </p>
+                                            </div>
+                                            <p class="text-2xl font-medium">Tags</p>
+                                            <div class="flex flex-row gap-4 flex-wrap mt-5 items-center justify-center">
+                                                <div v-for="tag in tags_petition" :key="tag.tag"
+                                                    class="w-[15rem] bg-white h-auto py-4 flex flex-col px-10 items-center justify-center gap-2 border border-gray-300 rounded-md">
+                                                    <p class="font-medium text-md">{{ tag.tag }}</p>
+                                                    <p class="text-sm  text-gray-700 text-justify">{{ tag.details }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Tab>
+                                <Tab title="Record Sheet">
+                                </Tab>
+                                <Tab title="Endorsement Letter">
+                                </Tab>
+                                <Tab title="Notice of Posting and Certificate of Posting">
+                                </Tab>
+                                <Tab title="Finality">
+                                </Tab>
+                                <Tab title="Finality Endorsement Letter">
+                                </Tab>
+                            </TabsWrapper>
                         </div>
                     </div>
-                </div>
-            </div>
+                </Tab>
+                <Tab title="Dates">
+                </Tab>
+                <Tab title="Values">
+                </Tab>
+
+            </TabsWrapper>
+
         </div>
     </div>
 </template>
 
 <script setup>
+import TabsWrapper from '../../component/DataRecordComponents/TabsWrapper.vue'
+import Tab from '../../component/DataRecordComponents/Tab.vue'
+
+const petition_types = ref([
+    '9048 CCE BIRTH',
+    '9048 CCE DEATH',
+    '9048 CCE MARRIAGE',
+    '9048 CFN BIRTH',
+    '10172 CCE BIRTH',
+])
+
+const tags_petition = ref([
+    { tag: '{petition_number}', details: 'Petition Number field' },
+    { tag: '{petitioner_name}', details: 'Full name of petitioner' },
+    { tag: '{nationality}', details: 'Nationality of petitioner' },
+    { tag: '{petitioner_address}', details: 'Full address of petitioner' },
+    { tag: '{#my}x{/my}', details: 'if the petitioner\'s document' },
+    { tag: '{#the}x{/the}', details: 'if the petition does not belong to the petitioner' },
+    { tag: '{document_owner}', details: 'Full name of Document Owner. N/A if my is selected' },
+    { tag: '{spouse}', details: 'Spouse name for CCE Marriage' },
+    { tag: '{relation_owner}', details: 'Relation to the owner field' },
+    { tag: '{event_date}', details: 'Date of Birth, Death, Marriage ' },
+    { tag: '{event_country}', details: 'Place of Birth, Death, Marriage Country' },
+    { tag: '{event_province}', details: 'Place of Birth, Death, Marriage Province' },
+    { tag: '{event_municipality}', details: 'Place of Birth, Death, Marriage Municipality' },
+    { tag: '{registry_number}', details: 'Registry Number field' },
+    { tag: '{#clerical}  {/}', details: 'Clerical Errors. Put it in Table' },
+    { tag: '{description}', details: 'This is belogs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
+    { tag: '{error_description_from}', details: 'This is belogs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
+    { tag: '{error_description_to}', details: 'This is belogs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
+    { tag: '{petition_number}', details: '' },
+    { tag: '{petition_number}', details: '' },
+    { tag: '{petition_number}', details: '' },
+    { tag: '{petition_number}', details: '' },
+])
 
 const emit = defineEmits(['close-setting'])
 import { ref } from 'vue';
@@ -119,6 +139,14 @@ import {
     add_date_issued,
     add_date_granted,
 } from '../../utils/DayPosting';
+import Input from '../essentials/inputs/Input.vue';
+import Button from '../essentials/buttons/Button.vue';
+
+const file_path = ref()
+const open = async () => {
+    const folder = await window.LocalCivilApi.selectFolder()
+    file_path.value = folder
+}
 
 
 const date_now = ref(now_date())

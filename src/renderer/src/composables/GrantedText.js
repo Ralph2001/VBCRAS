@@ -3,35 +3,28 @@ export function grantedText(data) {
         const fromValue = data.value.from || "(from)";
         const toValue = data.value.to || "(to)";
         return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, the child’s first name from "${fromValue}" to "${toValue}" is hereby changed. `;
-    } 
-    // else if (
-    //     (data.value.petition_type === "CCE" && data.value.document_type === "Birth") ||
-    //     data.value.document_type === "Death" ||
-    //     data.value.document_type === "Marriage"
-    // ) {
-    //     const errorStrings = [];
+    }
+    else if (
+        (data.value.petition_type === "CCE" && data.value.event_type === "Birth") ||
+        data.value.event_type === "Death" ||
+        data.value.event_type === "Marriage"
+    ) {
+        const errorStrings = [];
 
-    //     for (
-    //         let i = 0;
-    //         i < data.value.clerical_errors.description.length ||
-    //         i < data.value.clerical_errors.from.length ||
-    //         i < data.value.clerical_errors.to.length;
-    //         i++
-    //     ) {
-    //         const description = data.value.clerical_errors.description[i] || "(description)";
-    //         const fromValue = data.value.clerical_errors.from[i] || "(from)";
-    //         const toValue = data.value.clerical_errors.to[i] || "(to)";
+        for (let i = 0; i < data.value.clerical_errors.length; i++) {
+            const description = data.value.clerical_errors[i].description || "(description)";
+            const fromValue = data.value.clerical_errors[i].error_description_from || "(from)";
+            const toValue = data.value.clerical_errors[i].error_description_to || "(to)";
 
-    //         errorStrings.push(
-    //             `the ${description.toLowerCase()} from "${fromValue}" to "${toValue}"`
-    //         );
-    //     }
+            errorStrings.push(
+                `the ${description.toLowerCase()} from "${fromValue}" to "${toValue}"`
+            );
+        }
 
-    //     const lastItem = errorStrings.pop();
-    //     const formattedOutput =
-    //         errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
+        const lastItem = errorStrings.pop();
+        const formattedOutput =
+            errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
 
-            
-    //     return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby changed.`;
-    // }
+        return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby changed.`;
+    }
 }

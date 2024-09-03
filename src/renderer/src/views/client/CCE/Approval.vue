@@ -1,33 +1,18 @@
 <template>
-    <div class="relative h-[calc(100vh-100px)] flex sm:flex-wrap  md:lg:flex-row w-full p-4 overflow-y-scroll gap-10">
-        <div class="sm:grow md:lg:basis-[20%]  flex flex-col w-full h-full  gap-2 ">
-            <p class="text-4xl text-gray-800 tracking-wider font-medium px-10">Approval</p>
-            <div class="flex flex-col h-full border ">
-                <div class="w-full flex items-start justify-center p-4 flex-col bg-gray-100 shadow">
-                    <p class="text-md text-gray-800 tracking-wider font-medium  "> Details:</p>
-                </div>
-                <div class="flex flex-col overflow-y-scroll h-[calc(100vh-240px)] p-4">
-                    <div class="grid sm:grid-cols-1 md:lg:grid-cols-2" v-for="(value, key) in user_data" :key="key">
-                        <p class="text-sm font-normal">{{ key }}</p>
-                        <p class="text-md font-medium text-wrap w-full overflow-hidden truncate ">{{ value }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="relative h-[calc(100vh-60px)] flex  md:lg:flex-row w-full overflow-y-scroll gap-10">
+        <div class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col p-10 gap-2 ">
+            <p class="font-medium">Approval</p>
+            <p class="font-bold text-2xl mt-5">Attachments</p>
 
-        <!-- Another Half -->
+            <div class="flex items-center p-4">
+                <p class="font-normal text-gray-800">
+                    <span class="font-medium">Note:</span> Upon approval, a <span class="font-medium">Finality</span>
+                    and
+                    <span class="font-medium">Endorsement Letter</span> will be automatically generated. However, you
+                    will still need
+                    to create an Annotated Form 102.
+                </p>
 
-        <div class="sm:w-full md:lg:w-[65%] h-full  bg-gray-100 border-s border-gray-200 flex flex-col p-4 gap-2 ">
-            <p class="font-bold text-2xl">Attachments</p>
-
-            <div class="flex items-center" v-for="attach in attachments" :key="attach">
-                <div class="w-[12rem]">
-                    <input disabled type="checkbox" value=""
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label class="ms-2 text-sm font-medium text-gray-400 dark:text-gray-500">{{ attach }}</label>
-                </div>
-
-                <button class="p-1 border rounded-md bg-white px-3">Create </button>
             </div>
 
 
@@ -53,13 +38,13 @@
                             @click="open()"><font-awesome-icon icon="fa-solid fa-upload" class="text-sm me-2" /> Upload
                             PDF</button>
                     </div>
-                    <p class="text-sm bg-gray-100 px-1  w-full">Unannotated/ Form 1A</p>
+                    <!-- <p class="text-sm bg-gray-100 px-1  w-full">Unannotated/ Form 1A</p>
                     <div class="flex flex-col items-start w-full">
                         <button type="button"
                             class="w-full text-left font-semibold py-2 bg-gray-50 px-2.5 hover:bg-gray-200 transition-all flex items-center"><font-awesome-icon
                                 icon="fa-solid fa-plus" class="text-sm me-2" /> Create
                             1A</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -67,18 +52,10 @@
             <div class="border bg-white  shadow-sm flex px-4 py-3 h-[calc(100vh-310px)] w-full flex-col gap-2"
                 v-if="selectfromscanned">
                 <div class="grid sm:grid-flow-row md:lg:grid-cols-2  items-center justify-between w-full ">
-                    <p class=" font-medium text-gray-700 tracking-wide"> Scanned Documents</p>
+                    <p class=" font-medium text-gray-700 tracking-wide text-lg"> Scanned Documents</p>
                     <div class="mr-auto w-full flex flex-row gap-2">
                         <input v-model="filter_search" type="text" placeholder="Search"
                             class="border-gray-300 rounded-md text-gray-700 font-medium w-full placeholder:text-sm placeholder:text-gray-400">
-                        <select v-model="filter_type" value="all" class="border border-gray-200 h-10 rounded  text-sm ">
-                            <option value="all" selected>All</option>
-                            <option :value="value" v-for="(value, index ) in types" :key="index">{{ value }}</option>
-                        </select>
-                        <select v-model="filter_year" class="border border-gray-200 h-10 rounded  text-sm ">
-                            <option value="all" selected>All</option>
-                            <option :value="value" v-for="(value, index) in years" :key="index">{{ value }}</option>
-                        </select>
                     </div>
 
                 </div>
@@ -257,12 +234,6 @@ const { files, open, reset, onChange } = useFileDialog({
     directory: false,
 })
 
-const attachments = ref([
-    'Finality',
-    'Endoresement Letter',
-    'Annotated/Unannotated'
-])
-
 const filter_type = ref('Birth')
 const filter_year = ref(2024)
 const filter_search = ref('')
@@ -282,44 +253,31 @@ const changetoSelectfromScanned = () => {
     annotated_unannotated.value = false
 }
 
-
+// Scanned Documents Usage
 const Documents = useScannedDocuments();
-const ScannedData = ref()
-
-const types = computed(() => {
-    return [...new Set(Documents.scanned.map((data) => data.type))].sort((a, b) => a - b);
-});
-const years = computed(() => {
-
-    return [...new Set(Documents.scanned.map((data) => data.year))].sort((a, b) => a - b);
-});
-
 
 const data = computed(() => {
-    const TypeFilter = item =>
-        filter_type.value === 'all' ? item.type : item.type === filter_type.value
+    // const TypeFilter = item =>
+    //     filter_type.value === 'all' ? item.type : item.type === filter_type.value
 
-    const YearFilter = item =>
-        filter_year.value === 'all' ? item.year : item.year === filter_year.value
+    // const YearFilter = item =>
+    //     filter_year.value === 'all' ? item.year : item.year === filter_year.value
 
-    if (!filter_search.value) {
-        return Documents.scanned.filter(TypeFilter).filter(YearFilter).sort((a, b) => a - b);
-    }
+    // if (!filter_search.value) {
+    //     return Documents.scanned.filter(TypeFilter).filter(YearFilter).sort((a, b) => a - b);
+    // }
 
-    const lowerSearch = filter_search.value.toLowerCase();
-    return Documents.scanned.filter(TypeFilter)
-        .filter(YearFilter)
-        .filter(item => item.name.toLowerCase().includes(lowerSearch))
-        .sort((a, b) => a - b);
+    // const lowerSearch = filter_search.value.toLowerCase();
+    // return Documents.scanned.filter(TypeFilter)
+    //     .filter(YearFilter)
+    //     .filter(item => item.name.toLowerCase().includes(lowerSearch))
+    //     .sort((a, b) => a - b);
+    return Documents.scanned
 });
 
 
 const petition_data = ref()
-const user_data = ref({})
 
-const fromScanned = () => {
-
-}
 const CancelSelectFromScanned = () => {
     selectfromscanned.value = false
     selectedscanned.value = ''
@@ -342,10 +300,6 @@ onChange((file) => {
 })
 onMounted(async () => {
     const data = await petition.get_petition_by_id(route.params.id)
-    if (data) {
-        petition_data.value = data
-        user_data.value = data
-    }
 })
 
 

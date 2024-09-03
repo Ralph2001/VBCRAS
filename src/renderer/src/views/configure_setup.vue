@@ -1,5 +1,4 @@
 <template>
-    <TitleBar />
     <div class="h-full w-full  ">
         <div v-if="auth.user_role === 1" class=" flex h-full flex-col gap-5 p-10 relative">
             <Stepper :steps="steps">

@@ -7,6 +7,7 @@ class SystemSettings(db.Model):
     municipal_civil_registrar = db.Column(db.String(420), nullable=False)
     mayor = db.Column(db.String(420), nullable=False)
     reciept_municipality_province = db.Column(db.String(420), nullable=False)
+    petition_file_path = db.Column(db.String(420))
     created_on = db.Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_on = db.Column(DateTime(timezone=True), server_default=func.now(),  onupdate=func.now(),  nullable=False)
 

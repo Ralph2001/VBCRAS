@@ -5,7 +5,7 @@
                 :class="{ 'text-blue-600 border-b-2 border-blue-600': selectedTitle === tab.props.title }"
                 @click="selectedTitle = tab.props.title">
                 <p class="inline-block p-4 rounded-t-lg cursor-pointer">
-                    <font-awesome-icon :icon="tab.props.icon" />
+
                     {{ tab.props.title }}
                 </p>
             </li>
