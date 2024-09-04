@@ -2,7 +2,9 @@ import { format } from 'date-fns';
 import { useDateFormat, useNow } from '@vueuse/core';
 
 export function now_date() {
-    return useDateFormat(useNow(), 'yyyy-MM-dd');
+    const newDate = new Date();
+    return format(newDate, 'yyyy-MM-dd');
+
 }
 
 // The end date cannot fall on Saturday or Sunday.

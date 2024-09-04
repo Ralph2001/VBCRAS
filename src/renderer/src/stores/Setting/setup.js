@@ -5,11 +5,10 @@ import axios from 'axios'
 export const useSetup = defineStore('useSetup', {
     state: () => ({
         isSetupDone: true,
-        municipal_civil_registrar: '',
-        mayor: '',
-        municipality_province: '',
+        defaults: [],
         user_positions: [],
-        scanned_types: []
+        scanned_types: [],
+
     }),
     actions: {
         async getSystemSetting() {
@@ -21,15 +20,11 @@ export const useSetup = defineStore('useSetup', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
 
-
                 if (response.data < 1) {
                     this.isSetupDone = false
                     return false
                 }
-                this.municipal_civil_registrar = response.data[0].municipal_civil_registrar
-                this.mayor = response.data[0].mayor
-                this.municipality_province = response.data[0].municipality_province
-
+                this.defaults = response.data
                 this.isSetupDone = true
                 return true
 
@@ -49,7 +44,7 @@ export const useSetup = defineStore('useSetup', {
                     data,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')

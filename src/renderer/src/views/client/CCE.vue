@@ -941,17 +941,17 @@ const initialForm = {
   event_province: '',// Testing 
   event_municipality: '',// Testing 
   registry_number: '',// Testing 
-  filing_city_municipality: system_setting.municipality_province.split(',')[0],
-  filing_province: system_setting.municipality_province.split(',')[1],
+  filing_city_municipality: system_setting.defaults[0].petition_default_filling_municipality,
+  filing_province: system_setting.defaults[0].petition_default_filling_province,
   administering_officer_name: 'ISMAEL D. MALICDEM, JR.', // Testing 
   administering_officer_position: 'Municipal Civil Registrar', // Testing
   subscribe_sworn_date: new Date().toISOString().split('T')[0],
-  subscribe_sworn_city_municipality: system_setting.municipality_province,
+  subscribe_sworn_city_municipality: system_setting.defaults[0].petition_default_subscribe_sworn_municipality,
   community_tax_certificate: '',// Testing
-  issued_at: system_setting.municipality_province,
+  issued_at: system_setting.defaults[0].petition_default_issued_at,
   issued_on: new Date().toISOString().split('T')[0],
   action_taken_date: '',// Testing
-  municipal_civil_registrar: system_setting.municipal_civil_registrar,
+  municipal_civil_registrar: system_setting.defaults[0].municipal_civil_registrar,
   // Payment
   o_r_number: '',// Testing
   amount_paid: '',// Testing

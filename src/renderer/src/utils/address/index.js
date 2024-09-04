@@ -50,6 +50,32 @@ export function complete_municipality(province) {
         .sort((a, b) => a.localeCompare(b))
         .map(municipality => municipality.charAt(0).toUpperCase() + municipality.slice(1));
 }
+export function complete_municipality_with_province(province) {
+    const selectedProvince = province || ''
+
+    if (selectedProvince === '') {
+        console.log('No Selected Province')
+        return [];
+    }
+
+    let municipalitywithProvinceList = [];
+
+    philippines.forEach(regions => {
+        Object.values(regions).forEach(region => {
+            Object.entries(region.province_list).forEach(([provinceName, province]) => {
+                Object.entries(province.municipality_list).forEach(([municipalityName, municipality]) => {
+                    if (provinceName.toLowerCase() === selectedProvince.toLowerCase()) {
+                        municipalitywithProvinceList.push(`${municipalityName}, ${provinceName}`.toLowerCase());
+                    }
+                });
+            });
+        });
+    });
+
+    return municipalitywithProvinceList
+        .sort((a, b) => a.localeCompare(b))
+        .map(municipalitywithProvinceList => municipalitywithProvinceList.split(', ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(', '));
+}
 
 export function all_address() {
     let address = []

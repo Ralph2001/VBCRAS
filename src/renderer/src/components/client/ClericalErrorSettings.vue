@@ -25,65 +25,165 @@
                             <p class="p-2 font-medium text-2xl">Templates</p>
                             <TabsWrapper>
                                 <Tab title="Petition">
-                                    <div class="w-full flex flex-col gap-4 ">
-                                        <div class="flex flex-row gap-2 items-center justify-center">
-                                            <div v-for="type in petition_types" :key="type"
-                                                class="h-[8rem] border border-gray-200 w-[8rem]  rounded-md bg-green-50 flex flex-col items-center  justify-center shadow-sm">
-                                                <p class="text-center font-semibold text-sm mt-auto">{{ type }}</p>
-                                                <button
-                                                    class="w-full mt-auto text-xs py-1.5 bg-gray-50 border border-gray-300">Open</button>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex flex-col items-center">
-                                            <div class="flex flex-col gap-2 items-center justify-center">
-                                                <p class="text-2xl font-medium">How to?</p>
-                                                <p class="text-justify text-md tracking-wide">
-                                                    To customize the template, start by clicking "Open" and paste your
-                                                    custom template into the designated folder or editing the document,
-                                                    ensuring that the file
-                                                    is named petition.docx. It is important that this file is saved in
-                                                    the specified path, not in any other location, to ensure proper
-                                                    functionality. Within your template, you can insert tags such as
-                                                    <span class="font-bold">`{tag_name}`</span> at specific locations
-                                                    where you want the
-                                                    system to
-                                                    automatically insert data. These tags correspond to specific fields
-                                                    and will be replaced with the appropriate information provided by
-                                                    the system during processing. By doing this, you can ensure that
-                                                    your document is accurately populated with all necessary details,
-                                                    maintaining consistency and correctness throughout the generated
-                                                    petitions.
-                                                </p>
-                                            </div>
-                                            <p class="text-2xl font-medium">Tags</p>
-                                            <div class="flex flex-row gap-4 flex-wrap mt-5 items-center justify-center">
-                                                <div v-for="tag in tags_petition" :key="tag.tag"
-                                                    class="w-[15rem] bg-white h-auto py-4 flex flex-col px-10 items-center justify-center gap-2 border border-gray-300 rounded-md">
-                                                    <p class="font-medium text-md">{{ tag.tag }}</p>
-                                                    <p class="text-sm  text-gray-700 text-justify">{{ tag.details }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <TemplateSettings document_name="petition.docx" :tags="tags_petition"
+                                        :file_types="petition_types" />
                                 </Tab>
                                 <Tab title="Record Sheet">
+                                    <TemplateSettings document_name="Record Sheet.docx"
+                                        :file_types="['Record Sheet']" />
                                 </Tab>
                                 <Tab title="Endorsement Letter">
+                                    <TemplateSettings document_name="Endorsement Letter.docx"
+                                        :file_types="['Endorsement Letter']" />
                                 </Tab>
                                 <Tab title="Notice of Posting and Certificate of Posting">
+                                    <TemplateSettings document_name="Notice of Posting and Certificate of Posting.docx"
+                                        :file_types="['Notice of Posting and Certificate of Posting']" />
                                 </Tab>
                                 <Tab title="Finality">
+                                    <TemplateSettings document_name="Finality.docx" :file_types="['Finality']" />
                                 </Tab>
                                 <Tab title="Finality Endorsement Letter">
+                                    <TemplateSettings document_name="Finality Endorsement Letter.docx"
+                                        :file_types="['Finality Endorsement Letter']" />
                                 </Tab>
                             </TabsWrapper>
                         </div>
                     </div>
                 </Tab>
                 <Tab title="Dates">
+                    <div class="flex flex-col h-full">
+                        <p class="p-2 font-medium text-2xl">Automatic Date Counts</p>
+
+                        <p class="p-2 font-semibold text-lg ml-20">Output:</p>
+                        <div class="flex flex-row flex-wrap gap-2 items-center justify-center ">
+                            <div class="h-[4rem] w-[10rem] bg-white border border-gray-300 rounded-md shadow-sm flex flex-col items-center justify-center"
+                                v-for="date in dates" :key="date">
+                                <p class="text-xs">{{ date.name }}</p>
+                                <p class="font-medium"> {{ date.date }}</p>
+                            </div>
+                        </div>
+                        <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 h-full w-full mt-5 gap-1">
+                            <div class="flex flex-col border bg-white shadow-sm p-4">
+                                <p class="p-2 font-medium text-2xl ">Configure</p>
+
+
+
+                                <div class="flex flex-col gap-2 items-center">
+                                    <Input label="Date Filed" type="number" />
+                                    <Input label="Date Notice" type="number" />
+                                    <Input label="Date Certificate Start" type="number" />
+                                    <Input label="Date Certificate End" type="number" />
+                                    <Input label="Date Issued" type="number" />
+
+                                </div>
+
+
+
+                            </div>
+                            <div class="flex flex-col border p-4 bg-white shadow-sm">
+                                <p class="p-2 font-medium text-2xl">Holidays</p>
+                                <p class="text-sm font-medium">Add Holidays</p>
+
+                                <div class="flex flex-row items-center justify-center gap-2 ">
+                                    <Input label="Date" />
+                                    <Input label="description" />
+                                    <Button label="Add" class="w-max mt-7 border border-gray-300" />
+                                </div>
+
+
+                                <div class="flex flex-col gap-2 mt-10 border h-[20rem] overflow-y-scroll">
+                                    <div class="relative overflow-x-auto flex justify-center">
+                                        <table
+                                            class="w-[30rem] text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            <thead
+                                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                                <tr>
+                                                    <th scope="col" class="px-6 py-3">
+                                                        Date
+                                                    </th>
+                                                    <th scope="col" class="px-6 py-3">
+                                                        Description
+                                                    </th>
+                                                    <th scope="col" class="px-6 py-3">
+                                                        Action
+                                                    </th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                                                    v-for="holiday in holidays">
+                                                    <th scope="row"
+                                                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                        {{ holiday.date }}
+                                                    </th>
+                                                    <td class="px-6 py-4">
+                                                        {{ holiday.description }}
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <button
+                                                            class="border border-gray-300 rounded px-2 bg-red-400 text-white">Remove</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </Tab>
-                <Tab title="Values">
+                <Tab title="Default Values">
+                    <div class="flex flex-col h-full">
+                        <p class="p-2 font-medium text-2xl">This value can still be edited in the form generator.</p>
+                        <div class="grid grid-cols-2 gap-10 px-20 mt-10">
+                            <div class="flex flex-col gap-2">
+                                <p class="font-medium italic">Petitioner Address</p>
+
+                                <Input label="Nationality" v-model="formData.nationality" />
+                                <Input label="Country" v-model="formData.country" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <p class="font-medium italic">Filling This petition at</p>
+                                <InputAutoComplete label="Province" v-model="formData.filing_province"
+                                    :suggestion_data="province" />
+                                <InputAutoComplete label="City/Municipality" v-model="formData.filing_municipality"
+                                    :suggestion_data="municipality" />
+
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <p class="font-medium italic">Administering Officer</p>
+                                <Input label="Name" v-model="formData.administering_officer_name" />
+                                <Input label="Position" v-model="formData.administering_officer_position" />
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                <p class="font-medium italic">Subscribe and Sworn</p>
+                                <InputAutoComplete label="City/Municipality"
+                                    v-model="formData.subscribe_sworn_city_municipality"
+                                    :suggestion_data="municipality_province" />
+                                <InputAutoComplete label="Issued At" v-model="formData.issued_at"
+                                    :suggestion_data="municipality_province" />
+
+                            </div>
+                            <div class="flex flex-col gap-4">
+                                <Input label="Municipal Civil Registrar *" class="mt-5"
+                                    v-model="formData.municipal_civil_registrar" />
+                                <div class="flex flex-row items-center gap-3">
+                                    <CheckBox />
+                                    <label for="" class="font-medium text-xs">Always Select "Granted"</label>
+                                </div>
+                                <!-- <div class="flex flex-row items-center gap-3">
+                                    <CheckBox />
+                                    <label for="" class="font-medium text-xs">Generate all at the same time</label>
+                                </div> -->
+                            </div>
+
+
+                        </div>
+
+                    </div>
                 </Tab>
 
             </TabsWrapper>
@@ -95,6 +195,39 @@
 <script setup>
 import TabsWrapper from '../../component/DataRecordComponents/TabsWrapper.vue'
 import Tab from '../../component/DataRecordComponents/Tab.vue'
+import { computed, onMounted, reactive, ref } from 'vue';
+import {
+    now_date,
+    add_date_notice,
+    add_date_certificate_start,
+    add_date_certificate_end,
+    add_date_issued,
+    add_date_granted,
+} from '../../utils/DayPosting';
+import Input from '../essentials/inputs/Input.vue';
+import Button from '../essentials/buttons/Button.vue';
+import TemplateSettings from './TemplateSettings.vue';
+import CheckBox from '../essentials/buttons/CheckBox.vue';
+import InputAutoComplete from '../InputAutoComplete.vue';
+import { complete_municipality, complete_province, complete_municipality_with_province } from '../../utils/address';
+import { useSetup } from '../../stores/Setting/setup';
+
+const setup = useSetup()
+
+onMounted(async () => {
+    await setup.getSystemSetting()
+})
+
+
+
+const province = ref(complete_province())
+const municipality = computed(() => {
+    return complete_municipality(formData.filing_province)
+})
+const municipality_province = computed(() => {
+    return complete_municipality_with_province(formData.filing_province)
+})
+
 
 const petition_types = ref([
     '9048 CCE BIRTH',
@@ -120,29 +253,37 @@ const tags_petition = ref([
     { tag: '{event_municipality}', details: 'Place of Birth, Death, Marriage Municipality' },
     { tag: '{registry_number}', details: 'Registry Number field' },
     { tag: '{#clerical}  {/}', details: 'Clerical Errors. Put it in Table' },
-    { tag: '{description}', details: 'This is belogs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
-    { tag: '{error_description_from}', details: 'This is belogs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
-    { tag: '{error_description_to}', details: 'This is belogs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
-    { tag: '{petition_number}', details: '' },
-    { tag: '{petition_number}', details: '' },
-    { tag: '{petition_number}', details: '' },
-    { tag: '{petition_number}', details: '' },
+    { tag: '{description}', details: 'This is belongs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
+    { tag: '{error_description_from}', details: 'This is belongs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
+    { tag: '{error_description_to}', details: 'This is belongs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
 ])
 
-const emit = defineEmits(['close-setting'])
-import { ref } from 'vue';
-import {
-    now_date,
-    add_date_notice,
-    add_date_certificate_start,
-    add_date_certificate_end,
-    add_date_issued,
-    add_date_granted,
-} from '../../utils/DayPosting';
-import Input from '../essentials/inputs/Input.vue';
-import Button from '../essentials/buttons/Button.vue';
+// petition_default_file_path
+// petition_default_nationality
+// petition_default_country
+// petition_default_filling_province
+// petition_default_filling_municipality
+// petition_default_administering_officer_name
+// petition_default_administering_officer_position
+// petition_default_subscribe_sworn_municipality
+// petition_default_issued_at
+// petition_always_granted
 
-const file_path = ref()
+
+const formData = reactive({
+    nationality: setup.defaults[0].petition_default_nationality,
+    country: setup.defaults[0].petition_default_country,
+    filing_province: setup.defaults[0].petition_default_filling_province,
+    filing_municipality: setup.defaults[0].petition_default_filling_municipality,
+    administering_officer_name: setup.defaults[0].petition_default_administering_officer_name,
+    administering_officer_position: setup.defaults[0].petition_default_administering_officer_position,
+    subscribe_sworn_city_municipality: setup.defaults[0].petition_default_subscribe_sworn_municipality,
+    issued_at: setup.defaults[0].petition_default_issued_at,
+    municipal_civil_registrar: setup.defaults[0].municipal_civil_registrar,
+})
+
+const emit = defineEmits(['close-setting'])
+const file_path = ref(setup.defaults[0].petition_default_file_path)
 const open = async () => {
     const folder = await window.LocalCivilApi.selectFolder()
     file_path.value = folder
@@ -169,10 +310,43 @@ const dates = ref
         ]
     )
 
+const holidays = ref([
+    {
+        date: '01/01',
+        description: 'New Year’s Day'
+    },
+    {
+        date: '03/28',
+        description: 'Maundy Thursday'
+    },
+    {
+        date: '03/29',
+        description: 'Good Friday'
+    },
+    {
+        date: '04/09',
+        description: 'Day of Valor (Araw ng Kagitingan)'
+    },
+    {
+        date: '04/10',
+        description: 'Eid\'l Fitr'
+    },
+    {
+        date: '05/01',
+        description: 'Labor Day'
+    },
+    {
+        date: '05/01',
+        description: 'Labor Day'
+    },
+    {
+        date: '05/01',
+        description: 'Labor Day'
+    },
+])
 
-const close_setting = () => {
-    emit('close-setting')
-}
+
+
 </script>
 
 <style lang="scss" scoped></style>
