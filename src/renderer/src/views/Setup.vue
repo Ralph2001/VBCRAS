@@ -87,12 +87,12 @@ import Input from '../components/essentials/inputs/Input.vue'
 import { useSetup } from '../stores/Setting/setup';
 import { useRouter } from 'vue-router';
 
-import { AuthStore } from '../stores/clientAuth';
+import { AuthStore } from '../stores/Authentication';
 import SetupSVG from '../components/svg/setupSVG.vue';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import InputAutoComplete from '../components/InputAutoComplete.vue';
-import { complete_municipality, complete_municipality_with_province, complete_province } from '../utils/address';
+import { complete_municipality, complete_municipality_with_province, complete_province } from '../utils/Address';
 
 const router = useRouter()
 
@@ -178,7 +178,7 @@ const submit_setup = async () => {
     const change_setting = await system_setting.setSystemSetting(data)
 
     if(change_setting){
-        router.push('/client/welcome')
+        router.push('/pages/welcome')
     }
 }
 

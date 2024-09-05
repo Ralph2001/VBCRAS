@@ -61,7 +61,7 @@ const approve_petition = () => {
   console.log(props.params.data)
 
   // Add Validation Here
-  router.push('/client/cce_approval/' + props.params.data.id)
+  router.push('/pages/cce_approval/' + props.params.data.id)
 
 
   // Swal

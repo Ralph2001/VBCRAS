@@ -60,11 +60,12 @@
           <Box title="Document" width="w-fit ">
             <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
               tabindex="-1">
-              <Select skip :options="republic_act" v-model="formData.republic_act_number" label="Republic Act" />
-              <Select skip :options="petition_type" v-model="formData.petition_type" label="Petition Type"
-                @change="petition_by_type_retriever" />
-              <Select skip :options="event_type" v-model="formData.event_type" label="Document Type"
-                @change="change_event_selected_error_in()" />
+              <Select :error="v$.republic_act_number.$error" skip :options="republic_act"
+                v-model="formData.republic_act_number" label="Republic Act" />
+              <Select :error="v$.petition_type.$error" skip :options="petition_type" v-model="formData.petition_type"
+                label="Petition Type" @change="petition_by_type_retriever" />
+              <Select :error="v$.event_type.$error" skip :options="event_type" v-model="formData.event_type"
+                label="Document Type" @change="change_event_selected_error_in()" />
             </div>
           </Box>
         </div>
@@ -83,16 +84,17 @@
                   :republic_act="is_default_republic_act" :type="is_default_petition_type"
                   :petition_number_value="is_default_petitioner_number" />
               </div>
-              <Input label="Petitioner Name" v-model="formData.petitioner_name" cap />
+              <Input :error="v$.petitioner_name.$error" label="Petitioner Name" v-model="formData.petitioner_name"
+                cap />
             </div>
           </Box>
 
           <Box title="Petitioner Nationality & Complete Address" width="w-full">
             <div class="grid grid-cols-3 w-full gap-2">
-              <Input label="Nationality" v-model="formData.nationality" skip />
+              <Input :error="v$.nationality.$error" label="Nationality" v-model="formData.nationality" skip />
               <div class=" col-span-2">
-                <InputAutoComplete label="Petitioner Address" v-model="formData.petitioner_address" :wait="true"
-                  :suggestion_data="all_" />
+                <InputAutoComplete :error="v$.petitioner_address.$error" label="Petitioner Address"
+                  v-model="formData.petitioner_address" :wait="true" :suggestion_data="all_" />
 
               </div>
             </div>
@@ -116,7 +118,7 @@
             <Box title="Document Owner & Relationship to the Owner" width="w-full">
               <div class=" grid grid-cols-1 w-full gap-2">
                 <div class="w-full">
-                  <Input :label="formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my'
+                  <Input :error="v$.document_owner.$error" :label="formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my'
                     ? 'Complete Name of Spouse'
                     : 'Document Owner'
                     " v-model="formData.document_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
@@ -132,7 +134,7 @@
                   formData.event_type === 'Death' ||
                   (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
                 ">
-                  <InputAutoComplete @input="generate_fact_reason_text()"
+                  <InputAutoComplete :error="v$.relation_owner.$error" @input="generate_fact_reason_text()"
                     :suggestion_data="petitions.relation_to_document_owner" label="Relation"
                     v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                       ? true
@@ -151,7 +153,8 @@
           <div class="basis-[30%]">
             <Box :title="IHeSheLabel" width="w-full">
               <div class="grid grid-cols-1 w-full gap-2">
-                <Input type="date" :label="event_date_label" v-model="formData.event_date" />
+                <Input :error="v$.event_date.$error" type="date" :label="event_date_label"
+                  v-model="formData.event_date" />
               </div>
             </Box>
           </div>
@@ -159,12 +162,13 @@
           <div class="basis-[45%]">
             <Box title=", at" width="w-full ">
               <div class="grid sm:grid-cols-1 lg:grid-cols-2 w-full gap-2">
-                <InputAutoComplete label="Country" v-model="formData.event_country"
+                <InputAutoComplete :error="v$.event_country.$error" label="Country" v-model="formData.event_country"
                   :suggestion_data="countryList.countryList" />
-                <InputAutoComplete label="Province" @change="formData.event_municipality = ''"
-                  v-model="formData.event_province" :suggestion_data="province" />
-                <InputAutoComplete label="Municipality" v-model="formData.event_municipality"
-                  :suggestion_data="municipality" />
+                <InputAutoComplete :error="v$.event_province.$error" label="Province"
+                  @change="formData.event_municipality = ''" v-model="formData.event_province"
+                  :suggestion_data="province" />
+                <InputAutoComplete :error="v$.event_municipality.$error" label="Municipality"
+                  v-model="formData.event_municipality" :suggestion_data="municipality" />
                 <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
                 <!-- <Input label="Province" v-model="formData.event_province" /> -->
                 <!-- <Input label="Municipalty" v-model="formData.event_municipality" /> -->
@@ -175,7 +179,7 @@
           <div class="grow">
             <Box :title="`The ${registry_label} was recorded under`" width="w-full ">
               <div class="grid grid-cols-1 w-full gap-2 sm:mt-5">
-                <Input label="Registry Number" v-model="formData.registry_number" />
+                <Input :error="v$.registry_number.$error" label="Registry Number" v-model="formData.registry_number" />
               </div>
             </Box>
           </div>
@@ -252,10 +256,10 @@
           ">
             <Box title="The first name to be change  " width="w-full">
               <div class="grid grid-cols-2 gap-2 w-full">
-                <Input label="From" @change="generate_granted_text()"
+                <Input :error="v$.first_name_from.$error" label="From" @change="generate_granted_text()"
                   @input="formData.first_name_from = $event.target.value.toUpperCase()"
                   v-model="formData.first_name_from" />
-                <Input @change="generate_granted_text()"
+                <Input :error="v$.first_name_to.$error" @change="generate_granted_text()"
                   @input="formData.first_name_to = $event.target.value.toUpperCase()" label="To"
                   v-model="formData.first_name_to" />
               </div>
@@ -284,8 +288,9 @@
                   <div class="relative">
                     I have/He/She has habitually and continuously used
                     <div class="absolute -top-[1.2rem] left-[23rem]">
-                      <Input nolabel :class="`flex text-center`" v-model="formData.ground_b_data"
-                        :readonly="formData.ground_b ? false : true" :skip="formData.ground_b ? false : true" />
+                      <Input :error="v$.ground_b_data.$error" nolabel :class="`flex text-center`"
+                        v-model="formData.ground_b_data" :readonly="formData.ground_b ? false : true"
+                        :skip="formData.ground_b ? false : true" />
                     </div>
                     _______________________________ &nbsp;and I/He/She is publicly known
                     in the community with that first name;
@@ -315,8 +320,9 @@
                   <div class="relative w-max">
                     Others: (Specify)
                     <div class="absolute -top-[1.2rem] left-[7.4rem] w-full">
-                      <Input nolabel v-model="formData.ground_f_data" :class="`flex text-center`"
-                        :readonly="formData.ground_f ? false : true" :skip="formData.ground_f ? false : true" />
+                      <Input :error="v$.ground_f_data.$error" nolabel v-model="formData.ground_f_data"
+                        :class="`flex text-center`" :readonly="formData.ground_f ? false : true"
+                        :skip="formData.ground_f ? false : true" />
                     </div>
                     ________________________________________________________.
                   </div>
@@ -389,8 +395,9 @@
           <div class="basis-[40%] h-max">
             <Box title="filing this petition at the LCRO of " width="w-ful">
               <div class="grid sm:grid-cols-1 lg:grid-cols-1 justify-center gap-2 w-full">
-                <Input label="City/Municipality" skip v-model="formData.filing_city_municipality" />
-                <Input label="Province" skip v-model="formData.filing_province" />
+                <Input label="City/Municipality" :error="v$.filing_city_municipality.$error" skip
+                  v-model="formData.filing_city_municipality" />
+                <Input label="Province " :error="v$.filing_province.$error" skip v-model="formData.filing_province" />
               </div>
             </Box>
           </div>
@@ -417,8 +424,9 @@
             <Box title="ADMINISTERING OFFICER" width="w-ful">
               <div class="grid grid-cols-1 w-full gap-2">
                 <Input label="Name" v-model="formData.administering_officer_name"
-                  @input="formData.administering_officer_name = $event.target.value.toUpperCase()" />
-                <Input label="Position" v-model="formData.administering_officer_position" />
+                  :error="v$.administering_officer_name.$error" cap />
+                <Input label="Position" v-model="formData.administering_officer_position"
+                  :error="v$.administering_officer_position.$error" />
               </div>
             </Box>
           </div>
@@ -427,11 +435,14 @@
             <Box title="SUBSCRIBE AND SWORN" width="w-ful">
               <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 w-full gap-2">
                 <div></div>
-                <Input label="Date Sworn" type="date" skip v-model="formData.subscribe_sworn_date" />
-                <Input label="City/Municipality" skip v-model="formData.subscribe_sworn_city_municipality" />
-                <Input label="Community Tax Certificate No." v-model="formData.community_tax_certificate" />
-                <Input label="Issued at" skip v-model="formData.issued_at" />
-                <Input label="Issued on" skip type="date" v-model="formData.issued_on" />
+                <Input label="Date Sworn" type="date" skip v-model="formData.subscribe_sworn_date"
+                  :error="v$.subscribe_sworn_date.$error" />
+                <Input label="City/Municipality" skip v-model="formData.subscribe_sworn_city_municipality"
+                  :error="v$.subscribe_sworn_city_municipality.$error" />
+                <Input label="Community Tax Certificate No." v-model="formData.community_tax_certificate"
+                  :error="v$.community_tax_certificate.$error" />
+                <Input label="Issued at" skip v-model="formData.issued_at" :error="v$.issued_at.$error" />
+                <Input label="Issued on" skip type="date" v-model="formData.issued_on" :error="v$.issued_on.$error" />
               </div>
             </Box>
           </div>
@@ -469,9 +480,10 @@
 
 
                 <div class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
-                  <Input type="date" label="Date" skip v-model="formData.action_taken_date" />
-                  <Input label="Municipal Civil Registrar" skip v-model="formData.municipal_civil_registrar"
-                    @input="formData.municipal_civil_registrar = $event.target.value.toUpperCase()" />
+                  <Input type="date" label="Date" skip v-model="formData.action_taken_date"
+                    :error="v$.action_taken_date.$error" />
+                  <Input label="Municipal Civil Registrar" skip v-model="formData.municipal_civil_registrar" cap
+                    :error="v$.municipal_civil_registrar.$error" />
                 </div>
               </div>
             </Box>
@@ -497,8 +509,9 @@
             <Box title="DATE PREVIEW" width="w-ful">
               <div class="flex flex-col w-full gap-2 items-start">
                 <div class="grid grid-cols-2 w-full gap-4">
-                  <Input label="Date Filled" type="date" v-model="formData.date_filed" />
-                  <Input label="Notice of Posting" type="date" v-model="formData.notice_posting" />
+                  <Input label="Date Filled" type="date" v-model="formData.date_filed" :error="v$.date_filed.$error" />
+                  <Input label="Notice of Posting" type="date" v-model="formData.notice_posting"
+                    :error="v$.notice_posting.$error" />
                 </div>
 
                 <div class="flex flex-col items-center w-full gap-2 bg-yellow-100/20 mt-3">
@@ -506,17 +519,20 @@
                   <p class="font-bold text-center uppercase">Certificate of Posting</p>
                   <div class="flex flex-row w-full justify-evenly relative">
                     <div>
-                      <Input label="Start" type="date" v-model="formData.certificate_posting_start" />
+                      <Input label="Start" type="date" v-model="formData.certificate_posting_start"
+                        :error="v$.certificate_posting_start.$error" />
                     </div>
                     <p class="absolute top-10 font-bold text-xs">TO</p>
                     <div>
-                      <Input label="End" type="date" v-model="formData.certificate_posting_end" />
+                      <Input label="End" type="date" v-model="formData.certificate_posting_end"
+                        :error="v$.certificate_posting_end.$error" />
                     </div>
                   </div>
 
                   <div class="flex items-center">
                     <div class="w-auto">
-                      <Input label="Date Issued" type="date" v-model="formData.petition_date_issued" />
+                      <Input label="Date Issued" type="date" v-model="formData.petition_date_issued"
+                        :error="v$.petition_date_issued.$error" />
                     </div>
                   </div>
                   <div class="border border-dashed border-yellow-400 w-full mt-5"></div>
@@ -524,7 +540,8 @@
 
                 <div class="flex flex-col justify-start gap-5 mt-3 items-start w-full">
                   <div class="w-[50%]">
-                    <Input label="Date Granted" type="date" v-model="formData.petition_date_granted" />
+                    <Input label="Date Granted" type="date" v-model="formData.petition_date_granted"
+                      :error="v$.petition_date_granted.$error" />
                   </div>
                 </div>
               </div>
@@ -548,7 +565,14 @@
 
 <script setup>
 
-// import { usePetitions } from "../../stores/Petition/Petitions.js";
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
 import { usePetitions } from "../../stores/Petition/petitions.js";
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
 import { ref, onMounted, reactive, computed, defineAsyncComponent } from "vue";
@@ -569,7 +593,7 @@ import TextArea from "../../components/essentials/inputs/TextArea.vue";
 import ViewBTn from "../../components/essentials/buttons/table/viewBTn.vue";
 import MultiButton from "../../components/essentials/buttons/table/multiButton.vue";
 import InputAutoComplete from "../../components/InputAutoComplete.vue";
-import countryList from '../../utils/country.js'
+import countryList from '../../utils/Country.js'
 
 import {
   now_date,
@@ -580,14 +604,25 @@ import {
   add_date_granted,
 } from "../../utils/DayPosting.js";
 
-import { grantedText } from "../../composables/GrantedText.js";
-import { factReason } from "../../composables/FactsReasons.js";
+import { grantedText } from "../../utils/GrantedText.js";
+import { factReason } from "../../utils/FactsReasons.js";
 import ValidateClericalPopup from "../../components/ValidateClericalPopup.vue";
 import PDFViewerCCE from "../../components/PDFViewerCCE.vue";
 import Wave from "../../components/Wave.vue";
 import ClericalErrorSettings from "../../components/client/ClericalErrorSettings.vue";
 
-import { all_address, complete_municipality, complete_province } from '../../utils/address'
+import { all_address, complete_municipality, complete_province } from '../../utils/Address/index.js'
+
+import { useVuelidate } from "@vuelidate/core";
+import { helpers, required, requiredIf } from "@vuelidate/validators";
+
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 
 const province = ref(complete_province())
 const municipality = computed(() => {
@@ -596,10 +631,13 @@ const municipality = computed(() => {
 const all_ = ref(all_address())
 
 
-const system_setting = useSetup() // System Settings, Default Values
-const AutoComplete = defineAsyncComponent(() =>
-  import("../../components/essentials/inputs/AutoComplete.vue")
-);
+/**
+ * 
+ * System Default Settings
+ * 
+ */
+const system_setting = useSetup()
+
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 
 
@@ -762,9 +800,6 @@ const fact_reason_data = computed(() => {
 function generate_fact_reason_text() {
   formData.reasons[0].reason = fact_reason_data.value.message
 }
-
-
-
 
 
 // Petitiner Number Values
@@ -941,17 +976,17 @@ const initialForm = {
   event_province: '',// Testing 
   event_municipality: '',// Testing 
   registry_number: '',// Testing 
-  filing_city_municipality: system_setting.defaults[0].petition_default_filling_municipality,
-  filing_province: system_setting.defaults[0].petition_default_filling_province,
+  filing_city_municipality: system_setting.defaults[0].petition_default_filling_municipality || '',
+  filing_province: system_setting.defaults[0].petition_default_filling_province || '',
   administering_officer_name: 'ISMAEL D. MALICDEM, JR.', // Testing 
   administering_officer_position: 'Municipal Civil Registrar', // Testing
   subscribe_sworn_date: new Date().toISOString().split('T')[0],
-  subscribe_sworn_city_municipality: system_setting.defaults[0].petition_default_subscribe_sworn_municipality,
+  subscribe_sworn_city_municipality: system_setting.defaults[0].petition_default_subscribe_sworn_municipality || '',
   community_tax_certificate: '',// Testing
-  issued_at: system_setting.defaults[0].petition_default_issued_at,
+  issued_at: system_setting.defaults[0].petition_default_issued_at || '',
   issued_on: new Date().toISOString().split('T')[0],
   action_taken_date: '',// Testing
-  municipal_civil_registrar: system_setting.defaults[0].municipal_civil_registrar,
+  municipal_civil_registrar: system_setting.defaults[0].municipal_civil_registrar || '',
   // Payment
   o_r_number: '',// Testing
   amount_paid: '',// Testing
@@ -1003,9 +1038,96 @@ const initialForm = {
   ],
 }
 
+const rules = computed(() => {
+  return {
+
+    date_filed: { required },
+    republic_act_number: { required },
+    petition_type: { required },
+    event_type: { required },
+    petition_number: { required },
+    petitioner_name: { required },
+    nationality: { required },
+    petitioner_address: { required },
+    petitioner_error_in: { required },
+    document_owner: { required },
+    relation_owner: { required },
+    event_date: { required },
+    event_country: { required },
+    event_province: { required },
+    event_municipality: { required },
+    registry_number: { required },
+    filing_city_municipality: { required },
+    filing_province: { required },
+    administering_officer_name: { required },
+    administering_officer_position: { required },
+    subscribe_sworn_date: { required },
+    subscribe_sworn_city_municipality: { required },
+    community_tax_certificate: { required },
+    issued_at: { required },
+    issued_on: { required },
+    action_taken_date: { required },
+    municipal_civil_registrar: { required },
+
+    /**
+     * Change of First Name Fields
+     */
+
+    first_name_from: {
+      requiredIf: requiredIf(() =>
+        formData.petition_type === "CFN" && formData.first_name_from === "" ? true : false
+      )
+    },
+    first_name_to: {
+      requiredIf: requiredIf(() =>
+        formData.petition_type === "CFN" && formData.first_name_to === "" ? true : false
+      )
+    },
+
+    ground_b_data: {
+      requiredIf: requiredIf(() =>
+        formData.ground_b && formData.petition_type === "CFN" ? true : false
+      )
+    },
+    ground_f_data: {
+      requiredIf: requiredIf(() =>
+        formData.ground_f && formData.petition_type === "CFN" ? true : false
+      )
+    },
+
+    /**
+     *  Required Dates
+     */
+
+    notice_posting: { required },
+    certificate_posting_start: { required },
+    certificate_posting_end: { required },
+    petition_date_issued: { required },
+    petition_date_granted: { required },
+
+
+    /**
+     *  Validation for Dynamically Changing List
+     * 
+     */
+
+
+  };
+});
+
+
 const formData = reactive({ ...initialForm })
 
+const v$ = useVuelidate(rules, formData);
+
 const submitForm = async () => {
+
+  v$.value.$touch();
+
+  if (v$.value.$error) {
+    console.log(v$.value);
+    return;
+  }
 
   const petition_ = {
     date_filed: formData.date_filed,

@@ -96,7 +96,7 @@ const submit = async () => {
 
     const change_setting = system_setting.setSystemSetting(formData)
     if (change_setting) {
-        router.push('/client/welcome')
+        router.push('/pages/welcome')
     }
 }
 </script>

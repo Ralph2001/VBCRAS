@@ -46,6 +46,10 @@ const props = defineProps({
   cap: {
     type: Boolean,
     default: false,
+  },
+  skipnext: {
+    type: Boolean,
+    default: false,
   }
 
 });
@@ -62,6 +66,9 @@ const value_toUpperCase = (value) => {
 }
 
 const focusNextInput = (event) => {
+  if (props.skipnext) {
+    return
+  }
   const inputs = document.querySelectorAll('input');
   const index = Array.from(inputs).indexOf(event.target);
   if (index >= 0 && index < inputs.length - 1) {

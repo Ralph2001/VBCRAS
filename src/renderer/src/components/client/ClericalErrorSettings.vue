@@ -193,8 +193,8 @@
 </template>
 
 <script setup>
-import TabsWrapper from '../../component/DataRecordComponents/TabsWrapper.vue'
-import Tab from '../../component/DataRecordComponents/Tab.vue'
+import TabsWrapper from '../Tab/TabsWrapper.vue'
+import Tab from '../Tab/Tab.vue'
 import { computed, onMounted, reactive, ref } from 'vue';
 import {
     now_date,
@@ -209,7 +209,7 @@ import Button from '../essentials/buttons/Button.vue';
 import TemplateSettings from './TemplateSettings.vue';
 import CheckBox from '../essentials/buttons/CheckBox.vue';
 import InputAutoComplete from '../InputAutoComplete.vue';
-import { complete_municipality, complete_province, complete_municipality_with_province } from '../../utils/address';
+import { complete_municipality, complete_province, complete_municipality_with_province } from '../../utils/Address';
 import { useSetup } from '../../stores/Setting/setup';
 
 const setup = useSetup()

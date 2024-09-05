@@ -1,13 +1,12 @@
 #  Vital Bridge Civil Registry and Archive System (VBCRAS)
 
-
-
 ### TODO
+- [ ] Fix Server App
+- [ ] Fix Production File Paths
 - [ ] Fix Forms
 - [ ] Fix Correction of Clerical Error & Change of First Name
 - [ ] Fix Scanned Documents
 - [ ] Fix AUSF
-
 <br />
 
 
@@ -17,7 +16,7 @@
 - Scanned Documents
 - Forms
 - [AUSF](#ausf)
-- Registry Records
+-
 
 <br />
 
@@ -25,6 +24,7 @@
 ## Features
 
 - Start/Join Local Server
+- Embedded Server App using Flask
 - User Login/Authentication
 - Generate PDF 
 - Easy track records
@@ -32,6 +32,7 @@
 - Auto Backup Database
 - Easy Print Documents
 - Configure Fields Positions
+- Validate Layout
 
 <h2>Documentation</h2>
 

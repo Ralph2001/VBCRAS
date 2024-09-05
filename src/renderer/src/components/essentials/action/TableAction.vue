@@ -82,7 +82,7 @@
 import { onClickOutside } from '@vueuse/core';
 import { reactive, ref } from 'vue';
 import { useAusf } from '../../../stores/Ausf';
-import { AuthStore } from '../../../stores/clientAuth';
+import { AuthStore } from '../../../stores/Authentication';
 import { Modal } from 'flowbite';
 import Dialog from '../../Dialog.vue';
 

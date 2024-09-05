@@ -132,10 +132,10 @@
 
 <script setup>
 import { onMounted, ref, reactive, computed, defineAsyncComponent } from "vue";
-import { useScannedDocuments } from "../../stores/scanned";
-import { useComputerStore } from "../../stores/computer";
+import { useScannedDocuments } from "../../stores/Scanned";
+import { useComputerStore } from "../../stores/Computer";
 import DropZone from "../../components/client/DropZone.vue";
-import { AuthStore } from "../../stores/clientAuth";
+import { AuthStore } from "../../stores/Authentication";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";

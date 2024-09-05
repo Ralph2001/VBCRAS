@@ -44,7 +44,7 @@ const data = ref([
   {
     title: "Home", text: [
       'Return Home',
-    ], link: "/client/welcome"
+    ], link: "/pages/welcome"
   },
   {
     title: "CCE & CFN",
@@ -54,7 +54,7 @@ const data = ref([
       'Change of First Name',
 
     ],
-    link: "/client/cce",
+    link: "/pages/cce",
   },
   {
     title: "Forms", text:
@@ -63,26 +63,26 @@ const data = ref([
         'Form 2 (Death Available, Death-not-available, Death Destroyed)',
         'Form 3 (Marriage Available, Marriage-not-available, Marriage Destroyed)'
       ],
-    link: "/client/forms"
+    link: "/pages/forms"
   },
   {
     title: "AFFIDAVIT TO USE THE SURNAME OF THE FATHER", text:
       [
         'AUSF',
       ],
-    link: "/client/ausf"
+    link: "/pages/ausf"
   },
   {
     title: "Registry Record",
     text: [
       'All Registry Records',
     ],
-    link: "/client/data_record",
+    link: "/pages/data_record",
   },
   {
     title: "Scanned Documents", text: [
       'All Scanned Documents',
-    ], link: "/client/scanned"
+    ], link: "/pages/scanned"
   },
 ]);
 </script>

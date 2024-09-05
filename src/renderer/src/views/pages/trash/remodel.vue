@@ -599,7 +599,7 @@
 
 <script setup>
 import Radio from "../../components/essentials/inputs/Radio.vue";
-import { usePetitions } from "../../stores/Petition/petitions.js";
+import { usePetitions } from "../../../stores/Petition/petitions.js";
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
 import { ref, reactive, computed, onMounted, watch, defineAsyncComponent } from "vue";
 import Select from "../../components/essentials/inputs/Select.vue";
@@ -617,23 +617,23 @@ import {
   add_date_certificate_end,
   add_date_issued,
   add_date_granted,
-} from "../../utils/DayPosting.js";
+} from "../../../utils/DayPosting.js";
 
 import InputCurrency from "../../components/essentials/inputs/InputCurrency.vue";
-import { useAddress } from "../../composables/Address.js";
+import { useAddress } from "../../../utils/Address.js";
 import Header from "../../components/essentials/header.vue";
 import MultiButton from "../../components/essentials/buttons/table/multiButton.vue";
 import ViewBTn from "../../components/essentials/buttons/table/viewBTn.vue";
 import CheckBox from "../../components/essentials/buttons/CheckBox.vue";
 import { useVuelidate } from "@vuelidate/core";
 import { helpers, required, requiredIf } from "@vuelidate/validators";
-import toOOXML from "../../utils/toOOXML.js";
+import toOOXML from "../../../utils/toOOXML.js";
 
 import Box from "../../components/essentials/Box.vue";
 import Modal from "../../components/client/modal/Modal.vue";
 
-import { factReason } from "../../composables/FactsReasons.js";
-import { grantedText } from "../../composables/GrantedText.js";
+import { factReason } from "../../../utils/FactsReasons.js";
+import { grantedText } from "../../../utils/GrantedText.js";
 import MultiInput from "../../components/essentials/inputs/MultiInput.vue";
 import DateInput from "../../components/essentials/inputs/DateInput.vue";
 import Button from "../../components/essentials/buttons/Button.vue";

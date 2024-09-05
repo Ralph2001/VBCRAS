@@ -224,7 +224,7 @@ import { usePetitions } from '../../../stores/Petition/petitions';
 import ExplorerView from '../../../components/client/ExplorerView.vue';
 import { useFileDialog } from '@vueuse/core'
 import { RecycleScroller } from 'vue-virtual-scroller';
-import { useScannedDocuments } from '../../../stores/scanned';
+import { useScannedDocuments } from '../../../stores/Scanned';
 import { computed } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -304,7 +304,7 @@ onMounted(async () => {
 
 
 const back = () => {
-    router.push('/client/cce')
+    router.push('/pages/cce')
 }
 
 

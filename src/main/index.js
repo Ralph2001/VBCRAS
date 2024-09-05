@@ -2,11 +2,10 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
+
+
 import { generate } from '../documents/clerical_error'
 import { finality } from '../documents/finality'
-// import { generate_form } from '../documents/forms/createForm'
-import { generate_records } from '../documents/records/generate_records'
-// import { createPdfForm } from '../documents/forms/createPdfForm'
 import { generate_form } from '../documents/forms/createForm'
 import { CreateAnnotated } from '../documents/clerical/generate_annotation'
 import { generate_ausf } from '../documents/ausf/create_ausf'
@@ -25,12 +24,11 @@ const fs = require('fs')
 const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe');
 
 
-var interfaces = os.networkInterfaces()
-
-var addresses = []
-for (var k in interfaces) {
-    for (var k2 in interfaces[k]) {
-        var address = interfaces[k][k2]
+let interfaces = os.networkInterfaces()
+let addresses = []
+for (let k in interfaces) {
+    for (let k2 in interfaces[k]) {
+        let address = interfaces[k][k2]
         if (address.family === 'IPv4' && !address.internal) {
             addresses.push(address.address)
         }
@@ -50,11 +48,8 @@ function generateRandomString(length) {
 
 
 // Create Print Window without gui
-
-
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
 
-    // const pdfWindow = new BrowserWindow();
     const randomFileName = `temp_${generateRandomString(20)}.pdf`;
     const pdfPath = join(__dirname, '../../resources/temp/', randomFileName);
     const fileDirectory = join(__dirname, '../../resources/temp/')
@@ -78,7 +73,6 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
                 console.error(`SumatraPDF process exited with code ${code}`);
             }
 
-            // Remove the temp file
             fs.unlink(pdfPath, (err) => {
                 if (err) {
                     console.error('Failed to delete temp PDF file', err);
@@ -89,25 +83,6 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
 
             fse.emptyDirSync(fileDirectory);
         });
-        // pdfWindow.loadFile(pdfPath);
-
-        // pdfWindow.webContents.on('did-finish-load', () => {
-        //     pdfWindow.webContents.print({}, (success, errorType) => {
-        //         if (!success) {
-        //             console.error('Failed to print PDF', errorType);
-        //         }
-
-        //         pdfWindow.close();
-
-        //         fs.unlink(pdfPath, (err) => {
-        //             if (err) {
-        //                 console.error('Failed to delete temp PDF file', err);
-        //             } else {
-        //                 console.log('Temp PDF file deleted successfully');
-        //             }
-        //         });
-        //     });
-        // });
     });
 });
 
@@ -162,50 +137,8 @@ function executeCommand(commandPath, args) {
 
 
 
-let dialogOpen = false
-let pythonProcess = null
-async function startServer() {
-    try {
-        // pythonProcess = execFile(
-        //     join(__dirname, '../../resources/script/dist/app/app.exe')
-        // )
 
-        pythonProcess = spawn(
-            'python',
-            [join(__dirname, '../../resources/script/app.py')],
-            {}
-        )
 
-        pythonProcess.on('error', (error) => {
-            console.error('Error starting Python process:', error)
-            pythonProcess = null
-        })
-
-        pythonProcess.on('exit', (code, signal) => {
-            console.log(
-                `Python process exited with code ${code} and signal ${signal}`
-            )
-            pythonProcess = null
-        })
-
-        return true
-    } catch (error) {
-        console.error('Error starting server:', error)
-        return false
-    }
-}
-
-ipcMain.handle('GenerateRecords', async (event, formData) => {
-    try {
-        const generate_record = await generate_records(formData)
-        // if ((generate_records.success = true)) {
-        //     return true
-        // }
-        console.log(generate_record)
-    } catch (error) {
-        console.log(error)
-    }
-})
 
 // Form IPCMAIN
 
@@ -224,7 +157,6 @@ ipcMain.handle('createPdfForm', async (event, formData) => {
     }
 })
 
-// Form 1, 2, 3 IpcMain
 ipcMain.handle('open-form', async (event, source) => {
     try {
         win = new BrowserWindow({
@@ -245,16 +177,7 @@ ipcMain.handle('open-form', async (event, source) => {
     }
 })
 
-// ipcMain.handle('createForm', async (event, formData) => {
-//     try {
-//         const createForm = await generate_form(formData)
-//         if ((createForm.success = true)) {
-//             return { status: true, filepath: createForm.filepath }
-//         }
-//     } catch (error) {
-//         console.log(error)
-//     }
-// })
+
 /////////////
 /////////////
 // AUSF
@@ -378,6 +301,135 @@ ipcMain.handle('open-clerical-files', async (event, source) => {
 })
 
 
+
+
+
+/**
+ * Main Window
+ * 
+ */
+function mainWindow() {
+    const mainWindow = new BrowserWindow({
+        width: 1060,
+        height: 670,
+        show: false,
+        frame: true,
+
+
+        autoHideMenuBar: true,
+        ...(process.platform === 'linux' ? { icon } : {}),
+        webPreferences: {
+            preload: join(__dirname, '../preload/index.js'),
+            sandbox: false,
+        },
+    })
+
+    // mainWindow.setMinimumSize(1050, 500)
+
+    mainWindow.on('ready-to-show', () => {
+        mainWindow.show()
+    })
+
+    mainWindow.webContents.setWindowOpenHandler((details) => {
+        shell.openExternal(details.url)
+        return { action: 'deny' }
+    })
+
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    } else {
+        mainWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+            hash: 'home',
+        })
+    }
+}
+
+app.whenReady().then(() => {
+    electronApp.setAppUserModelId('com.localcivilregistry.office')
+    app.on('browser-window-created', (_, window) => {
+        optimizer.watchWindowShortcuts(window)
+    })
+    mainWindow()
+    app.on('activate', function () {
+        if (BrowserWindow.getAllWindows().length === 0) mainWindow()
+    })
+})
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
+})
+
+
+
+/**
+ * List of IPC
+ **/
+
+
+/**
+ * Scanned Document IPC's
+ */
+
+
+ipcMain.handle('open-scanned-sidebar', async (event, source) => {
+    /**
+      *  Open Scanned Documents in Side Bar
+      *  Get Relative Path, Add the destop name 
+      *  Convert to base64  
+      */
+    try {
+        const fiepath = 'C:\\Users\\' + username + '\\' + source
+        const data = fs.readFileSync(fiepath)
+        if (data) {
+            return { status: true, fileUrl: data.toString('base64') }
+        }
+        return { status: false, fileUrl: null }
+    } catch (error) {
+        return { status: false, fileUrl: null }
+    }
+})
+
+
+/**
+ * LocalCivil IPC
+ */
+
+
+let dialogOpen = false
+let pythonProcess = null
+async function startServer() {
+    try {
+        // pythonProcess = execFile(
+        //     join(__dirname, '../../resources/script/dist/app/app.exe')
+        // )
+
+        pythonProcess = spawn(
+            'python',
+            [join(__dirname, '../../resources/script/app.py')],
+            {}
+        )
+
+        pythonProcess.on('error', (error) => {
+            console.error('Error starting Python process:', error)
+            pythonProcess = null
+        })
+
+        pythonProcess.on('exit', (code, signal) => {
+            console.log(
+                `Python process exited with code ${code} and signal ${signal}`
+            )
+            pythonProcess = null
+        })
+
+        return true
+    } catch (error) {
+        console.error('Error starting server:', error)
+        return false
+    }
+}
+
 ipcMain.handle('is-server-running', async (event) => {
     try {
         if (pythonProcess) {
@@ -387,6 +439,7 @@ ipcMain.handle('is-server-running', async (event) => {
         }
     } catch (error) {
         console.log(error)
+        return false
     }
 })
 
@@ -454,29 +507,10 @@ ipcMain.handle('select-file', async (event) => {
     }
 })
 
-ipcMain.handle('move-file', async (event, { source, destination }) => {
-    try {
-        await fse.move(source, destination)
-        event.returnValue = 'File moved successfully!'
-    } catch (err) {
-        console.error(err)
-        event.returnValue = 'Error moving file: ' + err.message
-    }
-})
 
-ipcMain.handle('copy-file', async (event, { source, destination }) => {
-    try {
-        await fse.copy(source, destination)
-        event.returnValue = true
-    } catch (err) {
-        console.error(err)
-        event.returnValue = 'Error moving file: ' + err.message
-    }
-})
-
-let win
 
 ipcMain.handle('open-file', async (event, source) => {
+    let win
     try {
         win = new BrowserWindow({
             webPreferences: {
@@ -508,72 +542,10 @@ ipcMain.handle('open-file-folder', async (event, path) => {
     }
 })
 
+
 ipcMain.handle('get-user', async (event) => {
+    /**
+     *  Return user name directory
+     */
     return username
-})
-
-//Scanned Document IPC
-ipcMain.handle('open-scanned-sidebar', async (event, source) => {
-    try {
-        const fiepath = 'C:\\Users\\' + username + '\\' + source
-        const data = fs.readFileSync(fiepath)
-        if (data) {
-            return { status: true, fileUrl: data.toString('base64') }
-        }
-        return { status: false, fileUrl: null }
-    } catch (error) { }
-})
-
-//Main Window
-function mainWindow() {
-    const mainWindow = new BrowserWindow({
-        width: 1060,
-        height: 670,
-        show: false,
-        frame: true,
-
-
-        autoHideMenuBar: true,
-        ...(process.platform === 'linux' ? { icon } : {}),
-        webPreferences: {
-            preload: join(__dirname, '../preload/index.js'),
-            sandbox: false,
-        },
-    })
-
-    // mainWindow.setMinimumSize(1050, 500)
-
-    mainWindow.on('ready-to-show', () => {
-        mainWindow.show()
-    })
-
-    mainWindow.webContents.setWindowOpenHandler((details) => {
-        shell.openExternal(details.url)
-        return { action: 'deny' }
-    })
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-        mainWindow.loadFile(join(__dirname, '../renderer/index.html'), {
-            hash: 'home',
-        })
-    }
-}
-
-app.whenReady().then(() => {
-    electronApp.setAppUserModelId('com.localcivilregistry.office')
-    app.on('browser-window-created', (_, window) => {
-        optimizer.watchWindowShortcuts(window)
-    })
-    mainWindow()
-    app.on('activate', function () {
-        if (BrowserWindow.getAllWindows().length === 0) mainWindow()
-    })
-})
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
 })

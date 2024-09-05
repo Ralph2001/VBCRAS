@@ -82,12 +82,6 @@ contextBridge.exposeInMainWorld('AusfApi', {
 })
 
 
-contextBridge.exposeInMainWorld('RecordsApi', {
-    GenerateRecords: async (formData) => {
-        const result = await ipcRenderer.invoke('GenerateRecords', formData)
-        return true
-    },
-})
 
 contextBridge.exposeInMainWorld('ScannedApi', {
     OpenInSideBar: async (formData) => {

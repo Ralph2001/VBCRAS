@@ -494,46 +494,23 @@
 
 <script setup>
 import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
-import TableGrid from '../../components/TableGrid.vue'
 import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
 import Header from '../../components/essentials/header.vue'
-import ButtonIcon from '../../components/essentials/buttons/ButtonIcon.vue'
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
-import Box from '../../components/essentials/Box.vue'
-import Select from '../../components/essentials/inputs/Select.vue'
-import Input from '../../components/essentials/inputs/Input.vue'
-import { useElementVisibility } from '@vueuse/core'
 import Loading from '../../components/essentials/others/Loading.vue'
-import InputforForm from '../../component/FormPageComponents/InputforForm.vue'
-import ButtonBorderless from '../../component/FormPageComponents/ButtonBorderless.vue'
-import FormCheckbox from '../../component/FormPageComponents/FormCheckbox.vue'
-import InputLabel from '../../component/FormPageComponents/InputLabel.vue'
-import RangeInput from '../../component/FormPageComponents/RangeInput.vue'
+import InputforForm from '../../components/Form/InputforForm.vue'
+import ButtonBorderless from '../../components/Form/ButtonBorderless.vue'
+import FormCheckbox from '../../components/Form/FormCheckbox.vue'
+import InputLabel from '../../components/Form/InputLabel.vue'
+import RangeInput from '../../components/Form/RangeInput.vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import { format } from 'date-fns'
-import AutoCompleteAddress from '../../component/FormPageComponents/AutoCompleteAddress.vue'
-import PDFViewer from 'pdf-viewer-vue'
-// import VuePdfEmbed from 'vue-pdf-embed'
+import AutoCompleteAddress from '../../components/Form/AutoCompleteAddress.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
-
-// import PDF from "pdf-vue3";
-// import { VuePDF, usePDF } from '@tato30/vue-pdf'
-
-// import pdf from 'pdfvuer'
-
-// not needed since v1.9.1
-
-
-// essential styles
-import 'vue-pdf-embed/dist/style/index.css'
-// optional styles
-import 'vue-pdf-embed/dist/style/annotationLayer.css'
-import 'vue-pdf-embed/dist/style/textLayer.css'
-import InputCurrency from '../../components/essentials/inputs/InputCurrency.vue'
 
 
 

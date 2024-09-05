@@ -323,11 +323,10 @@
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
 import SearchFilter from "./SearchFilter.vue";
-import { useComputerStore } from "../../stores/computer";
-import { useScannedDocuments } from "../../stores/scanned";
+import { useComputerStore } from "../../stores/Computer";
+import { useScannedDocuments } from "../../stores/Scanned";
 import Alert from "../Alert.vue";
 import { watchDebounced, refDebounced, onStartTyping } from "@vueuse/core";
-import PDFViewer from "pdf-viewer-vue";
 import { onClickOutside } from "@vueuse/core";
 import Wave from "../Wave.vue";
 import { RecycleScroller } from "vue-virtual-scroller";

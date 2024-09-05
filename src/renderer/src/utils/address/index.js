@@ -1,5 +1,5 @@
 
-import philippines from "../philippines";
+import philippines from "../Philippines";
 
 
 export function complete_province(country) {

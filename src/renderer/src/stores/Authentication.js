@@ -1,10 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
-import { useHostStore } from './connection'
-import { ref } from 'vue'
-
-
+import { useHostStore } from './Connection'
 
 export const AuthStore = defineStore('auth', {
     state: () => ({
@@ -32,7 +28,7 @@ export const AuthStore = defineStore('auth', {
                 )
                 this.token = response.data.access_token
                 localStorage.setItem('token', this.token)
-                this.router.push('/client/welcome')
+                this.router.push('/pages/welcome')
             } catch (error) {
                 this.error = error.response.data.error
             }
@@ -50,7 +46,7 @@ export const AuthStore = defineStore('auth', {
                         },
                     }
                 )
-                this.router.push('/client/login')
+                this.router.push('/login')
             } catch (error) {
                 this.error = error.response.data.error
             }
@@ -72,9 +68,7 @@ export const AuthStore = defineStore('auth', {
                     this.user = user.data.username
                     this.user_id = user.data.id
                     this.user_role = user.data.role
-                    // console.log(user)
-                    // // this.user_details = user.data
-                    // // console.log(user)
+
                     return true
                 } catch (error) {
                     localStorage.removeItem('token')
@@ -88,7 +82,7 @@ export const AuthStore = defineStore('auth', {
         logout() {
             this.token = null
             localStorage.removeItem('token')
-            this.router.push('/client/login')
+            this.router.push('/login')
         },
     },
 })
