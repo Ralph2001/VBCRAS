@@ -4,11 +4,12 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 
 
-import { generate } from '../documents/clerical_error'
-import { finality } from '../documents/finality'
+import { generate } from '../documents/clerical/clerical_error'
+import { finality } from '../documents/clerical/finality'
 import { generate_form } from '../documents/forms/createForm'
-import { CreateAnnotated } from '../documents/clerical/generate_annotation'
+import { CreateAnnotated } from '../documents/clerical/annotation'
 import { generate_ausf } from '../documents/ausf/create_ausf'
+import { generate_by_month_year } from '../documents/clerical/generate_report'
 
 
 const { execFile } = require('child_process')
@@ -300,7 +301,13 @@ ipcMain.handle('open-clerical-files', async (event, source) => {
     return data
 })
 
-
+ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
+    try {
+        const generate = await generate_by_month_year(formData)
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 
 

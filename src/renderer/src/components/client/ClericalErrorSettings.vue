@@ -3,7 +3,7 @@
         <div class="h-full w-full flex rounded-lg bg-gray-50 flex-col p-6 relative">
             <button @click="emit('close-setting')"
                 class="absolute right-10 border px-2 rounded outline-none bg-red-500 font-medium text-white">Exit</button>
-            <p class="font-medium p-4">Preferences</p>
+            <p class="font-medium p-4">Settings</p>
             <TabsWrapper>
                 <Tab title="File Path And Templates">
                     <div class="flex flex-col p-4">
@@ -137,7 +137,7 @@
                 </Tab>
                 <Tab title="Default Values">
                     <div class="flex flex-col h-full">
-                        <p class="p-2 font-medium text-2xl">This value can still be edited in the form generator.</p>
+                        <p class="p-2 font-medium text-2xl">You can still change this value in the form maker.</p>
                         <div class="grid grid-cols-2 gap-10 px-20 mt-10">
                             <div class="flex flex-col gap-2">
                                 <p class="font-medium italic">Petitioner Address</p>
@@ -186,6 +186,113 @@
                     </div>
                 </Tab>
 
+                <Tab title="Reports">
+                    <div class="flex flex-col h-full gap-3 overflow-y-scroll ">
+                        <p class="p-2 font-medium text-2xl">Generate Reports</p>
+                        <div class="flex flex-row items-center justify-center gap-4 ">
+                            <div class="flex flex-col gap-2  w-[20rem]">
+                                <label for="" class="text-sm font-medium">Petition Type</label>
+                                <select class="border border-gray-300 rounded-md w-full font-medium"
+                                    v-model="selected_petition_type">
+                                    <option class="font-medium" v-for="type in petition_type" :key="type" :value="type">
+                                        {{ type }}
+                                    </option>
+                                </select>
+
+
+                            </div>
+                        </div>
+                        <div class="flex sm:px-10 md:lg:px-40 items-center justify-center h-full ">
+                            <div
+                                class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-20  items-center justify-center w-full  h-full p-4 space-x-1">
+                                <div class="flex flex-col  gap-4">
+                                    <div class="flex flex-col gap-3 border rounded-md p-5 shadow-sm bg-white">
+                                        <p class="font-medium  text-md tracking-wider text-gray-800 uppercase">Generate
+                                            list by
+                                            month
+                                            & year</p>
+                                        <div class="flex sm:md:flex-col lg:flex-row gap-2 w-full md:lg:px-10">
+                                            <div class="flex flex-col gap-2  w-full">
+                                                <label for="" class="text-sm font-medium">Selected Month</label>
+                                                <select class="border border-gray-300 rounded-md w-full font-medium"
+                                                    v-model="selected_month">
+                                                    <option class="font-medium" :value="key + 1"
+                                                        :selected="selected_month === key"
+                                                        v-for="( value, key) in months" :key="key">
+                                                        {{ value }}
+                                                    </option>
+                                                </select>
+
+
+                                            </div>
+                                            <div class="flex flex-col gap-2  w-full">
+                                                <label for="" class="text-sm font-medium">Selected Year</label>
+                                                <select class="border border-gray-300 rounded-md w-full font-medium"
+                                                    v-model="selected_year">
+                                                    <option class="font-medium" :value="value"
+                                                        :selected="selected_year === value"
+                                                        v-for="( value, key) in years" :key="key">
+                                                        {{ value }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="w-full flex  px-2 items-center">
+                                            <p class="font-medium text-md text-gray-700">Total: <span
+                                                    class=" text-gray-900">{{ month_year_record.length }}</span></p>
+                                            <button type="button" @click="generate_month_year"
+                                                class="font-medium w-max ml-auto border rounded  bg-blue-500 text-white px-2 py-1.5">Generate</button>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-3  border rounded-md p-5 shadow-sm bg-white">
+                                        <p class="font-medium  text-md tracking-wider text-gray-800 uppercase">Generate
+                                            Master
+                                            List
+                                            for the year</p>
+                                        <div class="md:lg:px-10 justify-center flex items-center   ">
+                                            <div class="flex flex-col gap-2  w-[15rem]">
+                                                <label for="" class="text-sm font-medium">Selected Year</label>
+                                                <select class="border border-gray-300 rounded-md w-full">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="w-full flex  px-2 items-center">
+                                            <p class="font-medium text-md text-gray-700">Total: <span
+                                                    class=" text-gray-900">No Selected</span></p>
+                                            <button type="button"
+                                                class="font-medium w-max ml-auto border rounded  bg-blue-500 text-white px-2 py-1.5">Generate</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-5 justify-center">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <p class="font-bold text-lg tracking-wider text-gray-700">Today's Total Record
+                                        </p>
+                                        <div class="h-[4rem]">
+                                            <p class="text-4xl font-bold text-gray-800">{{ today_record.length }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center">
+                                        <p class="font-bold text-lg tracking-wider text-gray-700">This Month Total
+                                            Record</p>
+                                        <div class="h-[4rem]">
+                                            <p class="text-4xl font-bold text-gray-800">{{ month_record.length }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center justify-center">
+                                        <p class="font-bold text-lg tracking-wider text-gray-700">This Year Total Record
+                                        </p>
+                                        <div class="h-[4rem]">
+                                            <p class="text-4xl font-bold text-gray-800">{{ year_record.length }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </Tab>
+
             </TabsWrapper>
 
         </div>
@@ -211,6 +318,11 @@ import CheckBox from '../essentials/buttons/CheckBox.vue';
 import InputAutoComplete from '../InputAutoComplete.vue';
 import { complete_municipality, complete_province, complete_municipality_with_province } from '../../utils/Address';
 import { useSetup } from '../../stores/Setting/setup';
+import { usePetitions } from '../../stores/Petition/petitions.js'
+
+
+const petitions = usePetitions()
+
 
 const setup = useSetup()
 
@@ -257,17 +369,6 @@ const tags_petition = ref([
     { tag: '{error_description_from}', details: 'This is belongs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
     { tag: '{error_description_to}', details: 'This is belongs to clerical tag. Put it inside, for example in table put it in with clerical tag' },
 ])
-
-// petition_default_file_path
-// petition_default_nationality
-// petition_default_country
-// petition_default_filling_province
-// petition_default_filling_municipality
-// petition_default_administering_officer_name
-// petition_default_administering_officer_position
-// petition_default_subscribe_sworn_municipality
-// petition_default_issued_at
-// petition_always_granted
 
 
 const formData = reactive({
@@ -345,7 +446,97 @@ const holidays = ref([
     },
 ])
 
+const months = ref([
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+])
 
+const years = ref([
+    2024
+])
+
+/**
+ * 
+ * Report 
+ * 
+ */
+const petition_type = ref([
+    'CCE',
+    'CFN',
+])
+
+const selected_petition_type = ref('CCE')
+
+// Get the current date details
+const now = new Date();
+const today = now.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; // 'YYYY-MM'
+const currentYear = now.getFullYear(); // YYYY
+
+// Helper to parse the date
+const parseDate = (dateString) => new Date(dateString);
+
+// Filter today's records
+const today_record = computed(() => {
+    return petitions.petitions.filter(petition => {
+        const petitionDate = parseDate(petition.created_at).toISOString().split('T')[0]; // 'YYYY-MM-DD'
+        return petition.petition_type === selected_petition_type.value && petitionDate === today;
+    });
+});
+
+// Filter this month's records
+const month_record = computed(() => {
+    return petitions.petitions.filter(petition => {
+        const petitionYearMonth = `${parseDate(petition.created_at).getFullYear()}-${String(parseDate(petition.created_at).getMonth() + 1).padStart(2, '0')}`;
+        return petition.petition_type === selected_petition_type.value && petitionYearMonth === currentYearMonth;
+    });
+});
+
+// Filter this year's records
+const year_record = computed(() => {
+    return petitions.petitions.filter(petition => {
+        return petition.petition_type === selected_petition_type.value && parseDate(petition.created_at).getFullYear() === currentYear;
+    });
+});
+
+
+const selected_month = ref();
+const selected_year = ref(currentYear);
+
+const month_year_record = computed(() => {
+    return petitions.petitions.filter(petition => {
+        const petitionDate = new Date(petition.created_at);
+        const petitionMonth = petitionDate.getMonth() + 1; // getMonth is 0-based
+        const petitionYear = petitionDate.getFullYear();
+        return petition.petition_type === selected_petition_type.value &&
+            petitionMonth === selected_month.value &&
+            petitionYear === selected_year.value;
+    });
+})
+
+
+const generate_month_year = async () => {
+
+    const formData = {
+        data: month_year_record.value,
+        petition_type: selected_petition_type.value,
+        month: months.value[selected_month.value - 1],
+        year: selected_year.value
+    }
+
+    const main_data = JSON.stringify(formData)
+    const generate = await window.ClericalApi.GenerateReportByMonthYear(main_data)
+}
 
 </script>
 

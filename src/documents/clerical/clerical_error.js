@@ -4,7 +4,7 @@ const fs = require('fs')
 const fsp = require('fs').promises
 const path = require('path')
 const dateFns = require('date-fns')
-import toOOXML from '../renderer/src/utils/toOOXML'
+import toOOXML from '../../renderer/src/utils/toOOXML'
 
 // CHANGEABLE FOLDER PATH
 // USED IN RETURNING THE RESULT FILEPATH

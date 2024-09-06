@@ -48,6 +48,10 @@ contextBridge.exposeInMainWorld('ClericalApi', {
         const result = await ipcRenderer.invoke('open-clerical-files', source)
         return result
     },
+    GenerateReportByMonthYear: async (formData) => {
+        const generate = await ipcRenderer.invoke('generateReportByMonthYear', formData)
+        console.log(generate)
+    }
 })
 
 contextBridge.exposeInMainWorld('FormApi', {
