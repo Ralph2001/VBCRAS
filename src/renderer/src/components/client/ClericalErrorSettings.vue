@@ -5,57 +5,12 @@
                 class="absolute right-10 border px-2 rounded outline-none bg-red-500 font-medium text-white">Exit</button>
             <p class="font-medium p-4">Settings</p>
             <TabsWrapper>
-                <Tab title="File Path And Templates">
-                    <div class="flex flex-col p-4">
-                        <div class="flex flex-col gap-2">
-                            <p class="p-2 font-medium text-2xl">Default File Save Path</p>
-                            <p class="text-sm">All petitions will be saved to the specified path. Please ensure that
-                                this path is set to a shared drive so that other users can access and open the petitions
-                                as needed.</p>
-                            <!-- <Input label="Selected File Path" @click="open" v-model="file_path" readonly /> -->
-                            <div class="w-full flex flex-col mt-5">
-                                <label for="path" class="font-medium mb-2 text-sm">Selected File Path</label>
-                                <input id="path" readonly type="text"
-                                    class="w-full border border-gray-300 rounded shadow-sm font-semibold text-gray-800 text-sm"
-                                    @click="open" v-model="file_path">
-                            </div>
-                            <Button label="Save" class="w-max border ml-auto" />
-                        </div>
-                        <div class="flex h-full flex-col">
-                            <p class="p-2 font-medium text-2xl">Templates</p>
-                            <TabsWrapper>
-                                <Tab title="Petition">
-                                    <TemplateSettings document_name="petition.docx" :tags="tags_petition"
-                                        :file_types="petition_types" />
-                                </Tab>
-                                <Tab title="Record Sheet">
-                                    <TemplateSettings document_name="Record Sheet.docx"
-                                        :file_types="['Record Sheet']" />
-                                </Tab>
-                                <Tab title="Endorsement Letter">
-                                    <TemplateSettings document_name="Endorsement Letter.docx"
-                                        :file_types="['Endorsement Letter']" />
-                                </Tab>
-                                <Tab title="Notice of Posting and Certificate of Posting">
-                                    <TemplateSettings document_name="Notice of Posting and Certificate of Posting.docx"
-                                        :file_types="['Notice of Posting and Certificate of Posting']" />
-                                </Tab>
-                                <Tab title="Finality">
-                                    <TemplateSettings document_name="Finality.docx" :file_types="['Finality']" />
-                                </Tab>
-                                <Tab title="Finality Endorsement Letter">
-                                    <TemplateSettings document_name="Finality Endorsement Letter.docx"
-                                        :file_types="['Finality Endorsement Letter']" />
-                                </Tab>
-                            </TabsWrapper>
-                        </div>
-                    </div>
-                </Tab>
-                <Tab title="Dates">
-                    <div class="flex flex-col h-full">
-                        <p class="p-2 font-medium text-2xl">Automatic Date Counts</p>
 
-                        <p class="p-2 font-semibold text-lg ml-20">Output:</p>
+                <Tab title="Dates">
+                    <div class="flex flex-col h-full p-4">
+                        <p class="p-2 font-medium text-2xl">Configure Date Counts</p>
+
+                        <p class="p-2 font-semibold text-lg ">Output:</p>
                         <div class="flex flex-row flex-wrap gap-2 items-center justify-center ">
                             <div class="h-[4rem] w-[10rem] bg-white border border-gray-300 rounded-md shadow-sm flex flex-col items-center justify-center"
                                 v-for="date in dates" :key="date">
@@ -202,97 +157,115 @@
 
                             </div>
                         </div>
-                        <div class="flex sm:px-10 md:lg:px-40 items-center justify-center h-full ">
-                            <div
-                                class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-20  items-center justify-center w-full  h-full p-4 space-x-1">
-                                <div class="flex flex-col  gap-4">
-                                    <div class="flex flex-col gap-3 border rounded-md p-5 shadow-sm bg-white">
-                                        <p class="font-medium  text-md tracking-wider text-gray-800 uppercase">Generate
-                                            list by
-                                            month
-                                            & year</p>
-                                        <div class="flex sm:md:flex-col lg:flex-row gap-2 w-full md:lg:px-10">
-                                            <div class="flex flex-col gap-2  w-full">
-                                                <label for="" class="text-sm font-medium">Selected Month</label>
-                                                <select class="border border-gray-300 rounded-md w-full font-medium"
-                                                    v-model="selected_month">
-                                                    <option class="font-medium" :value="key + 1"
-                                                        :selected="selected_month === key"
-                                                        v-for="( value, key) in months" :key="key">
-                                                        {{ value }}
-                                                    </option>
-                                                </select>
+                        <div
+                            class="flex flex-wrap gap-10 lg:flex-row sm:px-10 md:lg:px-40 items-center justify-center h-auto  ">
+                            <div class="flex flex-col  gap-3 border rounded-md p-5 shadow-sm bg-white">
+                                <p class="font-medium  text-md tracking-wider text-gray-800 uppercase">Generate
+                                    list by
+                                    month
+                                    & year</p>
+                                <div class="flex sm:md:flex-col lg:flex-row gap-2 w-full md:lg:px-10">
+                                    <div class="flex flex-col gap-2  w-full">
+                                        <label for="" class="text-sm font-medium">Select Month</label>
+                                        <select class="border border-gray-300 rounded-md w-full font-medium"
+                                            v-model="selected_month">
+                                            <option class="font-medium" :value="key + 1"
+                                                :selected="selected_month === key" v-for="( value, key) in months"
+                                                :key="key">
+                                                {{ value }}
+                                            </option>
+                                        </select>
 
 
-                                            </div>
-                                            <div class="flex flex-col gap-2  w-full">
-                                                <label for="" class="text-sm font-medium">Selected Year</label>
-                                                <select class="border border-gray-300 rounded-md w-full font-medium"
-                                                    v-model="selected_year">
-                                                    <option class="font-medium" :value="value"
-                                                        :selected="selected_year === value"
-                                                        v-for="( value, key) in years" :key="key">
-                                                        {{ value }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="w-full flex  px-2 items-center">
-                                            <p class="font-medium text-md text-gray-700">Total: <span
-                                                    class=" text-gray-900">{{ month_year_record.length }}</span></p>
-                                            <button type="button" @click="generate_month_year"
-                                                class="font-medium w-max ml-auto border rounded  bg-blue-500 text-white px-2 py-1.5">Generate</button>
-                                        </div>
                                     </div>
-                                    <div class="flex flex-col gap-3  border rounded-md p-5 shadow-sm bg-white">
-                                        <p class="font-medium  text-md tracking-wider text-gray-800 uppercase">Generate
-                                            Master
-                                            List
-                                            for the year</p>
-                                        <div class="md:lg:px-10 justify-center flex items-center   ">
-                                            <div class="flex flex-col gap-2  w-[15rem]">
-                                                <label for="" class="text-sm font-medium">Selected Year</label>
-                                                <select class="border border-gray-300 rounded-md w-full">
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="w-full flex  px-2 items-center">
-                                            <p class="font-medium text-md text-gray-700">Total: <span
-                                                    class=" text-gray-900">No Selected</span></p>
-                                            <button type="button"
-                                                class="font-medium w-max ml-auto border rounded  bg-blue-500 text-white px-2 py-1.5">Generate</button>
-                                        </div>
+                                    <div class="flex flex-col gap-2  w-full">
+                                        <label for="" class="text-sm font-medium">Select Year</label>
+                                        <select class="border border-gray-300 rounded-md w-full font-medium"
+                                            v-model="selected_year">
+                                            <option class="font-medium" :value="value"
+                                                :selected="selected_year === value" v-for="( value, key) in years"
+                                                :key="key">
+                                                {{ value }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-5 justify-center">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <p class="font-bold text-lg tracking-wider text-gray-700">Today's Total Record
-                                        </p>
-                                        <div class="h-[4rem]">
-                                            <p class="text-4xl font-bold text-gray-800">{{ today_record.length }}</p>
-                                        </div>
+                                <div class="w-full flex  px-2 items-center">
+                                    <p class="font-medium text-md text-gray-700">Total: <span class=" text-gray-900">{{
+                                        month_year_record.length }}</span></p>
+                                    <button type="button" @click="generate_month_year"
+                                        class="font-medium w-max ml-auto border rounded  bg-blue-500 text-white px-2 py-1.5">Generate</button>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3  border rounded-md p-5 shadow-sm bg-white">
+                                <p class="font-medium  text-md tracking-wider text-gray-800 uppercase">Generate
+                                    Master
+                                    List
+                                    for the year</p>
+                                <div class="md:lg:px-10 justify-center flex items-center   ">
+                                    <div class="flex flex-col gap-2  w-[15rem]">
+                                        <label for="" class="text-sm font-medium">Select Year</label>
+                                        <select class="border border-gray-300 rounded-md w-full">
+                                        </select>
                                     </div>
-                                    <div class="flex flex-col items-center justify-center">
-                                        <p class="font-bold text-lg tracking-wider text-gray-700">This Month Total
-                                            Record</p>
-                                        <div class="h-[4rem]">
-                                            <p class="text-4xl font-bold text-gray-800">{{ month_record.length }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col items-center justify-center">
-                                        <p class="font-bold text-lg tracking-wider text-gray-700">This Year Total Record
-                                        </p>
-                                        <div class="h-[4rem]">
-                                            <p class="text-4xl font-bold text-gray-800">{{ year_record.length }}</p>
-                                        </div>
-                                    </div>
+                                </div>
+                                <div class="w-full flex  px-2 items-center">
+                                    <p class="font-medium text-md text-gray-700">Total: <span class=" text-gray-900">No
+                                            Selected</span></p>
+                                    <button type="button"
+                                        class="font-medium w-max ml-auto border rounded  bg-blue-500 text-white px-2 py-1.5">Generate</button>
                                 </div>
                             </div>
                         </div>
 
                     </div>
                 </Tab>
-
+                <Tab title="File Path And Templates">
+                    <div class="flex flex-col p-4">
+                        <div class="flex flex-col gap-2">
+                            <p class="p-2 font-medium text-2xl">Default File Save Path</p>
+                            <p class="text-sm">All petitions will be saved to the specified path. Please ensure that
+                                this path is set to a shared drive so that other users can access and open the petitions
+                                as needed.</p>
+                            <!-- <Input label="Selected File Path" @click="open" v-model="file_path" readonly /> -->
+                            <div class="w-full flex flex-col mt-5">
+                                <label for="path" class="font-medium mb-2 text-sm">Selected File Path</label>
+                                <input id="path" readonly type="text"
+                                    class="w-full border border-gray-300 rounded shadow-sm font-semibold text-gray-800 text-sm"
+                                    @click="open" v-model="file_path">
+                            </div>
+                            <Button label="Save" class="w-max border ml-auto" />
+                        </div>
+                        <div class="flex h-full flex-col">
+                            <p class="p-2 font-medium text-2xl">Templates</p>
+                            <TabsWrapper>
+                                <Tab title="Petition">
+                                    <TemplateSettings document_name="petition.docx" :tags="tags_petition"
+                                        :file_types="petition_types" />
+                                </Tab>
+                                <Tab title="Record Sheet">
+                                    <TemplateSettings document_name="Record Sheet.docx"
+                                        :file_types="['Record Sheet']" />
+                                </Tab>
+                                <Tab title="Endorsement Letter">
+                                    <TemplateSettings document_name="Endorsement Letter.docx"
+                                        :file_types="['Endorsement Letter']" />
+                                </Tab>
+                                <Tab title="Notice of Posting and Certificate of Posting">
+                                    <TemplateSettings document_name="Notice of Posting and Certificate of Posting.docx"
+                                        :file_types="['Notice of Posting and Certificate of Posting']" />
+                                </Tab>
+                                <Tab title="Finality">
+                                    <TemplateSettings document_name="Finality.docx" :file_types="['Finality']" />
+                                </Tab>
+                                <Tab title="Finality Endorsement Letter">
+                                    <TemplateSettings document_name="Finality Endorsement Letter.docx"
+                                        :file_types="['Finality Endorsement Letter']" />
+                                </Tab>
+                            </TabsWrapper>
+                        </div>
+                    </div>
+                </Tab>
             </TabsWrapper>
 
         </div>
@@ -484,30 +457,30 @@ const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padS
 const currentYear = now.getFullYear(); // YYYY
 
 // Helper to parse the date
-const parseDate = (dateString) => new Date(dateString);
+// const parseDate = (dateString) => new Date(dateString);
 
 // Filter today's records
-const today_record = computed(() => {
-    return petitions.petitions.filter(petition => {
-        const petitionDate = parseDate(petition.created_at).toISOString().split('T')[0]; // 'YYYY-MM-DD'
-        return petition.petition_type === selected_petition_type.value && petitionDate === today;
-    });
-});
+// const today_record = computed(() => {
+//     return petitions.petitions.filter(petition => {
+//         const petitionDate = parseDate(petition.created_at).toISOString().split('T')[0]; // 'YYYY-MM-DD'
+//         return petition.petition_type === selected_petition_type.value && petitionDate === today;
+//     });
+// });
 
 // Filter this month's records
-const month_record = computed(() => {
-    return petitions.petitions.filter(petition => {
-        const petitionYearMonth = `${parseDate(petition.created_at).getFullYear()}-${String(parseDate(petition.created_at).getMonth() + 1).padStart(2, '0')}`;
-        return petition.petition_type === selected_petition_type.value && petitionYearMonth === currentYearMonth;
-    });
-});
+// const month_record = computed(() => {
+//     return petitions.petitions.filter(petition => {
+//         const petitionYearMonth = `${parseDate(petition.created_at).getFullYear()}-${String(parseDate(petition.created_at).getMonth() + 1).padStart(2, '0')}`;
+//         return petition.petition_type === selected_petition_type.value && petitionYearMonth === currentYearMonth;
+//     });
+// });
 
 // Filter this year's records
-const year_record = computed(() => {
-    return petitions.petitions.filter(petition => {
-        return petition.petition_type === selected_petition_type.value && parseDate(petition.created_at).getFullYear() === currentYear;
-    });
-});
+// const year_record = computed(() => {
+//     return petitions.petitions.filter(petition => {
+//         return petition.petition_type === selected_petition_type.value && parseDate(petition.created_at).getFullYear() === currentYear;
+//     });
+// });
 
 
 const selected_month = ref();
@@ -516,7 +489,7 @@ const selected_year = ref(currentYear);
 const month_year_record = computed(() => {
     return petitions.petitions.filter(petition => {
         const petitionDate = new Date(petition.created_at);
-        const petitionMonth = petitionDate.getMonth() + 1; // getMonth is 0-based
+        const petitionMonth = petitionDate.getMonth() + 1;
         const petitionYear = petitionDate.getFullYear();
         return petition.petition_type === selected_petition_type.value &&
             petitionMonth === selected_month.value &&

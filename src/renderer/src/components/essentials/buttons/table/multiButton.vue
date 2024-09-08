@@ -35,7 +35,7 @@
 
   <div class="w-full flex flex-col items-center justify-center h-full relative">
     <button type="button" ref="mainBtn" @click="approve_petition()"
-      class="px-3 py-1 text-xs tracking-wide  bg-green-400 hover:bg-green-600 text-white active:scale-95 font-medium text-center    transition-all focus:outline-none">
+      class="px-3 py-1 text-xs tracking-wide  bg-green-500 hover:bg-green-600 text-white rounded font-medium active:scale-95 text-center    transition-all focus:outline-none">
       OPEN
     </button>
   </div>

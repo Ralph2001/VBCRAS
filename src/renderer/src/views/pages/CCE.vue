@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
+
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
       <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
     </Header>
@@ -10,6 +11,18 @@
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
+      <div class="w-full flex p-2 items-center justify-start">
+        <div class="flex flex-col">
+          <div class="flex flex-row gap-1 items-center justify-center">
+            <div class="h-2 bg-[#4A90E2] block rounded-sm w-4"></div>
+            <p class="text-xs font-medium">CCE</p>
+          </div>
+          <div class="flex flex-row gap-1 items-center justify-center">
+            <div class="h-2 bg-[#2C7A7B] block rounded-sm w-4"></div>
+            <p class="text-xs font-medium">CFN</p>
+          </div>
+        </div>
+      </div>
       <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
       <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
 
@@ -35,517 +48,522 @@
     </div>
 
 
-    <Modal large label="Create a new Document" footerBG="bg-white  border border-gray-400" v-if="petition_modal">
-      <template v-slot:header>
+    <Modal large label="Create a new Document" footerBG="bg-white  border-t  border-gray-300" v-if="petition_modal">
+      <!-- <template v-slot:header>
         <ModalCloseButton @click="close_modal()" />
-      </template>
+      </template> -->
 
       <!-- Input Fields -->
-      <div :class="[backround_per_event]"
-        class="flex flex-col sm:px-10 md:lg:px-[12rem] object-cover bg-[#F5F5F5] overflow-y-scroll h-max w-full gap-4 relative pb-10">
+      <div class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max bg-gray-50  gap-4 relative">
+        <div :class="[backround_per_event]"
+          class="h-full flex flex-col px-10 py-10  ease-in-out transition-transform duration-200 bg-white border shadow border-gray-300 ">
 
 
-        <!-- Debugging -->
-        <!-- <div class="fixed top-10 bottom-10 right-10 flex flex-col w-[30rem] z-50 justify-center">
-          {{ fact_reason_data }}
-          <p v-for="(value, key) in formData" class="text-blue-500 text-xs text-center">"{{ key }}" - <span
-              class="text-gray-800 font-medium">{{
-                value }}</span></p>
-        </div> -->
-        <!-- Debugging -->
-
-
-        <!-- 1st  Document Selector-->
-        <div class="flex items-center justify-center p-2" ref="isFormVisible">
-          <Box title="Document" width="w-fit ">
-            <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
-              tabindex="-1">
-              <Select :error="v$.republic_act_number.$error" skip :options="republic_act"
-                v-model="formData.republic_act_number" label="Republic Act" />
-              <Select :error="v$.petition_type.$error" skip :options="petition_type" v-model="formData.petition_type"
-                label="Petition Type" @change="petition_by_type_retriever" />
-              <Select :error="v$.event_type.$error" skip :options="event_type" v-model="formData.event_type"
-                label="Document Type" @change="change_event_selected_error_in()" />
-            </div>
-          </Box>
-        </div>
-        <!-- 2nd Header-->
-        <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
-          <HeaderCCE :petition_type="formData.petition_type" :type_label="document_type_label" />
-        </div>
-        <!-- 3rd Petition Details and Address-->
-        <div class="grid grid-cols-1 gap-4">
-          <Box title="Petition Details" width="w-full">
-            <div class="grid grid-cols-1 w-full gap-3">
-              <div class="w-full flex flex-col">
-                <label class="basis-[100%] block mb-2 text-sm font-medium text-gray-900 dark:text-white">Petition
-                  Number</label>
-                <MultiInput @type-petition-number="change_petitioner_number" @type-year="change_petitioner_date" skip
-                  :republic_act="is_default_republic_act" :type="is_default_petition_type"
-                  :petition_number_value="is_default_petitioner_number" />
-              </div>
-              <Input :error="v$.petitioner_name.$error" label="Petitioner Name" v-model="formData.petitioner_name"
-                cap />
-            </div>
-          </Box>
-
-          <Box title="Petitioner Nationality & Complete Address" width="w-full">
-            <div class="grid grid-cols-3 w-full gap-2">
-              <Input :error="v$.nationality.$error" label="Nationality" v-model="formData.nationality" skip />
-              <div class=" col-span-2">
-                <InputAutoComplete :error="v$.petitioner_address.$error" label="Petitioner Address"
-                  v-model="formData.petitioner_address" :wait="true" :suggestion_data="all_" />
-
-              </div>
-            </div>
-          </Box>
-        </div>
-        <!-- 5th  Seeking and Document Owner and Relation-->
-        <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-4 items-stretch">
-          <div class="basis-[35%]" v-if="
-            formData.event_type === 'Birth' ||
-            formData.event_type === 'Marriage' ||
-            formData.event_type !== 'Death'
-          ">
-            <Box title="seeking for correction of the clerical error in: " width="w-full">
-              <div class="grid grid-rows-2 gap-2 w-full">
-                <Radio @change_="change_document_owner_relation()" :options="seeking_options"
-                  v-model="formData.petitioner_error_in" name="cce_in" />
+          <!-- 1st  Document Selector-->
+          <div class="flex items-center justify-center p-2" ref="isFormVisible">
+            <Box title="Document" width="w-fit ">
+              <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
+                tabindex="-1">
+                <Select :error="v$.republic_act_number.$error" skip :options="republic_act"
+                  v-model="formData.republic_act_number" label="Republic Act" />
+                <Select :error="v$.petition_type.$error" skip :options="petition_type" v-model="formData.petition_type"
+                  label="Petition Type" @change="petition_by_type_retriever" />
+                <Select :error="v$.event_type.$error" skip :options="event_type" v-model="formData.event_type"
+                  label="Document Type" @change="change_event_selected_error_in()" />
               </div>
             </Box>
           </div>
-          <div class="basis-[60%] grow">
-            <Box title="Document Owner & Relationship to the Owner" width="w-full">
-              <div class=" grid grid-cols-1 w-full gap-2">
-                <div class="w-full">
-                  <Input :error="v$.document_owner.$error" :label="formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my'
-                    ? 'Complete Name of Spouse'
-                    : 'Document Owner'
-                    " v-model="formData.document_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
-                      ? true
-                      : false || formData.petitioner_error_in === ''
-                      " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+          <!-- 2nd Header-->
+          <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
+            <HeaderCCE :petition_type="formData.petition_type" :type_label="document_type_label" />
+          </div>
+          <!-- 3rd Petition Details and Address-->
+          <div class="grid grid-cols-1 gap-4">
+            <Box title="Petition Details" width="w-full">
+              <div class="grid grid-cols-1 w-full gap-3">
+                <div class="w-full flex flex-col">
+                  <label class="basis-[100%] block mb-2 text-sm font-medium text-gray-900 dark:text-white">Petition
+                    Number</label>
+                  <MultiInput @type-petition-number="change_petitioner_number" @type-year="change_petitioner_date" skip
+                    :republic_act="is_default_republic_act" :type="is_default_petition_type"
+                    :petition_number_value="is_default_petitioner_number" />
+                </div>
+                <Input :error="v$.petitioner_name.$error" label="Petitioner Name" v-model="formData.petitioner_name"
+                  cap />
+              </div>
+            </Box>
+
+            <Box title="Petitioner Nationality & Complete Address" width="w-full">
+              <div class="grid grid-cols-3 w-full gap-2">
+                <Input :error="v$.nationality.$error" label="Nationality" v-model="formData.nationality" skip />
+                <div class=" col-span-2">
+                  <InputAutoComplete :error="v$.petitioner_address.$error" label="Petitioner Address"
+                    v-model="formData.petitioner_address" :wait="true" :suggestion_data="all_" />
+
+                </div>
+              </div>
+            </Box>
+          </div>
+          <!-- 5th  Seeking and Document Owner and Relation-->
+          <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-4 items-stretch">
+            <div class="basis-[35%]" v-if="
+              formData.event_type === 'Birth' ||
+              formData.event_type === 'Marriage' ||
+              formData.event_type !== 'Death'
+            ">
+              <Box title="seeking for correction of the clerical error in: " width="w-full">
+                <div class="grid grid-rows-2 gap-2 w-full">
+                  <Radio @change_="change_document_owner_relation()" :options="seeking_options"
+                    v-model="formData.petitioner_error_in" name="cce_in" />
+                </div>
+              </Box>
+            </div>
+            <div class="basis-[60%] grow">
+              <Box title="Document Owner & Relationship to the Owner" width="w-full">
+                <div class=" grid grid-cols-1 w-full gap-2">
+                  <div class="w-full">
+                    <Input :error="v$.document_owner.$error" :label="formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my'
+                      ? 'Complete Name of Spouse'
+                      : 'Document Owner'
+                      " v-model="formData.document_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                         ? true
                         : false || formData.petitioner_error_in === ''
-                        " @input="formData.document_owner = $event.target.value.toUpperCase()" />
-                </div>
-                <div v-if="
-                  formData.event_type === 'Birth' ||
-                  formData.event_type === 'Death' ||
-                  (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
-                ">
-                  <InputAutoComplete :error="v$.relation_owner.$error" @input="generate_fact_reason_text()"
-                    :suggestion_data="petitions.relation_to_document_owner" label="Relation"
-                    v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
-                      ? true
-                      : false || formData.petitioner_error_in === ''
-                      " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                        " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                          ? true
+                          : false || formData.petitioner_error_in === ''
+                          " @input="formData.document_owner = $event.target.value.toUpperCase()" />
+                  </div>
+                  <div v-if="
+                    formData.event_type === 'Birth' ||
+                    formData.event_type === 'Death' ||
+                    (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
+                  ">
+                    <InputAutoComplete :error="v$.relation_owner.$error" @input="generate_fact_reason_text()"
+                      :suggestion_data="petitions.relation_to_document_owner" label="Relation"
+                      v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                         ? true
                         : false || formData.petitioner_error_in === ''
-                        " />
-                </div>
-              </div>
-            </Box>
-          </div>
-        </div>
-        <!-- 6th Event Date and Place-->
-        <div class="flex sm:flex-col md:lg:flex-row gap-5">
-          <div class="basis-[30%]">
-            <Box :title="IHeSheLabel" width="w-full">
-              <div class="grid grid-cols-1 w-full gap-2">
-                <Input :error="v$.event_date.$error" type="date" :label="event_date_label"
-                  v-model="formData.event_date" />
-              </div>
-            </Box>
-          </div>
-
-          <div class="basis-[45%]">
-            <Box title=", at" width="w-full ">
-              <div class="grid sm:grid-cols-1 lg:grid-cols-2 w-full gap-2">
-                <InputAutoComplete :error="v$.event_country.$error" label="Country" v-model="formData.event_country"
-                  :suggestion_data="countryList.countryList" />
-                <InputAutoComplete :error="v$.event_province.$error" label="Province"
-                  @change="formData.event_municipality = ''" v-model="formData.event_province"
-                  :suggestion_data="province" />
-                <InputAutoComplete :error="v$.event_municipality.$error" label="Municipality"
-                  v-model="formData.event_municipality" :suggestion_data="municipality" />
-                <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
-                <!-- <Input label="Province" v-model="formData.event_province" /> -->
-                <!-- <Input label="Municipalty" v-model="formData.event_municipality" /> -->
-              </div>
-            </Box>
-          </div>
-
-          <div class="grow">
-            <Box :title="`The ${registry_label} was recorded under`" width="w-full ">
-              <div class="grid grid-cols-1 w-full gap-2 sm:mt-5">
-                <Input :error="v$.registry_number.$error" label="Registry Number" v-model="formData.registry_number" />
-              </div>
-            </Box>
-          </div>
-        </div>
-        <!-- 7th Clerical Errors And Facts and Reasons-->
-        <div class="flex flex-row flex-wrap gap-5">
-          <!-- Subpart 1: Shows when Petition Type is CCE -->
-          <div class="grow" v-if="formData.petition_type === 'CCE'">
-            <Box title="The clerical error(s) to be corrected is (are): " width="w-full">
-              <div class="flex flex-col gap-2 w-full font-bold relative">
-                <div class="absolute w-auto -top-4 right-4">
-                  <p class="text-xs italic text-gray-400 font-normal">
-                    <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
-                    <span class="font-medium">Crtl + Space</span> to add new column
-                  </p>
-                </div>
-                <div class="flex flex-row w-full items-center justify-center gap-2 mt-4">
-                  <div class="basis-[10%]">
-                    <p class="text-sm text-center">Item No.</p>
-                  </div>
-                  <div class="grow">
-                    <p class="text-sm text-center">Description</p>
-                  </div>
-                  <div class="grow">
-                    <p class="text-sm text-center">From</p>
-                  </div>
-                  <div class="grow">
-                    <p class="text-sm text-center">To</p>
+                        " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                          ? true
+                          : false || formData.petitioner_error_in === ''
+                          " />
                   </div>
                 </div>
-              </div>
+              </Box>
+            </div>
+          </div>
+          <!-- 6th Event Date and Place-->
+          <div class="flex sm:flex-col md:lg:flex-row gap-5">
+            <div class="basis-[30%]">
+              <Box :title="IHeSheLabel" width="w-full">
+                <div class="grid grid-cols-1 w-full gap-2">
+                  <Input :error="v$.event_date.$error" type="date" :label="event_date_label"
+                    v-model="formData.event_date" />
+                </div>
+              </Box>
+            </div>
 
-              <div class="flex flex-col gap-2 w-full mt-5">
-                <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
-                  :key="index">
-                  <div class="basis-[10%]">
-                    <p class="text-sm text-center">
-                      {{ index + 1 }}
+            <div class="basis-[45%]">
+              <Box title=", at" width="w-full ">
+                <div class="grid sm:grid-cols-1 lg:grid-cols-2 w-full gap-2">
+                  <InputAutoComplete skip :error="v$.event_country.$error" label="Country"
+                    v-model="formData.event_country" :suggestion_data="countryList.countryList" />
+                  <InputAutoComplete :error="v$.event_province.$error" label="Province"
+                    @change="formData.event_municipality = ''" v-model="formData.event_province"
+                    :suggestion_data="province" />
+                  <InputAutoComplete :error="v$.event_municipality.$error" label="Municipality"
+                    v-model="formData.event_municipality" :suggestion_data="municipality" />
+                  <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
+                  <!-- <Input label="Province" v-model="formData.event_province" /> -->
+                  <!-- <Input label="Municipalty" v-model="formData.event_municipality" /> -->
+                </div>
+              </Box>
+            </div>
+
+            <div class="grow">
+              <Box :title="`The ${registry_label} was recorded under`" width="w-full ">
+                <div class="grid grid-cols-1 w-full gap-2 sm:mt-5">
+                  <Input :error="v$.registry_number.$error" label="Registry Number"
+                    v-model="formData.registry_number" />
+                </div>
+              </Box>
+            </div>
+          </div>
+          <!-- 7th Clerical Errors And Facts and Reasons-->
+          <div class="flex flex-row flex-wrap gap-5">
+            <!-- Subpart 1: Shows when Petition Type is CCE -->
+            <div class="grow" v-if="formData.petition_type === 'CCE'">
+              <Box title="The clerical error(s) to be corrected is (are): " width="w-full">
+                <div class="flex flex-col gap-2 w-full font-bold relative">
+                  <div class="absolute w-auto -top-4 right-4">
+                    <p class="text-xs italic text-gray-400 font-normal">
+                      <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
+                      <span class="font-medium">Crtl + Space</span> to add new column
                     </p>
                   </div>
-
-                  <div class="grow">
-                    <InputAutoComplete @change="generate_granted_text()" nolabel
-                      :suggestion_data="clerical_error_descriptions"
-                      v-model="formData.clerical_errors[index].description" />
-                  </div>
-                  <div class="grow">
-                    <Input nolabel @change="generate_granted_text()" cap
-                      v-model="formData.clerical_errors[index].error_description_from" />
-                  </div>
-                  <div class="grow">
-                    <Input nolabel @change="generate_granted_text()" cap
-                      v-model="formData.clerical_errors[index].error_description_to" />
-                  </div>
-                </div>
-                <div class="flex justify-end gap-2 mt-3">
-                  <button type="button" @click="remove_clerical_error()" v-if="clerical_errors_items.length > 1"
-                    class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Remove
-                  </button>
-                  <button type="button" @click="add_clerical_error()"
-                    class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Add
-                  </button>
-                </div>
-              </div>
-            </Box>
-          </div>
-          <!-- Subpart 2: Shows when Petition Type is CFN -->
-          <div class="basis-[60%]" v-if="
-            formData.petition_type === 'CFN' &&
-            formData.event_type === 'Birth' &&
-            formData.republic_act_number === '9048'
-          ">
-            <Box title="The first name to be change  " width="w-full">
-              <div class="grid grid-cols-2 gap-2 w-full">
-                <Input :error="v$.first_name_from.$error" label="From" @change="generate_granted_text()"
-                  @input="formData.first_name_from = $event.target.value.toUpperCase()"
-                  v-model="formData.first_name_from" />
-                <Input :error="v$.first_name_to.$error" @change="generate_granted_text()"
-                  @input="formData.first_name_to = $event.target.value.toUpperCase()" label="To"
-                  v-model="formData.first_name_to" />
-              </div>
-            </Box>
-          </div>
-          <!-- Subpart 2.2: Shows when Petition Type is CFN -->
-          <div class="grow" v-if="
-            formData.petition_type === 'CFN' &&
-            formData.event_type === 'Birth' &&
-            formData.republic_act_number === '9048'
-          ">
-            <Box title="The grounds for filing this petition are the following  " width="w-full">
-              <div class="flex flex-col gap-5 text-md font-base justify-center">
-                <div class="flex flex-row gap-2 items-center">
-                  <p class="basis-[2%] font-serif">a)</p>
-                  <CheckBox v-model="formData.ground_a" />
-                  <div>
-                    <label for="">The first name is extremely difficult to write or
-                      pronounce;</label>
-                  </div>
-                </div>
-                <div class="flex flex-row gap-2 items-center">
-                  <p class="basis-[2%] font-serif">b)</p>
-                  <CheckBox v-model="formData.ground_b" />
-
-                  <div class="relative">
-                    I have/He/She has habitually and continuously used
-                    <div class="absolute -top-[1.2rem] left-[23rem]">
-                      <Input :error="v$.ground_b_data.$error" nolabel :class="`flex text-center`"
-                        v-model="formData.ground_b_data" :readonly="formData.ground_b ? false : true"
-                        :skip="formData.ground_b ? false : true" />
+                  <div class="flex flex-row w-full items-center justify-center gap-2 mt-4">
+                    <div class="basis-[10%]">
+                      <p class="text-sm text-center">Item No.</p>
                     </div>
-                    _______________________________ &nbsp;and I/He/She is publicly known
-                    in the community with that first name;
-                  </div>
-                </div>
-                <div class="flex flex-row gap-2 items-center">
-                  <p class="basis-[2%] font-serif">c)</p>
-                  <CheckBox v-model="formData.ground_c" />
-                  <div for="one">
-                    <label for="one" class="cursor-pointer">
-                      The first name is tainted with dishonor;</label>
-                  </div>
-                </div>
-                <div class="flex flex-row gap-2 items-center">
-                  <p class="basis-[2%] font-serif">d)</p>
-                  <CheckBox v-model="formData.ground_d" />
-                  <div>The first name is ridiculous;</div>
-                </div>
-                <div class="flex flex-row gap-2 items-center flex-wrap">
-                  <p class="basis-[2%] font-serif">e)</p>
-                  <CheckBox v-model="formData.ground_e" />
-                  <div>The first name causes confusion;</div>
-                </div>
-                <div class="flex flex-row gap-2 items-center">
-                  <p class="basis-[2%] font-serif">f)</p>
-                  <CheckBox v-model="formData.ground_f" />
-                  <div class="relative w-max">
-                    Others: (Specify)
-                    <div class="absolute -top-[1.2rem] left-[7.4rem] w-full">
-                      <Input :error="v$.ground_f_data.$error" nolabel v-model="formData.ground_f_data"
-                        :class="`flex text-center`" :readonly="formData.ground_f ? false : true"
-                        :skip="formData.ground_f ? false : true" />
+                    <div class="grow">
+                      <p class="text-sm text-center">Description</p>
                     </div>
-                    ________________________________________________________.
-                  </div>
-                </div>
-              </div>
-            </Box>
-          </div>
-          <!-- Subpart 3: Shows when Petition Type CCE -->
-          <div class="basis-[100%]" v-if="formData.petition_type !== 'CFN'">
-            <Box title="The facts/reasons for filing this petition are the following. " width="w-ful">
-              <div class="flex flex-col w-full" v-if="
-                formData.petition_type === 'CCE' &&
-                formData.event_type === 'Birth' &&
-                formData.republic_act_number === '10172'
-              ">
-                <div class="flex flex-row w-full p-2 gap-2" v-for="(value, index) in clerical_errors_items"
-                  :key="index">
-                  <div class="basis-[20%] px-8 flex items-center">
-                    <label :for="index" class="text-sm text-nowrap w-full font-semibold tracking-wide text-gray-900">
-                      For error No. {{ index + 1 }}:
-                    </label>
-                  </div>
-                  <div class="flex flex-col grow">
-                    <textarea rows="3" :id="index" v-model="formData.reasons[index].reason"
-                      class="block py-3 tracking-wider px-6 text-justify font-semibold w-full text-md text-black bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 w-full gap-2" v-else>
-                <TextArea :rows="4" label="Facts/Reasons" v-model="formData.reasons[0].reason" />
-              </div>
-            </Box>
-          </div>
-        </div>
-        <!-- 8th Supporting Documents Note: Need to fix buttons and designs-->
-        <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-2">
-          <div class="grow">
-            <Box title=" documents to support this petition: " width="w-ful">
-              <div class="flex flex-col w-full gap-3 mt-5 relative">
-                <div class="absolute w-auto -top-9 right-4">
-                  <p class="text-xs italic text-gray-400 font-normal">
-                    <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
-                    <span class="font-medium">Crtl + Space</span> to add new column
-                  </p>
-                </div>
-                <div class="flex flex-row w-full gap-2 items-center" v-for="(value, index) in supporting_items"
-                  :key="index">
-                  <p class="basis-[9%] text-sm text-center">
-                    {{ indexToLetter(index) }} )
-                  </p>
-                  <div class="basis-[90%]">
-                    <Input v-model="formData.supporting_documents[index].document_name" />
-                  </div>
-                </div>
-                <div class="flex justify-end gap-2">
-                  <!-- Make this component -->
-                  <button type="button" @click="remove_supporting_documents()" v-if="supporting_items.length > 1"
-                    class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Remove
-                  </button>
-                  <button type="button" @click="add_supporting_documents()"
-                    class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                    Add
-                  </button>
-                </div>
-              </div>
-            </Box>
-          </div>
-          <div class="basis-[40%] h-max">
-            <Box title="filing this petition at the LCRO of " width="w-ful">
-              <div class="grid sm:grid-cols-1 lg:grid-cols-1 justify-center gap-2 w-full">
-                <Input label="City/Municipality" :error="v$.filing_city_municipality.$error" skip
-                  v-model="formData.filing_city_municipality" />
-                <Input label="Province " :error="v$.filing_province.$error" skip v-model="formData.filing_province" />
-              </div>
-            </Box>
-          </div>
-        </div>
-
-        <!-- 9th  Page 2 Starts-->
-        <div class="relative border-b-2 border-dashed flex items-center justify-center mt-10 mb-10">
-          <p class="absolute bg-yellow-100 px-2 font-semibold italic text-gray-600">
-            PAGE 2
-          </p>
-        </div>
-        <!-- 10th Verification, Administering and CTC-->
-        <div class="flex flex-wrap sm:flex-col md:lg:flex-row gap-4">
-          <div class="basis-[50%]">
-            <Box title="VERIFICATION" width="w-ful">
-              <div class="grid grid-cols-1 w-full gap-2">
-                <Input label="Petitioner Name" skip v-model="formData.petitioner_name"
-                  @input="formData.petitioner_name = $event.target.value.toUpperCase()" readonly />
-              </div>
-            </Box>
-          </div>
-
-          <div class="grow">
-            <Box title="ADMINISTERING OFFICER" width="w-ful">
-              <div class="grid grid-cols-1 w-full gap-2">
-                <Input label="Name" v-model="formData.administering_officer_name"
-                  :error="v$.administering_officer_name.$error" cap />
-                <Input label="Position" v-model="formData.administering_officer_position"
-                  :error="v$.administering_officer_position.$error" />
-              </div>
-            </Box>
-          </div>
-
-          <div class="grow">
-            <Box title="SUBSCRIBE AND SWORN" width="w-ful">
-              <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 w-full gap-2">
-                <div></div>
-                <Input label="Date Sworn" type="date" skip v-model="formData.subscribe_sworn_date"
-                  :error="v$.subscribe_sworn_date.$error" />
-                <Input label="City/Municipality" skip v-model="formData.subscribe_sworn_city_municipality"
-                  :error="v$.subscribe_sworn_city_municipality.$error" />
-                <Input label="Community Tax Certificate No." v-model="formData.community_tax_certificate"
-                  :error="v$.community_tax_certificate.$error" />
-                <Input label="Issued at" skip v-model="formData.issued_at" :error="v$.issued_at.$error" />
-                <Input label="Issued on" skip type="date" v-model="formData.issued_on" :error="v$.issued_on.$error" />
-              </div>
-            </Box>
-          </div>
-        </div>
-        <!-- 11th Action Taken-->
-        <div class="flex flex-row gap-2">
-
-          <div class="basis-[100%]">
-            <Box title="ACTION TAKEN BY THE C/MCR" width="w-full ">
-              <div class="grid grid-cols-1 w-full gap-2">
-                <!-- Subpart 1: Shows when republic act is 9048 -->
-                <div v-if="formData.republic_act_number === '9048'" class="flex flex-col">
-                  <div class="flex flex-row justify-evenly">
-                    <Radio :options="action_options" :name="'action_' + 0"
-                      v-model="formData.petition_actions[0].action_decision" />
-                  </div>
-                  <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
-                    <textarea id="message" rows="6" v-model="formData.petition_actions[0].action_text"
-                      class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                    <div class="grow">
+                      <p class="text-sm text-center">From</p>
+                    </div>
+                    <div class="grow">
+                      <p class="text-sm text-center">To</p>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Subpart 1: Shows when republic act is 10172 -->
-                <div v-if="formData.republic_act_number === '10172'" class="flex flex-col"
-                  v-for="(value, index) in clerical_errors_items" :key="index">
-                  <div class="flex flex-row justify-evenly">
-                    <Radio :options="action_options" :name="'action_' + index"
-                      v-model="formData.petition_actions[index].action_decision" />
+                <div class="flex flex-col gap-2 w-full mt-5">
+                  <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
+                    :key="index">
+                    <div class="basis-[10%]">
+                      <p class="text-sm text-center">
+                        {{ index + 1 }}
+                      </p>
+                    </div>
+
+                    <div class="grow">
+                      <InputAutoComplete @change="generate_granted_text()" nolabel
+                        :suggestion_data="clerical_error_descriptions"
+                        v-model="formData.clerical_errors[index].description" />
+                    </div>
+                    <div class="grow">
+                      <Input nolabel @change="generate_granted_text()" cap
+                        v-model="formData.clerical_errors[index].error_description_from" />
+                    </div>
+                    <div class="grow">
+                      <Input nolabel @change="generate_granted_text()" cap
+                        v-model="formData.clerical_errors[index].error_description_to" />
+                    </div>
                   </div>
-                  <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
-                    <textarea id="message" rows="6" v-model="formData.petition_actions[index].action_text"
-                      class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                  <div class="flex justify-end gap-2 mt-3">
+                    <button type="button" @click="remove_clerical_error()" v-if="clerical_errors_items.length > 1"
+                      class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      Remove
+                    </button>
+                    <button type="button" @click="add_clerical_error()"
+                      class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      Add
+                    </button>
                   </div>
                 </div>
-
-
-                <div class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
-                  <Input type="date" label="Date" skip v-model="formData.action_taken_date"
-                    :error="v$.action_taken_date.$error" />
-                  <Input label="Municipal Civil Registrar" skip v-model="formData.municipal_civil_registrar" cap
-                    :error="v$.municipal_civil_registrar.$error" />
+              </Box>
+            </div>
+            <!-- Subpart 2: Shows when Petition Type is CFN -->
+            <div class="basis-[60%]" v-if="
+              formData.petition_type === 'CFN' &&
+              formData.event_type === 'Birth' &&
+              formData.republic_act_number === '9048'
+            ">
+              <Box title="The first name to be change  " width="w-full">
+                <div class="grid grid-cols-2 gap-2 w-full">
+                  <Input :error="v$.first_name_from.$error" label="From" @change="generate_granted_text()"
+                    @input="formData.first_name_from = $event.target.value.toUpperCase()"
+                    v-model="formData.first_name_from" />
+                  <Input :error="v$.first_name_to.$error" @change="generate_granted_text()"
+                    @input="formData.first_name_to = $event.target.value.toUpperCase()" label="To"
+                    v-model="formData.first_name_to" />
                 </div>
-              </div>
-            </Box>
-          </div>
-
-
-
-        </div>
-        <!-- 12th Payment and Date Preview-->
-        <div class="flex sm:flex-col md:lg:flex-row gap-2">
-          <div class="basis-[35%]">
-            <Box title="Payment of filing fee" width="w-ful">
-              <div class="grid grid-cols-1 w-full gap-2">
-                <Input label="O.R. No." type="text" v-model="formData.o_r_number" />
-                <InputCurrency label="Amount Paid" v-model="formData.amount_paid" />
-                <Input label="Date Paid" type="date" v-model="formData.date_paid" />
-
-              </div>
-            </Box>
-          </div>
-
-          <div class="grow">
-            <Box title="DATE PREVIEW" width="w-ful">
-              <div class="flex flex-col w-full gap-2 items-start">
-                <div class="grid grid-cols-2 w-full gap-4">
-                  <Input label="Date Filled" type="date" v-model="formData.date_filed" :error="v$.date_filed.$error" />
-                  <Input label="Notice of Posting" type="date" v-model="formData.notice_posting"
-                    :error="v$.notice_posting.$error" />
-                </div>
-
-                <div class="flex flex-col items-center w-full gap-2 bg-yellow-100/20 mt-3">
-                  <div class="border border-dashed border-yellow-400 w-full mb-5"></div>
-                  <p class="font-bold text-center uppercase">Certificate of Posting</p>
-                  <div class="flex flex-row w-full justify-evenly relative">
+              </Box>
+            </div>
+            <!-- Subpart 2.2: Shows when Petition Type is CFN -->
+            <div class="grow" v-if="
+              formData.petition_type === 'CFN' &&
+              formData.event_type === 'Birth' &&
+              formData.republic_act_number === '9048'
+            ">
+              <Box title="The grounds for filing this petition are the following  " width="w-full">
+                <div class="flex flex-col gap-5 text-md font-base justify-center">
+                  <div class="flex flex-row gap-2 items-center">
+                    <p class="basis-[2%] font-serif">a)</p>
+                    <CheckBox v-model="formData.ground_a" />
                     <div>
-                      <Input label="Start" type="date" v-model="formData.certificate_posting_start"
-                        :error="v$.certificate_posting_start.$error" />
+                      <label for="">The first name is extremely difficult to write or
+                        pronounce;</label>
                     </div>
-                    <p class="absolute top-10 font-bold text-xs">TO</p>
-                    <div>
-                      <Input label="End" type="date" v-model="formData.certificate_posting_end"
-                        :error="v$.certificate_posting_end.$error" />
+                  </div>
+                  <div class="flex flex-row gap-2 items-center">
+                    <p class="basis-[2%] font-serif">b)</p>
+                    <CheckBox v-model="formData.ground_b" />
+
+                    <div class="relative">
+                      I have/He/She has habitually and continuously used
+                      <div class="absolute -top-[1.2rem] left-[23rem]">
+                        <Input :error="v$.ground_b_data.$error" nolabel :class="`flex text-center`"
+                          v-model="formData.ground_b_data" :readonly="formData.ground_b ? false : true"
+                          :skip="formData.ground_b ? false : true" />
+                      </div>
+                      _______________________________ &nbsp;and I/He/She is publicly known
+                      in the community with that first name;
+                    </div>
+                  </div>
+                  <div class="flex flex-row gap-2 items-center">
+                    <p class="basis-[2%] font-serif">c)</p>
+                    <CheckBox v-model="formData.ground_c" />
+                    <div for="one">
+                      <label for="one" class="cursor-pointer">
+                        The first name is tainted with dishonor;</label>
+                    </div>
+                  </div>
+                  <div class="flex flex-row gap-2 items-center">
+                    <p class="basis-[2%] font-serif">d)</p>
+                    <CheckBox v-model="formData.ground_d" />
+                    <div>The first name is ridiculous;</div>
+                  </div>
+                  <div class="flex flex-row gap-2 items-center flex-wrap">
+                    <p class="basis-[2%] font-serif">e)</p>
+                    <CheckBox v-model="formData.ground_e" />
+                    <div>The first name causes confusion;</div>
+                  </div>
+                  <div class="flex flex-row gap-2 items-center">
+                    <p class="basis-[2%] font-serif">f)</p>
+                    <CheckBox v-model="formData.ground_f" />
+                    <div class="relative w-max">
+                      Others: (Specify)
+                      <div class="absolute -top-[1.2rem] left-[7.4rem] w-full">
+                        <Input :error="v$.ground_f_data.$error" nolabel v-model="formData.ground_f_data"
+                          :class="`flex text-center`" :readonly="formData.ground_f ? false : true"
+                          :skip="formData.ground_f ? false : true" />
+                      </div>
+                      ________________________________________________________.
+                    </div>
+                  </div>
+                </div>
+              </Box>
+            </div>
+            <!-- Subpart 3: Shows when Petition Type CCE -->
+            <div class="basis-[100%]" v-if="formData.petition_type !== 'CFN'">
+              <Box title="The facts/reasons for filing this petition are the following. " width="w-ful">
+                <div class="flex flex-col w-full" v-if="
+                  formData.petition_type === 'CCE' &&
+                  formData.event_type === 'Birth' &&
+                  formData.republic_act_number === '10172'
+                ">
+                  <div class="flex flex-row w-full p-2 gap-2" v-for="(value, index) in clerical_errors_items"
+                    :key="index">
+                    <div class="basis-[20%] px-8 flex items-center">
+                      <label :for="index" class="text-sm text-nowrap w-full font-semibold tracking-wide text-gray-900">
+                        For error No. {{ index + 1 }}:
+                      </label>
+                    </div>
+                    <div class="flex flex-col grow">
+                      <textarea rows="3" :id="index" v-model="formData.reasons[index].reason"
+                        class="block py-3 tracking-wider px-6 text-justify font-semibold w-full text-md text-black bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 w-full gap-2" v-else>
+                  <TextArea :rows="4" label="Facts/Reasons" v-model="formData.reasons[0].reason" />
+                </div>
+              </Box>
+            </div>
+          </div>
+          <!-- 8th Supporting Documents Note: Need to fix buttons and designs-->
+          <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-2">
+            <div class="grow">
+              <Box title=" documents to support this petition: " width="w-ful">
+                <div class="flex flex-col w-full gap-3 mt-5 relative">
+                  <div class="absolute w-auto -top-9 right-4">
+                    <p class="text-xs italic text-gray-400 font-normal">
+                      <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
+                      <span class="font-medium">Crtl + Space</span> to add new column
+                    </p>
+                  </div>
+                  <div class="flex flex-row w-full gap-2 items-center" v-for="(value, index) in supporting_items"
+                    :key="index">
+                    <p class="basis-[9%] text-sm text-center">
+                      {{ indexToLetter(index) }} )
+                    </p>
+                    <div class="basis-[90%]">
+                      <Input v-model="formData.supporting_documents[index].document_name" />
+                    </div>
+                  </div>
+                  <div class="flex justify-end gap-2">
+                    <!-- Make this component -->
+                    <button type="button" @click="remove_supporting_documents()" v-if="supporting_items.length > 1"
+                      class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      Remove
+                    </button>
+                    <button type="button" @click="add_supporting_documents()"
+                      class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </Box>
+            </div>
+            <div class="basis-[40%] h-max">
+              <Box title="filing this petition at the LCRO of " width="w-ful">
+                <div class="grid sm:grid-cols-1 lg:grid-cols-1 justify-center gap-2 w-full">
+                  <Input label="City/Municipality" :error="v$.filing_city_municipality.$error" skip
+                    v-model="formData.filing_city_municipality" />
+                  <Input label="Province " :error="v$.filing_province.$error" skip v-model="formData.filing_province" />
+                </div>
+              </Box>
+            </div>
+          </div>
+
+          <!-- 9th  Page 2 Starts-->
+          <div class="relative border-b-2 border-dashed flex items-center justify-center mt-10 mb-10">
+            <p class="absolute bg-yellow-100 px-2 font-semibold italic text-gray-600">
+              PAGE 2
+            </p>
+          </div>
+          <!-- 10th Verification, Administering and CTC-->
+          <div class="flex flex-wrap sm:flex-col md:lg:flex-row gap-4">
+            <div class="basis-[50%]">
+              <Box title="VERIFICATION" width="w-ful">
+                <div class="grid grid-cols-1 w-full gap-2">
+                  <Input label="Petitioner Name" skip v-model="formData.petitioner_name"
+                    @input="formData.petitioner_name = $event.target.value.toUpperCase()" readonly />
+                </div>
+              </Box>
+            </div>
+
+            <div class="grow">
+              <Box title="ADMINISTERING OFFICER" width="w-ful">
+                <div class="grid grid-cols-1 w-full gap-2">
+                  <Input skip label="Name" v-model="formData.administering_officer_name"
+                    :error="v$.administering_officer_name.$error" cap />
+                  <Input skip label="Position" v-model="formData.administering_officer_position" />
+                </div>
+              </Box>
+            </div>
+
+            <div class="grow">
+              <Box title="SUBSCRIBE AND SWORN" width="w-ful">
+                <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 w-full gap-2">
+                  <div></div>
+                  <Input label="Date Sworn" type="date" skip v-model="formData.subscribe_sworn_date"
+                    :error="v$.subscribe_sworn_date.$error" />
+                  <Input label="City/Municipality" skip v-model="formData.subscribe_sworn_city_municipality"
+                    :error="v$.subscribe_sworn_city_municipality.$error" />
+                  <Input label="Community Tax Certificate No." v-model="formData.community_tax_certificate"
+                    :error="v$.community_tax_certificate.$error" />
+                  <Input label="Issued at" skip v-model="formData.issued_at" :error="v$.issued_at.$error" />
+                  <Input label="Issued on" skip type="date" v-model="formData.issued_on" :error="v$.issued_on.$error" />
+                </div>
+              </Box>
+            </div>
+          </div>
+          <!-- 11th Action Taken-->
+          <div class="flex flex-row gap-2">
+
+            <div class="basis-[100%]">
+              <Box title="ACTION TAKEN BY THE C/MCR" width="w-full ">
+                <div class="grid grid-cols-1 w-full gap-2">
+                  <!-- Subpart 1: Shows when republic act is 9048 -->
+                  <div v-if="formData.republic_act_number === '9048'" class="flex flex-col">
+                    <div class="flex flex-row justify-evenly">
+                      <Radio :options="action_options" :name="'action_' + 0"
+                        v-model="formData.petition_actions[0].action_decision" />
+                    </div>
+                    <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
+                      <textarea id="message" rows="6" v-model="formData.petition_actions[0].action_text"
+                        class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                     </div>
                   </div>
 
-                  <div class="flex items-center">
-                    <div class="w-auto">
-                      <Input label="Date Issued" type="date" v-model="formData.petition_date_issued"
-                        :error="v$.petition_date_issued.$error" />
+                  <!-- Subpart 1: Shows when republic act is 10172 -->
+                  <div v-if="formData.republic_act_number === '10172'" class="flex flex-col"
+                    v-for="(value, index) in clerical_errors_items" :key="index">
+                    <div class="flex flex-row justify-evenly">
+                      <Radio :options="action_options" :name="'action_' + index"
+                        v-model="formData.petition_actions[index].action_decision" />
+                    </div>
+                    <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
+                      <textarea id="message" rows="6" v-model="formData.petition_actions[index].action_text"
+                        class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                     </div>
                   </div>
-                  <div class="border border-dashed border-yellow-400 w-full mt-5"></div>
-                </div>
 
-                <div class="flex flex-col justify-start gap-5 mt-3 items-start w-full">
-                  <div class="w-[50%]">
-                    <Input label="Date Granted" type="date" v-model="formData.petition_date_granted"
-                      :error="v$.petition_date_granted.$error" />
+
+                  <div class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
+                    <Input type="date" label="Date" skip v-model="formData.action_taken_date"
+                      :error="v$.action_taken_date.$error" />
+                    <Input label="Municipal Civil Registrar" skip v-model="formData.municipal_civil_registrar" cap
+                      :error="v$.municipal_civil_registrar.$error" />
                   </div>
                 </div>
-              </div>
-            </Box>
+              </Box>
+            </div>
+
+
+
+          </div>
+          <!-- 12th Payment and Date Preview-->
+          <div class="flex sm:flex-col md:lg:flex-row gap-2">
+            <div class="basis-[35%]">
+              <Box title="Payment of filing fee" width="w-ful">
+
+                <div class="grid grid-cols-1 w-full gap-2">
+                  <div class="flex flex-row gap-2 items-center p-4">
+                    <CheckBox v-model="formData.is_indigent" @change="is_indigent()" />
+                    <label for="" class="font-medium text-sm">Indigent</label>
+                  </div>
+                  <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" label="O.R. No." type="text"
+                    v-model="formData.o_r_number" />
+                  <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" readonly
+                    v-if="formData.is_indigent" label="Amount Paid" v-model="formData.amount_paid" />
+                  <Input :readonly="formData.is_indigent" readonly v-if="formData.is_indigent" label="Date Paid" skip
+                    v-model="formData.date_paid" />
+
+
+                  <InputCurrency v-if="!formData.is_indigent" label="Amount Paid" v-model="formData.amount_paid" />
+                  <Input v-if="!formData.is_indigent" label="Date Paid" type="date" skip v-model="formData.date_paid" />
+
+                </div>
+              </Box>
+            </div>
+
+            <div class="grow">
+              <Box title="DATE PREVIEW" width="w-ful">
+                <div class="flex flex-col w-full gap-2 items-start">
+                  <div class="grid grid-cols-2 w-full gap-4">
+                    <Input skip label="Date Filled" type="date" v-model="formData.date_filed"
+                      :error="v$.date_filed.$error" />
+                    <Input skip label="Notice of Posting" type="date" v-model="formData.notice_posting"
+                      :error="v$.notice_posting.$error" />
+                  </div>
+
+                  <div class="flex flex-col items-center w-full gap-2 bg-yellow-100/20 mt-3">
+                    <div class="border border-dashed border-yellow-400 w-full mb-5"></div>
+                    <p class="font-bold text-center uppercase">Certificate of Posting</p>
+                    <div class="flex flex-row w-full justify-evenly relative">
+                      <div>
+                        <Input skip label="Start" type="date" v-model="formData.certificate_posting_start"
+                          :error="v$.certificate_posting_start.$error" />
+                      </div>
+                      <p class="absolute top-10 font-bold text-xs">TO</p>
+                      <div>
+                        <Input skip label="End" type="date" v-model="formData.certificate_posting_end"
+                          :error="v$.certificate_posting_end.$error" />
+                      </div>
+                    </div>
+
+                    <div class="flex items-center">
+                      <div class="w-auto">
+                        <Input skip label="Date Issued" type="date" v-model="formData.petition_date_issued"
+                          :error="v$.petition_date_issued.$error" />
+                      </div>
+                    </div>
+                    <div class="border border-dashed border-yellow-400 w-full mt-5"></div>
+                  </div>
+
+                  <div class="flex flex-col justify-start gap-5 mt-3 items-start w-full">
+                    <div class="w-[50%]">
+                      <Input skip label="Date Granted" type="date" v-model="formData.petition_date_granted"
+                        :error="v$.petition_date_granted.$error" />
+                    </div>
+                  </div>
+                </div>
+              </Box>
+            </div>
           </div>
         </div>
       </div>
@@ -553,7 +571,7 @@
       <template v-slot:footer>
         <div class="h-full flex items-center justify-end gap-2 w-full px-5 rounded-md font-medium ">
           <button type="button"
-            class="bg-white px-3 py-1.5 border rounded transition-all border-gray-300 hover:bg-blue-500 hover:text-white"
+            class="bg-white px-2.5 py-1 border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
             @click="submitForm()">Submit</button>
         </div>
       </template>
@@ -615,6 +633,7 @@ import { all_address, complete_municipality, complete_province } from '../../uti
 
 import { useVuelidate } from "@vuelidate/core";
 import { helpers, required, requiredIf } from "@vuelidate/validators";
+import PetitionNumberRenderer from "../../components/PetitionNumberRenderer.vue";
 
 /**
  * 
@@ -681,6 +700,7 @@ const open_modal = async () => {
 // Retrieve Latest Petitioner Number
 // CCE and CFN
 const petition_by_type_retriever = computed(async () => {
+
   if (formData.petition_type === 'CCE') {
     const cce = await petitions.get_latest_cce()
     console.log(cce)
@@ -707,6 +727,7 @@ const petition_by_type_retriever = computed(async () => {
 
 const close_modal = () => {
   petition_modal.value = false
+  resetForm()
 }
 const supporting_items = ref([0])
 const clerical_errors_items = ref([0])
@@ -874,6 +895,25 @@ const action_options = ref({
   Granted: "Granted",
   Denied: "Denied (Provide the basis for denial)",
 });
+
+
+function is_indigent() {
+  if (!formData.is_indigent) {
+
+    formData.o_r_number = ''
+    formData.amount_paid = ''
+    formData.date_paid = new Date().toISOString().split('T')[0]
+    return
+  }
+
+  formData.o_r_number = 'Indigent'
+  formData.amount_paid = 'Indigent'
+  formData.date_paid = 'Indigent'
+
+}
+
+
+
 function indexToLetter(index) {
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
   return alphabet[index].toLowerCase();
@@ -936,6 +976,7 @@ function remove_supporting_documents() {
 
 // Document Changer Dynamically Change the Error in 
 function change_event_selected_error_in() {
+
   formData.event_type === 'Birth' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'N/A') :
     formData.event_type === 'Death' ? (formData.petitioner_error_in = 'the', formData.document_owner = '', formData.relation_owner = '') :
       formData.event_type === 'Marriage' ? (formData.petitioner_error_in = 'my', formData.document_owner = '', formData.relation_owner = 'Spouse') : ''
@@ -988,6 +1029,7 @@ const initialForm = {
   action_taken_date: '',// Testing
   municipal_civil_registrar: system_setting.defaults[0].municipal_civil_registrar || '',
   // Payment
+  is_indigent: false,
   o_r_number: '',// Testing
   amount_paid: '',// Testing
   date_paid: new Date().toISOString().split('T')[0],
@@ -1060,7 +1102,7 @@ const rules = computed(() => {
     filing_city_municipality: { required },
     filing_province: { required },
     administering_officer_name: { required },
-    administering_officer_position: { required },
+    // administering_officer_position: { required },
     subscribe_sworn_date: { required },
     subscribe_sworn_city_municipality: { required },
     community_tax_certificate: { required },
@@ -1117,6 +1159,12 @@ const rules = computed(() => {
 
 
 const formData = reactive({ ...initialForm })
+
+const resetForm = () => {
+  Object.assign(formData, { ...initialForm });
+  v$.value.$reset();
+};
+
 
 const v$ = useVuelidate(rules, formData);
 
@@ -1190,7 +1238,7 @@ const submitForm = async () => {
   close_modal()
   is_validating.value = true
 
-
+  resetForm();
 
 };
 
@@ -1232,8 +1280,11 @@ const colDefs = ref([
     flex: 2,
     filter: true,
     pinned: "left",
-    cellClass: "font-semibold tracking-wider w-full text-start ",
     lockPinned: true,
+    cellStyle: { border: "none" },
+    width: 240,
+    cellStyle: { overflow: "visible", border: "none" },
+    cellRenderer: PetitionNumberRenderer
   }, {
     field: "petitioner_name",
     headerName: "Petitioner Name",
@@ -1290,6 +1341,17 @@ const colDefs = ref([
     cellStyle: { overflow: "visible", border: "none" },
     sortable: false,
   },
+  // {
+  //   headerName: "Remarks",
+  //   flex: 1,
+  //   pinned: "right",
+  //   lockPinned: true,
+  //   resizable: false,
+  //   // cellRenderer: MultiButton,
+  //   cellClass: "text-center",
+  //   cellStyle: { overflow: "visible", border: "none" },
+  //   sortable: false,
+  // },
   {
     headerName: "Action",
     cellStyle: { border: "none" },

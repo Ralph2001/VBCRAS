@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full flex flex-col items-center justify-center h-full relative">
+    <div class="w-full flex flex-col items-center justify-center h-full relative ">
         <button type="button" @click="dropdown = !dropdown" ref="mainBtn"
             :class="{ 'bg-gray-600 text-white hover:bg-gray-700': dropdown, 'text-gray-900 bg-white hover:bg-gray-100': !dropdown }"
             class="px-3 py-1 text-sm tracking-wide hover:border-gray-400 active:scale-95  font-medium text-center  rounded-sm  border transition-all focus:outline-none">

@@ -66,7 +66,7 @@ const baseClasses = computed(() => [
     !props.bold ? 'font-semibold' : '',
     !props.isTransparent ? 'bg-white' : '',
     !props.she ? 'focus:ring-blue-500 focus:border-blue-500' : '',
-    'items-center text-gray-900 text-sm rounded px-2 py-1.5'
+    'items-center text-gray-900 text-sm rounded px-2 py-1.5 '
 ]);
 </script>
 

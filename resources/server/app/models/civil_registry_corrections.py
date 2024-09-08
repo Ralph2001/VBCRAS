@@ -1,9 +1,12 @@
 from ..extensions import db
 import datetime
 
+
 class Petitions(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
+    # Person who create the document
+    filed_by_user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     date_filed = db.Column(db.String)
     republic_act_number = db.Column(db.String)
@@ -38,9 +41,9 @@ class Petitions(db.Model):
     action_taken_date = db.Column(db.String)
     municipal_civil_registrar = db.Column(db.String)
     # Payment
-    o_r_number = db.Column(db.String)
-    amount_paid = db.Column(db.String)
-    date_paid = db.Column(db.String)
+    o_r_number = db.Column(db.String)  # maybe indigent
+    amount_paid = db.Column(db.String)  # maybe indigent
+    date_paid = db.Column(db.String)  # maybe indigent
 
     # Petition Dates
     notice_posting = db.Column(db.String)
@@ -62,13 +65,26 @@ class Petitions(db.Model):
     ground_f_data = db.Column(db.String, nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
- 
+
+    # Remarks
+    remarks = db.Column(db.String(455), nullable=True)
+
+    # Is Person Indigent?
+    is_indigent = db.Column(db.Boolean, nullable=False, default=False)
+
+    # File Path. What if it's gone???
+    file_path = db.Column(db.String, nullable=True)
+
     # Relationships (nullable for CFN document type)
-    clerical_errors = db.relationship("PetitionClericalErrors", backref="petition", lazy=True)
-    supporting_documents = db.relationship( "PetitionSupportingDocuments", backref="petition", lazy=True)
+    clerical_errors = db.relationship(
+        "PetitionClericalErrors", backref="petition", lazy=True
+    )
+    supporting_documents = db.relationship(
+        "PetitionSupportingDocuments", backref="petition", lazy=True
+    )
     petition_actions = db.relationship("PetitionActions", backref="petition", lazy=True)
     petition_reasons = db.relationship("PetitionReasons", backref="petition", lazy=True)
-
+    filed_by_user = db.relationship("Users", backref="petitions", lazy=True)
 
 
 class PetitionClericalErrors(db.Model):

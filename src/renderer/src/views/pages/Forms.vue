@@ -12,8 +12,17 @@
             <template v-slot:header>
                 <ModalCloseButton @click="closeModal" />
             </template>
-            <div class="flex flex-col  sm:px-6 md:px-4 h-max w-full gap-4 relative font-medium" v-if="!isPreview">
-                <div class="h-full flex flex-col px-10 py-4">
+
+            <div class="fixed top-16 right-8  z-50 ">
+                <button :class="[!isPreview ? 'text-gray-800' : 'text-gray-100']"
+                    class="rounded-full flex items-center text-sm  font-medium" @click="previewcontent">
+                    {{ isPreview ? 'Return to form editor' : 'Preview' }}
+                </button>
+            </div>
+            <div class="flex flex-col  sm:px-2 md:lg:px-40 h-max bg-gray-100 py-2  gap-4 relative font-medium"
+                v-if="!isPreview">
+                <div ref="scalableDiv" :style="scalableDivStyle"
+                    class="h-full flex flex-col px-10 py-10  ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg ">
                     <div
                         class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
                         <ButtonBorderless v-for="type in FormTypes" :key="type" :label="`Form ${type}`"
@@ -24,7 +33,7 @@
                         <FormCheckbox label="With Authentication (Abroad)" v-model="formData.isWithAuthenticatedForm" />
                     </div>
                     <div class="flex items-center justify-end">
-                        <div class="w-[13rem]">
+                        <div class="w-[15rem]">
                             <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
                                 format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_filed" :teleport="true"
                                 :model-value="date_filed" @update:model-value="handleDateFiled"
@@ -95,8 +104,12 @@
                             <InputLabel v-if="selectedType === '1A'" label="Place of Birth">
                                 :
                                 <!-- <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" /> -->
-                                <AutoCompleteAddress width="100%" v-model="formData.place_of"
-                                    :error="v$.place_of.$error" nolabel />
+                                <!-- <AutoCompleteAddress width="100%" v-model="formData.place_of"
+                                    :error="v$.place_of.$error" nolabel /> -->
+
+                                <SuggestionInputforForm width="100%" v-model="formData.place_of"
+                                    :error="v$.place_of.$error" :suggestion_data="municipality_province"  nolabel />
+
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Name of Mother">
@@ -153,9 +166,13 @@
                                 :
                                 <!-- <InputforForm width="100%" v-model="formData.place_of_marriage_parents"
                                     :error="v$.place_of_marriage_parents.$error" /> -->
-
+                                <!-- 
                                 <AutoCompleteAddress width="100%" v-model="formData.place_of_marriage_parents"
+                                    :error="v$.place_of_marriage_parents.$error" nolabel /> -->
+
+                                <SuggestionInputforForm v-model="formData.place_of_marriage_parents"
                                     :error="v$.place_of_marriage_parents.$error" nolabel />
+
                             </InputLabel>
 
                             <!-- Form 2 -->
@@ -406,7 +423,7 @@
                         </div>
                     </div>
 
-                    <div class="flex  flex-col px-2 gap-2 w-[20rem] mt-5">
+                    <div class="flex  flex-col px-2 gap-2 w-[25rem] mt-5">
                         <InputLabel label="Amount Paid">
                             <InputforForm width="100%" v-model="formData.amount_paid" />
                             <!-- <InputforForm width="100%" v-model="formData.amount_paid" /> -->
@@ -430,24 +447,13 @@
 
             <div class="flex flex-row h-full bg-white w-full border" v-if="isPreview">
                 <div
-                    class="grow flex items-center justify-center h-full   w-full overflow-y-scroll sm:overflow-x-scroll md:lg:overflow-x-hidden  relative">
-                    <!-- 
-                    <div
-                        class="absolute items-center justify-center h-[4rem] flex bg-[#525659] top-0 w-full z-[999999999]">
-                        <p class="font-semibold text-gray-50">Preview Output</p>
-                    </div> -->
+                    class="grow -top-16 left-0 right-0 bottom-0 absolute flex items-center justify-center  sm:overflow-x-scroll md:lg:overflow-x-hidden  ">
+
+
+                    <div class="absolute right-0 block  h-full bg-[#525659] text-[#525659] "></div>
                     <iframe v-if="isPreview" class="h-full w-full " :src="previewUrl" frameborder="1"
                         allowfullscreen=""></iframe>
-                    <!-- <PDFViewer ref="PdfViewerRef" :source="previewUrl" class="w-[5rem]" :zoom="150"
-                        :controls="['zoom']" /> -->
-                    <!-- <PDF :src="previewUrl" style="width: 100%;"  /> -->
 
-                    <!-- <pdf :src="previewUrl" :page="1">
-                        <template slot="loading">
-                            loading content here...
-                        </template>
-                    </pdf> -->
-                    <!-- <VuePdfEmbed annotation-layer print text-layer :source="previewUrl" :width="600" class="mt-24" /> -->
                 </div>
                 <div v-if="vue" class=" flex p-4 flex-col h-full grow bg-white items-center">
                     <p class="text-md text-gray-800 font-medium mb-10">Adjust Positions</p>
@@ -474,17 +480,9 @@
 
             <template v-slot:footer>
                 <div class="h-full flex items-center justify-center w-full px-2">
-                    <button :class="{ 'text-blue-500': isPreview, 'text-gray-800 ': !isPreview }"
-                        class="rounded-full flex items-center text-sm " @click="previewcontent">
-                        <font-awesome-icon icon="fa-regular fa-eye" class="me-1" /> Preview
-
-                    </button>
-                    <button type="button" @click="submit"
-                        :class="{ 'pointer-events-none bg-blue-500 ': isLoading, 'bg-blue-600': !isLoading }"
-                        class="py-2 px-4 tracking-wide ml-auto  hover:bg-red-500  flex items-center text-sm font-medium text-white   rounded  active:scale-95 transition-all  shadow-sm hover:text-white focus:z-10 ">
-                        <Loading v-if="isLoading" />
-                        Create
-                    </button>
+                    <button type="button"
+                        class="bg-white px-2.5 py-1 ml-auto border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
+                        @click="submit()">Print</button>
                 </div>
             </template>
         </Modal>
@@ -493,7 +491,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
 import Header from '../../components/essentials/header.vue'
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
@@ -510,9 +508,64 @@ import { format } from 'date-fns'
 import AutoCompleteAddress from '../../components/Form/AutoCompleteAddress.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import Cookies from 'js-cookie'; // Import js-cookie library
+import SuggestionInputforForm from '../../components/Form/SuggestionInputforForm.vue';
+import { all_address, complete_municipality, complete_municipality_with_province, complete_province } from '../../utils/Address/index.js'
+const all_ = ref(all_address())
 
 
+const municipality_province = computed(() => {
+    return complete_municipality_with_province(formData.filing_province)
+})
 
+
+// Get scale from cookie if available on mounted
+onMounted(() => {
+    const savedScale = Cookies.get('scale');
+    if (savedScale) {
+        scale.value = parseFloat(savedScale); // Parse the cookie value as a number
+    }
+    window.addEventListener('wheel', handleWheel, { passive: false });
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('wheel', handleWheel);
+});
+
+// Initial scale
+const scale = ref(1);
+
+// Scaling factor
+const minScale = 0.5;
+const maxScale = 1;
+const scalingStep = 0.1;
+
+
+// Function to handle scaling and save to cookie
+const handleWheel = (event) => {
+    if (event.ctrlKey) {
+        event.preventDefault();
+        if (event.deltaY < 0) {
+            // Zoom in
+            if (scale.value < maxScale) {
+                scale.value = Math.min(maxScale, scale.value + scalingStep);
+            }
+        } else {
+            // Zoom out
+            if (scale.value > minScale) {
+                scale.value = Math.max(minScale, scale.value - scalingStep);
+            }
+        }
+        // Save the current scale to a cookie
+        Cookies.set('scale', scale.value, { expires: 7 }); // Cookie expires in 7 days
+    }
+};
+
+const scalableDivStyle = computed(() => {
+    return {
+        transform: `scale(${scale.value})`,
+    };
+});
 
 const isLoading = ref(false)
 const Modal = defineAsyncComponent(() =>
@@ -765,7 +818,6 @@ const submit = async () => {
             console.log(open)
 
             if (open.status) {
-
                 const openFolder = await window.FormApi.openPdfForm(open.filepath)
             }
         } catch (error) {
