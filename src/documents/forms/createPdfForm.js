@@ -16,7 +16,7 @@ let marginRight = 1
 let marginBottom = 0.3
 
 export async function createPdfForm(formData) {
-    console.log(formData)
+
     if (['1A', '2A', '3A'].includes(formData.form_type)) {
         doc = new jsPDF({
             orientation: 'p',
@@ -258,7 +258,7 @@ async function createRemarks(formData) {
     await doc.html(field, {
         callback: function (doc) {
             // return doc
-            console.log(doc)
+    
         },
     })
 }
@@ -419,7 +419,7 @@ async function whatTypeofForm(formData) {
     } else if (['1B', '2B', '3B'].includes(formData.form_type)) {
         create_for_B(formData)
     } else if (['1C', '2C', '3C'].includes(formData.form_type)) {
-        console.log(formData.form_type)
+        // console.log(formData.form_type)
     }
 }
 

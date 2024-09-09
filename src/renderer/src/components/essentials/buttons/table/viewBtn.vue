@@ -1,5 +1,10 @@
 <template>
     <div class="w-full flex flex-col items-center justify-center h-full relative ">
+
+        <Teleport to="body">
+            <PathWarning :path="missing_path" v-if="path_missing" @cancel="path_missing = false" />
+        </Teleport>
+
         <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
         <button type="button" @click="dropdown = !dropdown" ref="mainBtn"
             :class="{ 'bg-gray-600 text-white hover:bg-gray-700': dropdown, 'text-gray-900 bg-white hover:bg-gray-100': !dropdown }"
@@ -29,6 +34,10 @@ import { ref } from 'vue';
 import { onClickOutside } from "@vueuse/core";
 import { usePetitions } from '../../../../stores/Petition/petitions';
 import PDFViewerCCE from '../../../PDFViewerCCE.vue';
+import PathWarning from '../../../client/modal/PathWarning.vue';
+
+const path_missing = ref(false)
+const missing_path = ref()
 
 
 const petitions = usePetitions()
@@ -48,19 +57,35 @@ const props = defineProps({
 })
 
 const opendocuments = async (param) => {
-    const check = await window.ClericalApi.OpenClericalFiles(param.file_path  );
-    data_pdfs.value = check
-    pdf_viewer.value = !pdf_viewer.value
+    try {
+        const check = await window.ClericalApi.OpenClericalFiles(param.file_path);
+        if (!check.error) {
+            console.log(check)
+            data_pdfs.value = check
+            pdf_viewer.value = !pdf_viewer.value
+            return
+        }
+        path_missing.value = true
+        missing_path.value = param.file_path
+    } catch (error) {
+        path_missing.value = true
+        missing_path.value = param.file_path
+    }
 }
 
 const openfolder = async (param) => {
-    const open = await window.ClericalApi.OpenClerical(param.file_path)
+    try {
+        const open = await window.ClericalApi.OpenClerical(param.file_path)
+    } catch (error) {
+        console.log(error)
+        path_missing.value = true
+        missing_path.value = param.file_path
+    }
 }
 
 const delete_cmd = async (data) => {
     const id = Number(data.id)
     const remove_data = await petitions.remove_petition(id)
-
 }
 
 </script>

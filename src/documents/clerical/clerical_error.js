@@ -104,7 +104,7 @@ async function generate(formData) {
 
         return { status: true, filepath: main_folder_path }
     } catch (error) {
-        console.error('Error during generation:', error)
+      
         return { status: false, error: error.message }
     }
 }

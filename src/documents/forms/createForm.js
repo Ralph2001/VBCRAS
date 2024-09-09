@@ -5,7 +5,7 @@ const path = require('path')
 
 
 export async function generate_form(formData) {
-    console.log(formData)
+ 
 
     const pdfDoc = await PDFDocument.create()
     const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)

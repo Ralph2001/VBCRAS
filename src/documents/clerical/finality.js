@@ -25,7 +25,7 @@ function finalityPath(status) {
 }
 
 async function document_folder(data) {
-    console.log(data)
+   
     var folderCreation = data.filepath + '/Finality'
     if (!fs.existsSync(folderCreation)) {
         fs.mkdirSync(folderCreation, { recursive: true })
