@@ -13,6 +13,8 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
+from marshmallow import fields
+
 
 ma = Marshmallow()
 jwt = JWTManager()

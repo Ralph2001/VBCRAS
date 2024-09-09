@@ -18,13 +18,14 @@
         </div>
         <div
             class="absolute top-0 bottom-0 left-0 w-[20rem] p-2 px-6 py-20 items-center gap-2 bg-[#525659] z-40 flex flex-col">
-          
+
             <div class=" w-full flex flex-col gap-2">
                 <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
                     :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
                     class="p-2 shadow-inner outline-none ring-0 w-full font-medium text-sm rounded-sm flex items-start">
                     {{ item.name }}
                 </button>
+
             </div>
         </div>
 

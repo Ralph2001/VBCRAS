@@ -108,7 +108,7 @@
                                     :error="v$.place_of.$error" nolabel /> -->
 
                                 <SuggestionInputforForm width="100%" v-model="formData.place_of"
-                                    :error="v$.place_of.$error" :suggestion_data="municipality_province"  nolabel />
+                                    :error="v$.place_of.$error" :suggestion_data="municipality_province" nolabel />
 
                             </InputLabel>
 

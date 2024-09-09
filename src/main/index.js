@@ -87,54 +87,7 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     });
 });
 
-//  
-// Convert Docx to PDF 
 
-const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe');
-const originalDirectory = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/');
-const outputDirectory = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/');
-
-// Conversion arguments
-const convertArgs = [
-    '-f', originalDirectory,
-    '-O', outputDirectory,
-    '-T', 'wdFormatPDF',
-    '-OX', '.pdf'
-];
-
-// Deletion arguments
-const deleteArgs = [
-    '-f', originalDirectory,
-    '-O', outputDirectory,
-    '-T', 'wdFormatPDF',
-    '-OX', '.pdf',
-    '-R', 'true'
-];
-
-
-function executeCommand(commandPath, args) {
-    return new Promise((resolve, reject) => {
-        const process = spawn(commandPath, args);
-        let output = '';
-        let error = '';
-
-        process.stdout.on('data', (data) => {
-            output += data.toString();
-        });
-
-        process.stderr.on('data', (data) => {
-            error += data.toString();
-        });
-
-        process.on('close', (code) => {
-            if (code === 0) {
-                resolve(output);
-            } else {
-                reject(new Error(`Process failed with code ${code}: ${error}`));
-            }
-        });
-    });
-}
 
 
 
@@ -221,43 +174,95 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
 
 ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
+        const data = JSON.parse(formData)
         const generate_document = await generate(formData);
         if (generate_document.status) {
-            const source = join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Petition.docx')
-            const open_file = await shell.openExternal(source)
-
-            if (!open_file) {
-                return { status: false, filepath: null };
+            if (data.is_to_validate) {
+                const saved_file_path = await shell.openExternal(join(generate_document.filepath, 'petition.docx'))
             }
+            return { status: generate_document.status, filepath: generate_document.filepath };
         }
-        return { status: true, filepath: null };
+        return { status: generate_document.status, filepath: generate_document.filepath };
     } catch (error) {
         console.log(error);
+        return { status: false, filepath: null };
     }
-    return false;  // Return false if something went wrong
+    // Not Needed
 });
 
+// Execute external command helper
+function executeCommand(commandPath, args) {
+    return new Promise((resolve, reject) => {
+        const process = spawn(commandPath, args);
+        let output = '';
+        let error = '';
+
+        process.stdout.on('data', (data) => {
+            output += data.toString();
+        });
+
+        process.stderr.on('data', (data) => {
+            error += data.toString();
+        });
+
+        process.on('close', (code) => {
+            if (code === 0) {
+                resolve(output);
+            } else {
+                reject(new Error(`Process failed with code ${code}: ${error}`));
+            }
+        });
+    });
+};
 
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
-        const convert_files_and_delete = await executeCommand(doctoPath, convertArgs)
-            .then(async (output) => {
-                await executeCommand(doctoPath, deleteArgs);
-                return true;
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                return false;
-            });
+        const data = JSON.parse(formData)
 
-        if (convert_files_and_delete) {
-            return { status: true, filepath: null };
+        // Define paths
+        const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe');
+
+        const originalDirectory = data.orignal_path;
+        const petitionType = data.petition_type;
+        const republicAct = data.republic_act_number;
+        const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
+
+        const outputDirectory = join(data.path_where_to_save, `Correction of Clerical Error and Change of First Name`, `${petitionType} ${republicAct}`, documentOwner);
+
+        if (!fs.existsSync(outputDirectory)) {
+            fs.mkdirSync(outputDirectory, { recursive: true })
+        }
+
+        // Conversion and Deletion arguments
+        const convertArgs = [
+            '-f', originalDirectory,
+            '-O', outputDirectory,
+            '-T', 'wdFormatPDF',
+            '-OX', '.pdf'
+        ];
+
+        const deleteArgs = [
+            '-f', originalDirectory,
+            '-O', outputDirectory,
+            '-T', 'wdFormatPDF',
+            '-OX', '.pdf',
+            '-R', 'true'
+        ];
+
+        // Convert and then delete files
+        const conversionResult = await executeCommand(doctoPath, convertArgs);
+
+        if (conversionResult) {
+            await executeCommand(doctoPath, deleteArgs);
+            return { status: true, filepath: outputDirectory };
+        } else {
+            return { status: false, filepath: null };
         }
 
     } catch (error) {
-        console.log(error);
+        console.error('Error during file conversion:', error);
+        return { status: false, filepath: null };
     }
-    return false;  // Return false if something went wrong
 });
 
 
@@ -284,26 +289,85 @@ ipcMain.handle('open-clerical', async (event, source) => {
     }
 })
 
-ipcMain.handle('open-clerical-files', async (event, source) => {
-    const petition = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Petition.pdf')).toString('base64')
-    const endorsement_letter = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Endorsement Letter.pdf')).toString('base64')
-    const record_sheet = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Record Sheet.pdf')).toString('base64')
-    const posting = fs.readFileSync(join(__dirname, '../../resources/documents/Generated/Correction of Clerical Error/Posting.pdf')).toString('base64')
-
-
-    const data = [
-        { name: 'Petition', link: petition },
-        { name: 'Posting', link: posting },
-        { name: 'Endorsement Letter', link: endorsement_letter },
-        { name: 'Record Sheet', link: record_sheet },
-    ]
-
-    return data
+ipcMain.handle('remove-item', async (event, path) => {
+    try {
+        fs.rm(path, { recursive: true, force: true }, (err) => {
+            if (err) {
+                console.error(`Error removing directory: ${err.message}`);
+                return;
+            }
+            console.log(`Directory ${path} removed successfully.`);
+        });
+        return
+    } catch (error) {
+        console.log(error)
+        return false
+    }
 })
+
+
+// ipcMain.handle('open-clerical-files', (event, path) => {
+//     try {
+//         // Define the main directory once
+//         const mainDirectory = path;
+
+//         // List of file names and corresponding document titles
+//         const files = [
+//             { name: 'Petition', file: 'Petition.pdf' },
+//             { name: 'Posting', file: 'Posting.pdf' },
+//             { name: 'Endorsement Letter', file: 'Endorsement Letter.pdf' },
+//             { name: 'Record Sheet', file: 'Record Sheet.pdf' }
+//         ];
+
+//         // Read all files synchronously and return the data
+//         const data = files.map(({ name, file }) => {
+//             const filePath = join(mainDirectory, file);
+//             const fileData = fs.readFileSync(filePath, 'base64');
+//             return { name, link: fileData };
+//         });
+
+//         return data;
+
+//     } catch (error) {
+//         console.error('Error reading clerical files:', error);
+//         return { error: 'Failed to open clerical files' };
+//     }
+// });
+
+ipcMain.handle('open-clerical-files', (event, path) => {
+    try {
+        console.log(path)
+        // Define the main directory
+        const mainDirectory = path;
+
+        // Get all PDF files in the directory
+        const files = fs.readdirSync(mainDirectory)
+            .filter(file => file.endsWith('.pdf')); // Filter for PDF files
+
+        // Read each PDF file and encode it in base64
+        const data = files.map(file => {
+            const filePath = join(mainDirectory, file);
+            const fileData = fs.readFileSync(filePath, 'base64');
+
+            // Extract the name without the file extension
+            const name = file.substring(0, file.lastIndexOf('.'));
+
+            return { name, link: fileData };
+        });
+
+        console.log(data)
+        return data;
+
+    } catch (error) {
+        console.error('Error reading clerical files:', error);
+        return { error: 'Failed to open clerical files' };
+    }
+});
 
 ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
     try {
         const generate = await generate_by_month_year(formData)
+        shell.showItemInFolder(generate.dir)
     } catch (error) {
         console.log(error)
     }

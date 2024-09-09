@@ -51,6 +51,10 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     GenerateReportByMonthYear: async (formData) => {
         const generate = await ipcRenderer.invoke('generateReportByMonthYear', formData)
         console.log(generate)
+    },
+    RemoveItem: async (path) => {
+        const remove_item = await ipcRenderer.invoke('remove-item', path)
+        console.log(remove_item)
     }
 })
 

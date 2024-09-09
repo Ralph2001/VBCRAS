@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
+
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
 
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
@@ -7,7 +8,8 @@
     </Header>
 
     <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
-    <ValidateClericalPopup @proceed="create_validated_document" v-if="is_validating" />
+    <ValidateClericalPopup :path="last_saved_filepath" @cancel="cancel_validating_stage"
+      @proceed="create_validated_document" v-if="is_validating" />
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
@@ -54,10 +56,8 @@
       </template> -->
 
       <!-- Input Fields -->
-      <div class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max bg-gray-50  gap-4 relative">
-        <div :class="[backround_per_event]"
-          class="h-full flex flex-col px-10 py-10  ease-in-out transition-transform duration-200 bg-white border shadow border-gray-300 ">
-
+      <div class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center ">
+        <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10  bg-white border border-gray-300  ">
 
           <!-- 1st  Document Selector-->
           <div class="flex items-center justify-center p-2" ref="isFormVisible">
@@ -159,6 +159,7 @@
                 <div class="grid grid-cols-1 w-full gap-2">
                   <Input :error="v$.event_date.$error" type="date" :label="event_date_label"
                     v-model="formData.event_date" />
+
                 </div>
               </Box>
             </div>
@@ -569,9 +570,13 @@
       </div>
 
       <template v-slot:footer>
-        <div class="h-full flex items-center justify-end gap-2 w-full px-5 rounded-md font-medium ">
+        <div class="h-full flex items-center justify-start gap-2 w-full px-5 rounded-md font-medium ">
+          <div class="flex flex-row items-center gap-2">
+            <CheckBox skip v-model="formData.is_to_validate" />
+            <p class="text-sm font-medium">Validate Layout</p>
+          </div>
           <button type="button"
-            class="bg-white px-2.5 py-1 border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
+            class="bg-white ml-auto px-2.5 py-1 border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
             @click="submitForm()">Submit</button>
         </div>
       </template>
@@ -635,6 +640,9 @@ import { useVuelidate } from "@vuelidate/core";
 import { helpers, required, requiredIf } from "@vuelidate/validators";
 import PetitionNumberRenderer from "../../components/PetitionNumberRenderer.vue";
 
+import { AuthStore } from "../../stores/Authentication.js";
+
+const auth = AuthStore()
 /**
  * 
  * 
@@ -665,6 +673,7 @@ const petition_modal = ref(false)
 onMounted(async () => {
   system_setting.getSystemSetting()
   petitions.get_all_petitions()
+  auth.isAuthenticated()
 });
 
 
@@ -1078,6 +1087,9 @@ const initialForm = {
   reasons: [
     { error_num: '1', reason: '' }
   ],
+
+  // For Setting will not be added in database
+  is_to_validate: true
 }
 
 const rules = computed(() => {
@@ -1168,6 +1180,9 @@ const resetForm = () => {
 
 const v$ = useVuelidate(rules, formData);
 
+
+
+
 const submitForm = async () => {
 
   v$.value.$touch();
@@ -1227,35 +1242,126 @@ const submitForm = async () => {
     supporting_documents: formData.supporting_documents,
     clerical_errors: formData.clerical_errors,
     reasons: formData.reasons,
+
+    //Is Indigent
+    is_indigent: formData.is_indigent,
+
+
+    // For Settings Only, will not be added in database
+    is_to_validate: formData.is_to_validate
   }
 
-
-  // Create a function that will generate all documents using the petition data
   const generate_ = await window.ClericalApi.createPetitionDocument(JSON.stringify(petition_));
-  // Validate Layouts
-  const submit_ = petitions.add_petition(petition_)
+  last_saved_filepath.value = generate_.filepath
 
-  close_modal()
-  is_validating.value = true
 
-  resetForm();
+  if (!formData.is_to_validate) {
+    create_validated_document()
+    petition_modal.value = false
+    return
+  } else {
+    is_validating.value = true
+  }
 
+  petition_modal.value = false
 };
+
+const last_saved_filepath = ref()
 
 const create_validated_document = async () => {
   is_validating.value = false
   is_creating.value = true
 
-  const check = await window.ClericalApi.proceedCreatePetition();
+  const settings = {
+    orignal_path: last_saved_filepath.value,
+    path_where_to_save: system_setting.defaults[0].petition_default_file_path,
+    republic_act_number: formData.republic_act_number,
+    petition_type: formData.petition_type,
+    petitioner_name: formData.petitioner_name,
+    document_owner: formData.document_owner,
+    relation_owner: formData.relation_owner
+  }
+
+  const check = await window.ClericalApi.proceedCreatePetition(JSON.stringify(settings));
+
+
+  const petition_ = ref({
+
+    file_path: check.filepath,
+    // filed_by_user: auth.user_id,
+    //
+    date_filed: formData.date_filed,
+    republic_act_number: formData.republic_act_number,
+    petition_type: formData.petition_type,
+    event_type: formData.event_type,
+    petition_number: formData.petition_number,
+    petitioner_name: formData.petitioner_name,
+    nationality: formData.nationality,
+    petitioner_address: formData.petitioner_address,
+    petitioner_error_in: formData.petitioner_error_in,
+    document_owner: formData.document_owner,
+    relation_owner: formData.relation_owner,
+    event_date: formData.event_date,
+    event_country: formData.event_country,
+    event_province: formData.event_province,
+    event_municipality: formData.event_municipality,
+    registry_number: formData.registry_number,
+    filing_city_municipality: formData.filing_city_municipality,
+    filing_province: formData.filing_province,
+    administering_officer_name: formData.administering_officer_name,
+    administering_officer_position: formData.administering_officer_position,
+    subscribe_sworn_date: formData.subscribe_sworn_date,
+    subscribe_sworn_city_municipality: formData.subscribe_sworn_city_municipality,
+    community_tax_certificate: formData.community_tax_certificate,
+    issued_at: formData.issued_at,
+    issued_on: formData.issued_on,
+    action_taken_date: formData.action_taken_date,
+    municipal_civil_registrar: formData.municipal_civil_registrar,
+    o_r_number: formData.o_r_number,
+    amount_paid: formData.amount_paid,
+    date_paid: formData.date_paid,
+    first_name_from: formData.first_name_from,
+    first_name_to: formData.first_name_to,
+    ground_a: formData.ground_a,
+    ground_b: formData.ground_b,
+    ground_c: formData.ground_c,
+    ground_d: formData.ground_d,
+    ground_e: formData.ground_e,
+    ground_f: formData.ground_f,
+    ground_b_data: formData.ground_b_data,
+    ground_f_data: formData.ground_f_data,
+    notice_posting: formData.notice_posting,
+    certificate_posting_start: formData.certificate_posting_start,
+    certificate_posting_end: formData.certificate_posting_end,
+    petition_date_issued: formData.petition_date_issued,
+    petition_date_granted: formData.petition_date_granted,
+    petition_actions: formData.petition_actions,
+    supporting_documents: formData.supporting_documents,
+    clerical_errors: formData.clerical_errors,
+    reasons: formData.reasons,
+
+    //Is Indigent
+    is_indigent: formData.is_indigent
+  })
+
+  const submit_ = petitions.add_petition(petition_.value)
+
+  resetForm();
   if (check.status) {
     is_creating.value = false
-    open_generated()
+    open_generated(check.filepath)
   }
 }
 
+const cancel_validating_stage = async () => {
+  is_validating.value = false
+  petition_modal.value = true
+  await window.ClericalApi.RemoveItem(last_saved_filepath.value)
+}
 
-const open_generated = async () => {
-  const check = await window.ClericalApi.OpenClericalFiles();
+const open_generated = async (path) => {
+  const check = await window.ClericalApi.OpenClericalFiles(path);
+  console.log(check)
   data_pdfs.value = check
   pdf_viewer.value = !pdf_viewer.value
 }

@@ -126,7 +126,7 @@
                         <div class="h-auto flex flex-col gap-2">
                             <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
                             <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
-                                contentType="html" />
+                                contentType="html" /> 
 
                         </div>
 

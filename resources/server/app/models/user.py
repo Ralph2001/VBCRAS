@@ -4,11 +4,6 @@ from ..extensions import IntegrityError
 from .ausf import Ausf
 from .scanned import Scans
 
-# class Positions(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(420), unique=True, nullable=False)
-#     users = db.relationship("Users", backref="position_ref", lazy=True)
-
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)

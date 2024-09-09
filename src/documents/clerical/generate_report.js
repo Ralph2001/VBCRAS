@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import Excel from 'exceljs'
 import { join } from 'path'
 const fs = require('fs');
@@ -24,9 +25,11 @@ export async function generate_by_month_year(data) {
         right: { style: 'thin' },
     };
 
+    const month = main_data.month.toUpperCase()
+    const year = main_data.year
 
     const main_title = main_data.petition_type === 'CCE' ? 'CORRECTION OF CLERICAL ERROR UNDER R.A. 9048 / R.A. 10172' : main_data.petition_type === 'CFN' ? 'CHANGE OF FIRST NAME UNDER R.A. 9048' : '';
-    const report_title = `REPORT LIST ${main_data.month} ${main_data.year}`;
+    const report_title = `REPORT LIST ${month} ${year}`;
 
     // Add and format the main title
     const titleRow = worksheet.addRow([main_title]);
@@ -60,13 +63,13 @@ export async function generate_by_month_year(data) {
         { key: 'o_r_number', width: 15 },
         { key: 'amount_paid', width: 15 },
         { key: 'petition_date_granted', width: 15 },
-        { key: '', width: 20 },
+
     ];
 
     // Add the header row (which will now be the second row)
     const headerRow = worksheet.addRow([
         'PETITION NUMBER', 'NAME OF PETITIONER', 'DOCUMENT OWNER', 'RELATIONSHIP',
-        'ADDRESS', 'DATE FILED', 'O.R. NO.', 'AMOUNT PAID', 'DATE FORWARDED TO CRG', 'REMARKS'
+        'ADDRESS', 'DATE FILED', 'O.R. NO.', 'AMOUNT PAID', 'DATE FORWARDED TO CRG'
     ]);
 
     // Format the header row
@@ -80,19 +83,26 @@ export async function generate_by_month_year(data) {
     // Sort Data
     const sortedData = main_data.data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
+
+
+
     // Add rows and center data in each cell
     sortedData.forEach(item => {
+        // Is it??
+        const document_owner = item.document_owner === 'N/A' ? item.petitioner_name : item.document_owner
+        const relation_owner = item.relation_owner === 'N/A' ? 'Owner' : item.relation_owner
+
         const row = worksheet.addRow({
             petition_number: item.petition_number,
             petitioner_name: item.petitioner_name,
-            document_owner: item.document_owner,
-            relation_owner: item.relation_owner,
+            document_owner: document_owner,
+            relation_owner: relation_owner,
             petitioner_address: item.petitioner_address,
             date_filed: item.date_filed,
             o_r_number: item.o_r_number,
             amount_paid: item.amount_paid,
             petition_date_granted: item.petition_date_granted,
-            remarks: item.remarks
+
         });
 
         row.height = 30; // Adjust the height for the row
@@ -111,6 +121,11 @@ export async function generate_by_month_year(data) {
         fs.mkdirSync(output_dir, { recursive: true });
     }
 
-    await workbook.xlsx.writeFile(join(output_dir, `Example Output of ${main_data.petition_type}.xlsx`));
-    return { status: true, dir: output_dir };
+
+    const time = format(new Date(), 'p')
+
+    const file = join(output_dir, `${month} ${year} ${main_data.petition_type}.xlsx`)
+
+    await workbook.xlsx.writeFile(file);
+    return { status: true, dir: file };
 }

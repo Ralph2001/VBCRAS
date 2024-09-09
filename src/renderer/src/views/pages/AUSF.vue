@@ -13,7 +13,8 @@
                 <ModalCloseButton @click="close_ausf" />
             </template>
 
-            <div class="flex flex-col sm:px-2 md:lg:px-40 h-max bg-gray-100 py-2 gap-4 relative font-medium">
+            <div
+                class="flex flex-col sm:px-2 md:lg:px-40 h-max bg-gray-100 py-2 gap-4 w-full items-center justify-center relative font-medium">
                 <div
                     class="h-full flex flex-col py-16 ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg">
                     <div
@@ -247,7 +248,7 @@
                                 <div class="flex flex-row mt-5 gap-1 w-full">
                                     <p class="indent-12">I,</p>
                                     <InputButtomBorder v-model="formData.attestation_name"
-                                        :error="v$.attestation_name.$error"  />
+                                        :error="v$.attestation_name.$error" />
                                     <p class="text-nowrap">
                                         Filipino citizen, of legal age, with address at
                                     </p>
