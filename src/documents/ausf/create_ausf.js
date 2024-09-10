@@ -11,12 +11,12 @@ const path = require('path')
 export async function generate_ausf(formData) {
 
 
-    const ausf_main_template = path.resolve(__dirname, '../../resources/documents/AUSF/main_ausf_template.pdf')
+    const ausf_main_template = path.resolve(__dirname, '../../resources/documents/AUSF/main_ausf_template.pdf').replace('app.asar', 'app.asar.unpacked')
     const main_template = fs.readFileSync(ausf_main_template)
 
 
 
-    const attestation_template = path.resolve(__dirname, '../../resources/documents/AUSF/attestation_template.pdf')
+    const attestation_template = path.resolve(__dirname, '../../resources/documents/AUSF/attestation_template.pdf').replace('app.asar', 'app.asar.unpacked')
     const attestation = fs.readFileSync(attestation_template)
 
     const pdfDoc = await PDFDocument.load(main_template)

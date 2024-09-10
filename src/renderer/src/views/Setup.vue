@@ -2,19 +2,35 @@
     <div class="h-full w-full  ">
         <div v-if="auth.user_role === 1" class=" flex h-full flex-col p-10 gap-4 relative">
             <p class="font-medium text-3xl text-gray-700">System Setup</p>
-            <div class="flex flex-col border rounded-md h-full  bg-gray-50  overflow-y-scroll ">
+            <div class="flex flex-col border rounded-md h-full sm:md:px-20 lg:px-40 bg-gray-50  overflow-y-scroll ">
                 <div class="flex flex-col h-full  p-16  gap-4 ">
-                    <p class="font-medium text-2xl text-gray-800  ">Petition Saving Path</p>
+                    <p class="font-medium text-2xl text-gray-800   md:lg:px-20">Default Saving Path</p>
                     <div class="w-full flex flex-col md:lg:grid-cols-2 md:lg:px-20">
-                        <label for="path" class="font-medium mb-2 text-sm">File Path</label>
+                        <!-- <label for="path" class="font-medium mb-2 text-sm">File Path</label>
                         <input id="path" readonly type="text"
                             class="w-full border border-gray-300 rounded shadow-sm font-semibold text-gray-800 text-sm"
-                            @click="open" v-model="formData.file_path">
+                            @click="open" v-model="formData.file_path"> -->
+
+                        <div class="flex flex-row gap-2 w-full items-center justify-center">
+                            <Input label="Path" class="w-full" readonly :error="v$.file_path.$error"
+                                v-model="formData.file_path" />
+                            <button class="border rounded p-2 mt-auto font-medium bg-blue-500 text-white px-4"
+                                v-if="!formData.file_path" @click="open">Select</button>
+                            <button class="border rounded p-2 mt-auto font-medium bg-red-400 text-white px-4"
+                                v-if="formData.file_path" @click="formData.file_path = ''">Remove</button>
+
+                        </div>
+
                     </div>
-                    <p class="font-medium text-2xl text-gray-800  ">Petition Default Values</p>
+
+                    <p class="font-medium text-2xl text-gray-800  md:lg:px-20 ">Correction of Clerical Error and Change
+                        of First
+                        Name
+                    </p>
                     <div class="grid  gap-10 sm:grid-cols-1 md:lg:grid-cols-2 md:lg:px-20 w-full">
+
                         <div class="flex flex-col gap-2">
-                            <p class="font-medium italic">Petitioner</p>
+                            <p class="font-medium italic">Most Use</p>
 
                             <Input label="Nationality" v-model="formData.nationality" />
                             <Input label="Country" v-model="formData.country" />
@@ -22,9 +38,9 @@
                         <div class="flex flex-col gap-2">
                             <p class="font-medium italic">Filling This petition at</p>
                             <InputAutoComplete label="Province" v-model="formData.filing_province"
-                                :suggestion_data="province" />
+                                :suggestion_data="province" :error="v$.filing_province.$error" />
                             <InputAutoComplete label="City/Municipality" v-model="formData.filing_municipality"
-                                :suggestion_data="municipality" />
+                                :suggestion_data="municipality" :error="v$.filing_municipality.$error" />
 
                         </div>
                         <div class="flex flex-col gap-2">
@@ -44,10 +60,11 @@
 
                     </div>
                     <div class="flex flex-col gap-4">
-                        <p class="font-medium text-2xl text-gray-800  ">Municipality</p>
+                        <p class="font-medium text-2xl text-gray-800   md:lg:px-20">Municipality</p>
                         <div class="grid  w-full gap-10 items-center sm:grid-cols-1 md:lg:grid-cols-2 md:lg:px-20">
-                            <Input label="Municipal Civil Registrar" cap v-model="formData.municipal_civil_registrar" />
-                            <Input label="Municipal Mayor" cap v-model="formData.mayor" />
+                            <Input label="Municipal Civil Registrar" :error="v$.municipal_civil_registrar.$error" cap
+                                v-model="formData.municipal_civil_registrar" />
+                            <Input label="Municipal Mayor" :error="v$.mayor.$error" cap v-model="formData.mayor" />
 
                         </div>
                     </div>
@@ -55,10 +72,10 @@
             </div>
 
             <div class="flex flex-row gap-4 justify-end">
-                <button @click="auth.logout"
+                <button @click="auth.logout" tabindex="-1"
                     class="border px-4 py-1.5 hover:bg-red-400 rounded shadow-sm hover:text-white">Logout</button>
                 <button :disabled="is_submitting"
-                    class="w-max  border px-2 py-1.5 disabled:cursor-progress rounded disabled:bg-blue-200  bg-blue-500 text-white font-medium bottom-2 right-2"
+                    class="w-max  border px-4 py-1.5 disabled:cursor-progress rounded disabled:bg-blue-200  bg-blue-500 text-white font-medium bottom-2 right-2"
                     @click="submit_setup">Submit</button>
             </div>
 
@@ -74,7 +91,7 @@
                 <SetupSVG />
             </div>
             <div class="absolute bottom-10 px-4 right-0 ">
-                <button @click="auth.logout"
+                <button @click="auth.logout" 
                     class="border px-4 py-1.5 hover:bg-red-400 rounded shadow-sm hover:text-white">Logout</button>
             </div>
         </div>
@@ -138,15 +155,9 @@ const formData = reactive({
 
 const rules = computed(() => ({
     file_path: { required },
-    nationality: { required },
-    country: { required },
+    municipal_civil_registrar: { required },
     filing_province: { required },
     filing_municipality: { required },
-    administering_officer_name: { required },
-    administering_officer_position: { required },
-    subscribe_sworn_city_municipality: { required },
-    issued_at: { required },
-    municipal_civil_registrar: { required },
     mayor: { required },
 }))
 
@@ -177,7 +188,7 @@ const submit_setup = async () => {
 
     const change_setting = await system_setting.setSystemSetting(data)
 
-    if(change_setting){
+    if (change_setting) {
         router.push('/pages/welcome')
     }
 }

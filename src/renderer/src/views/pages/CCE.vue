@@ -2,11 +2,11 @@
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
 
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
-
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
       <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
     </Header>
 
+    <AlertPath v-if="busy" />
     <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
     <ValidateClericalPopup :path="last_saved_filepath" @cancel="cancel_validating_stage"
       @proceed="create_validated_document" v-if="is_validating" />
@@ -51,13 +51,28 @@
 
 
     <Modal large label="Create a new Document" footerBG="bg-white  border-t  border-gray-300" v-if="petition_modal">
-      <!-- <template v-slot:header>
+      <template v-slot:header>
         <ModalCloseButton @click="close_modal()" />
-      </template> -->
+      </template>
+
+
+      <div v-if="v$.$error"
+        class="fixed top-16 bg-red-400 rounded right-10 z-[9999] h-auto w-[15rem] border p-4 flex flex-col items-center justify-center">
+        <p class="font-medium text-white"> Require Fields
+        </p>
+        <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
+          <p v-for="error in v$.$errors" >
+            {{ error.$propertyPath.replace('_', ' ') }}
+
+          </p> -->
+
+        <!-- </div> -->
+      </div>
 
       <!-- Input Fields -->
-      <div class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center ">
-        <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10  bg-white border border-gray-300  ">
+      <div
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center bg-gray-50 ">
+        <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10   ">
 
           <!-- 1st  Document Selector-->
           <div class="flex items-center justify-center p-2" ref="isFormVisible">
@@ -617,6 +632,8 @@ import ViewBTn from "../../components/essentials/buttons/table/viewBTn.vue";
 import MultiButton from "../../components/essentials/buttons/table/multiButton.vue";
 import InputAutoComplete from "../../components/InputAutoComplete.vue";
 import countryList from '../../utils/Country.js'
+import AlertPath from '../../components/Alert/AlertPath.vue'
+
 
 import {
   now_date,
@@ -642,6 +659,8 @@ import PetitionNumberRenderer from "../../components/PetitionNumberRenderer.vue"
 
 import { AuthStore } from "../../stores/Authentication.js";
 
+
+const busy = ref(false)
 const auth = AuthStore()
 /**
  * 
@@ -1185,6 +1204,7 @@ const v$ = useVuelidate(rules, formData);
 
 const submitForm = async () => {
 
+
   v$.value.$touch();
 
   if (v$.value.$error) {
@@ -1269,6 +1289,18 @@ const submitForm = async () => {
 const last_saved_filepath = ref()
 
 const create_validated_document = async () => {
+  if (busy.value) { return }
+  const is_busy = await window.ClericalApi.IsFileBusy(last_saved_filepath.value + 'petition.docx')
+
+  if (is_busy) {
+    busy.value = true
+
+    setTimeout(() => {
+      busy.value = false
+    }, 3000);
+    return
+  }
+
   is_validating.value = false
   is_creating.value = true
 
@@ -1354,6 +1386,19 @@ const create_validated_document = async () => {
 }
 
 const cancel_validating_stage = async () => {
+  if (busy.value) { return }
+
+  const is_busy = await window.ClericalApi.IsFileBusy(last_saved_filepath.value + 'petition.docx')
+
+  if (is_busy) {
+    busy.value = true
+
+    setTimeout(() => {
+      busy.value = false
+    }, 3000);
+    return
+  }
+
   is_validating.value = false
   petition_modal.value = true
   await window.ClericalApi.RemoveItem(last_saved_filepath.value)

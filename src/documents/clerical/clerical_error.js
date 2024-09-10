@@ -4,7 +4,7 @@ const fs = require('fs')
 const fsp = require('fs').promises
 const path = require('path')
 const dateFns = require('date-fns')
-import toOOXML from '../../renderer/src/utils/toOOXML'
+
 
 // CHANGEABLE FOLDER PATH
 // USED IN RETURNING THE RESULT FILEPATH
@@ -18,39 +18,41 @@ const PETITION_TEMPLATE_PATHS = {
     LIVEBIRTH: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/Live Birth/petition.docx'
-    ),
+    ).replace('app.asar', 'app.asar.unpacked'),
     DEATH: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/Death/petition.docx'
-    ),
+    ).replace('app.asar', 'app.asar.unpacked'),
     MARRIAGE: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/Marriage/petition.docx'
-    ),
+    ).replace('app.asar', 'app.asar.unpacked'),
     CFN: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/Change First Name/petition.docx'
-    ),
+    ).replace('app.asar', 'app.asar.unpacked'),
     CCE10172: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/Live Birth/petition_RA_10172.docx'
-    )
-}
+    ).replace('app.asar', 'app.asar.unpacked')
+};
 
 const ADDITIONAL_FILES_TEMPLATE = {
     ENDORSEMENT_LETTER: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/endorsement.docx'
-    ),
+    ).replace('app.asar', 'app.asar.unpacked'),
     RECORD_SHEET: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/record sheet.docx'
-    ),
+    ).replace('app.asar', 'app.asar.unpacked'),
     POSTING: path.resolve(
         __dirname,
         '../../resources/documents/RA 9048 RA 10172/notice and certificate.docx'
-    )
-}
+    ).replace('app.asar', 'app.asar.unpacked')
+};
+
+
 // FUNCTION THAT CHECKS THE FILES
 // COULD BE BETTER, IDK
 function checkFilesExist(paths) {
@@ -104,7 +106,7 @@ async function generate(formData) {
 
         return { status: true, filepath: main_folder_path }
     } catch (error) {
-      
+
         return { status: false, error: error.message }
     }
 }
@@ -276,8 +278,8 @@ async function petition(data) {
     // Task: Auto Bold text inside quotation marks
     // Or Nah
     const solo_action = data.petition_actions[0].action_text
-        .replace(`"`, '“')
-        .replace(`"`, '”')
+        .replace(`"`, `“`)
+        .replace(`"`, `”`)
 
     doc.render({
         petition_number: data.petition_number,

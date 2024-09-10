@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
@@ -12,6 +12,9 @@ import { generate_ausf } from '../documents/ausf/create_ausf'
 import { generate_by_month_year } from '../documents/clerical/generate_report'
 
 
+import { autoUpdater } from "electron-updater"
+
+
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
 const { dialog } = require('electron')
@@ -22,7 +25,11 @@ const fse = require('fs-extra')
 const fs = require('fs')
 
 
-const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe');
+/**
+ * Main Printer Opener
+ */
+const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
+
 
 
 let interfaces = os.networkInterfaces()
@@ -52,8 +59,8 @@ function generateRandomString(length) {
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
 
     const randomFileName = `temp_${generateRandomString(20)}.pdf`;
-    const pdfPath = join(__dirname, '../../resources/temp/', randomFileName);
-    const fileDirectory = join(__dirname, '../../resources/temp/')
+    const pdfPath = join(__dirname, '../../resources/temp/', randomFileName).replace('app.asar', 'app.asar.unpacked');
+    const fileDirectory = join(__dirname, '../../resources/temp/').replace('app.asar', 'app.asar.unpacked')
 
     fs.writeFile(pdfPath, Buffer.from(base64Data, 'base64'), (err) => {
         if (err) {
@@ -220,7 +227,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         const data = JSON.parse(formData)
 
         // Define paths
-        const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe');
+        const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
 
         const originalDirectory = data.orignal_path;
         const petitionType = data.petition_type;
@@ -306,34 +313,6 @@ ipcMain.handle('remove-item', async (event, path) => {
 })
 
 
-// ipcMain.handle('open-clerical-files', (event, path) => {
-//     try {
-//         // Define the main directory once
-//         const mainDirectory = path;
-
-//         // List of file names and corresponding document titles
-//         const files = [
-//             { name: 'Petition', file: 'Petition.pdf' },
-//             { name: 'Posting', file: 'Posting.pdf' },
-//             { name: 'Endorsement Letter', file: 'Endorsement Letter.pdf' },
-//             { name: 'Record Sheet', file: 'Record Sheet.pdf' }
-//         ];
-
-//         // Read all files synchronously and return the data
-//         const data = files.map(({ name, file }) => {
-//             const filePath = join(mainDirectory, file);
-//             const fileData = fs.readFileSync(filePath, 'base64');
-//             return { name, link: fileData };
-//         });
-
-//         return data;
-
-//     } catch (error) {
-//         console.error('Error reading clerical files:', error);
-//         return { error: 'Failed to open clerical files' };
-//     }
-// });
-
 ipcMain.handle('open-clerical-files', (event, path) => {
     try {
         console.log(path)
@@ -355,11 +334,9 @@ ipcMain.handle('open-clerical-files', (event, path) => {
             return { name, link: fileData };
         });
 
-        console.log(data)
         return data;
 
     } catch (error) {
-        console.error('Error reading clerical files:', error);
         return { error: 'Failed to open clerical files' };
     }
 });
@@ -372,6 +349,8 @@ ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
         console.log(error)
     }
 })
+
+
 
 
 
@@ -421,17 +400,49 @@ app.whenReady().then(() => {
         optimizer.watchWindowShortcuts(window)
     })
     mainWindow()
+
+    // Updates
+    autoUpdater.checkForUpdatesAndNotify();
+
+    // Disable Ctrl + R on Windows/Linux and Cmd + R on macOS
+    globalShortcut.register('CommandOrControl+R', () => {
+        console.log('Refresh shortcut disabled');
+        // Do nothing to cancel the refresh action
+    });
+
+    globalShortcut.register('F5', () => {
+        console.log('F5 Refresh disabled');
+        // Do nothing to cancel F5 refresh
+    });
+
+
+    // Updates
+    autoUpdater.on('update-available', (info) => {
+        mainWindow.webContents.send('update-available', info);
+    });
+
+    autoUpdater.on('update-downloaded', (info) => {
+        mainWindow.webContents.send('update-downloaded', info);
+        autoUpdater.quitAndInstall();
+    });
+
+    autoUpdater.on('error', (err) => {
+        log.error('Error while checking for updates:', err);
+    });
+
+
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) mainWindow()
     })
 })
 
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        app.quit()
+        globalShortcut.unregisterAll();
+        app.quit();
     }
-})
-
+});
 
 
 /**
@@ -500,6 +511,9 @@ async function startServer() {
         return false
     }
 }
+
+
+
 
 ipcMain.handle('is-server-running', async (event) => {
     try {
@@ -575,6 +589,21 @@ ipcMain.handle('select-file', async (event) => {
         return { canceled, filePaths }
     } finally {
         dialogOpen = false
+    }
+})
+
+
+ipcMain.handle('is_file_busy', async (event, path) => {
+    try {
+        // Try to open the file in read-write mode.
+        const fileDescriptor = fs.openSync(path, 'r+');
+        fs.closeSync(fileDescriptor);
+        return false; // File is not locked
+    } catch (error) {
+        if (error.code === 'EBUSY' || error.code === 'EACCES' || error.code === 'EPERM') {
+            return true; // File is locked, likely open in another program
+        }
+        throw error; // Some other error occurred
     }
 })
 

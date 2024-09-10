@@ -93,8 +93,8 @@
 
 
             <div class="mt-auto ml-auto bottom-0 right-10 gap-2 flex">
-                <button
-                    class="border w-[10rem] rounded-sm bg-gray-800 hover:bg-gray-900 text-sm py-2  text-white font-medium shadow-sm transition-all active:scale-95 ">Impugn</button>
+                <!-- <button
+                    class="border w-[10rem] rounded-sm bg-gray-800 hover:bg-gray-900 text-sm py-2  text-white font-medium shadow-sm transition-all active:scale-95 ">Impugn</button> -->
                 <button @click="back"
                     class="border w-[10rem] rounded-sm bg-white text-sm py-2 hover:bg-red-400 text-gray-800 font-medium shadow-sm transition-all active:scale-95 hover:text-white">Cancel</button>
 
@@ -110,8 +110,8 @@
         <div class="fixed bg-white z-[9999] top-0 bottom-0 left-0 right-0 flex flex-col p-4 -full w-full border gap-2 px-10"
             v-if="AnnotationEditor">
 
-            <div class="h-full flex flex-col overflow-y-scroll">
-                <button class="self-end border " @click="AnnotationEditor = !AnnotationEditor">[close]</button>
+            <div class="h-full flex flex-col overflow-y-scroll gap-1">
+                <button class="self-end border bg-red-400 text-white rounded px-2.5 p-1" @click="AnnotationEditor = !AnnotationEditor">Close</button>
                 <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 w-full h-full gap-5 ">
                     <div class="flex h-[calc(100vh-100px)]  w-full border relative">
                         <div
@@ -126,14 +126,14 @@
                         <div class="h-auto flex flex-col gap-2">
                             <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
                             <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
-                                contentType="html" /> 
+                                contentType="html" />
 
                         </div>
 
                         <p class="text-gray-800 text-sm font-medium mt-2">Adjustments</p>
                         <div class="  items-start flex flex-col flex-wrap  p-2 gap-3">
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.form_scale"
+                                <input type="number" step="0.1" v-model="formData.form_scale"
                                     class="w-[4rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
@@ -142,14 +142,14 @@
                                     Scale</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.form_x"
+                                <input type="number" step="0.1" v-model="formData.form_x"
                                     class="w-[4rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-left-right" class="text-xs w-6" /> Form 102
                                     Horizontal Position</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.form_y"
+                                <input type="number" step="0.1" v-model="formData.form_y"
                                     class="w-[4rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-down" class="text-xs w-6" /> Form 102 Vertical Position</p>
@@ -159,7 +159,7 @@
 
                         <div class="  items-start  p-2 gap-2 flex flex-col ">
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.annotation_scale"
+                                <input type="number" step="0.1" v-model="formData.annotation_scale"
                                     class="w-[4rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
@@ -167,14 +167,14 @@
                                     Scale</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.annotation_x"
+                                <input type="number" step="0.1" v-model="formData.annotation_x"
                                     class="w-[4rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation
                                     Horizontal Position</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.annotation_y"
+                                <input type="number" step="0.1" v-model="formData.annotation_y"
                                     class="w-[4rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Vertical Position
@@ -182,7 +182,7 @@
                             </div>
 
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" v-model="formData.annotation_font"
+                                <input type="number" step="0.1" v-model="formData.annotation_font"
                                     class="w-[4rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Height</p>
@@ -204,7 +204,7 @@
                         </div>
 
                         <div class="mt-auto flex justify-items-end">
-                            <button
+                            <button @click="create_finality()"
                                 class="ml-auto tracking-wider border px-2 py-1.5 bg-blue-500 text-white rounded font-medium"
                                 type="button">Done</button>
                         </div>
@@ -257,21 +257,6 @@ const changetoSelectfromScanned = () => {
 const Documents = useScannedDocuments();
 
 const data = computed(() => {
-    // const TypeFilter = item =>
-    //     filter_type.value === 'all' ? item.type : item.type === filter_type.value
-
-    // const YearFilter = item =>
-    //     filter_year.value === 'all' ? item.year : item.year === filter_year.value
-
-    // if (!filter_search.value) {
-    //     return Documents.scanned.filter(TypeFilter).filter(YearFilter).sort((a, b) => a - b);
-    // }
-
-    // const lowerSearch = filter_search.value.toLowerCase();
-    // return Documents.scanned.filter(TypeFilter)
-    //     .filter(YearFilter)
-    //     .filter(item => item.name.toLowerCase().includes(lowerSearch))
-    //     .sort((a, b) => a - b);
     return Documents.scanned
 });
 
@@ -310,6 +295,7 @@ const back = () => {
 
 const initialFormData = {
     filepath: '',
+    //Make This Dynamic
     annotation: '<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong> dated 03 November 2022 and affirmed by <strong>CRG under OCRG No. 22-2373313,</strong> the child&rsquo;s first name from <strong>"LODOVICO"</strong> to <strong>"LUDOVIGO"</strong> and child&rsquo;s date of birth from <strong>"MAY 17, 1967&rdquo; </strong> to <strong>"APRIL 26, 1967&rdquo; </strong> are hereby corrected.</p>',
     form_scale: 0.9,
     form_x: 1.7,
@@ -330,6 +316,18 @@ watch(formData, (newValue, oldValue) => {
 })
 
 const submit = async () => {
+
+    // Purpose
+    /**
+     *  0 Edit
+     *  1 Save
+     */
+
+    // Create Annotation
+    // Generate Endorsement and Finality Letter
+    // Save All in Saved Filepath
+    // Add to Database
+
     const data = {
         filepath: formData.filepath,
         annotation: formData.annotation,

@@ -12,10 +12,9 @@ export async function finality(formData) {
     return { success: true, filepath: folderPath }
 }
 
-const FINALITY_PATH = path.resolve(
-    __dirname,
-    '../../resources/documents/RA 9048 RA 10172/Finality/finality.docx'
-)
+const FINALITY_PATH = path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Finality/finality.docx').replace('app.asar', 'app.asar.unpacked')
+const ENDORSEMENT_LETTER_PATH = path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Finality/endorsement.docx').replace('app.asar', 'app.asar.unpacked')
+
 
 let folderPath
 
@@ -25,7 +24,7 @@ function finalityPath(status) {
 }
 
 async function document_folder(data) {
-   
+
     var folderCreation = data.filepath + '/Finality'
     if (!fs.existsSync(folderCreation)) {
         fs.mkdirSync(folderCreation, { recursive: true })
@@ -74,13 +73,13 @@ async function create_finality(data) {
 
     doc.render({
         petition_number: data.petition_number,
-        type: petition_type,
-        document_type: document_type,
-        name_owner: name_owner,
+        petition_type: petition_type,
+        event_type: document_type,
+        document_owner: name_owner,
         date_granted: date_granted,
-        mcr: data.mcr,
+        municipal_civil_registrar: data.mcr,
         day: day,
-        monthyear: monthyear,
+        month_year: monthyear,
     })
 
     const buf = doc.getZip().generate({

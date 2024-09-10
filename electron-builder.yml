@@ -1,5 +1,5 @@
 appId: com.vbcras.app
-productName: (VBCRAS)
+productName: VBCRAS
 directories:
   buildResources: build
 files:
@@ -38,5 +38,9 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  protocol: https
+  owner: Ralph2001
+  repo: LCRO
+  private: true
+  token: $GH_TOKEN   

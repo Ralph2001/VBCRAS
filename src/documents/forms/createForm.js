@@ -28,11 +28,11 @@ export async function generate_form(formData) {
     const rightLogoPath = path.resolve(
         __dirname,
         '../../resources/images/logo_bayambang.png'
-    )
+    ).replace('app.asar', 'app.asar.unpacked')
     const leftLogoPath = path.resolve(
         __dirname,
         '../../resources/images/logo_lcro.png'
-    )
+    ).replace('app.asar', 'app.asar.unpacked')
 
     //Logo
     const right_file = fs.readFileSync(rightLogoPath)

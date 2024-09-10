@@ -50,11 +50,15 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     },
     GenerateReportByMonthYear: async (formData) => {
         const generate = await ipcRenderer.invoke('generateReportByMonthYear', formData)
-        console.log(generate)
+
     },
     RemoveItem: async (path) => {
         const remove_item = await ipcRenderer.invoke('remove-item', path)
-        console.log(remove_item)
+
+    },
+    IsFileBusy: async (path) => {
+        const is_busy = await ipcRenderer.invoke('is_file_busy', path)
+        return is_busy
     }
 })
 

@@ -1,4 +1,5 @@
 <template>
+ 
     <div
         class="fixed top-0 bottom-0 right-0 left-0 z-50 backdrop-blur-sm backdrop-brightness-75 flex justify-center items-center">
         <div class=" h-auto w-[50rem] rounded-md border shadow  bg-white p-7 flex flex-col gap-2">
@@ -39,9 +40,10 @@
 </template>
 
 <script setup>
-
-
+import AlertPath from './Alert/AlertPath.vue';
 const emit = defineEmits(['proceed', 'cancel'])
+
+
 
 const proceed = () => {
     emit('proceed')

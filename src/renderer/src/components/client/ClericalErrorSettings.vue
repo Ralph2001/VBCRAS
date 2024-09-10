@@ -4,9 +4,57 @@
             <button @click="emit('close-setting')"
                 class="absolute right-10 border px-2 rounded outline-none bg-red-500 font-medium text-white">Exit</button>
             <p class="font-medium p-4">Settings</p>
+
+            <!-- <Tab title="Default Values">
+                <div class="flex flex-col h-full">
+                    <p class="p-2 font-medium text-2xl">You can still change this value in the form maker.</p>
+                    <div class="grid grid-cols-2 gap-10 px-20 mt-10">
+                        <div class="flex flex-col gap-2">
+                            <p class="font-medium italic">Petitioner Address</p>
+
+                            <Input label="Nationality" v-model="formData.nationality" />
+                            <Input label="Country" v-model="formData.country" />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <p class="font-medium italic">Filling This petition at</p>
+                            <InputAutoComplete label="Province" v-model="formData.filing_province"
+                                :suggestion_data="province" />
+                            <InputAutoComplete label="City/Municipality" v-model="formData.filing_municipality"
+                                :suggestion_data="municipality" />
+
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <p class="font-medium italic">Administering Officer</p>
+                            <Input label="Name" v-model="formData.administering_officer_name" />
+                            <Input label="Position" v-model="formData.administering_officer_position" />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <p class="font-medium italic">Subscribe and Sworn</p>
+                            <InputAutoComplete label="City/Municipality"
+                                v-model="formData.subscribe_sworn_city_municipality"
+                                :suggestion_data="municipality_province" />
+                            <InputAutoComplete label="Issued At" v-model="formData.issued_at"
+                                :suggestion_data="municipality_province" />
+
+                        </div>
+                        <div class="flex flex-col gap-4">
+                            <Input label="Municipal Civil Registrar *" class="mt-5"
+                                v-model="formData.municipal_civil_registrar" />
+                            <div class="flex flex-row items-center gap-3">
+                                <CheckBox />
+                                <label for="" class="font-medium text-xs">Always Select "Granted"</label>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </Tab> -->
             <TabsWrapper>
 
-                <Tab title="Dates">
+                <Tab title="Petition Date">
                     <div class="flex flex-col h-full p-4">
                         <p class="p-2 font-medium text-2xl">Configure Date Counts</p>
 
@@ -19,7 +67,7 @@
                             </div>
                         </div>
                         <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 h-full w-full mt-5 gap-1">
-                            <div class="flex flex-col border bg-white shadow-sm p-4">
+                            <!-- <div class="flex flex-col border bg-white shadow-sm p-4">
                                 <p class="p-2 font-medium text-2xl ">Configure</p>
 
 
@@ -35,15 +83,15 @@
 
 
 
-                            </div>
-                            <div class="flex flex-col border p-4 bg-white shadow-sm">
-                                <p class="p-2 font-medium text-2xl">Holidays</p>
+                            </div> -->
+                            <div class="flex flex-col border p-6 bg-white shadow-sm">
+                                <p class="font-medium text-2xl">Holidays</p>
                                 <p class="text-sm font-medium">Add Holidays</p>
 
                                 <div class="flex flex-row items-center justify-center gap-2 ">
-                                    <Input label="Date" />
-                                    <Input label="description" />
-                                    <Button label="Add" class="w-max mt-7 border border-gray-300" />
+                                    <!-- <Input label="Date" />
+                                    <Input label="description" /> -->
+                                    <!-- <Button label="Add" class="w-max mt-7 border border-gray-300" /> -->
                                 </div>
 
 
@@ -90,56 +138,8 @@
                         </div>
                     </div>
                 </Tab>
-                <Tab title="Default Values">
-                    <div class="flex flex-col h-full">
-                        <p class="p-2 font-medium text-2xl">You can still change this value in the form maker.</p>
-                        <div class="grid grid-cols-2 gap-10 px-20 mt-10">
-                            <div class="flex flex-col gap-2">
-                                <p class="font-medium italic">Petitioner Address</p>
-
-                                <Input label="Nationality" v-model="formData.nationality" />
-                                <Input label="Country" v-model="formData.country" />
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <p class="font-medium italic">Filling This petition at</p>
-                                <InputAutoComplete label="Province" v-model="formData.filing_province"
-                                    :suggestion_data="province" />
-                                <InputAutoComplete label="City/Municipality" v-model="formData.filing_municipality"
-                                    :suggestion_data="municipality" />
-
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <p class="font-medium italic">Administering Officer</p>
-                                <Input label="Name" v-model="formData.administering_officer_name" />
-                                <Input label="Position" v-model="formData.administering_officer_position" />
-                            </div>
-                            <div class="flex flex-col gap-2">
-                                <p class="font-medium italic">Subscribe and Sworn</p>
-                                <InputAutoComplete label="City/Municipality"
-                                    v-model="formData.subscribe_sworn_city_municipality"
-                                    :suggestion_data="municipality_province" />
-                                <InputAutoComplete label="Issued At" v-model="formData.issued_at"
-                                    :suggestion_data="municipality_province" />
-
-                            </div>
-                            <div class="flex flex-col gap-4">
-                                <Input label="Municipal Civil Registrar *" class="mt-5"
-                                    v-model="formData.municipal_civil_registrar" />
-                                <div class="flex flex-row items-center gap-3">
-                                    <CheckBox />
-                                    <label for="" class="font-medium text-xs">Always Select "Granted"</label>
-                                </div>
-                                <!-- <div class="flex flex-row items-center gap-3">
-                                    <CheckBox />
-                                    <label for="" class="font-medium text-xs">Generate all at the same time</label>
-                                </div> -->
-                            </div>
 
 
-                        </div>
-
-                    </div>
-                </Tab>
 
                 <Tab title="Reports">
                     <div class="flex flex-col h-full gap-3 overflow-y-scroll ">
@@ -220,7 +220,7 @@
 
                     </div>
                 </Tab>
-                <Tab title="File Path And Templates">
+                <Tab title="File Paths and Templates">
                     <div class="flex flex-col p-4">
                         <div class="flex flex-col gap-2">
                             <p class="p-2 font-medium text-2xl">Default File Save Path</p>
