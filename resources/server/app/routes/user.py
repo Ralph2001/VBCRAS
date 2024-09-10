@@ -1,7 +1,19 @@
-
-
-from ..extensions import db, jsonify, request, create_access_token, Blueprint
+from ..extensions import (
+    db,
+    jsonify,
+    request,
+    create_access_token,
+    Blueprint,
+    jwt_required,
+    get_jwt_identity,
+)
 from ..models.user import Users
+
+from ..schemas.user_schema import UserSchema
+
+# Schema Initialize
+user_schema = UserSchema()
+users_list_schema = UserSchema(many=True)
 
 
 user = Blueprint("user", __name__)
@@ -12,7 +24,7 @@ user = Blueprint("user", __name__)
 def signup():
     data = request.get_json()
 
-    required_fields = ["username", "password", "role"]
+    required_fields = ["username", "password"]
     for field in required_fields:
         if not data.get(field):
             return jsonify({"error": f"'{field}' is required"}), 400
@@ -23,8 +35,6 @@ def signup():
 
     new_user = Users(
         username=data["username"],
-        role=data["role"],
-        position=data["position_id"],
     )
     new_user.set_password(data["password"])
 
@@ -50,7 +60,15 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    access_token = create_access_token(
-        identity={"username": user.username, "role": user.role}
-    )
+    access_token = create_access_token(identity=user.id)
     return jsonify(access_token=access_token), 200
+
+
+@user.route("/user", methods=["GET"])
+@jwt_required()
+def get_user():
+    current_user = get_jwt_identity()
+    print(current_user)
+    user_record = Users.query.get_or_404(current_user)
+    result = user_schema.dump(user_record)
+    return jsonify(result), 200

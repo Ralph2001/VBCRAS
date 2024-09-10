@@ -57,5 +57,5 @@ export async function generate_records() {
     ]
 
     await workbook.xlsx.writeFile('records_by_month.xlsx')
-    console.log('Excel file with monthly sheets created!')
+
 }

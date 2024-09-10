@@ -1,15 +1,19 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
-import { generate } from '../documents/clerical_error'
-import { finality } from '../documents/finality'
-// import { generate_form } from '../documents/forms/createForm'
-import { generate_records } from '../documents/records/generate_records'
-// import { createPdfForm } from '../documents/forms/createPdfForm'
+
+
+import { generate } from '../documents/clerical/clerical_error'
+import { finality } from '../documents/clerical/finality'
 import { generate_form } from '../documents/forms/createForm'
-import { CreateAnnotated } from '../documents/clerical/generate_annotation'
+import { CreateAnnotated } from '../documents/clerical/annotation'
 import { generate_ausf } from '../documents/ausf/create_ausf'
+import { generate_by_month_year } from '../documents/clerical/generate_report'
+
+
+import { autoUpdater } from "electron-updater"
+
 
 const { execFile } = require('child_process')
 const { spawn } = require('child_process')
@@ -20,20 +24,471 @@ const username = os.userInfo().username
 const fse = require('fs-extra')
 const fs = require('fs')
 
-var interfaces = os.networkInterfaces()
 
-var addresses = []
-for (var k in interfaces) {
-    for (var k2 in interfaces[k]) {
-        var address = interfaces[k][k2]
+/**
+ * Main Printer Opener
+ */
+const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
+
+
+
+let interfaces = os.networkInterfaces()
+let addresses = []
+for (let k in interfaces) {
+    for (let k2 in interfaces[k]) {
+        let address = interfaces[k][k2]
         if (address.family === 'IPv4' && !address.internal) {
             addresses.push(address.address)
         }
     }
 }
 
-let dialogOpen = false
 
+function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+
+// Create Print Window without gui
+ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
+
+    const randomFileName = `temp_${generateRandomString(20)}.pdf`;
+    const pdfPath = join(__dirname, '../../resources/temp/', randomFileName).replace('app.asar', 'app.asar.unpacked');
+    const fileDirectory = join(__dirname, '../../resources/temp/').replace('app.asar', 'app.asar.unpacked')
+
+    fs.writeFile(pdfPath, Buffer.from(base64Data, 'base64'), (err) => {
+        if (err) {
+            console.error('Failed to write PDF to file', err);
+            return;
+        }
+
+        const printProcess = spawn(sumatraPath, ['-print-dialog', '-exit-when-done', pdfPath]);
+
+        printProcess.on('error', (error) => {
+            console.error('Failed to start SumatraPDF process:', error);
+        });
+
+        printProcess.on('close', (code) => {
+            if (code === 0) {
+                console.log('Printed successfully');
+            } else {
+                console.error(`SumatraPDF process exited with code ${code}`);
+            }
+
+            fs.unlink(pdfPath, (err) => {
+                if (err) {
+                    console.error('Failed to delete temp PDF file', err);
+                } else {
+                    console.log('Temp PDF file deleted successfully');
+                }
+            });
+
+            fse.emptyDirSync(fileDirectory);
+        });
+    });
+});
+
+
+
+
+
+
+
+
+// Form IPCMAIN
+
+ipcMain.handle('createPdfForm', async (event, formData) => {
+    try {
+        const generate_record = await generate_form(formData)
+        if ((generate_record.success = true)) {
+            return {
+                status: generate_record.status,
+                filepath: true,
+                dataurl: generate_record.pdfbase64,
+            }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+ipcMain.handle('open-form', async (event, source) => {
+    try {
+        win = new BrowserWindow({
+            webPreferences: {
+                plugins: true,
+                devTools: true,
+            },
+
+            autoHideMenuBar: true,
+            show: true,
+        })
+
+        const load = await win.loadURL(source)
+        return true
+    } catch (error) {
+        win.close()
+        return false
+    }
+})
+
+
+/////////////
+/////////////
+// AUSF
+/////////////
+/////////////
+
+ipcMain.handle('createAUSF', async (event, formData) => {
+    try {
+        const createAUSF = await generate_ausf(formData)
+        if ((createAUSF.success = true)) {
+            return {
+                status: createAUSF.status,
+                filepath: true,
+                dataurl: createAUSF.pdfbase64,
+            }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+/////////////
+/////////////
+// Clerical
+/////////////
+/////////////
+
+ipcMain.handle('CreateAnnotated', async (event, formData) => {
+    try {
+        const user = 'C:\\Users\\' + username
+        const generate_document = await CreateAnnotated(user, formData)
+        return {
+            status: generate_document.status,
+            pdfbase64: generate_document.pdfbase64,
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+ipcMain.handle('createPetitionDocument', async (event, formData) => {
+    try {
+        const data = JSON.parse(formData)
+        const generate_document = await generate(formData);
+        if (generate_document.status) {
+            if (data.is_to_validate) {
+                const saved_file_path = await shell.openExternal(join(generate_document.filepath, 'petition.docx'))
+            }
+            return { status: generate_document.status, filepath: generate_document.filepath };
+        }
+        return { status: generate_document.status, filepath: generate_document.filepath };
+    } catch (error) {
+        console.log(error);
+        return { status: false, filepath: null };
+    }
+    // Not Needed
+});
+
+// Execute external command helper
+function executeCommand(commandPath, args) {
+    return new Promise((resolve, reject) => {
+        const process = spawn(commandPath, args);
+        let output = '';
+        let error = '';
+
+        process.stdout.on('data', (data) => {
+            output += data.toString();
+        });
+
+        process.stderr.on('data', (data) => {
+            error += data.toString();
+        });
+
+        process.on('close', (code) => {
+            if (code === 0) {
+                resolve(output);
+            } else {
+                reject(new Error(`Process failed with code ${code}: ${error}`));
+            }
+        });
+    });
+};
+
+ipcMain.handle('proceedCreatePetition', async (event, formData) => {
+    try {
+        const data = JSON.parse(formData)
+
+        // Define paths
+        const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
+
+        const originalDirectory = data.orignal_path;
+        const petitionType = data.petition_type;
+        const republicAct = data.republic_act_number;
+        const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
+
+        const outputDirectory = join(data.path_where_to_save, `Correction of Clerical Error and Change of First Name`, `${petitionType} ${republicAct}`, documentOwner);
+
+        if (!fs.existsSync(outputDirectory)) {
+            fs.mkdirSync(outputDirectory, { recursive: true })
+        }
+
+        // Conversion and Deletion arguments
+        const convertArgs = [
+            '-f', originalDirectory,
+            '-O', outputDirectory,
+            '-T', 'wdFormatPDF',
+            '-OX', '.pdf'
+        ];
+
+        const deleteArgs = [
+            '-f', originalDirectory,
+            '-O', outputDirectory,
+            '-T', 'wdFormatPDF',
+            '-OX', '.pdf',
+            '-R', 'true'
+        ];
+
+        // Convert and then delete files
+        const conversionResult = await executeCommand(doctoPath, convertArgs);
+
+        if (conversionResult) {
+            await executeCommand(doctoPath, deleteArgs);
+            return { status: true, filepath: outputDirectory };
+        } else {
+            return { status: false, filepath: null };
+        }
+
+    } catch (error) {
+        console.error('Error during file conversion:', error);
+        return { status: false, filepath: null };
+    }
+});
+
+
+
+
+ipcMain.handle('createFinality', async (event, formData) => {
+    try {
+        const create_finality = await finality(formData)
+        if ((create_finality.success = true)) {
+            return { status: true, filepath: create_finality.filepath }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+ipcMain.handle('open-clerical', async (event, source) => {
+    try {
+        const filefolder = await shell.openExternal(source)
+        return true
+    } catch (error) {
+        win.close()
+        return false
+    }
+})
+
+ipcMain.handle('remove-item', async (event, path) => {
+    try {
+        fs.rm(path, { recursive: true, force: true }, (err) => {
+            if (err) {
+                console.error(`Error removing directory: ${err.message}`);
+                return;
+            }
+            console.log(`Directory ${path} removed successfully.`);
+        });
+        return
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+})
+
+
+ipcMain.handle('open-clerical-files', (event, path) => {
+    try {
+        console.log(path)
+        // Define the main directory
+        const mainDirectory = path;
+
+        // Get all PDF files in the directory
+        const files = fs.readdirSync(mainDirectory)
+            .filter(file => file.endsWith('.pdf')); // Filter for PDF files
+
+        // Read each PDF file and encode it in base64
+        const data = files.map(file => {
+            const filePath = join(mainDirectory, file);
+            const fileData = fs.readFileSync(filePath, 'base64');
+
+            // Extract the name without the file extension
+            const name = file.substring(0, file.lastIndexOf('.'));
+
+            return { name, link: fileData };
+        });
+
+        return data;
+
+    } catch (error) {
+        return { error: 'Failed to open clerical files' };
+    }
+});
+
+ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
+    try {
+        const generate = await generate_by_month_year(formData)
+        shell.showItemInFolder(generate.dir)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+
+
+
+
+/**
+ * Main Window
+ * 
+ */
+function mainWindow() {
+    const mainWindow = new BrowserWindow({
+        width: 1060,
+        height: 670,
+        show: false,
+        frame: true,
+
+
+        autoHideMenuBar: true,
+        ...(process.platform === 'linux' ? { icon } : {}),
+        webPreferences: {
+            preload: join(__dirname, '../preload/index.js'),
+            sandbox: false,
+        },
+    })
+
+    // mainWindow.setMinimumSize(1050, 500)
+
+    mainWindow.on('ready-to-show', () => {
+        mainWindow.show()
+    })
+
+    mainWindow.webContents.setWindowOpenHandler((details) => {
+        shell.openExternal(details.url)
+        return { action: 'deny' }
+    })
+
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    } else {
+        mainWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+            hash: 'home',
+        })
+    }
+}
+
+app.whenReady().then(() => {
+    electronApp.setAppUserModelId('com.localcivilregistry.office')
+    app.on('browser-window-created', (_, window) => {
+        optimizer.watchWindowShortcuts(window)
+    })
+    mainWindow()
+
+    // Updates
+    autoUpdater.checkForUpdatesAndNotify();
+
+    // Disable Ctrl + R on Windows/Linux and Cmd + R on macOS
+    globalShortcut.register('CommandOrControl+R', () => {
+        console.log('Refresh shortcut disabled');
+        // Do nothing to cancel the refresh action
+    });
+
+    globalShortcut.register('F5', () => {
+        console.log('F5 Refresh disabled');
+        // Do nothing to cancel F5 refresh
+    });
+
+    globalShortcut.register('F12', () => {
+        console.log('Developer Tools shortcut disabled');
+        // Do nothing to cancel F5 refresh
+    });
+
+    globalShortcut.register('CommandOrControl+Shift+I', () => {
+        console.log('Developer Tools shortcut disabled');
+    });
+
+
+    // Updates
+    autoUpdater.on('update-available', (info) => {
+        mainWindow.webContents.send('update-available', info);
+    });
+
+    autoUpdater.on('update-downloaded', (info) => {
+        mainWindow.webContents.send('update-downloaded', info);
+        autoUpdater.quitAndInstall();
+    });
+
+    autoUpdater.on('error', (err) => {
+        log.error('Error while checking for updates:', err);
+    });
+
+
+    app.on('activate', function () {
+        if (BrowserWindow.getAllWindows().length === 0) mainWindow()
+    })
+})
+
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        globalShortcut.unregisterAll();
+        app.quit();
+    }
+});
+
+
+/**
+ * List of IPC
+ **/
+
+
+/**
+ * Scanned Document IPC's
+ */
+
+
+ipcMain.handle('open-scanned-sidebar', async (event, source) => {
+    /**
+      *  Open Scanned Documents in Side Bar
+      *  Get Relative Path, Add the destop name 
+      *  Convert to base64  
+      */
+    try {
+        const fiepath = 'C:\\Users\\' + username + '\\' + source
+        const data = fs.readFileSync(fiepath)
+        if (data) {
+            return { status: true, fileUrl: data.toString('base64') }
+        }
+        return { status: false, fileUrl: null }
+    } catch (error) {
+        return { status: false, fileUrl: null }
+    }
+})
+
+
+/**
+ * LocalCivil IPC
+ */
+
+
+let dialogOpen = false
 let pythonProcess = null
 async function startServer() {
     try {
@@ -66,132 +521,8 @@ async function startServer() {
     }
 }
 
-ipcMain.handle('GenerateRecords', async (event, formData) => {
-    try {
-        const generate_record = await generate_records(formData)
-        // if ((generate_records.success = true)) {
-        //     return true
-        // }
-        console.log(generate_record)
-    } catch (error) {
-        console.log(error)
-    }
-})
 
-// Form IPCMAIN
 
-ipcMain.handle('createPdfForm', async (event, formData) => {
-    try {
-        const generate_record = await generate_form(formData)
-        if ((generate_record.success = true)) {
-            return {
-                status: generate_record.status,
-                filepath: true,
-                dataurl: generate_record.pdfbase64,
-            }
-        }
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-// Form 1, 2, 3 IpcMain
-ipcMain.handle('open-form', async (event, source) => {
-    try {
-        win = new BrowserWindow({
-            webPreferences: {
-                plugins: true,
-                devTools: true,
-            },
-
-            autoHideMenuBar: true,
-            show: true,
-        })
-
-        const load = await win.loadURL(source)
-        return true
-    } catch (error) {
-        win.close()
-        return false
-    }
-})
-
-// ipcMain.handle('createForm', async (event, formData) => {
-//     try {
-//         const createForm = await generate_form(formData)
-//         if ((createForm.success = true)) {
-//             return { status: true, filepath: createForm.filepath }
-//         }
-//     } catch (error) {
-//         console.log(error)
-//     }
-// })
-/////////////
-/////////////
-// AUSF
-/////////////
-/////////////
-
-ipcMain.handle('createAUSF', async (event, formData) => {
-    try {
-        const createAUSF = await generate_ausf(formData)
-        if ((createAUSF.success = true)) {
-            return {
-                status: createAUSF.status,
-                filepath: true,
-                dataurl: createAUSF.pdfbase64,
-            }
-        }
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-// Clerical IpcMain
-
-ipcMain.handle('CreateAnnotated', async (event, formData) => {
-    try {
-        const user = 'C:\\Users\\' + username
-        const generate_document = await CreateAnnotated(user, formData)
-        return {
-            status: generate_document.status,
-            pdfbase64: generate_document.pdfbase64,
-        }
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-ipcMain.handle('printLiveBirth', async (event, formData) => {
-    try {
-        const generate_document = await generate(formData)
-        if ((generate_document.success = true)) {
-            return { status: true, filepath: generate_document.filepath }
-        }
-    } catch (error) {
-        console.log(error)
-    }
-})
-ipcMain.handle('createFinality', async (event, formData) => {
-    try {
-        const create_finality = await finality(formData)
-        if ((create_finality.success = true)) {
-            return { status: true, filepath: create_finality.filepath }
-        }
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-ipcMain.handle('open-clerical', async (event, source) => {
-    try {
-        const filefolder = await shell.openExternal(source)
-        return true
-    } catch (error) {
-        win.close()
-        return false
-    }
-})
 
 ipcMain.handle('is-server-running', async (event) => {
     try {
@@ -202,6 +533,7 @@ ipcMain.handle('is-server-running', async (event) => {
         }
     } catch (error) {
         console.log(error)
+        return false
     }
 })
 
@@ -245,12 +577,9 @@ ipcMain.handle('select-folder', async (event) => {
         dialogOpen = true
         const { canceled, filePaths } = await dialog.showOpenDialog({
             properties: ['openDirectory'],
-            defaultPath:
-                'C:\\Users\\' +
-                username +
-                '\\SynologyDrive\\Joan\\SCANNED DOCUMENTS',
         })
-        return { canceled, filePaths }
+        const file_path = filePaths[0].replace('C:\\Users\\' + username + '\\', '')
+        return file_path
     } catch (err) {
         console.error('There was an error', err)
     } finally {
@@ -272,29 +601,25 @@ ipcMain.handle('select-file', async (event) => {
     }
 })
 
-ipcMain.handle('move-file', async (event, { source, destination }) => {
+
+ipcMain.handle('is_file_busy', async (event, path) => {
     try {
-        await fse.move(source, destination)
-        event.returnValue = 'File moved successfully!'
-    } catch (err) {
-        console.error(err)
-        event.returnValue = 'Error moving file: ' + err.message
+        // Try to open the file in read-write mode.
+        const fileDescriptor = fs.openSync(path, 'r+');
+        fs.closeSync(fileDescriptor);
+        return false; // File is not locked
+    } catch (error) {
+        if (error.code === 'EBUSY' || error.code === 'EACCES' || error.code === 'EPERM') {
+            return true; // File is locked, likely open in another program
+        }
+        throw error; // Some other error occurred
     }
 })
 
-ipcMain.handle('copy-file', async (event, { source, destination }) => {
-    try {
-        await fse.copy(source, destination)
-        event.returnValue = true
-    } catch (err) {
-        console.error(err)
-        event.returnValue = 'Error moving file: ' + err.message
-    }
-})
 
-let win
 
 ipcMain.handle('open-file', async (event, source) => {
+    let win
     try {
         win = new BrowserWindow({
             webPreferences: {
@@ -326,70 +651,10 @@ ipcMain.handle('open-file-folder', async (event, path) => {
     }
 })
 
+
 ipcMain.handle('get-user', async (event) => {
+    /**
+     *  Return user name directory
+     */
     return username
-})
-
-//Scanned Document IPC
-ipcMain.handle('open-scanned-sidebar', async (event, source) => {
-    try {
-        const fiepath = 'C:\\Users\\' + username + '\\' + source
-        const data = fs.readFileSync(fiepath)
-        if (data) {
-            return { status: true, fileUrl: data.toString('base64') }
-        }
-        return { status: false, fileUrl: null }
-    } catch (error) { }
-})
-
-//Main Window
-function mainWindow() {
-    const mainWindow = new BrowserWindow({
-        width: 1060,
-        height: 670,
-        show: false,
-
-        autoHideMenuBar: true,
-        ...(process.platform === 'linux' ? { icon } : {}),
-        webPreferences: {
-            preload: join(__dirname, '../preload/index.js'),
-            sandbox: false,
-        },
-    })
-
-    // mainWindow.setMinimumSize(1050, 500)
-
-    mainWindow.on('ready-to-show', () => {
-        mainWindow.show()
-    })
-
-    mainWindow.webContents.setWindowOpenHandler((details) => {
-        shell.openExternal(details.url)
-        return { action: 'deny' }
-    })
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-        mainWindow.loadFile(join(__dirname, '../renderer/index.html'), {
-            hash: 'home',
-        })
-    }
-}
-
-app.whenReady().then(() => {
-    electronApp.setAppUserModelId('com.localcivilregistry.office')
-    app.on('browser-window-created', (_, window) => {
-        optimizer.watchWindowShortcuts(window)
-    })
-    mainWindow()
-    app.on('activate', function () {
-        if (BrowserWindow.getAllWindows().length === 0) mainWindow()
-    })
-})
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
 })

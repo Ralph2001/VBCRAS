@@ -26,7 +26,7 @@
 import { ref, computed, defineProps, defineEmits } from "vue";
 import { onClickOutside } from "@vueuse/core";
 
-import philippines from '../../../utils/philippines';
+import philippines from '../../../utils/Philippines';
 const regions = computed(() => {
     return Object.keys(philippines[0]);
 })

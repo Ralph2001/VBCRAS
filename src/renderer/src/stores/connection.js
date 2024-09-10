@@ -11,32 +11,29 @@ export const useHostStore = defineStore('host', {
     actions: {
         async isConnected() {
             if (!this.host) {
-                // console.log('No Host Waah')
+                console.log('No Host Waah, He needs some milk')
                 return false
             }
             try {
                 const hostAdd = localStorage.getItem('host')
                 const response = await axios.get(
-                    `http://${hostAdd}:1216/connect`,
+                    `http://${hostAdd}:1216/test-server`,
                     {
                         headers: {
                             'Content-Type': 'application/json',
                         },
                     }
                 )
-                if (response.status === 201) {
-                    console.log('Connected')
-                    return true
-                } else {
-                    return false
-                }
+
+                if (response.status === 201) { return true }
+                return false
             } catch (error) {
                 return false
             }
         },
         async connectHost(val) {
             try {
-                const response = await axios.get(`http://${val}:1216/connect`, {
+                const response = await axios.get(`http://${val}:1216/test-server`, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -44,13 +41,18 @@ export const useHostStore = defineStore('host', {
                 if (response.status === 201) {
                     this.host = val
                     localStorage.setItem('host', val)
-                    this.router.push('/client/login')
+
+                    /**
+                     *  Go To Login Page if Connected
+                     */
+
+                    this.router.push('/login')
                     return true
-                } else {
-                    console.log('connection error')
-                    localStorage.removeItem('host')
-                    return false
                 }
+                console.log('connection error')
+                localStorage.removeItem('host')
+                return false
+
             } catch (error) {
                 console.log(error)
                 localStorage.removeItem('host')
@@ -62,10 +64,12 @@ export const useHostStore = defineStore('host', {
                 this.host = null
                 localStorage.removeItem('host')
                 localStorage.removeItem('token')
-                this.router.push('/client')
-            } else {
-                console.log('Already Disconnected')
+                localStorage.removeItem('mode')
+                this.router.push('/')
+                return
             }
+            console.log('Already Disconnected')
+
         },
     },
 })

@@ -1,9 +1,9 @@
 <template>
   <div class="w-full flex flex-col">
     <label class="text-sm font-semibold tracking-wide mb-2" :for="label">{{ label }}</label>
-    <input :id="label" type="text" :value="modelValue" @input="handleInput($event.target.value)"
+    <input  :tabindex="skip ? '-1' : ''" :id="label" type="text" :value="modelValue" @input="handleInput($event.target.value)"
       @blur="validateInput($event.target.value)"
-      class="border border-gray-300 rounded placeholder:text-sm bg-gray-50 font-semibold ring-0 outline-none focus:ring-green-500 focus:bg-green-50 focus:border-green-500"
+      class="border border-gray-300 rounded placeholder:text-sm bg-gray-50 font-bold text-sm py-2.5 text-gray-800 ring-0 outline-none focus:ring-green-500 focus:bg-green-50 focus:border-green-500"
       placeholder="mm/dd/yyyy" />
   </div>
 </template>
@@ -62,7 +62,11 @@ const validateInput = (e) => {
 
 const props = defineProps({
   label: String,
-  modelValue: String
+  modelValue: String,
+  skip: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 

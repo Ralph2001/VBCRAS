@@ -1,11 +1,64 @@
 <template>
-    <div class="flex flex-col w-full bg-slate-100  min-h-screen  flex-grow justify-center p-4 items-center relative">
+    <div class="flex flex-col w-full min-h-screen  flex-grow justify-center p-4 items-center relative bg-gray-50">
+        <ConnectModal @close-connect-modal="connect_modal = false" v-if="connect_modal">
+            <template v-slot:body>
+                <div class="w-full mb-5">
+                    <ul class="list-disc list-inside">
+                        <li class="text-sm font-mono text-gray-800">Make sure to use the host address given by the
+                            admin.</li>
+                        <li class="text-sm font-mono text-gray-800">Ensure that you're connected to the same network as
+                            the admin.</li>
+
+                    </ul>
+                </div>
+                <div class="flex flex-col gap-2 w-full">
+                    <label for="host" class="text-sm font-medium mb-2">Host Address <span
+                            class="text-xs italic font-normal">Example: 192.168.1.1</span></label>
+                    <input @input="connection_error = false" @keyup.enter="connect_host" :readonly="is_connecting"
+                        type="text" id="host" v-model="data.host"
+                        :class="[v$.host.$error ? 'border border-red-500 focus:border-red-500' : ' border border-gray-300 focus:border-blue-500 ']"
+                        class="read-only:select-none  w-full rounded font-medium border outline-none focus:ring-0 ring-0">
+
+
+                    <div class="h-5">
+                        <p v-if="v$.host.$error && !connection_error" class="text-red-500 text-sm h-4">Invalid *</p>
+                        <p v-if="connection_error" class="text-red-500 text-sm h-4">Connection Error, Please try again.
+                        </p>
+                    </div>
+                </div>
+            </template>
+
+            <template v-slot:footer>
+                <button :disabled="is_connecting"
+                    class="disabled:bg-blue-400 disabled:active:scale-100 disabled:cursor-progress w-max shadow-sm px-2.5 py-1 rounded ml-auto active:scale-95 hover:bg-blue-600 font-medium bg-blue-500 text-white text-sm"
+                    @click="connect_host">{{ connection_status }}</button>
+            </template>
+        </ConnectModal>
+
+        <div class="absolute top-0 right-0 p-4">
+            <button @click="more_option = !more_option">
+                <font-awesome-icon icon="fa-solid fa-bars" class="text-gray-700" />
+            </button>
+
+        </div>
+        <Transition mode="out-in">
+            <div v-if="more_option" ref="start_server_ref"
+                class="absolute flex  flex-col gap-2 top-10 right-4 items-center justify-center border shadow-md  rounded bg-white h-[10rem] w-[20rem]">
+                <button class="rounded-full border w-20 h-20 text-xs font-mono bg-white
+                    font-bold shadow-sm
+                     border-[#1cbfff] hover:bg-blue-500 hover:text-white active:scale-95 transition-all">Start</button>
+                <p class="font-mono font-medium mt-3">Start your own local server.</p>
+            </div>
+        </Transition>
         <Wave />
-        <!-- <p class="text-md uppercase text-gray-800 font-bold mb-2 font-mono antialiased tracking-wider">Connection Mode </p> -->
-        <!-- <p class="text-md uppercase text-gray-800 font-bold mb-10 font-mono antialiased">{{ mode.getMode() }}</p> -->
-        <div class="flex flex-row p-3 gap-5">
+        <div class="flex flex-col items-center p-3 gap-5">
+            <p class="text-2xl font-medium text-gray-800 mb-20 font-mono">Vital Bridge Civil Registry and Archive System
+            </p>
             <!-- <ButtonMode title="Server" @click="serverMode()" /> -->
-            <ButtonMode title="Client" @click="clientMode()" />
+            <div>
+                <!-- <ButtonMode title="Connect" @click="clientMode()" /> -->
+                <ButtonMode title="Connect" @click="connect_modal = true" />
+            </div>
         </div>
     </div>
 </template>
@@ -13,20 +66,74 @@
 <script setup>
 import Wave from '../components/Wave.vue';
 import ButtonMode from '../components/mode/ButtonMode.vue';
-import { useModeStore } from '../stores/mode'
-import { onMounted } from 'vue';
+import { useModeStore } from '../stores/Mode'
+import { computed, onMounted, reactive, ref } from 'vue';
+import ConnectModal from '../components/ConnectModal.vue';
+import { useVuelidate } from "@vuelidate/core";
+import { required, maxLength, ipAddress } from "@vuelidate/validators";
+import { onClickOutside } from '@vueuse/core/index.cjs';
+import { useHostStore } from '../stores/Connection';
+
+const mode = useModeStore();
+const connection = useHostStore();
 
 
-const mode = useModeStore()
-onMounted(() => {
-    // mode.checkMode()
+const connection_status = ref('Connect')
+const connection_error = ref(false)
+const is_connecting = ref(false)
+const more_option = ref(false)
+const connect_modal = ref(false)
+const start_server_ref = ref(null)
+
+onClickOutside(start_server_ref, event => more_option.value = false)
+
+const data = reactive({
+    host: ''
 })
 
-const serverMode = () => {
-    mode.changeMode('server')
-}
-const clientMode = () => {
+
+const rules = computed(() => {
+    return {
+        host: { required, ipAddress },
+    };
+});
+
+
+const v$ = useVuelidate(rules, data);
+
+const connect_host = async () => {
+    connection_error.value = false
+    connection_status.value = 'Connecting'
+    is_connecting.value = true
+    v$.value.$touch();
+    if (v$.value.$error) {
+        connection_status.value = 'Connect'
+        is_connecting.value = false
+        return;
+    }
+    const hostAddress = data.host
+    const connect = await connection.connectHost(hostAddress);
+
+    if (!connect) {
+        connection_error.value = true
+        connection_status.value = 'Connect'
+        is_connecting.value = false
+        return
+    }
+
     mode.changeMode('client')
+
 }
+// const mode = useModeStore()
+// onMounted(() => {
+//     mode.checkMode()
+// })
+
+// const serverMode = () => {
+//     mode.changeMode('server')
+// }
+// const clientMode = () => {
+//     mode.changeMode('client')
+// }
 
 </script>

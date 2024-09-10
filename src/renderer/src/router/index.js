@@ -1,406 +1,234 @@
-import { useModeStore } from '../stores/mode'
-import { useHostStore } from '../stores/connection'
-import { AuthStore } from '../stores/clientAuth'
-import { useServerAuthStore } from '../stores/ServerAuth'
-import { useServerStore } from '../stores/server'
-import { useUserData } from '../stores/clientData'
+import { useModeStore } from '../stores/Mode'
+import { useHostStore } from '../stores/Connection'
+import { AuthStore } from '../stores/Authentication'
 
 import {
     createRouter,
     createMemoryHistory,
     createWebHashHistory,
 } from 'vue-router'
+import { useSetup } from '../stores/Setting/setup'
+
+import { navGuard } from './Guards'
+
 
 const router = createRouter({
+    /**
+     *  createMemoryHistory(), this is only applicable in development
+     *  use 
+     *  createWebHashHistory() in production 
+     */
     history: createMemoryHistory(),
     // history: createWebHashHistory(),
 
     _routes: [
+
+        /**
+         *   
+         *  Main Path
+         * 
+         */
+
         {
             path: '/',
             name: 'Home',
             component: () => import('../views/Mode.vue'),
-            beforeEnter: (to, from) => {
+            beforeEnter: async (to, from) => {
                 const mode = useModeStore()
+                const connection = useHostStore()
+                // If 'Client' check the saved host address and try to connect to it, if connection error stay at home
+                // If 'Server' check the server app status if running, if not try to run the server and redirect to login
                 if (mode.checkMode()) {
                     const storedMode = localStorage.getItem('mode')
-                    return { name: storedMode } // if (mode) { return to mode client || server } else { return to Home }
+                    if (storedMode === 'client') {
+                        // Connect in saved host
+                        // No Host address? stay home
+                        // Connected? Proceed to Login Page
+                        const saved_ip = localStorage.getItem('host')
+                        if (!saved_ip) { return true }
+
+                        const is_person_connected = await connection.isConnected()
+                        if (is_person_connected) {
+                            return { name: 'login' }
+                        } else return true
+                    }
+                    else if (storedMode === 'server') {
+                        // Check if the server app is running or not 
+                        // Not Running? Stay Home
+                        // Running? Proceed to Login Page
+                    }
+                    // return
                 }
+
+                /**
+                 *  If No Mode Selected Continue To This Path
+                 */
+
                 return true
             },
         },
+
+        /**
+         * 
+         * 
+         *  End of main path
+         * 
+         */
+
+
+        /**
+         *  Login Page
+         *  Signup Page
+         *  Validate Users
+         *  Add Security
+         */
+
         {
-            path: '/mode/',
-            name: 'mode',
-            children: [
-                {
-                    path: 'server',
-                    component: () => import('../views/ServerMode.vue'),
-                    name: 'server',
-                    beforeEnter: async (to, from) => {
-                        const mode = useModeStore()
-                        const storedMode = localStorage.getItem('mode')
-                        const server = useServerStore()
-
-                        const is_server_running = await server.isServerRunning()
-
-                        if (mode.checkMode() && storedMode == 'server') {
-                            if (is_server_running) {
-                                return { name: 'server_login' }
-                            }
-                            return true
-                        } else {
-                            return { name: 'Home' }
-                        }
-                    },
-                },
-                {
-                    path: 'client',
-                    component: () => import('../views/ClientMode.vue'),
-                    name: 'client',
-                    beforeEnter: async (to, from) => {
-                        const mode = useModeStore()
-                        const con = useHostStore()
-                        const storedMode = localStorage.getItem('mode')
-                        const connection = await con.isConnected()
-
-                        if (mode.checkMode() && storedMode == 'client') {
-                            if (connection) {
-                                return { name: 'client_login' }
-                            } else {
-                                return true
-                            }
-                        } else {
-                            return { name: 'Home' }
-                        }
-                    },
-                },
-            ],
-        },
-        {
-            path: '/server/login',
-            name: 'server_login',
+            path: '/login',
+            name: 'login',
             component: () => import('../views/Login.vue'),
             beforeEnter: async (to, from) => {
-                const auth = useServerAuthStore()
-                const authenticated = await auth.isServerAuthenticated()
-                if (authenticated) {
-                    return { name: 'server_dashboard' }
-                }
-                return true
-            },
-        },
-
-        //////////////////////
-        // Server Page Here //
-        //////////////////////
-        {
-            path: '/server/',
-            name: 'server_page',
-            component: () => import('../layouts/Server.vue'),
-            beforeEnter: async (to, from) => {
-                const auth = useServerAuthStore()
-                const authenticated = await auth.isServerAuthenticated()
-                if (authenticated) {
-                    return true
-                }
-                return { name: 'server_login' }
-            },
-            children: [
-                {
-                    path: 'dashboard',
-                    component: () => import('../views/server/Dashboard.vue'),
-                    name: 'server_dashboard',
-                    beforeEnter: async (to, from) => {
-                        const auth = useServerAuthStore()
-                        const authenticated = await auth.isServerAuthenticated()
-                        if (authenticated) {
-                            return true
-                        }
-                        return { name: 'server_login' }
-                    },
-                },
-                {
-                    path: 'scanned',
-                    component: () => import('../views/server/Scanned.vue'),
-                    name: 'server_scanned',
-                    beforeEnter: async (to, from) => {
-                        const auth = useServerAuthStore()
-                        const authenticated = await auth.isServerAuthenticated()
-                        if (authenticated) {
-                            return true
-                        }
-                        return { name: 'server_login' }
-                    },
-                },
-                {
-                    path: 'users',
-                    component: () => import('../views/server/Users.vue'),
-                    name: 'server_users',
-                    beforeEnter: async (to, from) => {
-                        const auth = useServerAuthStore()
-                        const authenticated = await auth.isServerAuthenticated()
-                        if (authenticated) {
-                            return true
-                        }
-                        return { name: 'server_login' }
-                    },
-                },
-                {
-                    path: 'users/profile/:id',
-                    component: () =>
-                        import('../views/server/users/profile.vue'),
-                    name: 'check_users',
-                    beforeEnter: async (to, from) => {
-                        // console.log(to.params.id)
-                        const user_data = useUserData()
-                        const getUserData = await user_data.getUserData(
-                            to.params.id
-                        )
-                        if (getUserData) {
-                            user_data.getUserScannedLogs()
-                        }
-
-                        const auth = useServerAuthStore()
-                        const authenticated = await auth.isServerAuthenticated()
-                        if (authenticated) {
-                            return true
-                        }
-                        return { name: 'server_login' }
-                    },
-                },
-                {
-                    path: 'corrections',
-                    component: () => import('../views/server/Corrections.vue'),
-                    name: 'server_corrections',
-                    beforeEnter: async (to, from) => {
-                        const auth = useServerAuthStore()
-                        const authenticated = await auth.isServerAuthenticated()
-                        if (authenticated) {
-                            return true
-                        }
-                        return { name: 'server_login' }
-                    },
-                },
-                {
-                    path: 'forms',
-                    component: () => import('../views/server/Forms.vue'),
-                    name: 'server_forms',
-                    beforeEnter: async (to, from) => {
-                        const auth = useServerAuthStore()
-                        const authenticated = await auth.isServerAuthenticated()
-                        if (authenticated) {
-                            return true
-                        }
-                        return { name: 'server_login' }
-                    },
-                },
-                {
-                    path: 'datarecords',
-                    component: () => import('../views/server/DataRecords.vue'),
-                    name: 'server_records',
-                    beforeEnter: async (to, from) => {
-                        const auth = useServerAuthStore()
-                        const authenticated = await auth.isServerAuthenticated()
-                        if (authenticated) {
-                            return true
-                        }
-                        return { name: 'server_login' }
-                    },
-                },
-            ],
-        },
-
-        // Client Login
-        {
-            path: '/client/login',
-            name: 'client_login',
-            component: () => import('../views/client/Login.vue'),
-            beforeEnter: async (to, from) => {
                 const auth = AuthStore()
-                const con = useHostStore()
-                const storedMode = localStorage.getItem('mode')
+                const connection = useHostStore()
                 const authKey = await auth.isAuthenticated()
-                const connection = await con.isConnected()
+                const mode = useModeStore()
 
-                if (storedMode === 'client') {
-                    if (connection) {
+                if (mode.checkMode()) {
+                    if (await connection.isConnected()) {
                         if (authKey) {
-                            return { name: 'client_welcome' } // isAuthenticated go to login
+                            /**
+                             * Connected and Authenticated, redirect to Welcome Page
+                             */
+                            return { name: 'page_welcome' }
                         }
-                        return true // isconnected go to login
-                    } else {
-                        return { name: 'client' } // isnotconnected go to connection
+                        /**
+                         *  If Not Authenticated, Stay in this Path
+                         */
+                        return true
                     }
-                } else {
-                    return { name: 'Home' } // not client go to Home
-                }
-            },
-        },
-        {
-            path: '/client/signup',
-            name: 'client_signup',
-            component: () => import('../views/client/Signup.vue'),
-            beforeEnter: async (to, from) => {
-                const con = useHostStore()
-                const storedMode = localStorage.getItem('mode')
-                const connection = await con.isConnected()
 
-                if (storedMode === 'client') {
-                    if (connection) {
-                        return true // isconnected go to signup
-                    } else {
-                        return { name: 'client' } // isnotconnected go to connection
-                    }
-                } else {
-                    return { name: 'Home' } // not client go to Home
+                    /**
+                     *  Not Connected, redirect to home
+                     */
+                    return { name: 'Home' }
                 }
+                /**
+                 *  No Mode Selected, redirect to home
+                 */
+                return { name: 'Home' }
             },
         },
         {
-            path: '/client/',
-            name: 'client_page',
-            component: () => import('../layouts/Client.vue'),
+            path: '/signup',
+            name: 'signup',
+            component: () => import('../views/signup.vue'),
             beforeEnter: async (to, from) => {
                 const auth = AuthStore()
+                const connection = useHostStore()
+                const authKey = await auth.isAuthenticated()
+                const mode = useModeStore()
+
+                if (mode.checkMode()) {
+                    if (await connection.isConnected()) {
+                        /**
+                         *  is connected
+                         */
+                        return true
+                    }
+
+                    /**
+                     *  Not Connected, redirect to home
+                     */
+                    return { name: 'Home' }
+                }
+                /**
+                 *  No Mode Selected, redirect to home
+                 */
+                return { name: 'Home' }
+            },
+        },
+
+        // Validate Page
+        // Default Values for System Settings
+        // Before Proceeding into Welcome check if the systema already setup
+        {
+            path: '/setup',
+            name: 'setup',
+            component: () => import('../views/Setup.vue'),
+            beforeEnter: async (to, from) => {
+                const auth = AuthStore()
+                const setup = useSetup()
                 const con = useHostStore()
+
+                const isSetupDone = await setup.getSystemSetting()
                 const authKey = await auth.isAuthenticated()
                 const connection = await con.isConnected()
+
                 if (connection) {
                     if (authKey) {
+                        if (isSetupDone) {
+                            return { name: 'page_welcome' }
+                        }
                         return true
                     }
                     return { name: 'client' }
                 }
                 return { name: 'client' }
             },
+        },
+
+
+        /**
+         * 
+         * Main Pages for All System Apps
+         * Validate Connection and Credentials before proceeding 
+         * Also check the mode
+         * 
+         */
+
+        {
+            path: '/pages/',
+            name: 'system_page',
+            component: () => import('../layouts/MainLayout.vue'),
+            beforeEnter: navGuard,
+
             children: [
                 {
                     path: 'welcome',
-                    name: 'client_welcome',
-                    component: () => import('../views/client/Welcome.vue'),
-                    beforeEnter: async (to, from) => {
-                        const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
-                        const con = useHostStore()
-                        const connection = await con.isConnected()
-                        if (connection) {
-                            if (authKey) {
-                                return true
-                            }
-                            return { name: 'client' }
-                        }
-                        return { name: 'client' }
-                    },
+                    name: 'page_welcome',
+                    component: () => import('../views/pages/Welcome.vue'),
+                    beforeEnter: navGuard
                 },
 
                 {
                     path: 'scanned',
-                    name: 'client_scanned',
-                    component: () => import('../views/client/Scanned.vue'),
-                    beforeEnter: async (to, from) => {
-                        const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
-                        const con = useHostStore()
-                        const connection = await con.isConnected()
-                        if (connection) {
-                            if (authKey) {
-                                return true
-                            }
-                            return { name: 'client' }
-                        }
-                        return { name: 'client' }
-                    },
+                    name: 'page_scanned',
+                    component: () => import('../views/pages/Scanned.vue'),
+                    beforeEnter: navGuard
                 },
                 {
                     path: 'cce',
-                    name: 'client_cce',
-                    component: () => import('../views/client/CCE.vue'),
-                    beforeEnter: async (to, from) => {
-                        const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
-                        const con = useHostStore()
-                        const connection = await con.isConnected()
-                        if (connection) {
-                            if (authKey) {
-                                return true
-                            }
-                            return { name: 'client' }
-                        }
-                        return { name: 'client' }
-                    },
+                    name: 'page_cce',
+                    component: () => import('../views/pages/CCE.vue'),
+                    beforeEnter: navGuard
                 },
                 {
                     path: 'cce_approval/:id',
-                    name: 'client_cce_approval',
-                    component: () => import('../views/client/CCE/Approval.vue'),
-                    beforeEnter: async (to, from) => {
-                        const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
-                        const con = useHostStore()
-                        const connection = await con.isConnected()
-                        if (connection) {
-                            if (authKey) {
-                                return true
-                            }
-                            return { name: 'client' }
-                        }
-                        return { name: 'client' }
-                    },
+                    name: 'page_cce_approval',
+                    component: () => import('../views/pages/CCE/Approval.vue'),
+                    beforeEnter: navGuard
                 },
                 {
                     path: 'forms',
-                    name: 'client_forms',
-                    component: () => import('../views/client/Forms.vue'),
-                    beforeEnter: async (to, from) => {
-                        const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
-                        const con = useHostStore()
-                        const connection = await con.isConnected()
-                        if (connection) {
-                            if (authKey) {
-                                return true
-                            }
-                            return { name: 'client' }
-                        }
-                        return { name: 'client' }
-                    },
+                    name: 'page_forms',
+                    component: () => import('../views/pages/Forms.vue'),
+                    beforeEnter: navGuard
                 },
                 {
                     path: 'ausf',
-                    name: 'client_ausf',
-                    component: () => import('../views/client/AUSF.vue'),
-                    beforeEnter: async (to, from) => {
-                        const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
-                        const con = useHostStore()
-                        const connection = await con.isConnected()
-                        if (connection) {
-                            if (authKey) {
-                                return true
-                            }
-                            return { name: 'client' }
-                        }
-                        return { name: 'client' }
-                    },
-                },
-                {
-                    path: 'data_record',
-                    name: 'data_record',
-                    component: () => import('../views/client/DataRecord.vue'),
-                    beforeEnter: async (to, from) => {
-                        const auth = AuthStore()
-                        const authKey = await auth.isAuthenticated()
-                        const con = useHostStore()
-                        const connection = await con.isConnected()
-                        if (connection) {
-                            if (authKey) {
-                                return true
-                            }
-                            return { name: 'client' }
-                        }
-                        return { name: 'client' }
-                    },
+                    name: 'page_ausf',
+                    component: () => import('../views/pages/AUSF.vue'),
+                    beforeEnter: navGuard
                 },
             ],
         },

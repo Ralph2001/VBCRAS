@@ -2,7 +2,9 @@ import { format } from 'date-fns';
 import { useDateFormat, useNow } from '@vueuse/core';
 
 export function now_date() {
-    return useDateFormat(useNow(), 'MMMM DD, YYYY');
+    const newDate = new Date();
+    return format(newDate, 'yyyy-MM-dd');
+
 }
 
 // The end date cannot fall on Saturday or Sunday.
@@ -15,7 +17,7 @@ export function add_date_notice() {
         while (newDate.getDay() === 0 || newDate.getDay() === 6) {
             newDate.setDate(newDate.getDate() + 1);
         }
-        return format(newDate, 'MMMM dd, yyyy');
+        return format(newDate, 'yyyy-MM-dd');
     };
     return getNextDate(today.value);
 }
@@ -28,7 +30,7 @@ export function add_date_certificate_start() {
         while (newDate.getDay() === 0 || newDate.getDay() === 6) {
             newDate.setDate(newDate.getDate() + 1);
         }
-        return format(newDate, 'MMMM dd, yyyy');
+        return format(newDate, 'yyyy-MM-dd');
     };
     return getNextDate(add_date_notice());
 }
@@ -38,7 +40,7 @@ export function add_date_certificate_end() {
     const getNextDate = (date) => {
         const newDate = new Date(date);
         newDate.setDate(newDate.getDate() + 10);
-        return format(newDate, 'MMMM dd, yyyy');
+        return format(newDate, 'yyyy-MM-dd');
     };
     return getNextDate(add_date_certificate_start());
 }
@@ -51,7 +53,7 @@ export function add_date_issued() {
         while (newDate.getDay() === 0 || newDate.getDay() === 6) {
             newDate.setDate(newDate.getDate() + 1);
         }
-        return format(newDate, 'MMMM dd, yyyy');
+        return format(newDate, 'yyyy-MM-dd');
     };
     return getNextDate(add_date_certificate_end());
 }
@@ -64,7 +66,7 @@ export function add_date_granted() {
         while (newDate.getDay() === 0 || newDate.getDay() === 6) {
             newDate.setDate(newDate.getDate() + 1);
         }
-        return format(newDate, 'MMMM dd, yyyy');
+        return format(newDate, 'yyyy-MM-dd');
     };
     return getNextDate(add_date_issued());
 }

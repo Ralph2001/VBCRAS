@@ -4,14 +4,15 @@ module.exports = {
         './index.html',
         './src/**/*.{vue,js,ts,jsx,tsx}',
         'node_modules/flowbite-vue/**/*.{js,vue}',
-        'node_modules/flowbite/**/*.js,'
+        'node_modules/flowbite/**/*.js,',
+     
     ],
     theme: {
         screens: {
             sm: '480px',
             md: '768px',
             lg: '976px',
-            lg: '1280px',
+            xl: '1280px',
         },
         extend: {
             colors: {

@@ -7,7 +7,7 @@ import router from './router'
 
 import 'core-js/features/promise/with-resolvers';
 import PrimeVue from 'primevue/config'
-import Lara from './assets/presets/lara'
+// import Lara from './assets/presets/lara'
 
 import VueSweetalert2 from 'vue-sweetalert2'
 import 'sweetalert2/dist/sweetalert2.min.css'
@@ -65,7 +65,6 @@ import {
     faMarker,
     faExpand,
     faCompress,
-    faWindowMaximize,
     faWindowRestore,
     faArrowDown,
     faUpload,
@@ -76,12 +75,17 @@ import {
     faUpDown,
     faTextHeight,
     faArrowsUpDown,
-    faArrowsLeftRight
+    faArrowsLeftRight,
+    faNetworkWired, 
+    faBars, 
+    faWindowMinimize,
+    faCircleCheck, 
+    faTriangleExclamation
 
 
 } from '@fortawesome/free-solid-svg-icons'
 
-import { faEye, faUser } from '@fortawesome/free-regular-svg-icons'
+import { faEye, faUser, faWindowMaximize } from '@fortawesome/free-regular-svg-icons'
 
 /* add icons to the library */
 library.add(
@@ -136,7 +140,12 @@ library.add(
     faUpDown,
     faTextHeight,
     faArrowsUpDown,
-    faArrowsLeftRight
+    faArrowsLeftRight,
+    faNetworkWired,
+    faBars,
+    faWindowMinimize,
+    faCircleCheck,
+    faTriangleExclamation
 
 )
 
@@ -161,6 +170,6 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(VueSweetalert2)
 app.component('VueDatePicker', VueDatePicker)
 
-app.use(PrimeVue, { unstyled: true, pt: Lara })
+app.use(PrimeVue, { unstyled: true })
 
 app.mount('#app')
