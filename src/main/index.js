@@ -415,6 +415,15 @@ app.whenReady().then(() => {
         // Do nothing to cancel F5 refresh
     });
 
+    globalShortcut.register('F12', () => {
+        console.log('Developer Tools shortcut disabled');
+        // Do nothing to cancel F5 refresh
+    });
+
+    globalShortcut.register('CommandOrControl+Shift+I', () => {
+        console.log('Developer Tools shortcut disabled');
+    });
+
 
     // Updates
     autoUpdater.on('update-available', (info) => {
