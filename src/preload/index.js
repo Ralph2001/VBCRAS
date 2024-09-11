@@ -163,3 +163,11 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
         }
     },
 })
+
+contextBridge.exposeInMainWorld('UpdateApi', {
+    // Listen for updates and forward them to Vue.js
+    onUpdateCheck: (callback) => ipcRenderer.on('checking-for-update', callback),
+    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
+    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+    onUpdateError: (callback) => ipcRenderer.on('update-error', callback),
+});

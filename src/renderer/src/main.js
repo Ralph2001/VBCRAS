@@ -42,6 +42,7 @@ import {
     faCircleArrowLeft,
     faRepeat,
     faArrowRotateLeft,
+    faArrowLeft,
     faXmark,
     faFolderOpen,
     faChevronCircleRight,
@@ -76,11 +77,12 @@ import {
     faTextHeight,
     faArrowsUpDown,
     faArrowsLeftRight,
-    faNetworkWired, 
-    faBars, 
+    faNetworkWired,
+    faBars,
     faWindowMinimize,
-    faCircleCheck, 
-    faTriangleExclamation
+    faCircleCheck,
+    faTriangleExclamation,
+    faRightToBracket
 
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -104,6 +106,7 @@ library.add(
     faCircleArrowLeft,
     faRepeat,
     faArrowRotateLeft,
+    faArrowLeft,
     faXmark,
     faFolderOpen,
     faChevronCircleRight,
@@ -145,7 +148,8 @@ library.add(
     faBars,
     faWindowMinimize,
     faCircleCheck,
-    faTriangleExclamation
+    faTriangleExclamation,
+    faRightToBracket
 
 )
 

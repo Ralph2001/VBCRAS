@@ -50,9 +50,13 @@
     </div>
 
 
-    <Modal large label="Create a new Document" footerBG="bg-white  border-t  border-gray-300" v-if="petition_modal">
+    <Modal large footerBG="bg-white  border-t  border-gray-300" v-if="petition_modal">
       <template v-slot:header>
-        <ModalCloseButton @click="close_modal()" />
+
+        <button
+          class="rounded-md px-2.5 border py-1 text-sm hover:bg-red-400 hover:text-white font-medium text-gray-700"
+          @click="close_modal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
+        <!-- <ModalCloseButton @click="close_modal()" /> -->
       </template>
 
 
@@ -71,7 +75,7 @@
 
       <!-- Input Fields -->
       <div
-        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center bg-gray-50 ">
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center bg-gray-200 ">
         <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10   ">
 
           <!-- 1st  Document Selector-->
@@ -592,7 +596,7 @@
           </div>
           <button type="button"
             class="bg-white ml-auto px-2.5 py-1 border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
-            @click="submitForm()">Submit</button>
+            @click="submitForm()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Submit</button>
         </div>
       </template>
     </Modal>

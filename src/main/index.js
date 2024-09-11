@@ -11,8 +11,11 @@ import { CreateAnnotated } from '../documents/clerical/annotation'
 import { generate_ausf } from '../documents/ausf/create_ausf'
 import { generate_by_month_year } from '../documents/clerical/generate_report'
 
-
 import { autoUpdater } from "electron-updater"
+
+const log = require('electron-log');
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info'; // Set log level
 
 
 const { execFile } = require('child_process')
@@ -30,6 +33,13 @@ const fs = require('fs')
  */
 const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
 
+// autoUpdater.setFeedURL({
+//     provider: "github",
+//     repo: "LCRO",
+//     owner: "Ralph2001",
+//     private: true,
+//     token: process.env.GH_TOKEN,
+// });
 
 
 let interfaces = os.networkInterfaces()
@@ -353,11 +363,36 @@ ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
 
 
 
-
 /**
  * Main Window
  * 
  */
+
+// Function to handle updates
+function handleUpdates(mainWindow) {
+    autoUpdater.checkForUpdatesAndNotify();
+
+    autoUpdater.on('checking-for-update', (info) => {
+        mainWindow.webContents.send('checking-for-update', info);
+
+    });
+
+    autoUpdater.on('update-available', (info) => {
+        mainWindow.webContents.send('update-available', info);
+    });
+
+    autoUpdater.on('update-downloaded', (info) => {
+        mainWindow.webContents.send('update-downloaded', info);
+        autoUpdater.quitAndInstall(); // Automatically installs the update
+    });
+
+    autoUpdater.on('error', (err) => {
+        log.error('Error while checking for updates:', err);
+        mainWindow.webContents.send('update-error', err.message);
+    });
+}
+
+
 function mainWindow() {
     const mainWindow = new BrowserWindow({
         width: 1060,
@@ -392,6 +427,8 @@ function mainWindow() {
             hash: 'home',
         })
     }
+
+    handleUpdates(mainWindow);
 }
 
 app.whenReady().then(() => {
@@ -399,53 +436,21 @@ app.whenReady().then(() => {
     app.on('browser-window-created', (_, window) => {
         optimizer.watchWindowShortcuts(window)
     })
+
     mainWindow()
 
-    // Updates
-    autoUpdater.checkForUpdatesAndNotify();
-
-    // Disable Ctrl + R on Windows/Linux and Cmd + R on macOS
-    globalShortcut.register('CommandOrControl+R', () => {
-        console.log('Refresh shortcut disabled');
-        // Do nothing to cancel the refresh action
-    });
-
-    globalShortcut.register('F5', () => {
-        console.log('F5 Refresh disabled');
-        // Do nothing to cancel F5 refresh
-    });
-
-    globalShortcut.register('F12', () => {
-        console.log('Developer Tools shortcut disabled');
-        // Do nothing to cancel F5 refresh
-    });
-
-    globalShortcut.register('CommandOrControl+Shift+I', () => {
-        console.log('Developer Tools shortcut disabled');
-    });
-
-
-    // Updates
-    autoUpdater.on('update-available', (info) => {
-        mainWindow.webContents.send('update-available', info);
-    });
-
-    autoUpdater.on('update-downloaded', (info) => {
-        mainWindow.webContents.send('update-downloaded', info);
-        autoUpdater.quitAndInstall();
-    });
-
-    autoUpdater.on('error', (err) => {
-        log.error('Error while checking for updates:', err);
-    });
-
+    // Registert Shortcut that can affect Suste,
+    // globalShortcut.register('CommandOrControl+R', () => { });
+    // globalShortcut.register('F5', () => { });
+    // globalShortcut.register('F12', () => { });
+    // globalShortcut.register('CommandOrControl+Shift+I', () => { });
+    // globalShortcut.register('CommandOrControl+Shift+R', () => { });
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) mainWindow()
     })
+
 })
-
-
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         globalShortcut.unregisterAll();
@@ -453,6 +458,27 @@ app.on('window-all-closed', () => {
     }
 });
 
+
+
+// Disable Ctrl + R on Windows/Linux and Cmd + R on macOS
+// globalShortcut.register('CommandOrControl+R', () => {
+//     console.log('Refresh shortcut disabled');
+//     // Do nothing to cancel the refresh action
+// });
+
+// globalShortcut.register('F5', () => {
+//     console.log('F5 Refresh disabled');
+//     // Do nothing to cancel F5 refresh
+// });
+
+// globalShortcut.register('F12', () => {
+//     console.log('Developer Tools shortcut disabled');
+//     // Do nothing to cancel F5 refresh
+// });
+
+// globalShortcut.register('CommandOrControl+Shift+I', () => {
+//     console.log('Developer Tools shortcut disabled');
+// });
 
 /**
  * List of IPC
