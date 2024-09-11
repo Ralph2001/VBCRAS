@@ -33,13 +33,13 @@ const fs = require('fs')
  */
 const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
 
-// autoUpdater.setFeedURL({
-//     provider: "github",
-//     repo: "LCRO",
-//     owner: "Ralph2001",
-//     private: true,
-//     token: process.env.GH_TOKEN,
-// });
+autoUpdater.setFeedURL({
+    provider: "github",
+    repo: "LCRO",
+    owner: "Ralph2001",
+    private: true,
+    token: process.env.GH_TOKEN,
+});
 
 
 let interfaces = os.networkInterfaces()
