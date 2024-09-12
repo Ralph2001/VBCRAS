@@ -19,10 +19,12 @@
                     {{ isPreview ? 'Return to form editor' : 'Preview' }}
                 </button>
             </div>
-            <div class="flex flex-col  sm:px-2 md:lg:px-40 h-max bg-gray-100 py-2  gap-4 relative font-medium"
+            <div class="flex flex-col w-full items-center   h-max bg-gray-100 py-2  gap-4 relative font-medium"
                 v-if="!isPreview">
+
                 <div ref="scalableDiv" :style="scalableDivStyle"
-                    class="h-full flex flex-col px-10 py-10  ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg ">
+                    class="h-full w-[65rem] flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg ">
+
                     <div
                         class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
                         <ButtonBorderless v-for="type in FormTypes" :key="type" :label="`Form ${type}`"

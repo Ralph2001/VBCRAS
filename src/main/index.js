@@ -192,6 +192,7 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
         const generate_document = await generate(formData);
+        showNotification(generate_document.status, generate_document.filepath)
         if (generate_document.status) {
             if (data.is_to_validate) {
                 const saved_file_path = await shell.openExternal(join(generate_document.filepath, 'petition.docx'))

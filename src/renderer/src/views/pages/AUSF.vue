@@ -14,9 +14,9 @@
             </template>
 
             <div
-                class="flex flex-col sm:px-2 md:lg:px-40 h-max bg-gray-100 py-2 gap-4 w-full items-center justify-center relative font-medium">
+                class="flex flex-col  sm:px-2 md:lg:px-40 h-max bg-gray-100 py-2 gap-4 w-full items-center justify-center relative font-medium">
                 <div
-                    class="h-full flex flex-col py-16 ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg">
+                    class="h-full w-[65rem] flex flex-col py-16 ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg">
                     <div
                         class="fixed flex flex-row items-center p-3 shadow-sm z-50 bg-white gap-2 top-[2.6rem] left-0 border-b border-e">
                         <input type="checkbox" id="assertation" class="border rounded border-gray-400"
