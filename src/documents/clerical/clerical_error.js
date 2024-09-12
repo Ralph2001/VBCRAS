@@ -140,7 +140,7 @@ async function document_folder(data) {
         fs.mkdirSync(folderCreation, { recursive: true })
     }
     main_folder_path = folderCreation
-
+    console.log(main_folder_path)
     return true
 }
 

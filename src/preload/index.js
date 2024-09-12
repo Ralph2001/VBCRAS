@@ -170,4 +170,5 @@ contextBridge.exposeInMainWorld('UpdateApi', {
     onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
     onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
     onUpdateError: (callback) => ipcRenderer.on('update-error', callback),
+    appVersion: (callback) => ipcRenderer.invoke('app-version')
 });

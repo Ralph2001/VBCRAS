@@ -95,9 +95,17 @@ const system_setting = useSetup()
 
 onMounted(async () => {
   system_setting.getSystemSetting()
+
+
+
 })
 
 
+
+const appVersion = () => {
+  const version = window.UpdateApi.appVersion()
+  console.log(version)
+}
 
 
 const Vital = ref();

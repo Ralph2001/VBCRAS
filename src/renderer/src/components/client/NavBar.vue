@@ -90,12 +90,12 @@
                       {{ auth.user }}
                     </button>
                   </li>
-                  <!-- <li>
+                  <li>
                     <a href="#"
-                      class="items-center w-full block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                      <font-awesome-icon icon="fa-solid fa-gear" class="me-2" />
-                      Settings</a>
-                  </li> -->
+                      class="items-center tracking-wide flex justify-center w-full  px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+
+                      {{ appVersion }}</a>
+                  </li>
                 </ul>
                 <div class="">
                   <button @click="logout()"
@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, version } from "vue";
 import { initFlowbite } from "flowbite";
 import { AuthStore } from "../../stores/Authentication";
 import { onClickOutside } from '@vueuse/core'
@@ -132,10 +132,21 @@ const dropdownmenu = () => {
 const logout = () => {
   auth.logout();
 };
+const appVersion = ref('Loading...')
 
-
-onMounted(() => {
+onMounted(async () => {
   initFlowbite();
   auth.isAuthenticated();
+
+  try {
+    const version = await window.UpdateApi.appVersion();
+    appVersion.value = 'v' + version; // Set the fetched version
+  } catch (error) {
+    console.error('Failed to fetch app version:', error);
+    appVersion.value = 'Error fetching version'; // Handle error
+  }
 });
+
+
+
 </script>

@@ -38,5 +38,8 @@ onMounted(() => {
   window.UpdateApi.onUpdateError((event, errorMessage) => {
     console.error('Update error:', errorMessage);
   });
+  window.UpdateApi.appVersion((event, app_versiong) => {
+    console.log('Hi')
+  });
 })
 </script>
