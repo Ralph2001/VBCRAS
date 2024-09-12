@@ -192,7 +192,7 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
         const generate_document = await generate(formData);
-        showNotification(generate_document.status, generate_document.filepath)
+      
         if (generate_document.status) {
             if (data.is_to_validate) {
                 const saved_file_path = await shell.openExternal(join(generate_document.filepath, 'petition.docx'))
@@ -239,12 +239,14 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         // Define paths
         const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
 
-        const originalDirectory = data.orignal_path.replace('app.asar', 'app.asar.unpacked');
+        const originalDirectory = data.orignal_path
         const petitionType = data.petition_type;
         const republicAct = data.republic_act_number;
         const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
 
         const outputDirectory = join(data.path_where_to_save, `Correction of Clerical Error and Change of First Name`, `${petitionType} ${republicAct}`, documentOwner);
+
+        showNotification('HI', outputDirectory)
 
         if (!fs.existsSync(outputDirectory)) {
             fs.mkdirSync(outputDirectory, { recursive: true })
