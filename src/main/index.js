@@ -33,13 +33,11 @@ const fs = require('fs')
  */
 const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
 
-autoUpdater.setFeedURL({
-    provider: "github",
-    repo: "LCRO",
-    owner: "Ralph2001",
-    private: true,
-    token: process.env.GH_TOKEN,
-});
+
+// Updater Flags
+
+autoUpdater.autoDownload = false
+autoUpdater.autoInstallOnAppQuit = true
 
 
 let interfaces = os.networkInterfaces()
@@ -239,7 +237,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         // Define paths
         const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
 
-        const originalDirectory = data.orignal_path;
+        const originalDirectory = data.orignal_path.replace('app.asar', 'app.asar.unpacked');
         const petitionType = data.petition_type;
         const republicAct = data.republic_act_number;
         const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;

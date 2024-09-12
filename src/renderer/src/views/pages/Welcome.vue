@@ -95,23 +95,6 @@ const system_setting = useSetup()
 
 onMounted(async () => {
   system_setting.getSystemSetting()
-
-
-  window.UpdateApi.onUpdateCheck((event, info) => {
-    console.log('Checking for updates:', info);
-  });
-
-  window.UpdateApi.onUpdateAvailable((event, info) => {
-    console.log('Update available:', info);
-  });
-
-  window.UpdateApi.onUpdateDownloaded((event, info) => {
-    console.log('Update downloaded:', info);
-  });
-
-  window.UpdateApi.onUpdateError((event, errorMessage) => {
-    console.error('Update error:', errorMessage);
-  });
 })
 
 

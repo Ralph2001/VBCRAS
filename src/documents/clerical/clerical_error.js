@@ -133,7 +133,7 @@ async function document_folder(data) {
     const petition_type = data.petition_type
     const republic_act = data.republic_act_number
     const who_owns_it = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner
-    var folderCreation = path.join(__dirname, `temp\\Generated\\${generateRandomString()}\\${petition_type} ${republic_act}\\${who_owns_it}\\`
+    var folderCreation = path.join(__dirname, `..\\..\\resources\\temp\\Generated\\${generateRandomString()}\\${petition_type} ${republic_act}\\${who_owns_it}\\`
         // var folderCreation = path.join(data.main_dir, `Correction of Clerical Error and Change of First Name\\${petition_type} ${republic_act}\\${who_owns_it}\\`
     )
     if (!fs.existsSync(folderCreation)) {

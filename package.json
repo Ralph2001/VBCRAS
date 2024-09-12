@@ -38,7 +38,7 @@
     "date-fns": "^3.3.1",
     "docxtemplater": "^3.46.2",
     "electron-log": "^5.2.0",
-    "electron-updater": "^6.1.1",
+    "electron-updater": "^6.3.4",
     "exceljs": "^4.4.0",
     "flowbite": "^2.4.1",
     "flowbite-vue": "^0.1.5",

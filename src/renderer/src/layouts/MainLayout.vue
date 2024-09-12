@@ -17,6 +17,26 @@
 
 
 <script setup>
+import { onMounted } from "vue";
 import NavBar from "../components/client/NavBar.vue";
 import Menu from "../components/Menu.vue";
+
+
+onMounted(() => {
+  window.UpdateApi.onUpdateCheck((event, info) => {
+    console.log('Checking for updates:', info);
+  });
+
+  window.UpdateApi.onUpdateAvailable((event, info) => {
+    console.log('Update available:', info);
+  });
+
+  window.UpdateApi.onUpdateDownloaded((event, info) => {
+    console.log('Update downloaded:', info);
+  });
+
+  window.UpdateApi.onUpdateError((event, errorMessage) => {
+    console.error('Update error:', errorMessage);
+  });
+})
 </script>
