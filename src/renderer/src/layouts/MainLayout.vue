@@ -30,6 +30,9 @@ onMounted(() => {
   window.UpdateApi.onUpdateAvailable((event, info) => {
     console.log('Update available:', info);
   });
+  window.UpdateApi.onUpdateNotAvailable((event, info) => {
+    console.log('Update not available:', info);
+  });
 
   window.UpdateApi.onUpdateDownloaded((event, info) => {
     console.log('Update downloaded:', info);

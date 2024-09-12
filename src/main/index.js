@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, globalShortcut } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, globalShortcut, Notification } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
@@ -37,7 +37,7 @@ const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe').repl
 
 // Updater Flags
 
-autoUpdater.autoDownload = false
+// autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = true
 
 
@@ -361,6 +361,9 @@ ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
 
 
 
+function showNotification(NOTIFICATION_TITLE, NOTIFICATION_BODY) {
+    new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
+}
 
 /**
  * Main Window
@@ -373,16 +376,21 @@ function handleUpdates(mainWindow) {
 
     autoUpdater.on('checking-for-update', (info) => {
         mainWindow.webContents.send('checking-for-update', info);
-
     });
 
     autoUpdater.on('update-available', (info) => {
+        showNotification('Update Available', 'A new update is ready for download. The process will begin shortly to ensure you have the latest features and improvements. Thank you for keeping your application up-to-date.')
         mainWindow.webContents.send('update-available', info);
+    });
+    autoUpdater.on('update-not-available', (info) => {
+        mainWindow.webContents.send('update-not-available', info);
     });
 
     autoUpdater.on('update-downloaded', (info) => {
+        showNotification('Update Available', 'An update is starting to download. Please keep the app open to complete the download. Restart the app when done to apply the update.')
         mainWindow.webContents.send('update-downloaded', info);
-        autoUpdater.quitAndInstall(); // Automatically installs the update
+        // Do Not Quit
+        // autoUpdater.quitAndInstall();
     });
 
     autoUpdater.on('error', (err) => {
@@ -477,13 +485,16 @@ app.whenReady().then(() => {
         optimizer.watchWindowShortcuts(window)
     })
 
-    const permission = runPermissionController()
-    if (!permission) {
-        globalShortcut.unregisterAll();
-        app.quit();
+    if (app.isPackaged) {
+        const permission = runPermissionController()
+        if (!permission) {
+            globalShortcut.unregisterAll();
+            app.quit();
+        }
     }
 
     mainWindow()
+
 
     // Registert Shortcut that can affect Suste,
     // globalShortcut.register('CommandOrControl+R', () => { });
