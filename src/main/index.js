@@ -192,7 +192,7 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
         const generate_document = await generate(formData);
-      
+
         if (generate_document.status) {
             if (data.is_to_validate) {
                 const saved_file_path = await shell.openExternal(join(generate_document.filepath, 'petition.docx'))
@@ -245,8 +245,6 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
 
         const outputDirectory = join(data.path_where_to_save, `Correction of Clerical Error and Change of First Name`, `${petitionType} ${republicAct}`, documentOwner);
-
-        showNotification('HI', outputDirectory)
 
         if (!fs.existsSync(outputDirectory)) {
             fs.mkdirSync(outputDirectory, { recursive: true })
@@ -520,26 +518,6 @@ app.on('window-all-closed', () => {
 
 
 
-// Disable Ctrl + R on Windows/Linux and Cmd + R on macOS
-// globalShortcut.register('CommandOrControl+R', () => {
-//     console.log('Refresh shortcut disabled');
-//     // Do nothing to cancel the refresh action
-// });
-
-// globalShortcut.register('F5', () => {
-//     console.log('F5 Refresh disabled');
-//     // Do nothing to cancel F5 refresh
-// });
-
-// globalShortcut.register('F12', () => {
-//     console.log('Developer Tools shortcut disabled');
-//     // Do nothing to cancel F5 refresh
-// });
-
-// globalShortcut.register('CommandOrControl+Shift+I', () => {
-//     console.log('Developer Tools shortcut disabled');
-// });
-
 /**
  * List of IPC
  **/
@@ -584,7 +562,7 @@ async function startServer() {
 
         pythonProcess = spawn(
             'python',
-            [join(__dirname, '../../resources/script/app.py')],
+            [join(__dirname, '../../resources/server/main.py')],
             {}
         )
 
@@ -606,9 +584,6 @@ async function startServer() {
         return false
     }
 }
-
-
-
 
 ipcMain.handle('is-server-running', async (event) => {
     try {

@@ -8,9 +8,14 @@
 
         </div>
 
-        <Modal medium label="Create a new Document" footerBG="bg-white" v-if="isFormOpen">
+        <Modal footerBG="bg-white" v-if="isFormOpen">
             <template v-slot:header>
-                <ModalCloseButton @click="closeModal" />
+
+                <button
+                    class="rounded-md px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
+                    @click="closeModal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
+
+
             </template>
 
             <div class="fixed top-16 right-8  z-50 ">
@@ -368,25 +373,16 @@
                     </div>
 
                     <div class="flex w-full flex-col  items-center justify-center "
-                        v-if="formData.form_type.includes('A')">
+                        >
 
 
-                        <button @click="formData.isWithRemarks = true" v-if="!formData.isWithRemarks"
+                        <!-- As Remarks  v-if="formData.form_type.includes('A')"-->
+                        <div class="h-[15rem]"></div>
+                        <!-- <button @click="formData.isWithRemarks = true" v-if="!formData.isWithRemarks"
                             class="text-xs mt-5 border px-2.5 py-1.5 bg-white self-start ml-20  font-mono hover:bg-gray-100 shadow-sm">ADD
-                            REMARKS</button>
-                        <!-- <div class="w-full flex flex-row items-center justify-center mt-10 group relative"
-                            title="Add Remarks" v-if="!formData.isWithRemarks">
-                            <p class="absolute -top-1 text-xs  group-hover:cursor-pointer  font-semibold uppercase  tracking-wider"
-                                @click="formData.isWithRemarks = true">Add
-                                Remarks</p>
-                            <font-awesome-icon icon="fa-solid fa-marker"
-                                class="p-2 rounded-full bg-blue-100 text-sm text-blue-400 group-hover:bg-blue-200  group-hover:cursor-pointer "
-                                @click="formData.isWithRemarks = true" />
-                            <div class="w-[30rem] border h-2 bg-blue-100 group-hover:bg-blue-200 group-hover:cursor-pointer  rounded-e-md "
-                                @click="formData.isWithRemarks = true">
-                            </div>
-                        </div> -->
+                            REMARKS</button> -->
 
+                        <!-- 
                         <div class="flex-row flex  w-full px-10 gap-2 mt-3" v-if="formData.isWithRemarks">
                             <div class="flex  flex-row items-start gap-1 mb-2">
                                 <div class="flex items-center">
@@ -401,9 +397,9 @@
                             <div class="w-full mt-5 mb-10">
                                 <QuillEditor ref="remarks" theme="snow" :toolbar="['']"
                                     v-model:content="formData.remarks" contentType="html" @ready="addremarksvalue" />
-                                <!-- {{ formData.remarks }} -->
+                              
                             </div>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div
@@ -482,9 +478,13 @@
 
             <template v-slot:footer>
                 <div class="h-full flex items-center justify-center w-full px-2">
-                    <button type="button"
+                    <!-- <button type="button"
                         class="bg-white px-2.5 py-1 ml-auto border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
-                        @click="submit()">Print</button>
+                        @click="submit()">Print</button> -->
+
+                    <button type="button"
+                        class="bg-white ml-auto px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
+                        @click="submit()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" />Submit</button>
                 </div>
             </template>
         </Modal>

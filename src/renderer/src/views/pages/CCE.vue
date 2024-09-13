@@ -54,15 +54,15 @@
       <template v-slot:header>
 
         <button
-          class="rounded-md px-2.5 border py-1 text-sm hover:bg-red-400 hover:text-white font-medium text-gray-700"
+          class="rounded-md px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
           @click="close_modal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
         <!-- <ModalCloseButton @click="close_modal()" /> -->
       </template>
 
 
       <div v-if="v$.$error"
-        class="fixed top-16 bg-red-400 rounded right-10 z-[9999] h-auto w-[15rem] border p-4 flex flex-col items-center justify-center">
-        <p class="font-medium text-white"> Require Fields
+        class="fixed top-16 bg-red-400 rounded-md right-10 z-[9999] h-auto w-[15rem] border p-4 flex flex-col items-center justify-center">
+        <p class="font-medium text-white"> Required Fields
         </p>
         <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
           <p v-for="error in v$.$errors" >
@@ -248,7 +248,7 @@
 
                     <div class="grow">
                       <InputAutoComplete @change="generate_granted_text()" nolabel
-                        :suggestion_data="clerical_error_descriptions"
+                        @keydown.ctrlKey="add_clerical_error()" :suggestion_data="clerical_error_descriptions"
                         v-model="formData.clerical_errors[index].description" />
                     </div>
                     <div class="grow">
@@ -592,10 +592,10 @@
         <div class="h-full flex items-center justify-start gap-2 w-full px-5 rounded-md font-medium ">
           <div class="flex flex-row items-center gap-2">
             <CheckBox skip v-model="formData.is_to_validate" />
-            <p class="text-sm font-medium">Validate Layout</p>
+            <p class="text-sm font-medium text-gray-200">Validate Layout</p>
           </div>
           <button type="button"
-            class="bg-white ml-auto px-2.5 py-1 border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
+            class="bg-white ml-auto px-2.5 py-1  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
             @click="submitForm()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Submit</button>
         </div>
       </template>

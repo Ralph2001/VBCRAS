@@ -56,49 +56,32 @@
 
                 <Tab title="Petition Date">
                     <div class="flex flex-col h-full p-4">
-                        <p class="p-2 font-medium text-2xl">Configure Date Counts</p>
-
                         <p class="p-2 font-semibold text-lg ">Output:</p>
                         <div class="flex flex-row flex-wrap gap-2 items-center justify-center ">
-                            <div class="h-[4rem] w-[10rem] bg-white border border-gray-300 rounded-md shadow-sm flex flex-col items-center justify-center"
+                            <div class="h-[4rem] w-[12rem] bg-white border border-gray-300 rounded-md shadow-sm flex flex-col items-center justify-center"
                                 v-for="date in dates" :key="date">
-                                <p class="text-xs">{{ date.name }}</p>
-                                <p class="font-medium"> {{ date.date }}</p>
+                                <p class="text-xs font-gray-600">{{ date.name }}</p>
+                                <p class="font-medium"> {{ format(date.date, 'MMMM dd, yyyy') }}</p>
                             </div>
                         </div>
                         <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 h-full w-full mt-5 gap-1">
-                            <!-- <div class="flex flex-col border bg-white shadow-sm p-4">
-                                <p class="p-2 font-medium text-2xl ">Configure</p>
 
-
-
-                                <div class="flex flex-col gap-2 items-center">
-                                    <Input label="Date Filed" type="number" />
-                                    <Input label="Date Notice" type="number" />
-                                    <Input label="Date Certificate Start" type="number" />
-                                    <Input label="Date Certificate End" type="number" />
-                                    <Input label="Date Issued" type="number" />
-
-                                </div>
-
-
-
-                            </div> -->
                             <div class="flex flex-col border p-6 bg-white shadow-sm">
                                 <p class="font-medium text-2xl">Holidays</p>
-                                <p class="text-sm font-medium">Add Holidays</p>
 
-                                <div class="flex flex-row items-center justify-center gap-2 ">
-                                    <!-- <Input label="Date" />
-                                    <Input label="description" /> -->
-                                    <!-- <Button label="Add" class="w-max mt-7 border border-gray-300" /> -->
+
+                                <div class="flex flex-row items-center justify-center gap-2 w-full">
+                                    <Input label="Date" v-model="holidayForm.holiday_date" />
+                                    <Input label="description" v-model="holidayForm.description" />
+                                    <button @click="add_holiday()"
+                                        class="border rounded-md p-2 mt-auto hover:bg-blue-500 hover:text-white">Add</button>
                                 </div>
 
 
                                 <div class="flex flex-col gap-2 mt-10 border h-[20rem] overflow-y-scroll">
                                     <div class="relative overflow-x-auto flex justify-center">
                                         <table
-                                            class="w-[30rem] text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             <thead
                                                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                                 <tr>
@@ -116,10 +99,10 @@
                                             </thead>
                                             <tbody>
                                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                                                    v-for="holiday in holidays">
+                                                    v-for="holiday in setup.holidays">
                                                     <th scope="row"
                                                         class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        {{ holiday.date }}
+                                                        {{ holiday.holiday_date }}
                                                     </th>
                                                     <td class="px-6 py-4">
                                                         {{ holiday.description }}
@@ -134,6 +117,180 @@
                                     </div>
 
                                 </div>
+                            </div>
+
+                            <div class="flex flex-col border p-6 h-[38rem] overflow-y-scroll bg-white shadow-sm">
+                                <p class="font-medium text-2xl">Automatic Date Counts</p>
+
+
+                                <div class="flex flex-col mt-6 gap-4 p-4">
+                                    <div class="flex flex-col">
+                                        <p class="font-medium">Date Notice</p>
+                                        <div class="flex flex-col indent-8">
+                                            <div class="grid grid-cols-6 items-center">
+                                                <p class="text-sm col-span-5">How many days after the current date
+                                                    should the notice be issued?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <Input class="w-20" center/>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the count of added days exclude
+                                                    holidays and weekends?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the end date be allowed to fall on
+                                                    a weekend (Saturday or Sunday)?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the end date be allowed to fall on
+                                                    a holiday?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <p class="font-medium">Certificate Start</p>
+                                        <div class="flex flex-col indent-8">
+                                            <div class="grid grid-cols-6 items-center">
+                                                <p class="text-sm col-span-5">How many days after the notice date should
+                                                    the certificate start?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <Input class="w-20" center/>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the count of added days exclude
+                                                    holidays and weekends?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the start date be allowed to fall
+                                                    on a weekend (Saturday or Sunday)?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the start date be allowed to fall
+                                                    on a holiday?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <p class="font-medium">Certificate End</p>
+                                        <div class="flex flex-col indent-8">
+                                            <div class="grid grid-cols-6 items-center">
+                                                <p class="text-sm col-span-5">How many days after the certificate start
+                                                    should the certificate end?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <Input class="w-20" center/>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the count of added days exclude
+                                                    holidays and weekends?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the end date be allowed to fall on
+                                                    a weekend (Saturday or Sunday)?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the end date be allowed to fall on
+                                                    a holiday?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <p class="font-medium">Date Issued</p>
+                                        <div class="flex flex-col indent-8">
+                                            <div class="grid grid-cols-6 items-center">
+                                                <p class="text-sm col-span-5">How many days after the certificate end
+                                                    should the issued date be?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <Input class="w-20" center/>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the count of added days exclude
+                                                    holidays and weekends?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the issued date be allowed to fall
+                                                    on a weekend (Saturday or Sunday)?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the issued date be allowed to fall
+                                                    on a holiday?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <p class="font-medium">Grant Date</p>
+                                        <div class="flex flex-col indent-8">
+                                            <div class="grid grid-cols-6 items-center">
+                                                <p class="text-sm col-span-5">How many days after the issued date should
+                                                    the grant date be set?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <Input class="w-20" center/>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the count of added days exclude
+                                                    holidays and weekends?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the grant date be allowed to fall
+                                                    on a weekend (Saturday or Sunday)?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-6 items-center h-10">
+                                                <p class="text-sm col-span-5">Should the grant date be allowed to fall
+                                                    on a holiday?</p>
+                                                <div class="flex items-center justify-center">
+                                                    <CheckBox />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -292,6 +449,7 @@ import InputAutoComplete from '../InputAutoComplete.vue';
 import { complete_municipality, complete_province, complete_municipality_with_province } from '../../utils/Address';
 import { useSetup } from '../../stores/Setting/setup';
 import { usePetitions } from '../../stores/Petition/petitions.js'
+import { format } from 'date-fns';
 
 
 const petitions = usePetitions()
@@ -301,6 +459,7 @@ const setup = useSetup()
 
 onMounted(async () => {
     await setup.getSystemSetting()
+    await setup.getHolidays()
 })
 
 
@@ -384,40 +543,60 @@ const dates = ref
         ]
     )
 
-const holidays = ref([
-    {
-        date: '01/01',
-        description: 'New Year’s Day'
-    },
-    {
-        date: '03/28',
-        description: 'Maundy Thursday'
-    },
-    {
-        date: '03/29',
-        description: 'Good Friday'
-    },
-    {
-        date: '04/09',
-        description: 'Day of Valor (Araw ng Kagitingan)'
-    },
-    {
-        date: '04/10',
-        description: 'Eid\'l Fitr'
-    },
-    {
-        date: '05/01',
-        description: 'Labor Day'
-    },
-    {
-        date: '05/01',
-        description: 'Labor Day'
-    },
-    {
-        date: '05/01',
-        description: 'Labor Day'
-    },
-])
+const holidayForm = reactive({
+    holiday_date: '',
+    description: ''
+})
+
+const add_holiday = async () => {
+    if (holidayForm.holiday_date === '' || holidayForm.description === '') {
+        return
+    }
+
+    const data = {
+        holiday_date: holidayForm.holiday_date,
+        description: holidayForm.description
+    }
+
+    const add = await setup.addHolidays(data)
+    holidayForm.holiday_date = ''
+    holidayForm.description = ''
+}
+
+// const holidays = ref([
+//     {
+//         date: '01/01',
+//         description: 'New Year’s Day'
+//     },
+//     {
+//         date: '03/28',
+//         description: 'Maundy Thursday'
+//     },
+//     {
+//         date: '03/29',
+//         description: 'Good Friday'
+//     },
+//     {
+//         date: '04/09',
+//         description: 'Day of Valor (Araw ng Kagitingan)'
+//     },
+//     {
+//         date: '04/10',
+//         description: 'Eid\'l Fitr'
+//     },
+//     {
+//         date: '05/01',
+//         description: 'Labor Day'
+//     },
+//     {
+//         date: '05/01',
+//         description: 'Labor Day'
+//     },
+//     {
+//         date: '05/01',
+//         description: 'Labor Day'
+//     },
+// ])
 
 const months = ref([
     'January',

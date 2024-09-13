@@ -2,8 +2,8 @@
     <div class="relative">
         <label v-if="!nolabel" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
         </label>
-        <input @input="typing_input" :type="type" :id="label" :value="modelValue" :tabindex="skip ? '-1' : ''"
-            :readonly="readonly" :class="{
+        <input @keydown.up="focusPreviousInput" @keydown.down="focusNextInput" @input="typing_input" :type="type"
+            :id="label" :value="modelValue" :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
                 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
                 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
             }"
@@ -116,6 +116,27 @@ function generate_suggestions(e) {
     }
 }
 
+
+const focusNextInput = (event) => {
+    if (props.skipnext || suggestions_.value) {
+        return
+    }
+    const inputs = document.querySelectorAll('input');
+    const index = Array.from(inputs).indexOf(event.target);
+    if (index >= 0 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+    }
+}
+const focusPreviousInput = (event) => {
+    if (props.skipnext) {
+        return
+    }
+    const inputs = document.querySelectorAll('input');
+    const index = Array.from(inputs).indexOf(event.target);
+    if (index >= 0 && index < inputs.length - 1) {
+        inputs[index - 1].focus();
+    }
+}
 </script>
 
 

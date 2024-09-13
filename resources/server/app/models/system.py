@@ -23,3 +23,15 @@ class SystemSettings(db.Model):
     updated_on = db.Column(DateTime(timezone=True), server_default=func.now(),  onupdate=func.now(),  nullable=False)
 
 
+class DateRules(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type  = db.Column(db.String)
+    days_after  = db.Column(db.Integer)
+    exclude_holidays_weekends  = db.Column(db.Boolean)
+    allow_weekend  = db.Column(db.Boolean)
+    allow_holiday  = db.Column(db.Boolean)
+
+class Holidays(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    holiday_date  = db.Column(db.String)
+    description  = db.Column(db.String, nullable=True)

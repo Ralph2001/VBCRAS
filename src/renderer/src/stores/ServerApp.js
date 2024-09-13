@@ -6,7 +6,6 @@ export const useServerStore = defineStore('server', {
     state: () => ({
         server: localStorage.getItem('server'),
         auto: localStorage.getItem('auto'),
-        serverAddress: localStorage.getItem('serverAddress'),
     }),
     actions: {
         async isServerRunning() {
@@ -17,6 +16,7 @@ export const useServerStore = defineStore('server', {
             }
             return false
         },
+
         async serverSwitch() {
             try {
                 const server_running = await this.isServerRunning()
@@ -24,7 +24,7 @@ export const useServerStore = defineStore('server', {
                     const stop_server = await window.LocalCivilApi.StopServer()
                     if (stop_server) {
                         this.server = false
-                        localStorage.removeItem('serverAddress')
+
                         localStorage.removeItem('server')
                         localStorage.removeItem('host')
                     }

@@ -7,9 +7,11 @@ from ..extensions import (
     render_template,
 )
 
-from ..schemas.system_schema import SystemSchema, ScannedTypeSchema
-from ..models.system import SystemSettings
+from ..schemas.system_schema import SystemSchema, ScannedTypeSchema, DateRuleSchema, HolidaySchema
+
+from ..models.system import SystemSettings, DateRules, Holidays
 from ..models.scanned import ScannedType
+
 
 # from ..models.user import Positions
 
@@ -19,6 +21,12 @@ systems_schema = SystemSchema(many=True)
 
 scanned_schema = ScannedTypeSchema()
 scans_schema = ScannedTypeSchema(many=True)
+
+date_rule_schema = DateRuleSchema()
+date_rule_schemas = DateRuleSchema(many=True)
+
+holiday_schema = HolidaySchema()
+holidays_schema =  HolidaySchema(many=True)
 
 # position_schema = PositionSchema()
 # positions_schema = PositionSchema(many=True)
@@ -74,6 +82,42 @@ def add_scanned_type():
     result = scanned_schema.dump(add_scanned_type)
     return jsonify(result), 201
 
+
+# Date Rules
+@configuration.route("/add-date-rules", methods=["POST"])
+def add_date_rules():
+    data = request.get_json()
+    date_rule = date_rule_schema.load(data, session=db.session)
+    
+    db.session.add(date_rule)
+    db.session.commit()
+
+    result = date_rule_schema.dump(date_rule)
+    return jsonify(result), 201
+
+@configuration.route("/get-date-rules", methods=["GET"])
+def get_date_rules():
+    date_rules = DateRules.query.all()
+    result = scans_schema.dump(date_rules)
+    return jsonify(result), 200
+
+# Holidays
+@configuration.route("/add-holiday", methods=["POST"])
+def add_holiday():
+    data = request.get_json()
+    holiday = holiday_schema.load(data, session=db.session)
+    
+    db.session.add(holiday)
+    db.session.commit()
+
+    result = holiday_schema.dump(holiday)
+    return jsonify(result), 201
+
+@configuration.route("/get-holidays", methods=["GET"])
+def get_holidays():
+    date_rules = Holidays.query.all()
+    result = holidays_schema.dump(date_rules)
+    return jsonify(result), 200
 
 # User Positions
 # @configuration.route("/get-positions", methods=["GET"])

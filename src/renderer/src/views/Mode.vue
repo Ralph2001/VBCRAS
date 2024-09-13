@@ -44,7 +44,7 @@
         <Transition mode="out-in">
             <div v-if="more_option" ref="start_server_ref"
                 class="absolute flex  flex-col gap-2 top-10 right-4 items-center justify-center border shadow-md  rounded bg-white h-[10rem] w-[20rem]">
-                <button class="rounded-full border w-20 h-20 text-xs font-mono bg-white
+                <button @click="createOwnServer()" class="rounded-full border w-20 h-20 text-xs font-mono bg-white
                     font-bold shadow-sm
                      border-[#1cbfff] hover:bg-blue-500 hover:text-white active:scale-95 transition-all">Start</button>
                 <p class="font-mono font-medium mt-3">Start your own local server.</p>
@@ -123,6 +123,11 @@ const connect_host = async () => {
 
     mode.changeMode('client')
 
+}
+
+const createOwnServer = async () => {
+    const server_status = await connection.isServerRunning()
+    console.log(server_status)
 }
 // const mode = useModeStore()
 // onMounted(() => {

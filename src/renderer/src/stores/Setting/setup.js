@@ -8,6 +8,7 @@ export const useSetup = defineStore('useSetup', {
         defaults: [],
         user_positions: [],
         scanned_types: [],
+        holidays: []
 
     }),
     actions: {
@@ -95,56 +96,45 @@ export const useSetup = defineStore('useSetup', {
         async refreshScannedTypes() {
             this.getScannedType()
         },
-        async getUserPositions() {
+
+        async getHolidays() {
             try {
                 const hostAdd = localStorage.getItem('host')
                 let tokenStr = localStorage.getItem('token')
+
                 const response = await axios.get(
-                    `http://${hostAdd}:1216/get-positions`,
+                    `http://${hostAdd}:1216/get-holidays`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
+
                 )
-
-                this.user_positions = response.data
-
+                this.holidays = response.data
+                console.log(response)
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
             }
         },
-        async addUserPositions(data) {
+
+        async addHolidays(data) {
             try {
                 const hostAdd = localStorage.getItem('host')
                 let tokenStr = localStorage.getItem('token')
                 const response = await axios.post(
-                    `http://${hostAdd}:1216/add-positions`,
+                    `http://${hostAdd}:1216/add-holiday`,
                     data,
-                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`
+                        }
+                    }
                 )
-                console.log(response)
-                this.refreshPosition()
+                this.getHolidays()
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
             }
-        },
-        async removeUserPositions(data) {
-            try {
-                const hostAdd = localStorage.getItem('host')
-                let tokenStr = localStorage.getItem('token')
-                const response = await axios.delete(
-                    `http://${hostAdd}:1216/add-position`,
-                    data,
-                    { headers: { Authorization: `Bearer ${tokenStr}` } }
-                )
-                this.refreshPosition()
-            } catch (error) {
-                console.error('Error fetching data:', error)
-                this.router.push('/login')
-            }
-        },
-        async refreshPosition() {
-            this.getUserPositions()
-        },
+        }
 
     },
 })

@@ -12,6 +12,10 @@ import { useSetup } from '../stores/Setting/setup'
 import { navGuard } from './Guards'
 
 
+/**
+ *  Return True = Stay To That Path
+ */
+
 const router = createRouter({
     /**
      *  createMemoryHistory(), this is only applicable in development
@@ -57,6 +61,7 @@ const router = createRouter({
                         // Not Running? Stay Home
                         // Running? Proceed to Login Page
                     }
+                    else { return true }
                     // return
                 }
 

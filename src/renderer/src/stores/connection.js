@@ -6,7 +6,7 @@ import axios from 'axios'
 export const useHostStore = defineStore('host', {
     state: () => ({
         host: localStorage.getItem('host'),
-        hostAuto: localStorage.getItem('hostAuto'),
+
     }),
     actions: {
         async isConnected() {
@@ -70,6 +70,15 @@ export const useHostStore = defineStore('host', {
             }
             console.log('Already Disconnected')
 
+        },
+        async isServerRunning() {
+            const server = await window.LocalCivilApi.IsServerRunning()
+            if (server) {
+                localStorage.setItem('host', '127.0.0.1')
+                this.host = '127.0.0.1'
+                return true
+            }
+            return false
         },
     },
 })
