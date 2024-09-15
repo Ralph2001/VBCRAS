@@ -10,7 +10,11 @@
 
         <Modal v-if="ausf_modal" medium label=" Affidavit to use the Surname of the Father" footerBG="bg-white">
             <template v-slot:header>
-                <ModalCloseButton @click="close_ausf" />
+                <button
+                    class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
+                    @click="close_ausf"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
+
+                <!-- <ModalCloseButton  /> -->
             </template>
 
             <div
@@ -355,12 +359,16 @@
                         </p>
                     </div>
                     <div class="h-full flex items-center justify-end gap-2 w-full">
-                        <button v-if="previewUrl" @click="previewUrl = ''">Edit</button>
-                        <button type="button" v-if="!previewUrl"
+                        <!-- <button v-if="previewUrl" @click="previewUrl = ''">Edit</button> -->
+                        <!-- <button type="button" v-if="!previewUrl"
                             class="bg-white px-2.5 py-1 ml-auto border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
                             @click="check()">
                             Check
-                        </button>
+                        </button> -->
+                        <button type="button"
+                            class="bg-white ml-auto px-2.5 py-1  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
+                            @click="check()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" />
+                            Check</button>
                     </div>
                 </div>
             </template>

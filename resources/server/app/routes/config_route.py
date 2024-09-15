@@ -7,7 +7,12 @@ from ..extensions import (
     render_template,
 )
 
-from ..schemas.system_schema import SystemSchema, ScannedTypeSchema, DateRuleSchema, HolidaySchema
+from ..schemas.system_schema import (
+    SystemSchema,
+    ScannedTypeSchema,
+    DateRuleSchema,
+    HolidaySchema,
+)
 
 from ..models.system import SystemSettings, DateRules, Holidays
 from ..models.scanned import ScannedType
@@ -26,7 +31,7 @@ date_rule_schema = DateRuleSchema()
 date_rule_schemas = DateRuleSchema(many=True)
 
 holiday_schema = HolidaySchema()
-holidays_schema =  HolidaySchema(many=True)
+holidays_schema = HolidaySchema(many=True)
 
 # position_schema = PositionSchema()
 # positions_schema = PositionSchema(many=True)
@@ -65,17 +70,19 @@ def get_system_settings():
 
 # Add Scanned Types
 
+
 @configuration.route("/get-scanned-type", methods=["GET"])
 def get_scanned_type():
     scanned_types = ScannedType.query.all()
     result = scans_schema.dump(scanned_types)
     return jsonify(result), 200
 
+
 @configuration.route("/add-scanned-type", methods=["POST"])
 def add_scanned_type():
     data = request.get_json()
     add_scanned_type = scanned_schema.load(data, session=db.session)
-    
+
     db.session.add(add_scanned_type)
     db.session.commit()
 
@@ -88,12 +95,13 @@ def add_scanned_type():
 def add_date_rules():
     data = request.get_json()
     date_rule = date_rule_schema.load(data, session=db.session)
-    
+
     db.session.add(date_rule)
     db.session.commit()
 
     result = date_rule_schema.dump(date_rule)
     return jsonify(result), 201
+
 
 @configuration.route("/get-date-rules", methods=["GET"])
 def get_date_rules():
@@ -101,23 +109,38 @@ def get_date_rules():
     result = scans_schema.dump(date_rules)
     return jsonify(result), 200
 
+
 # Holidays
 @configuration.route("/add-holiday", methods=["POST"])
 def add_holiday():
     data = request.get_json()
     holiday = holiday_schema.load(data, session=db.session)
-    
+
     db.session.add(holiday)
     db.session.commit()
 
     result = holiday_schema.dump(holiday)
     return jsonify(result), 201
 
+
 @configuration.route("/get-holidays", methods=["GET"])
 def get_holidays():
-    date_rules = Holidays.query.all()
-    result = holidays_schema.dump(date_rules)
+    holidays = Holidays.query.all()
+    result = holidays_schema.dump(holidays)
     return jsonify(result), 200
+
+
+@configuration.route("/remove-holiday/<int:id>", methods=["DELETE"])
+def remove_holidays(id):
+    holidays = Holidays.query.get(id)
+    # Delete the  holidays
+    db.session.delete(holidays)
+    db.session.commit()
+
+    return jsonify({"message": "Holiday record deleted successfully."}), 200
+
+    # return jsonify({"message": "Petition record deleted successfully."}), 200
+
 
 # User Positions
 # @configuration.route("/get-positions", methods=["GET"])

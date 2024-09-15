@@ -8,8 +8,8 @@
         <slot></slot>
     </div> -->
     <fieldset :class="width"
-        class=" border border-gray-300  bg-gray-50  rounded h-full flex items-center flex-wrap px-10 py-8 ">
-        <legend class=" z-50  px-2  bg-transparent leading-2 font-semibold italic text-sm tracking-wide text-gray-600">
+        class=" border border-gray-300  bg-white  rounded h-full flex items-center flex-wrap px-10 py-8 ">
+        <legend class=" z-50  px-2  bg-transparent leading-2 font-semibold italic text-sm tracking-wide text-gray-500">
             {{ title
             }} <span class="ms-4 text-red-500 italic text-xs" v-if="error">{{ error }}</span></legend>
         <slot></slot>

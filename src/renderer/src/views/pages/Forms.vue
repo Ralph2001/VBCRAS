@@ -10,9 +10,8 @@
 
         <Modal footerBG="bg-white" v-if="isFormOpen">
             <template v-slot:header>
-
                 <button
-                    class="rounded-md px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
+                    class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
                     @click="closeModal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
 
 

@@ -54,15 +54,15 @@
       <template v-slot:header>
 
         <button
-          class="rounded-md px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
+          class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
           @click="close_modal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
         <!-- <ModalCloseButton @click="close_modal()" /> -->
       </template>
 
 
       <div v-if="v$.$error"
-        class="fixed top-16 bg-red-400 rounded-md right-10 z-[9999] h-auto w-[15rem] border p-4 flex flex-col items-center justify-center">
-        <p class="font-medium text-white"> Required Fields
+        class="fixed top-16 bg-red-400 rounded right-10 z-[9999] h-auto border p-4 flex flex-col items-center justify-center">
+        <p class="font-semibold tracking-wider text-white text-sm"> Required Fields
         </p>
         <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
           <p v-for="error in v$.$errors" >
@@ -357,7 +357,7 @@
             </div>
             <!-- Subpart 3: Shows when Petition Type CCE -->
             <div class="basis-[100%]" v-if="formData.petition_type !== 'CFN'">
-              <Box title="The facts/reasons for filing this petition are the following. " width="w-ful">
+              <Box title="The facts/reasons for filing this petition are the following. " width="w-auto">
                 <div class="flex flex-col w-full" v-if="
                   formData.petition_type === 'CCE' &&
                   formData.event_type === 'Birth' &&
@@ -386,7 +386,7 @@
           <!-- 8th Supporting Documents Note: Need to fix buttons and designs-->
           <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-2">
             <div class="grow">
-              <Box title=" documents to support this petition: " width="w-ful">
+              <Box title=" documents to support this petition: " width="w-auto">
                 <div class="flex flex-col w-full gap-3 mt-5 relative">
                   <div class="absolute w-auto -top-9 right-4">
                     <p class="text-xs italic text-gray-400 font-normal">
@@ -418,7 +418,7 @@
               </Box>
             </div>
             <div class="basis-[40%] h-max">
-              <Box title="filing this petition at the LCRO of " width="w-ful">
+              <Box title="filing this petition at the LCRO of " width="w-auto">
                 <div class="grid sm:grid-cols-1 lg:grid-cols-1 justify-center gap-2 w-full">
                   <Input label="City/Municipality" :error="v$.filing_city_municipality.$error" skip
                     v-model="formData.filing_city_municipality" />
@@ -437,7 +437,7 @@
           <!-- 10th Verification, Administering and CTC-->
           <div class="flex flex-wrap sm:flex-col md:lg:flex-row gap-4">
             <div class="basis-[50%]">
-              <Box title="VERIFICATION" width="w-ful">
+              <Box title="VERIFICATION" width="w-auto">
                 <div class="grid grid-cols-1 w-full gap-2">
                   <Input label="Petitioner Name" skip v-model="formData.petitioner_name"
                     @input="formData.petitioner_name = $event.target.value.toUpperCase()" readonly />
@@ -446,7 +446,7 @@
             </div>
 
             <div class="grow">
-              <Box title="ADMINISTERING OFFICER" width="w-ful">
+              <Box title="ADMINISTERING OFFICER" width="w-auto">
                 <div class="grid grid-cols-1 w-full gap-2">
                   <Input skip label="Name" v-model="formData.administering_officer_name"
                     :error="v$.administering_officer_name.$error" cap />
@@ -456,7 +456,7 @@
             </div>
 
             <div class="grow">
-              <Box title="SUBSCRIBE AND SWORN" width="w-ful">
+              <Box title="SUBSCRIBE AND SWORN" width="w-auto">
                 <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 w-full gap-2">
                   <div></div>
                   <Input label="Date Sworn" type="date" skip v-model="formData.subscribe_sworn_date"
@@ -519,7 +519,7 @@
           <!-- 12th Payment and Date Preview-->
           <div class="flex sm:flex-col md:lg:flex-row gap-2">
             <div class="basis-[35%]">
-              <Box title="Payment of filing fee" width="w-ful">
+              <Box title="Payment of filing fee" width="w-auto">
 
                 <div class="grid grid-cols-1 w-full gap-2">
                   <div class="flex flex-row gap-2 items-center p-4">
@@ -542,7 +542,7 @@
             </div>
 
             <div class="grow">
-              <Box title="DATE PREVIEW" width="w-ful">
+              <Box title="DATE PREVIEW" width="w-auto">
                 <div class="flex flex-col w-full gap-2 items-start">
                   <div class="grid grid-cols-2 w-full gap-4">
                     <Input skip label="Date Filled" type="date" v-model="formData.date_filed"

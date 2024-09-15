@@ -2,7 +2,7 @@
   <div
     class="fixed top-0 bottom-0 left-0 right-0 backdrop-brightness-75 z-[9999999999999999] flex items-center justify-center">
     <div class="h-full   flex flex-col w-full relative">
-      <div class="w-full flex flex-row h-auto bg-gray-700 outline-none  p-1 items-center ">
+      <div class="w-full flex flex-row h-auto bg-gray-700 outline-none px-3  p-1 items-center ">
 
         <slot name="header"></slot>
       </div>

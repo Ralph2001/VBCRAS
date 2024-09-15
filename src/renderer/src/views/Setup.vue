@@ -1,9 +1,10 @@
 <template>
     <div class="h-full w-full  ">
-        <div v-if="auth.user_role === 1" class=" flex h-full flex-col p-10 gap-4 relative">
+        <div v-if="auth.user_role === 1" class=" flex h-full flex-col p-4 gap-4 relative">
             <p class="font-medium text-3xl text-gray-700">System Setup</p>
-            <div class="flex flex-col border rounded-md h-full sm:md:px-20 lg:px-40 bg-gray-50  overflow-y-scroll ">
-                <div class="flex flex-col h-full  p-16  gap-4 ">
+
+            <div class="flex flex-col border rounded-md p-10  bg-gray-50  overflow-y-scroll ">
+                <div class="flex flex-col h-auto p-4 py-8  gap-4 ">
                     <p class="font-medium text-2xl text-gray-800   md:lg:px-20">Default Saving Path</p>
                     <div class="w-full flex flex-col md:lg:grid-cols-2 md:lg:px-20">
                         <!-- <label for="path" class="font-medium mb-2 text-sm">File Path</label>
@@ -91,7 +92,7 @@
                 <SetupSVG />
             </div>
             <div class="absolute bottom-10 px-4 right-0 ">
-                <button @click="auth.logout" 
+                <button @click="auth.logout"
                     class="border px-4 py-1.5 hover:bg-red-400 rounded shadow-sm hover:text-white">Logout</button>
             </div>
         </div>

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-
 export const useSetup = defineStore('useSetup', {
     state: () => ({
         isSetupDone: true,
@@ -9,7 +8,6 @@ export const useSetup = defineStore('useSetup', {
         user_positions: [],
         scanned_types: [],
         holidays: []
-
     }),
     actions: {
         async getSystemSetting() {
@@ -28,8 +26,6 @@ export const useSetup = defineStore('useSetup', {
                 this.defaults = response.data
                 this.isSetupDone = true
                 return true
-
-
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -66,7 +62,6 @@ export const useSetup = defineStore('useSetup', {
                     }
                 )
                 this.refreshScannedTypes()
-
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -80,7 +75,6 @@ export const useSetup = defineStore('useSetup', {
                     const response = await axios.get(
                         `http://${hostAdd}:1216/get-scanned-type`,
                         { headers: { Authorization: `Bearer ${tokenStr}` } }
-
                     )
                     this.scanned_types = response.data
                     console.log(response)
@@ -105,7 +99,6 @@ export const useSetup = defineStore('useSetup', {
                 const response = await axios.get(
                     `http://${hostAdd}:1216/get-holidays`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
-
                 )
                 this.holidays = response.data
                 console.log(response)
@@ -134,7 +127,25 @@ export const useSetup = defineStore('useSetup', {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
             }
+        },
+        async removeHoliday(id) {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.delete(
+                    `http://${hostAdd}:1216/remove-holiday/${id}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`
+                        }
+                    }
+                )
+                this.getHolidays()
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                this.router.push('/login')
+            }
         }
-
-    },
+    }
 })
