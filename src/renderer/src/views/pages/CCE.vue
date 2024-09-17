@@ -216,10 +216,10 @@
               <Box title="The clerical error(s) to be corrected is (are): " width="w-full">
                 <div class="flex flex-col gap-2 w-full font-bold relative">
                   <div class="absolute w-auto -top-4 right-4">
-                    <p class="text-xs italic text-gray-400 font-normal">
+                    <!-- <p class="text-xs italic text-gray-400 font-normal">
                       <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
                       <span class="font-medium">Crtl + Space</span> to add new column
-                    </p>
+                    </p> -->
                   </div>
                   <div class="flex flex-row w-full items-center justify-center gap-2 mt-4">
                     <div class="basis-[10%]">
@@ -389,10 +389,10 @@
               <Box title=" documents to support this petition: " width="w-auto">
                 <div class="flex flex-col w-full gap-3 mt-5 relative">
                   <div class="absolute w-auto -top-9 right-4">
-                    <p class="text-xs italic text-gray-400 font-normal">
+                    <!-- <p class="text-xs italic text-gray-400 font-normal">
                       <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
                       <span class="font-medium">Crtl + Space</span> to add new column
-                    </p>
+                    </p> -->
                   </div>
                   <div class="flex flex-row w-full gap-2 items-center" v-for="(value, index) in supporting_items"
                     :key="index">
@@ -458,13 +458,15 @@
             <div class="grow">
               <Box title="SUBSCRIBE AND SWORN" width="w-auto">
                 <div class="grid sm:grid-cold-1 md:lg:grid-cols-3 w-full gap-2">
-                  <div></div>
+
                   <Input label="Date Sworn" type="date" skip v-model="formData.subscribe_sworn_date"
                     :error="v$.subscribe_sworn_date.$error" />
                   <Input label="City/Municipality" skip v-model="formData.subscribe_sworn_city_municipality"
                     :error="v$.subscribe_sworn_city_municipality.$error" />
-                  <Input label="Community Tax Certificate No." v-model="formData.community_tax_certificate"
-                    :error="v$.community_tax_certificate.$error" />
+                  <Input label="exhibiting his/her" skip v-model="formData.exhibiting_his_her"
+                    :error="v$.exhibiting_his_her.$error" />
+                  <Input :label="formData.exhibiting_his_her || `No.`" v-model="formData.exhibiting_number"
+                    :error="v$.exhibiting_number.$error" />
                   <Input label="Issued at" skip v-model="formData.issued_at" :error="v$.issued_at.$error" />
                   <Input label="Issued on" skip type="date" v-model="formData.issued_on" :error="v$.issued_on.$error" />
                 </div>
@@ -646,7 +648,7 @@ import {
   add_date_certificate_end,
   add_date_issued,
   add_date_granted,
-} from "../../utils/DayPosting.js";
+} from "../../utils/ClericalDateCount";
 
 import { grantedText } from "../../utils/GrantedText.js";
 import { factReason } from "../../utils/FactsReasons.js";
@@ -1055,8 +1057,15 @@ const initialForm = {
   administering_officer_position: 'Municipal Civil Registrar', // Testing
   subscribe_sworn_date: new Date().toISOString().split('T')[0],
   subscribe_sworn_city_municipality: system_setting.defaults[0].petition_default_subscribe_sworn_municipality || '',
-  community_tax_certificate: '',// Testing
+
+  // Community Tax Certificate or Other ID
+  exhibiting_his_her: 'Community Tax Certificate No.',
+  exhibiting_number: '',
+
+
+  // community_tax_certificate: '',// Testing
   issued_at: system_setting.defaults[0].petition_default_issued_at || '',
+
   issued_on: new Date().toISOString().split('T')[0],
   action_taken_date: '',// Testing
   municipal_civil_registrar: system_setting.defaults[0].municipal_civil_registrar || '',
@@ -1140,7 +1149,12 @@ const rules = computed(() => {
     // administering_officer_position: { required },
     subscribe_sworn_date: { required },
     subscribe_sworn_city_municipality: { required },
-    community_tax_certificate: { required },
+
+
+    // community_tax_certificate: { required },
+    exhibiting_his_her: { required },
+    exhibiting_number: { required },
+
     issued_at: { required },
     issued_on: { required },
     action_taken_date: { required },
@@ -1239,7 +1253,11 @@ const submitForm = async () => {
     administering_officer_position: formData.administering_officer_position,
     subscribe_sworn_date: formData.subscribe_sworn_date,
     subscribe_sworn_city_municipality: formData.subscribe_sworn_city_municipality,
-    community_tax_certificate: formData.community_tax_certificate,
+
+    exhibiting_his_her: formData.exhibiting_his_her,
+    exhibiting_number: formData.exhibiting_number,
+    // community_tax_certificate: formData.community_tax_certificate,
+
     issued_at: formData.issued_at,
     issued_on: formData.issued_on,
     action_taken_date: formData.action_taken_date,
@@ -1348,7 +1366,15 @@ const create_validated_document = async () => {
     administering_officer_position: formData.administering_officer_position,
     subscribe_sworn_date: formData.subscribe_sworn_date,
     subscribe_sworn_city_municipality: formData.subscribe_sworn_city_municipality,
-    community_tax_certificate: formData.community_tax_certificate,
+
+
+    exhibiting_his_her: formData.exhibiting_his_her,
+    exhibiting_number: formData.exhibiting_number,
+
+    // community_tax_certificate: formData.community_tax_certificate,
+
+
+
     issued_at: formData.issued_at,
     issued_on: formData.issued_on,
     action_taken_date: formData.action_taken_date,

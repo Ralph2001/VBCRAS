@@ -82,7 +82,8 @@ import {
     faWindowMinimize,
     faCircleCheck,
     faTriangleExclamation,
-    faRightToBracket
+    faRightToBracket, 
+    faAnglesRight
 
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -149,7 +150,8 @@ library.add(
     faWindowMinimize,
     faCircleCheck,
     faTriangleExclamation,
-    faRightToBracket
+    faRightToBracket, 
+    faAnglesRight
 
 )
 

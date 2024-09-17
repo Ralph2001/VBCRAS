@@ -5,53 +5,66 @@ const fsp = require('fs').promises
 const path = require('path')
 const dateFns = require('date-fns')
 
-
 // CHANGEABLE FOLDER PATH
 // USED IN RETURNING THE RESULT FILEPATH
 let main_folder_path
-
 
 // FILE PATHS HERE
 // DOCX FORMAT ONLY
 // NAME OF TEMPLATE COULD BE BETTER
 const PETITION_TEMPLATE_PATHS = {
-    LIVEBIRTH: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/Live Birth/petition.docx'
-    ).replace('app.asar', 'app.asar.unpacked'),
-    DEATH: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/Death/petition.docx'
-    ).replace('app.asar', 'app.asar.unpacked'),
-    MARRIAGE: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/Marriage/petition.docx'
-    ).replace('app.asar', 'app.asar.unpacked'),
-    CFN: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/Change First Name/petition.docx'
-    ).replace('app.asar', 'app.asar.unpacked'),
-    CCE10172: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/Live Birth/petition_RA_10172.docx'
-    ).replace('app.asar', 'app.asar.unpacked')
-};
+    LIVEBIRTH: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Live Birth/petition.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    DEATH: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Death/petition.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    MARRIAGE: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Marriage/petition.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    CFN: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Change First Name/petition.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    CCE10172: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Live Birth/petition_RA_10172.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked')
+}
 
 const ADDITIONAL_FILES_TEMPLATE = {
-    ENDORSEMENT_LETTER: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/endorsement.docx'
-    ).replace('app.asar', 'app.asar.unpacked'),
-    RECORD_SHEET: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/record sheet.docx'
-    ).replace('app.asar', 'app.asar.unpacked'),
-    POSTING: path.resolve(
-        __dirname,
-        '../../resources/documents/RA 9048 RA 10172/notice and certificate.docx'
-    ).replace('app.asar', 'app.asar.unpacked')
-};
-
+    ENDORSEMENT_LETTER: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/endorsement.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    RECORD_SHEET: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/record sheet.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    POSTING: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/notice and certificate.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked')
+}
 
 // FUNCTION THAT CHECKS THE FILES
 // COULD BE BETTER, IDK
@@ -106,25 +119,23 @@ async function generate(formData) {
 
         return { status: true, filepath: main_folder_path }
     } catch (error) {
-
         return { status: false, error: error.message }
     }
 }
 
 function generateRandomString() {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const numbers = '0123456789'
     // Get the current time in milliseconds
-    const currentTime = Date.now().toString();
+    const currentTime = Date.now().toString()
     // Generate a random letter
-    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+    const randomLetter = letters[Math.floor(Math.random() * letters.length)]
     // Generate a random number (optional, for extra randomness)
-    const randomNumber = numbers[Math.floor(Math.random() * numbers.length)];
+    const randomNumber = numbers[Math.floor(Math.random() * numbers.length)]
     // Combine the current time with a random letter and number
-    const randomString = randomLetter + randomNumber + currentTime;
-    return randomString;
+    const randomString = randomLetter + randomNumber + currentTime
+    return randomString
 }
-
 
 // FIRST CREATE DOCUMENT FOLDER BEFORE
 // GENERATING NEW DOCUMENTS
@@ -132,8 +143,16 @@ function generateRandomString() {
 async function document_folder(data) {
     const petition_type = data.petition_type
     const republic_act = data.republic_act_number
-    const who_owns_it = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner
-    var folderCreation = path.join(__dirname, `..\\..\\resources\\temp\\Generated\\${generateRandomString()}\\${petition_type} ${republic_act}\\${who_owns_it}\\`).replace('app.asar', 'app.asar.unpacked')
+    const who_owns_it =
+        data.document_owner === 'N/A'
+            ? data.petitioner_name
+            : data.document_owner
+    var folderCreation = path
+        .join(
+            __dirname,
+            `..\\..\\resources\\temp\\Generated\\${generateRandomString()}\\${petition_type} ${republic_act}\\${who_owns_it}\\`
+        )
+        .replace('app.asar', 'app.asar.unpacked')
     if (!fs.existsSync(folderCreation)) {
         fs.mkdirSync(folderCreation, { recursive: true })
     }
@@ -182,16 +201,16 @@ async function endorsement_letter(data) {
         data.event_type === 'Birth'
             ? 'Certificate of Live Birth'
             : data.event_type === 'Marriage'
-                ? 'Certificate of Marriage'
-                : data.event_type === 'Death'
-                    ? 'Certificate of Death'
-                    : ''
+              ? 'Certificate of Marriage'
+              : data.event_type === 'Death'
+                ? 'Certificate of Death'
+                : ''
     const type_of_petition =
         data.petition_type === 'CCE'
             ? 'Correction of Clerical Error'
             : data.petition_type === 'CFN'
-                ? 'Change of First Name'
-                : ''
+              ? 'Change of First Name'
+              : ''
     const granted_date = dateFns.format(
         data.petition_date_granted,
         'dd MMMM yyyy'
@@ -200,8 +219,8 @@ async function endorsement_letter(data) {
         data.republic_act_number === '9048'
             ? 'R.A 9048'
             : data.republic_act_number === '10172'
-                ? 'R.A 10172'
-                : ''
+              ? 'R.A 10172'
+              : ''
 
     doc.render({
         date: granted_date,
@@ -314,7 +333,11 @@ async function petition(data) {
         day_ss: day_ss,
         month_year_ss: monthyear_ss,
         subscribe_sworn: data.subscribe_sworn_city_municipality,
-        community_tax_certificate: data.community_tax_certificate,
+
+        exhibiting_his_her: data.exhibiting_his_her,
+        exhibiting_number: data.exhibiting_number,
+        // community_tax_certificate: data.community_tax_certificate,
+
         issued_at: data.issued_at,
         issued_on: issued_on,
 
@@ -380,16 +403,16 @@ async function record_sheet(data) {
         data.event_type === 'Birth'
             ? 'Certificate of Live Birth'
             : data.event_type === 'Marriage'
-                ? 'Certificate of Marriage'
-                : data.event_type === 'Death'
-                    ? 'Certificate of Death'
-                    : ''
+              ? 'Certificate of Marriage'
+              : data.event_type === 'Death'
+                ? 'Certificate of Death'
+                : ''
     const type_of_petition =
         data.petition_type === 'CCE'
             ? 'Correction of Clerical Error'
             : data.petition_type === 'CFN'
-                ? 'Change of First Name'
-                : ''
+              ? 'Change of First Name'
+              : ''
     const start_date_posting = dateFns.format(
         data.certificate_posting_start,
         'dd MMMM yyyy'
@@ -442,16 +465,16 @@ async function posting(data) {
         data.event_type === 'Birth'
             ? 'Certificate of Live Birth'
             : data.event_type === 'Marriage'
-                ? 'Certificate of Marriage'
-                : data.event_type === 'Death'
-                    ? 'Certificate of Death'
-                    : ''
+              ? 'Certificate of Marriage'
+              : data.event_type === 'Death'
+                ? 'Certificate of Death'
+                : ''
     const type_of_petition =
         data.petition_type === 'CCE'
             ? 'Correction of Clerical Error'
             : data.petition_type === 'CFN'
-                ? 'Change of First Name'
-                : ''
+              ? 'Change of First Name'
+              : ''
     const start_date_posting = dateFns.format(
         data.certificate_posting_start,
         'dd MMMM yyyy'

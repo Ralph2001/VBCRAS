@@ -53,7 +53,6 @@
                 </div>
             </Tab> -->
                 <TabsWrapper>
-
                     <Tab title="Petition Date">
                         <div class="flex flex-col h-full p-4">
                             <p class="p-2 font-semibold text-lg ">Output:</p>
@@ -461,7 +460,7 @@ import {
     add_date_certificate_end,
     add_date_issued,
     add_date_granted,
-} from '../../utils/DayPosting';
+} from '../../utils/ClericalDateCount';
 import Input from '../essentials/inputs/Input.vue';
 import Button from '../essentials/buttons/Button.vue';
 import TemplateSettings from './TemplateSettings.vue';

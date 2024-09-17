@@ -486,15 +486,9 @@ app.whenReady().then(() => {
         optimizer.watchWindowShortcuts(window)
     })
 
-    if (app.isPackaged) {
-        const permission = runPermissionController()
-        if (!permission) {
-            globalShortcut.unregisterAll();
-            app.quit();
-        }
-    }
-
+    runPermissionController()
     mainWindow()
+
 
 
     // Registert Shortcut that can affect Suste,

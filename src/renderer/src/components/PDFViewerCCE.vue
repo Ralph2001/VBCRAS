@@ -8,22 +8,52 @@
             </div>
             <div class="flex flex-row gap-3 ml-auto">
                 <!-- <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Print All</button> -->
-                <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
+                <button
+                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide"
                     v-if="active_pdf_link" @click="printAllPDF">Print All</button>
-                <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide"
+                <button
+                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide"
                     v-if="active_pdf_link" @click="printPDF">Print Active Document</button>
                 <button @click="exit_btn"
-                    class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Exit</button>
+                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide">Exit</button>
             </div>
         </div>
-        <div
-            class="absolute top-0 bottom-0 left-0 w-[20rem] p-2 px-6 py-20 items-center gap-2 bg-[#525659] z-40 flex flex-col">
 
-            <div class=" w-full flex flex-col gap-2">
-                <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
-                    :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
-                    class="p-2 shadow-inner outline-none ring-0 w-full font-medium text-sm rounded-sm flex items-start">
-                    {{ item.name }}
+        <button @click="sidebar = true"
+            class="absolute left-0 top-0 bottom-0 pt-20 w-fit p-1 bg-gray-700 hover:bg-gray-800  transition-all outline-none flex items-center justify-center  ">
+            <font-awesome-icon icon="fa-solid fa-angles-right" class=" text-lg  text-white" />
+        </button>
+
+
+        <div v-if="sidebar"
+            class="absolute top-0 bottom-0 left-0 w-[20rem]  pt-18 items-center gap-2 bg-[#525659] z-40 flex flex-col transition-all">
+            <div class="flex flex-row w-full h-full gap-1 bg-gray-700">
+                <div class=" w-full flex flex-col gap-2 items-center h-full pt-20 px-2">
+                    <div class="w-full grid grid-cols-2 items-center justify-center  shadow">
+                        <button @click="changeMenu('Files')"
+                            :class="[menu === 'Files' ? 'bg-gray-800' : 'hover:bg-gray-800']"
+                            class="font-medium transition-all text-gray-50 ">Files</button>
+                        <button @click="changeMenu('Info')"
+                            :class="[menu === 'Info' ? 'bg-gray-800' : 'hover:bg-gray-800']"
+                            class="font-medium transition-all text-gray-50 hover:bg-gray-800">Info</button>
+                    </div>
+                    <div class="flex flex-col gap-2 items-center justify-center w-full p-3" v-if="menu === 'Files'">
+                        <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
+                            :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
+                            class="p-2 shadow-inner outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex items-start">
+                            {{ item.name }}
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-2 items-center justify-center w-full h-full p-3"
+                        v-if="menu === 'Info'">
+                        <p class="italic text-white">Soon :)</p>
+                    </div>
+
+                </div>
+
+                <button @click="sidebar = false"
+                    class="h-full bg-gray-700 hover:bg-gray-800  transition-all outline-none flex items-center p-1 justify-center  ">
+                    <font-awesome-icon icon="fa-solid fa-angles-right " class=" text-lg  text-white rotate-180" />
                 </button>
 
             </div>
@@ -40,20 +70,13 @@
             <iframe ref="iframeRef" class="h-full w-full" v-if="active_pdf_link" :src="base64(active_pdf_link)"
                 frameborder="1" allowfullscreen=""></iframe>
         </div>
-        <!-- <div class="absolute right-20 top-20 z-[9999999] flex flex-col w-[20rem] bg-white items-center p-4">
-            <p class="font-medium">Summary</p>
-
-            <div class="grid"></div>
-        </div> -->
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
+import { onMounted, ref } from 'vue';
 
 const emit = defineEmits(['cancel-btn', 'save-print', 'exit-btn']);
-
 const props = defineProps({
     pdf: {
         type: [String, Object, Array],
@@ -75,6 +98,17 @@ function base64(data) {
 const pdfs = ref(props.pdf_data)
 const active_pdf = ref(null)
 const active_pdf_link = ref(null)
+const sidebar = ref(true)
+const menu = ref('Files')
+
+function changeMenu(data) {
+    menu.value = data
+}
+
+onMounted(() => {
+    // console.log(pdfs.value[0].name)
+    change_active_pdf(pdfs.value[1].name, pdfs.value[1].link)
+})
 
 
 const change_active_pdf = (name, link) => {

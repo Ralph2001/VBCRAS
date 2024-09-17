@@ -34,7 +34,11 @@ class Petitions(db.Model):
     administering_officer_position = db.Column(db.String)
     subscribe_sworn_date = db.Column(db.String)
     subscribe_sworn_city_municipality = db.Column(db.String)
-    community_tax_certificate = db.Column(db.String)
+    
+    # community_tax_certificate = db.Column(db.String)
+    exhibiting_his_her = db.Column(db.String)
+    exhibiting_number = db.Column(db.String)
+    
     issued_at = db.Column(db.String)
     issued_on = db.Column(db.String)
     # Actions

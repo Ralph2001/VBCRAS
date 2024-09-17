@@ -128,6 +128,8 @@
                             <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
                                 contentType="html" />
 
+                                {{ formData.annotation_angle }}
+
                         </div>
 
                         <p class="text-gray-800 text-sm font-medium mt-2">Adjustments</p>
@@ -228,6 +230,11 @@ import { useScannedDocuments } from '../../../stores/Scanned';
 import { computed } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { useComputerStore } from '../../../stores/Computer';
+
+
+const computer = useComputerStore()
+
 
 const { files, open, reset, onChange } = useFileDialog({
     accept: 'application/pdf',
@@ -247,6 +254,9 @@ const selectfromscanned = ref(false)
 const selectedscanned = ref()
 const pdfbase64 = ref()
 const annotation_text = ref()
+
+
+
 
 const changetoSelectfromScanned = () => {
     selectfromscanned.value = true
@@ -271,12 +281,13 @@ const CancelSelectFromScanned = () => {
 
 onChange((file) => {
     if (file[0].type != 'application/pdf' || file.length > 1) {
-        alert('Invalid')
+       
         annotated_unannotated.value = false
         return
     }
 
-    formData.filepath = file[0].path.replace('C:\\Users\\Erika Joyce\\', '')
+    formData.filepath = file[0].path.replace(`C:\\Users\\${computer.desktop_name}\\`, '')
+    console.log(formData.filepath)
 
     // console.log(file[0])
     submit()
@@ -284,6 +295,7 @@ onChange((file) => {
 
 })
 onMounted(async () => {
+    computer.getUserName()
     const data = await petition.get_petition_by_id(route.params.id)
 })
 
@@ -296,6 +308,7 @@ const back = () => {
 const initialFormData = {
     filepath: '',
     //Make This Dynamic
+
     annotation: '<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong> dated 03 November 2022 and affirmed by <strong>CRG under OCRG No. 22-2373313,</strong> the child&rsquo;s first name from <strong>"LODOVICO"</strong> to <strong>"LUDOVIGO"</strong> and child&rsquo;s date of birth from <strong>"MAY 17, 1967&rdquo; </strong> to <strong>"APRIL 26, 1967&rdquo; </strong> are hereby corrected.</p>',
     form_scale: 0.9,
     form_x: 1.7,
