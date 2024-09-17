@@ -400,45 +400,45 @@ function handleUpdates(mainWindow) {
     });
 }
 
-// Function to check if the executable is already whitelisted
-function isWhitelisted() {
-    const whitelistFilePath = join(__dirname, '../../resources/app/whitelist.txt').replace('app.asar', 'app.asar.unpacked');
-    // Check if the file exists and contains a success marker
-    return fs.existsSync(whitelistFilePath);
-}
+// // Function to check if the executable is already whitelisted
+// function isWhitelisted() {
+//     const whitelistFilePath = join(__dirname, '../../resources/app/whitelist.txt').replace('app.asar', 'app.asar.unpacked');
+//     // Check if the file exists and contains a success marker
+//     return fs.existsSync(whitelistFilePath);
+// }
 
-function markAsWhitelisted() {
-    const whitelistFilePath = join(__dirname, '../../resources/app/whitelist.txt').replace('app.asar', 'app.asar.unpacked');
-    // Create a file to mark the executable as whitelisted
-    fs.writeFileSync(whitelistFilePath, 'whitelisted', 'utf8');
-}
+// function markAsWhitelisted() {
+//     const whitelistFilePath = join(__dirname, '../../resources/app/whitelist.txt').replace('app.asar', 'app.asar.unpacked');
+//     // Create a file to mark the executable as whitelisted
+//     fs.writeFileSync(whitelistFilePath, 'whitelisted', 'utf8');
+// }
 
 
 
-function runPermissionController() {
-    try {
-        if (isWhitelisted()) {
-            return true
-        }
-        const batFilePath = join(__dirname, '../../resources/app/permission.bat').replace('app.asar', 'app.asar.unpacked');
-        execFile(batFilePath, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error executing batch file: ${error.message}`);
-                return false
-            }
-            if (stderr) {
-                console.error(`stderr: ${stderr}`);
-                return false
-            }
+// function runPermissionController() {
+//     try {
+//         if (isWhitelisted()) {
+//             return true
+//         }
+//         const batFilePath = join(__dirname, '../../resources/app/permission.bat').replace('app.asar', 'app.asar.unpacked');
+//         execFile(batFilePath, (error, stdout, stderr) => {
+//             if (error) {
+//                 console.error(`Error executing batch file: ${error.message}`);
+//                 return false
+//             }
+//             if (stderr) {
+//                 console.error(`stderr: ${stderr}`);
+//                 return false
+//             }
 
-        });
-        markAsWhitelisted();
-        return true
-    } catch (error) {
-        console.log(error)
-        return false
-    }
-}
+//         });
+//         markAsWhitelisted();
+//         return true
+//     } catch (error) {
+//         console.log(error)
+//         return false
+//     }
+// }
 
 function mainWindow() {
     const mainWindow = new BrowserWindow({
@@ -486,7 +486,7 @@ app.whenReady().then(() => {
         optimizer.watchWindowShortcuts(window)
     })
 
-    runPermissionController()
+    // runPermissionController()
     mainWindow()
 
 
