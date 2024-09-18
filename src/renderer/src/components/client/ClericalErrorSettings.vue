@@ -310,7 +310,7 @@
                     </Tab>
 
                     <Tab title="Reports">
-                        <div class="flex flex-col h-full gap-3 overflow-y-scroll ">
+                        <div class="flex flex-col h-full gap-6 overflow-y-scroll ">
                             <p class="p-2 font-medium text-2xl">Generate Reports</p>
                             <div class="flex flex-row items-center justify-center gap-4 ">
                                 <div class="flex flex-col gap-2  w-[20rem]">
@@ -327,7 +327,10 @@
                                 </div>
                             </div>
                             <div
-                                class="flex flex-wrap gap-10 lg:flex-row sm:px-10 md:lg:px-40 items-center justify-center h-auto  ">
+                                class="grid sm:grid-rows-1 md:lg:grid-cols-2 gap-10 lg:flex-row sm:px-10 md:lg:px-20 items-center justify-center h-auto  ">
+
+
+
                                 <div class="flex flex-col  gap-3 border rounded-md p-5 shadow-sm bg-white">
                                     <p class="font-medium  text-md tracking-wider text-gray-800 uppercase">Generate
                                         list by
@@ -584,7 +587,7 @@ const add_holiday = async () => {
 }
 
 const removeHoliday = async (id) => {
-    
+
 
     const remove = await setup.removeHoliday(id)
 }
@@ -626,34 +629,10 @@ const today = now.toISOString().split('T')[0]; // 'YYYY-MM-DD'
 const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`; // 'YYYY-MM'
 const currentYear = now.getFullYear(); // YYYY
 
-// Helper to parse the date
-// const parseDate = (dateString) => new Date(dateString);
-
-// Filter today's records
-// const today_record = computed(() => {
-//     return petitions.petitions.filter(petition => {
-//         const petitionDate = parseDate(petition.created_at).toISOString().split('T')[0]; // 'YYYY-MM-DD'
-//         return petition.petition_type === selected_petition_type.value && petitionDate === today;
-//     });
-// });
-
-// Filter this month's records
-// const month_record = computed(() => {
-//     return petitions.petitions.filter(petition => {
-//         const petitionYearMonth = `${parseDate(petition.created_at).getFullYear()}-${String(parseDate(petition.created_at).getMonth() + 1).padStart(2, '0')}`;
-//         return petition.petition_type === selected_petition_type.value && petitionYearMonth === currentYearMonth;
-//     });
-// });
-
-// Filter this year's records
-// const year_record = computed(() => {
-//     return petitions.petitions.filter(petition => {
-//         return petition.petition_type === selected_petition_type.value && parseDate(petition.created_at).getFullYear() === currentYear;
-//     });
-// });
 
 
-const selected_month = ref();
+
+const selected_month = ref(now.getMonth() + 1);
 const selected_year = ref(currentYear);
 
 const month_year_record = computed(() => {

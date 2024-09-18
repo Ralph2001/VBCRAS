@@ -2,20 +2,21 @@
     <div class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
         <div class="w-full bg-[#525659] flex  absolute  p-4 top-0 z-[99999]">
             <div class="flex flex-row gap-2 items-center">
-                <p class="text-sm  text-gray-100 font-medium  italic">
-                    Correction of Clerical Error - Ralph Advincula Villanueva
+                <p class="text-md  text-gray-100 font-medium  italic">
+                    <!-- Correction of Clerical Error - Ralph Advincula Villanueva -->
+                     Document Viewer
                 </p>
             </div>
             <div class="flex flex-row gap-3 ml-auto">
                 <!-- <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Print All</button> -->
-                <button
+                <!-- <button
                     class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide"
-                    v-if="active_pdf_link" @click="printAllPDF">Print All</button>
+                    v-if="active_pdf_link" @click="printAllPDF">Print All</button> -->
                 <button
                     class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide"
                     v-if="active_pdf_link" @click="printPDF">Print Active Document</button>
                 <button @click="exit_btn"
-                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide">Exit</button>
+                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 w-20 py-1 tracking-wide">Exit</button>
             </div>
         </div>
 
@@ -52,7 +53,7 @@
                 </div>
 
                 <button @click="sidebar = false"
-                    class="h-full bg-gray-700 hover:bg-gray-800  transition-all outline-none flex items-center p-1 justify-center  ">
+                    class="h-full bg-gray-700 hover:bg-gray-800 shadow-md px-2  transition-all outline-none flex items-center  justify-center  ">
                     <font-awesome-icon icon="fa-solid fa-angles-right " class=" text-lg  text-white rotate-180" />
                 </button>
 

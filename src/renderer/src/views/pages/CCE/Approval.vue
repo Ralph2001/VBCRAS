@@ -111,7 +111,7 @@
             v-if="AnnotationEditor">
 
             <div class="h-full flex flex-col overflow-y-scroll gap-1">
-                <button class="self-end border bg-red-400 text-white rounded px-2.5 p-1" @click="AnnotationEditor = !AnnotationEditor">Close</button>
+
                 <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 w-full h-full gap-5 ">
                     <div class="flex h-[calc(100vh-100px)]  w-full border relative">
                         <div
@@ -127,16 +127,13 @@
                             <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
                             <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
                                 contentType="html" />
-
-                                {{ formData.annotation_angle }}
-
                         </div>
 
                         <p class="text-gray-800 text-sm font-medium mt-2">Adjustments</p>
                         <div class="  items-start flex flex-col flex-wrap  p-2 gap-3">
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.form_scale"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                    class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
                                     Form
@@ -145,14 +142,14 @@
                             </div>
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.form_x"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                    class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-left-right" class="text-xs w-6" /> Form 102
                                     Horizontal Position</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.form_y"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                    class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-down" class="text-xs w-6" /> Form 102 Vertical Position</p>
                             </div>
@@ -162,7 +159,7 @@
                         <div class="  items-start  p-2 gap-2 flex flex-col ">
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.annotation_scale"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                    class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
                                     Annotation
@@ -170,14 +167,14 @@
                             </div>
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.annotation_x"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                    class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation
                                     Horizontal Position</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.annotation_y"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                    class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Vertical Position
                                 </p>
@@ -185,7 +182,7 @@
 
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.annotation_font"
-                                    class="w-[4rem] py-1 border-gray-200 rounded">
+                                    class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                         icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Height</p>
                             </div>
@@ -205,15 +202,20 @@
                             </div>
                         </div>
 
-                        <div class="mt-auto flex justify-items-end">
-                            <button @click="create_finality()"
-                                class="ml-auto tracking-wider border px-2 py-1.5 bg-blue-500 text-white rounded font-medium"
-                                type="button">Done</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
+                    </div>
+
+                </div>
+               
+            </div>
+            <div class="mt-2 flex justify-items-end gap-2 w-full">
+                    <button
+                        class=" text-sm tracking-wider ml-auto border bg-red-500 text-white rounded-sm hover:bg-red-600 px-3 py-2 "
+                        @click="AnnotationEditor = !AnnotationEditor">Close</button>
+                    <button @click="create_finality()"
+                        class=" text-sm tracking-wider  border px-3  py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 font-medium"
+                        type="button">Done</button>
+                </div>
         </div>
 
     </div>
@@ -281,7 +283,7 @@ const CancelSelectFromScanned = () => {
 
 onChange((file) => {
     if (file[0].type != 'application/pdf' || file.length > 1) {
-       
+
         annotated_unannotated.value = false
         return
     }

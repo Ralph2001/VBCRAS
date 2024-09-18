@@ -392,7 +392,7 @@ async function record_sheet(data) {
         linebreaks: true
     })
     const date_paid = dateFns.format(
-        data.petition_date_granted,
+        data.date_filed,
         'MMMM dd, yyyy'
     )
     const document_owner =

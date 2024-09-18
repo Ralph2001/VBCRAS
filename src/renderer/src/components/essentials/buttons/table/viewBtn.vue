@@ -19,10 +19,11 @@
             <button type="button" @click="opendocuments(props.params.data)"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Document</button>
+
             <button type="button" @click="openfolder(props.params.data)"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Folder</button>
-            <button type="button" @click="delete_cmd(props.params.data)"
+            <button v-if="user.user_role === 1" type="button" @click="delete_cmd(props.params.data)"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete</button>
             <!-- @click="delete_cmd(props.params.data)" -->
         </div>
@@ -30,12 +31,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { onClickOutside } from "@vueuse/core";
 import { usePetitions } from '../../../../stores/Petition/petitions';
 import PDFViewerCCE from '../../../PDFViewerCCE.vue';
 import PathWarning from '../../../client/modal/PathWarning.vue';
+import { AuthStore } from '../../../../stores/Authentication';
 
+
+const user = AuthStore()
+
+onMounted(()=>{
+    user.isAuthenticated()
+})
 const path_missing = ref(false)
 const missing_path = ref()
 

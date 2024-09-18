@@ -32,7 +32,7 @@ const fs = require('fs')
 /**
  * Main Printer Opener
  */
-const sumatraPath = join(__dirname, '../../resources/tools/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
+const sumatraPath = join(__dirname, '../../resources/tools/printer/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
 
 
 // Updater Flags
@@ -237,7 +237,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         const data = JSON.parse(formData)
 
         // Define paths
-        const doctoPath = join(__dirname, '../../resources/tools/Converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
+        const doctoPath = join(__dirname, '../../resources/tools/converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
 
         const originalDirectory = data.orignal_path
         const petitionType = data.petition_type;

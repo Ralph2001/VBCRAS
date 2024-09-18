@@ -78,12 +78,14 @@
                                 :
                                 <!-- <InputforForm width="100%" v-model="formData.date_registration"
                                     :error="v$.date_registration.$error" /> -->
-                                <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                                <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
                                     format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_registration"
                                     :teleport="true" :model-value="date_registration"
                                     @update:model-value="handleDateRegistration"
                                     @cleared="formData.date_registration = ''">
-                                </VueDatePicker>
+                                </VueDatePicker> -->
+                                <InputforForm  width="100%" bold v-model="formData.date_registration"
+                                    :error="v$.date_registration.$error" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" :label="name_of">
@@ -100,21 +102,25 @@
                             <InputLabel v-if="selectedType === '1A'" label="Date of Birth">
                                 :
                                 <!-- <InputforForm width="100%" v-model="formData.date_of" :error="v$.date_of.$error" /> -->
-                                <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                                <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
                                     format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_of" :teleport="true"
                                     :model-value="date_of" @update:model-value="handleDateOf"
                                     @cleared="formData.date_of = ''">
-                                </VueDatePicker>
+                                </VueDatePicker> -->
+                                <InputforForm  width="100%" bold v-model="formData.date_of"
+                                :error="v$.date_of.$error" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Birth">
                                 :
-                                <!-- <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" /> -->
+                                <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" />
                                 <!-- <AutoCompleteAddress width="100%" v-model="formData.place_of"
                                     :error="v$.place_of.$error" nolabel /> -->
 
-                                <SuggestionInputforForm width="100%" v-model="formData.place_of"
-                                    :error="v$.place_of.$error" :suggestion_data="municipality_province" nolabel />
+                                <!-- <SuggestionInputforForm width="100%" v-model="formData.place_of"
+                                    :error="v$.place_of.$error" :suggestion_data="municipality_province" nolabel /> -->
+                                    <!-- <InputforForm  width="100%" bold v-model="formData.place_of"
+                                    :error="v$.place_of.$error" /> -->
 
                             </InputLabel>
 
@@ -170,14 +176,14 @@
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Marriage of Parents">
                                 :
-                                <!-- <InputforForm width="100%" v-model="formData.place_of_marriage_parents"
-                                    :error="v$.place_of_marriage_parents.$error" /> -->
+                                <InputforForm width="100%" v-model="formData.place_of_marriage_parents"
+                                    :error="v$.place_of_marriage_parents.$error" />
                                 <!-- 
                                 <AutoCompleteAddress width="100%" v-model="formData.place_of_marriage_parents"
                                     :error="v$.place_of_marriage_parents.$error" nolabel /> -->
 
-                                <SuggestionInputforForm v-model="formData.place_of_marriage_parents"
-                                    :error="v$.place_of_marriage_parents.$error" nolabel />
+                                <!-- <SuggestionInputforForm v-model="formData.place_of_marriage_parents"
+                                    :error="v$.place_of_marriage_parents.$error" nolabel /> -->
 
                             </InputLabel>
 
@@ -430,11 +436,13 @@
                         </InputLabel>
                         <InputLabel label="Date Paid">
                             <!-- <InputforForm width="100%" v-model="formData.date_paid" /> -->
-                            <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                            <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
                                 format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_paid" :teleport="true"
                                 :model-value="date_paid" @update:model-value="handleDatePaid"
                                 @cleared="formData.date_paid = ''">
-                            </VueDatePicker>
+                            </VueDatePicker> -->
+                            <InputforForm  width="100%" bold v-model="formData.date_paid"
+                          />
                         </InputLabel>
                     </div>
 

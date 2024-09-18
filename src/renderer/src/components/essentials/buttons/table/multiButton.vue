@@ -1,61 +1,49 @@
 <template>
-  <!-- <Teleport to="body">
-    <FinalityMessage v-if="finality" @close-modal="finality = false" :data="props.params" />
-  </Teleport> -->
 
-  <!-- <div class="flex items-center h-full justify-center relative w-full" :class="{
-    'bg-green-200': Approved,
-    'bg-red-200': Disapproved,
-  }" ref="mainBtn">
-    <div class="flex flex-row divide-x" v-if="status === ''">
-      <button @click="ApprovedBtn" type="button"
-        class="px-3 py-2 text-xs font-medium text-center text-white bg-green-500 hover:bg-green-600 focus:outline-none transition-all hover:shadow-md">
-        Approve
-      </button>
-      <button @click="dropdown" type="button"
-        class="px-3 py-2 text-xs font-medium text-center text-white bg-green-600 hover:bg-green-700 focus:outline-none">
-        <font-awesome-icon icon="fa-solid fa-angle-down" />
-      </button>
-    </div>
-
-    <div class="flex flex-col items-center w-full" v-if="status !== ''">
-      <p class="text-sm font-semibold">{{ status }}</p>
-      <p class="text-xs italic">on April 16, 2024</p>
-    </div>
-
-    <div v-if="showOption"
-      class="absolute flex  gap-2 flex-col w-full p-2 bg-white border z-50 items-center top-[95%] ">
-      <button @click="ImpugnedBtn" type="button"
-        class="px-3 py-2 text-xs font-medium text-center w-full text-white bg-gray-500 hover:bg-gray-600 focus:outline-none shadow-2xl">
-        Impugn
-      </button>
-
-    </div>
-  </div> -->
-
-  <div class="w-full flex flex-col items-center justify-center h-full relative">
-    <button type="button" ref="mainBtn" @click="approve_petition()"
+  <div class="w-full flex flex-col items-center justify-center h-full  ">
+    <button v-if="!isWaiting || user.user_role === 1" type="button" ref="mainBtn" @click="approve_petition()"
       class="px-3 py-1 text-xs tracking-wide  bg-green-500 hover:bg-green-600 text-white rounded font-medium active:scale-95 text-center    transition-all focus:outline-none">
-      OPEN
+      CREATE FINALITY
     </button>
+    <div v-if="isWaiting && user.user_role === 2"
+      class="flex h-full w-full bg-yellow-200 items-center justify-center relative">
+      <p class=" font-medium text-gray-700 -mt-2 ">PENDING</p> <br>
+      <p class="text-xs font-medium absolute  bottom-0">{{ formatDate(props.params.data.petition_date_granted) }}</p>
+    </div>
   </div>
 
 
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const mainBtn = ref(null);
+import { AuthStore } from "../../../../stores/Authentication";
+import { format } from "date-fns";
+const user = AuthStore()
 
+
+onMounted(() => {
+  user.isAuthenticated()
+})
 const props = defineProps({
   params: {
     type: Object,
     required: true
   }
 })
+function formatDate(data) {
+ return format(data, "MMMM dd, yyyy")
+}
 
+function isWaiting() {
+  const now = new Date()
+  const grantedDate = new Date(props.params.data.petition_date_granted);
+  console.log(now > grantedDate)
+  return now > grantedDate;
+}
 
 const approve_petition = () => {
   console.log(props.params.data)

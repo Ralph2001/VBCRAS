@@ -3,7 +3,7 @@
 
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
-      <button class="text-gray-600 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
+      <button class="text-gray-600 " v-if="auth.user_role === 1 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
     </Header>
 
     <AlertPath v-if="busy" />
