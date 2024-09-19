@@ -61,6 +61,7 @@
                                     v-for="date in dates" :key="date">
                                     <p class="text-xs font-gray-600">{{ date.name }}</p>
                                     <p class="font-medium"> {{ format(date.date, 'MMMM dd, yyyy') }}</p>
+                                    <p class="text-xs font-medium text-blue-700"> {{ format(date.date, 'eeee') }}</p>
                                 </div>
                             </div>
 

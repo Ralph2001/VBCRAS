@@ -1,6 +1,6 @@
 from ..extensions import ma
 from ..models.civil_registry_corrections import Petitions, PetitionReasons, PetitionActions, PetitionClericalErrors, PetitionSupportingDocuments
-
+from .user_schema import CreatedUserSchema
 
 class PetitionClericalErrorsSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -27,7 +27,10 @@ class PetitionSchema(ma.SQLAlchemyAutoSchema):
     supporting_documents = ma.Nested(PetitionSupportingDocumentsSchema, many=True)
     petition_actions = ma.Nested(PetitionActionsSchema, many=True)
     reasons = ma.Nested(PetitionReasonsSchema, many=True)
+    created_by_user = ma.Nested(CreatedUserSchema, attribute="users") 
+
 
     class Meta:
         model = Petitions
         load_instance = True
+        include_fk = True

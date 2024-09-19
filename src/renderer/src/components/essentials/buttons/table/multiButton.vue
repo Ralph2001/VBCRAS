@@ -1,14 +1,19 @@
 <template>
 
   <div class="w-full flex flex-col items-center justify-center h-full  ">
-    <button v-if="!isWaiting || user.user_role === 1" type="button" ref="mainBtn" @click="approve_petition()"
+    <button v-if="!isWaiting() && props.params.data.status === 'PENDING'" type="button" ref="mainBtn"
+      @click="approve_petition()"
       class="px-3 py-1 text-xs tracking-wide  bg-green-500 hover:bg-green-600 text-white rounded font-medium active:scale-95 text-center    transition-all focus:outline-none">
       CREATE FINALITY
     </button>
-    <div v-if="isWaiting && user.user_role === 2"
-      class="flex h-full w-full bg-yellow-200 items-center justify-center relative">
+    <!-- <div v-if="isWaiting()" class="flex h-full w-full bg-yellow-200 items-center justify-center relative">
       <p class=" font-medium text-gray-700 -mt-2 ">TO BE GRANTED</p> <br>
-      <p class="text-xs font-medium text-gray-700 absolute  bottom-0">{{ formatDate(props.params.data.petition_date_granted) }}</p>
+      <p class="text-xs font-medium text-gray-700 absolute  bottom-0">{{
+        formatDate(props.params.data.petition_date_granted) }}</p>
+    </div> -->
+    <div v-if="!isWaiting() && props.params.data.status === 'FINISHED'"
+      class="flex h-full w-full bg-green-200 items-center justify-center relative">
+      <p>FINISHED</p>
     </div>
   </div>
 
@@ -35,45 +40,19 @@ const props = defineProps({
   }
 })
 function formatDate(data) {
- return format(data, "MMMM dd, yyyy")
+  return format(data, "MMMM dd, yyyy")
 }
 
 function isWaiting() {
   const now = new Date()
   const grantedDate = new Date(props.params.data.petition_date_granted);
-  console.log(now > grantedDate)
   return now > grantedDate;
 }
 
 const approve_petition = () => {
   console.log(props.params.data)
 
-  // Add Validation Here
   router.push('/pages/cce_approval/' + props.params.data.id)
-
-
-  // Swal
-  //   .fire({
-  //     title: "Are you sure?",
-  //     text: "You won't be able to revert this!",
-  //     icon: "warning",
-  //     showCancelButton: true,
-  //     confirmButtonColor: "#3085d6",
-  //     cancelButtonColor: "#d33",
-  //     confirmButtonText: "Yes, approve it!",
-  //   })
-  //   .then(async (result) => {
-  //     if (result.isConfirmed) {
-
-  //       const create_finality = await window.ClericalApi.CreateFinality(props.params.data);
-
-  //       Approved.value = true;
-  //       showOption.value = false;
-  //       status.value = "Approved";
-  //       finality.value = true
-  //     }
-  //   });
-
 };
 
 </script>

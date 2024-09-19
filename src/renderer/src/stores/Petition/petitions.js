@@ -60,6 +60,27 @@ export const usePetitions = defineStore('petitions', {
                 console.error('Error inserting data:', error)
             }
         },
+        async edit_petition(id, data) {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.put(
+                    `http://${hostAdd}:1216/petitions/edit-petition/${id}`,
+                    data,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`
+                        }
+                    }
+                )
+
+                this.refresh()
+            } catch (error) {
+                console.error('Error inserting data:', error)
+            }
+        },
+
 
         async get_latest_cce() {
             try {

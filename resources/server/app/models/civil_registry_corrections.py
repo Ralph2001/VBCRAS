@@ -1,12 +1,12 @@
 from ..extensions import db
 import datetime
 
-
 class Petitions(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     # Person who create the document
-    filed_by_user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    status =  db.Column(db.String, default="PENDING")
 
     date_filed = db.Column(db.String)
     republic_act_number = db.Column(db.String)
@@ -86,9 +86,12 @@ class Petitions(db.Model):
     supporting_documents = db.relationship(
         "PetitionSupportingDocuments", backref="petition", lazy=True
     )
+
+
+
     petition_actions = db.relationship("PetitionActions", backref="petition", lazy=True)
     petition_reasons = db.relationship("PetitionReasons", backref="petition", lazy=True)
-    filed_by_user = db.relationship("Users", backref="petitions", lazy=True)
+    
 
 
 class PetitionClericalErrors(db.Model):

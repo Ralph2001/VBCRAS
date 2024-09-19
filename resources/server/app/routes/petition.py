@@ -32,6 +32,32 @@ def get_petition_by_id(id):
     result = petition_schema.dump(petition_record)
     return jsonify(result), 200
 
+@petitions.route("/petitions/edit-petition/<int:id>", methods=["GET", "PUT"])
+def edit_petition(id):
+    if request.method == "GET":
+        # Retrieve the petition by id
+        petition_record = Petitions.query.get(id)
+
+        if not petition_record:
+            return jsonify({"message": "Petition not found"}), 404
+
+        result = petition_schema.dump(petition_record)
+        return jsonify(result), 200
+
+    if request.method == "PUT":
+        # Update the petition
+        petition_record = Petitions.query.get(id)
+
+        if not petition_record:
+            return jsonify({"message": "Petition not found"}), 404
+
+        # Load the request data into the schema to validate and deserialize
+        petition_data = petition_schema.load(request.json, instance=petition_record, partial=True)
+
+        # Save changes to the database
+        db.session.commit()
+
+        return jsonify(petition_schema.dump(petition_record)), 200
 
 # Get Latest Petitions
 @petitions.route("/petitions/latest-cce", methods=["GET"])

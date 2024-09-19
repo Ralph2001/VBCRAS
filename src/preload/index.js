@@ -23,6 +23,10 @@ contextBridge.exposeInMainWorld('ClericalApi', {
             pdfbase64: result.pdfbase64,
         }
     },
+    SaveAnnotated: async (fileUri) => {
+        const result = await ipcRenderer.invoke('saveAnnotated', fileUri)
+        return result
+    },
     createPetitionDocument: async (formData) => {
         const result = await ipcRenderer.invoke('createPetitionDocument', formData)
 

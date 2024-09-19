@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from ..extensions import IntegrityError
 from .ausf import Ausf
 from .scanned import Scans
+from .civil_registry_corrections import Petitions
 
 
 class Users(db.Model):
@@ -16,6 +17,7 @@ class Users(db.Model):
     # Relationship
     ausf = db.relationship(Ausf, backref='users', lazy=True)
     scans = db.relationship(Scans, backref='users', lazy=True)
+    petitions = db.relationship(Petitions, backref='users', lazy=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

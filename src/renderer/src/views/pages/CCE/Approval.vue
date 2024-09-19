@@ -1,11 +1,31 @@
 <template>
     <div class="relative h-[calc(100vh-60px)] flex  md:lg:flex-row w-full overflow-y-scroll gap-10">
+
+        <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="exit_approval()" />
+        <div role="dialog" aria-modal="true" v-if="isCreatingFinality"
+            class="fixed top-0 bottom-0 left-0 right-0 h-full items-center justify-center flex p-4 z-50 backdrop-blur-sm backdrop-brightness-[0.7]"
+            tabindex="-1">
+            <div
+                class="h-auto w-[25rem] gap-1 bg-white border rounded-md border-gray-300 shadow-sm flex flex-col p-4 items-center justify-center ">
+                <!-- <Loading /> -->
+
+                <div class="relative h-[10rem] w-full bg-gray-100 rounded-lg brightness-95 hover:border-gray-300 border   transition-all hover:brightness-100"
+                    title="wave">
+                    <Wave />
+                </div>
+                <p class="text-2xl text-gray-800 mt-5">Creating Finality</p>
+                <p class="text-sm text-gray-600">
+                    Please wait...
+                </p>
+            </div>
+        </div>
+
         <div class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col p-10 gap-2 ">
             <p class="font-medium">Approval</p>
             <p class="font-bold text-2xl mt-5">Attachments</p>
 
             <div class="flex items-center p-4">
-                <p class="font-normal text-gray-800">
+                <p class="font-normal text-sm text-gray-800">
                     <span class="font-medium">Note:</span> Upon approval, a <span class="font-medium">Finality</span>
                     and
                     <span class="font-medium">Endorsement Letter</span> will be automatically generated. However, you
@@ -17,7 +37,7 @@
 
 
 
-            <div class="flex flex-col w-full p-1">
+            <div class="flex flex-col w-full p-1" v-if="!annotation">
                 <button
                     :class="{ 'bg-gray-700 text-white  hover:text-white hover:bg-gray-800': annotated_unannotated, 'bg-white': !annotated_unannotated, ' pointer-events-none bg-gray-700 text-white hidden hover:text-white hover:bg-gray-800  ': selectfromscanned }"
                     class="w-fit text-sm font-semibold px-2.5 py-2 text-gray-700 shadow-md rounded border  items-center flex hover:bg-gray-100"
@@ -46,6 +66,11 @@
                             1A</button>
                     </div> -->
                 </div>
+            </div>
+            <div v-else class="flex flex-row gap-2">
+                <p class="font-medium text-sm text-green-500">Annotation Added</p>
+
+
             </div>
 
 
@@ -98,12 +123,15 @@
                 <button @click="back"
                     class="border w-[10rem] rounded-sm bg-white text-sm py-2 hover:bg-red-400 text-gray-800 font-medium shadow-sm transition-all active:scale-95 hover:text-white">Cancel</button>
 
-                <button type="button"
-                    class="bg-blue-300 py-2 px-10 font-medium rounded-sm text-white cursor-not-allowed">Approve</button>
+                <button type="button" @click="create_finality" :disabled="!annotation"
+                    class="bg-blue-600 disabled:bg-blue-400 disabled:hover:cursor-not-allowed hover:bg-blue-500 hover:cursor-pointer py-2 px-10 font-medium rounded-sm text-white ">Approve</button>
 
             </div>
         </div>
+        <div>
 
+
+        </div>
         <!-- <ul v-for="(value, key) in petition.petition_data" :key="key">
             <li>{{ key + ' : ' + value }}</li>
         </ul> -->
@@ -214,7 +242,7 @@
                 <button
                     class=" text-sm tracking-wider ml-auto border bg-red-500 text-white rounded-sm hover:bg-red-600 px-3 py-2 "
                     @click="AnnotationEditor = !AnnotationEditor">Close</button>
-                <button @click="create_finality()"
+                <button @click="create_annotation()"
                     class=" text-sm tracking-wider  border px-3  py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 font-medium"
                     type="button">Done</button>
             </div>
@@ -235,6 +263,11 @@ import { computed } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useComputerStore } from '../../../stores/Computer';
+import Wave from '../../../components/Wave.vue';
+import PDFViewerCCE from '../../../components/PDFViewerCCE.vue';
+
+
+
 
 
 const computer = useComputerStore()
@@ -250,6 +283,9 @@ const filter_year = ref(2024)
 const filter_search = ref('')
 const AnnotationEditor = ref(false)
 
+const pdf_viewer = ref(false)
+const data_pdfs = ref()
+
 const petition = usePetitions()
 const router = useRouter();
 const route = useRoute();
@@ -258,8 +294,11 @@ const selectfromscanned = ref(false)
 const selectedscanned = ref()
 const pdfbase64 = ref()
 const annotation_text = ref()
+const annotation = ref(false)
 
+const isCreatingFinality = ref(false)
 
+const petition_info = ref()
 
 
 const changetoSelectfromScanned = () => {
@@ -300,7 +339,7 @@ onChange((file) => {
 })
 onMounted(async () => {
     computer.getUserName()
-    const data = await petition.get_petition_by_id(route.params.id)
+    petition_info.value = await petition.get_petition_by_id(route.params.id)
 })
 
 
@@ -320,13 +359,13 @@ const initialFormData = {
     //Make This Dynamic
 
     annotation:
-        `<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong>`,
+        `<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong> dated 03 November 2022 and affirmed by <strong>CRG under OCRG No. 22-2373313,</strong> the child&rsquo;s first name from <strong>"LODOVICO"</strong> to <strong>"LUDOVIGO"</strong> and child&rsquo;s date of birth from <strong>"MAY 17, 1967&rdquo; </strong> to <strong>"APRIL 26, 1967&rdquo; </strong> are hereby corrected.</p>`,
     form_scale: 0.9,
     form_x: 1.7,
     form_y: 25,
 
     // Annotation Adjustments
-    annotation_width: 900,
+    annotation_width: 800,
     annotation_x: 590,
     annotation_y: 450,
     annotation_font_size: 12,
@@ -360,7 +399,7 @@ const submit = async () => {
         form_y: formData.form_y,
 
         // Annotation
-        annotation: formData.annotation,
+        annotation_width: formData.annotation_width,
         annotation_x: formData.annotation_x,
         annotation_y: formData.annotation_y,
         annotation_font_size: formData.annotation_font_size,
@@ -370,6 +409,55 @@ const submit = async () => {
 
     AnnotationEditor.value = true
     pdfbase64.value = 'data:application/pdf;filename=generated.pdf;base64,' + submit.pdfbase64
+    raw_pdf.value = submit.pdfbase64
+}
+const raw_pdf = ref()
+
+
+function create_annotation() {
+    annotation.value = true
+    AnnotationEditor.value = false
+}
+const create_finality = async () => {
+    isCreatingFinality.value = true
+    const data = JSON.stringify(petition_info.value)
+
+    const annotation_data = {
+        file: raw_pdf.value,
+        path: petition_info.value.file_path
+    }
+    const annotation = await window.ClericalApi.SaveAnnotated(JSON.stringify(annotation_data))
+    const create = await window.ClericalApi.CreateFinality(data)
+
+    if (create) {
+
+        const data = {
+            status: 'FINISHED'
+        }
+
+
+        isCreatingFinality.value = false
+        const update_database = await petition.edit_petition(petition_info.value.id, data)
+        console.log(update_database)
+        open_generated(petition_info.value.file_path)
+
+    }
+}
+
+
+const open_generated = async (path) => {
+    const check = await window.ClericalApi.OpenClericalFiles(path);
+    data_pdfs.value = check
+    pdf_viewer.value = !pdf_viewer.value
+}
+
+const exit_approval = async () => {
+    pdf_viewer.value = false
+    pdfbase64.value = ''
+    raw_pdf.value = ''
+    // await petition.get_all_petitions()
+    router.push('/pages/cce')
+
 }
 
 </script>

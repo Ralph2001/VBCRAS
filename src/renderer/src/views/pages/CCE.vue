@@ -3,7 +3,8 @@
 
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
-      <button class="text-gray-600 " v-if="auth.user_role === 1 " @click="settings = true"><font-awesome-icon icon="fa-solid fa-gear" /></button>
+      <button class="text-gray-600 " v-if="auth.user_role === 1" @click="settings = true"><font-awesome-icon
+          icon="fa-solid fa-gear" /></button>
     </Header>
 
     <AlertPath v-if="busy" />
@@ -699,6 +700,7 @@ onMounted(async () => {
   system_setting.getSystemSetting()
   petitions.get_all_petitions()
   auth.isAuthenticated()
+
 });
 
 
@@ -1035,6 +1037,8 @@ function change_document_owner_relation() {
 
 
 const initialForm = {
+  status: 'PENDING',
+  created_by: auth.user_id,
   date_filed: new Date().toISOString().split('T')[0],
   republic_act_number: '9048',
   petition_type: 'CCE',
@@ -1126,6 +1130,8 @@ const initialForm = {
 
 const rules = computed(() => {
   return {
+    status: { required },
+    created_by: {required},
 
     date_filed: { required },
     republic_act_number: { required },
@@ -1231,6 +1237,9 @@ const submitForm = async () => {
   }
 
   const petition_ = {
+    status: formData.status,
+    created_by: formData.created_by,
+
     date_filed: formData.date_filed,
     republic_act_number: formData.republic_act_number,
     petition_type: formData.petition_type,
@@ -1340,6 +1349,8 @@ const create_validated_document = async () => {
 
 
   const petition_ = ref({
+    status: formData.status,
+    created_by: formData.created_by,
 
     file_path: check.filepath,
     // filed_by_user: auth.user_id,

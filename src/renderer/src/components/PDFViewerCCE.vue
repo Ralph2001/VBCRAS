@@ -44,6 +44,7 @@
                             class="p-2 shadow-inner outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex items-start">
                             {{ item.name }}
                         </button>
+                     
                     </div>
                     <div class="flex flex-col gap-2 items-center justify-center w-full h-full p-3"
                         v-if="menu === 'Info'">
@@ -108,7 +109,8 @@ function changeMenu(data) {
 
 onMounted(() => {
     // console.log(pdfs.value[0].name)
-    change_active_pdf(pdfs.value[1].name, pdfs.value[1].link)
+    change_active_pdf(pdfs.value[0].name, pdfs.value[0].link)
+    console.log(pdfs.value)
 })
 
 

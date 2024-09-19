@@ -175,6 +175,27 @@ ipcMain.handle('createAUSF', async (event, formData) => {
 /////////////
 /////////////
 
+function saveBase64AsPDF(base64Data, path, fileName) {
+    // Remove the prefix if it exists (data:application/pdf;base64,)
+    const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+
+    // Convert base64 to a buffer
+    const buffer = Buffer.from(base64, 'base64');
+
+    // Define the path where the PDF will be saved
+    const filePath = join(path, fileName);
+
+    // Write the buffer to a file
+    fs.writeFile(filePath, buffer, (err) => {
+        if (err) {
+            console.error('Error saving PDF:', err);
+        } else {
+            console.log('PDF saved successfully:', filePath);
+        }
+    });
+}
+
+
 ipcMain.handle('CreateAnnotated', async (event, formData) => {
     try {
         const user = 'C:\\Users\\' + username
@@ -188,6 +209,14 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
     }
 })
 
+ipcMain.handle('saveAnnotated', async (event, fileUri) => {
+    try {
+        const data = JSON.parse(fileUri)
+        saveBase64AsPDF(data.file, data.path, 'Annotation.pdf');
+    } catch (error) {
+        console.log(error)
+    }
+})
 ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
@@ -235,8 +264,8 @@ function executeCommand(excutable, originalDirectory, outputDirectory, args) {
             outputDirectory,
             args
         ]);
-    
-       
+
+
         let output = '';
         let error = '';
 
@@ -261,9 +290,8 @@ function executeCommand(excutable, originalDirectory, outputDirectory, args) {
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
-
-        // Define paths
         const doctoPath = join(__dirname, '../../resources/tools/converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
+
         const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
 
         const originalDirectory = data.orignal_path
@@ -280,32 +308,12 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
 
         const deleteOriginal = 'true';
 
-
-
-        // // Conversion and Deletion arguments
-        // const convertArgs = [
-        //     '-f', originalDirectory,
-        //     '-O', outputDirectory,
-        //     '-T', 'wdFormatPDF',
-        //     '-OX', '.pdf'
-        // ];
-
-        // const deleteArgs = [
-        //     '-f', originalDirectory,
-        //     '-O', outputDirectory,
-        //     '-T', 'wdFormatPDF',
-        //     '-OX', '.pdf',
-        //     '-R', 'true'
-        // ];
-
-        // Convert and then delete files
         const conversionResult = await executeCommand(excutable,
             originalDirectory,
             outputDirectory,
             deleteOriginal);
 
         if (conversionResult) {
-            // await executeCommand(doctoPath, deleteArgs);
             return { status: true, filepath: outputDirectory };
         } else {
             return { status: false, filepath: null };
@@ -321,13 +329,34 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
 
 
 ipcMain.handle('createFinality', async (event, formData) => {
+
     try {
-        const create_finality = await finality(formData)
-        if ((create_finality.success = true)) {
-            return { status: true, filepath: create_finality.filepath }
+        const data = JSON.parse(formData)
+        const generate_document = await finality(data);
+
+        if (generate_document.success) {
+
+            const deleteOriginal = 'true';
+
+            const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
+            const outputDirectory = data.file_path
+
+            const conversionResult = await executeCommand(excutable,
+                generate_document.filepath,
+                outputDirectory,
+                deleteOriginal);
+
+            if (conversionResult) {
+                return { status: true, filepath: outputDirectory };
+            } else {
+                return { status: false, filepath: null };
+            }
         }
+
+        return { status: false, filepath: null };
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        return { status: false, filepath: null };
     }
 })
 
@@ -358,34 +387,46 @@ ipcMain.handle('remove-item', async (event, path) => {
 })
 
 
-ipcMain.handle('open-clerical-files', (event, path) => {
+ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
     try {
-        console.log(path)
-        // Define the main directory
-        const mainDirectory = path;
+        // Define the required and optional files
+        const requiredFiles = ['Petition.pdf', 'Posting.pdf', 'Endorsement Letter.pdf', 'Record Sheet.pdf'];
+        const optionalFiles = ['Annotation.pdf', 'Certificate of Finality.pdf', 'Finality Endorsement Letter.pdf'];
 
-        // Get all PDF files in the directory
-        const files = fs.readdirSync(mainDirectory)
-            .filter(file => file.endsWith('.pdf')); // Filter for PDF files
+        const data = [];
 
-        // Read each PDF file and encode it in base64
-        const data = files.map(file => {
-            const filePath = join(mainDirectory, file);
-            const fileData = fs.readFileSync(filePath, 'base64');
+        // Check for required files
+        for (const requiredFile of requiredFiles) {
+            const filePath = join(mainDirectory, requiredFile);
+            
+            // Check if the required file exists before reading
+            if (fs.existsSync(filePath)) {
+                const fileData = fs.readFileSync(filePath, 'base64');
+                const name = requiredFile.substring(0, requiredFile.lastIndexOf('.'));
+                data.push({ name, link: fileData });
+            }
+        }
 
-            // Extract the name without the file extension
-            const name = file.substring(0, file.lastIndexOf('.'));
+        // Check for optional files
+        const optionalData = []; // Use a new array for optional files
+        for (const optionalFile of optionalFiles) {
+            const filePath = join(mainDirectory, optionalFile);
+            
+            // Check if the optional file exists before reading
+            if (fs.existsSync(filePath)) {
+                const fileData = fs.readFileSync(filePath, 'base64');
+                const name = optionalFile.substring(0, optionalFile.lastIndexOf('.'));
+                optionalData.push({ name, link: fileData }); // Push to optionalData
+            }
+        }
 
-            return { name, link: fileData };
-        });
-
-        return data;
+        // Combine required and optional data
+        return [...data, ...optionalData];
 
     } catch (error) {
         return { error: 'Failed to open clerical files' };
     }
 });
-
 ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
     try {
         const generate = await generate_by_month_year(formData)

@@ -38,8 +38,8 @@ export async function CreateAnnotated(user, formData) {
     const y_position = Number(formData.form_y)
 
     // Changeable
-    let annotation_x = Number(formData.annotation_x)
-    let annotation_y = Number(formData.annotation_y)
+    const annotation_x = Number(formData.annotation_x)
+    const annotation_y = Number(formData.annotation_y)
     // Const
     const annotation_rotation = Number(formData.annotation_rotation)
     const annotation_width = Number(formData.annotation_width)
@@ -83,8 +83,8 @@ export async function CreateAnnotated(user, formData) {
         const textWidth = fontType.widthOfTextAtSize(text, 12) + 3
 
         //if Total Width Reaches Max Limit, it will save the current array
-        const MAX_WIDTH = annotation_width
-        if (totalWidthSoFar + textWidth >= MAX_WIDTH) {
+      
+        if (totalWidthSoFar + textWidth >= annotation_width) {
             filtered.push(currentArray)
 
             currentArray = []
@@ -150,8 +150,7 @@ export async function CreateAnnotated(user, formData) {
      * dadagdag siya ng blanks/width para sa sakto sa limit na fe. 900
      */
     function addBlanks(data) {
-        const targetWidth = annotation_width //Limit The Width
-        const minimumWidthToAddBlanks = annotation_width - 100 // Minimun Width
+    
 
         // Create a new array to store the modified lines without modifying the original data
         let newData = []
@@ -159,18 +158,18 @@ export async function CreateAnnotated(user, formData) {
         for (let line of data) {
             let totalWidth = line.reduce((acc, item) => acc + item.size, 0)
 
-            // Check if totalWidth is less than minimumWidthToAddBlanks
-            if (totalWidth < minimumWidthToAddBlanks) {
+            // Check if totalWidth is less than (annotation_width - 100)
+            if (totalWidth < (annotation_width - 100)) {
                 // Push the original line to the new array without modifications
                 newData.push([...line])
                 continue // Skip adding blanks if totalWidth is less than 700
             }
 
-            // Check if totalWidth is less than targetWidth
-            if (totalWidth < targetWidth) {
+            // Check if totalWidth is less than annotation_width
+            if (totalWidth < annotation_width) {
                 // Create a new line with added blanks
                 let newLine = [...line]
-                const remainingSpace = targetWidth - totalWidth
+                const remainingSpace = annotation_width - totalWidth
                 const blankItem = { text: ' ', isBold: false, size: 1 }
 
                 // Calculate how many blank items are needed
@@ -256,7 +255,6 @@ export async function CreateAnnotated(user, formData) {
 
     for (const line of sortedData) {
         for (const item of line) {
-
             // Annotation is Vertical
             if (annotation_rotation === Number(-90)) {
                 firstPage.drawText(item.text, {
@@ -281,11 +279,13 @@ export async function CreateAnnotated(user, formData) {
                 })
             }
             splitedwidth += item.size
+    
+
         }
         new_line += 14
         splitedwidth = 0
     }
-
+    
     pdfBytes = await pdfDoc.saveAsBase64()
 
     return { status: true, pdfbase64: pdfBytes }
