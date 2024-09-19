@@ -7,8 +7,8 @@
     </button>
     <div v-if="isWaiting && user.user_role === 2"
       class="flex h-full w-full bg-yellow-200 items-center justify-center relative">
-      <p class=" font-medium text-gray-700 -mt-2 ">PENDING</p> <br>
-      <p class="text-xs font-medium absolute  bottom-0">{{ formatDate(props.params.data.petition_date_granted) }}</p>
+      <p class=" font-medium text-gray-700 -mt-2 ">TO BE GRANTED</p> <br>
+      <p class="text-xs font-medium text-gray-700 absolute  bottom-0">{{ formatDate(props.params.data.petition_date_granted) }}</p>
     </div>
   </div>
 

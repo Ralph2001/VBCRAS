@@ -208,21 +208,47 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
 });
 
 // Execute external command helper
-function executeCommand(commandPath, args) {
+function executeCommand(excutable, originalDirectory, outputDirectory, args) {
     return new Promise((resolve, reject) => {
-        const process = spawn(commandPath, args);
+        // const process = spawn(commandPath, args);
+        // let output = '';
+        // let error = '';
+
+        // process.stdout.on('data', (data) => {
+        //     output += data.toString();
+        // });
+
+        // process.stderr.on('data', (data) => {
+        //     error += data.toString();
+        // });
+
+        // process.on('close', (code) => {
+        //     if (code === 0) {
+        //         resolve(output);
+        //     } else {
+        //         reject(new Error(`Process failed with code ${code}: ${error}`));
+        //     }
+        // });
+
+        const pythonProcess = spawn(excutable, [
+            originalDirectory,
+            outputDirectory,
+            args
+        ]);
+    
+       
         let output = '';
         let error = '';
 
-        process.stdout.on('data', (data) => {
+        pythonProcess.stdout.on('data', (data) => {
             output += data.toString();
         });
 
-        process.stderr.on('data', (data) => {
+        pythonProcess.stderr.on('data', (data) => {
             error += data.toString();
         });
 
-        process.on('close', (code) => {
+        pythonProcess.on('close', (code) => {
             if (code === 0) {
                 resolve(output);
             } else {
@@ -238,6 +264,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
 
         // Define paths
         const doctoPath = join(__dirname, '../../resources/tools/converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
+        const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
 
         const originalDirectory = data.orignal_path
         const petitionType = data.petition_type;
@@ -250,27 +277,35 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             fs.mkdirSync(outputDirectory, { recursive: true })
         }
 
-        // Conversion and Deletion arguments
-        const convertArgs = [
-            '-f', originalDirectory,
-            '-O', outputDirectory,
-            '-T', 'wdFormatPDF',
-            '-OX', '.pdf'
-        ];
 
-        const deleteArgs = [
-            '-f', originalDirectory,
-            '-O', outputDirectory,
-            '-T', 'wdFormatPDF',
-            '-OX', '.pdf',
-            '-R', 'true'
-        ];
+        const deleteOriginal = 'true';
+
+
+
+        // // Conversion and Deletion arguments
+        // const convertArgs = [
+        //     '-f', originalDirectory,
+        //     '-O', outputDirectory,
+        //     '-T', 'wdFormatPDF',
+        //     '-OX', '.pdf'
+        // ];
+
+        // const deleteArgs = [
+        //     '-f', originalDirectory,
+        //     '-O', outputDirectory,
+        //     '-T', 'wdFormatPDF',
+        //     '-OX', '.pdf',
+        //     '-R', 'true'
+        // ];
 
         // Convert and then delete files
-        const conversionResult = await executeCommand(doctoPath, convertArgs);
+        const conversionResult = await executeCommand(excutable,
+            originalDirectory,
+            outputDirectory,
+            deleteOriginal);
 
         if (conversionResult) {
-            await executeCommand(doctoPath, deleteArgs);
+            // await executeCommand(doctoPath, deleteArgs);
             return { status: true, filepath: outputDirectory };
         } else {
             return { status: false, filepath: null };
@@ -354,7 +389,7 @@ ipcMain.handle('open-clerical-files', (event, path) => {
 ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
     try {
         const generate = await generate_by_month_year(formData)
-        shell.showItemInFolder(generate.dir)
+        shell.showItemInFolder(generate.dir.replace('app.asar', 'app.asar.unpacked'))
     } catch (error) {
         console.log(error)
     }

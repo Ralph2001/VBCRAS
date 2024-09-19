@@ -112,16 +112,16 @@
 
             <div class="h-full flex flex-col overflow-y-scroll gap-1">
 
-                <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 w-full h-full gap-5 ">
-                    <div class="flex h-[calc(100vh-100px)]  w-full border relative">
+                <div class="grid sm:grid-cols-1 md:lg:grid-cols-3 w-full h-full gap-5 ">
+                    <div class="flex h-[calc(100vh-100px)] col-span-2  w-full border relative">
                         <div
-                            class="absolute right-[3rem] top-[0.4rem]  h-[3rem] w-[5rem] flex items-center justify-center bg-[#323639] z-[999]">
+                            class="absolute right-[3.5rem] top-[0.4rem]  h-[3rem] w-[5rem] flex items-center justify-center bg-[#323639] z-[999]">
                             <p class="text-white text-xs tracking-wider font-medium">VBCRAS</p>
                         </div>
-
                         <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
                     </div>
-                    <div class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm">
+                    <div
+                        class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm overflow-y-scroll h-full">
                         <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Settings </p>
                         <div class="h-auto flex flex-col gap-2">
                             <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
@@ -155,50 +155,52 @@
                             </div>
 
                         </div>
-
+                        <div class="block w-full border border-gray-600"></div>
                         <div class="  items-start  p-2 gap-2 flex flex-col ">
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.annotation_scale"
+                                <input type="number" step="0.1" v-model="formData.annotation_width"
                                     class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
-                                    Annotation
-                                    Scale</p>
+                                        icon="fa-solid fa-left-right" class="text-xs w-6" />
+                                    Annotation Text
+                                    Width</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.annotation_x"
                                     class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation
+                                        icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation Text
                                     Horizontal Position</p>
                             </div>
                             <div class="flex flex-row items-center gap-3">
                                 <input type="number" step="0.1" v-model="formData.annotation_y"
                                     class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Vertical Position
+                                        icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Text Vertical
+                                    Position
                                 </p>
                             </div>
 
                             <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.annotation_font"
+                                <input type="number" step="0.1" v-model="formData.annotation_font_size"
                                     class="w-[6rem] py-1 border-gray-200 rounded">
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Height</p>
+                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Font Size
+                                </p>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <div class="flex flex-row text-gray-700 gap-2">
-                                    <button @click="formData.annotation_angle = -90"
+                                    <button @click="change_annotation_width(-90)"
                                         class="border p-1 rounded hover:bg-gray-100 hover:shadow-sm w-9">
                                         <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                                     </button>
-                                    <button @click="formData.annotation_angle = 0"
+                                    <button @click="change_annotation_width(0)"
                                         class="border p-1 rounded hover:bg-gray-100 hover:shadow-sm w-9">
                                         <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                                     </button>
                                 </div>
                                 <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Angle</p>
+                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Rotation</p>
                             </div>
                         </div>
 
@@ -206,16 +208,16 @@
                     </div>
 
                 </div>
-               
+
             </div>
             <div class="mt-2 flex justify-items-end gap-2 w-full">
-                    <button
-                        class=" text-sm tracking-wider ml-auto border bg-red-500 text-white rounded-sm hover:bg-red-600 px-3 py-2 "
-                        @click="AnnotationEditor = !AnnotationEditor">Close</button>
-                    <button @click="create_finality()"
-                        class=" text-sm tracking-wider  border px-3  py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 font-medium"
-                        type="button">Done</button>
-                </div>
+                <button
+                    class=" text-sm tracking-wider ml-auto border bg-red-500 text-white rounded-sm hover:bg-red-600 px-3 py-2 "
+                    @click="AnnotationEditor = !AnnotationEditor">Close</button>
+                <button @click="create_finality()"
+                    class=" text-sm tracking-wider  border px-3  py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 font-medium"
+                    type="button">Done</button>
+            </div>
         </div>
 
     </div>
@@ -306,22 +308,29 @@ const back = () => {
     router.push('/pages/cce')
 }
 
+function change_annotation_width(val) {
+    formData.annotation_rotation = val
+    val === -90 ? formData.annotation_width = 900 : formData.annotation_width = 500
+    val === -90 ? formData.annotation_x = 590 : formData.annotation_x = 50
+    val === -90 ? formData.annotation_y = 450 : formData.annotation_y = 50
+}
 
 const initialFormData = {
     filepath: '',
     //Make This Dynamic
 
-    annotation: '<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong> dated 03 November 2022 and affirmed by <strong>CRG under OCRG No. 22-2373313,</strong> the child&rsquo;s first name from <strong>"LODOVICO"</strong> to <strong>"LUDOVIGO"</strong> and child&rsquo;s date of birth from <strong>"MAY 17, 1967&rdquo; </strong> to <strong>"APRIL 26, 1967&rdquo; </strong> are hereby corrected.</p>',
+    annotation:
+        `<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong>`,
     form_scale: 0.9,
     form_x: 1.7,
     form_y: 25,
 
     // Annotation Adjustments
-    annotation_scale: 0,
-    annotation_x: 600,
+    annotation_width: 900,
+    annotation_x: 590,
     annotation_y: 450,
-    annotation_font: 12,
-    annotation_angle: -90,
+    annotation_font_size: 12,
+    annotation_rotation: -90,
 };
 
 const formData = reactive({ ...initialFormData });
@@ -354,8 +363,8 @@ const submit = async () => {
         annotation: formData.annotation,
         annotation_x: formData.annotation_x,
         annotation_y: formData.annotation_y,
-        annotation_font: formData.annotation_font,
-        annotation_angle: formData.annotation_angle
+        annotation_font_size: formData.annotation_font_size,
+        annotation_rotation: formData.annotation_rotation
     }
     const submit = await window.ClericalApi.CreateAnnotated(data);
 

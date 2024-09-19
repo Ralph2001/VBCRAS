@@ -37,11 +37,13 @@ export async function CreateAnnotated(user, formData) {
     const x_position = Number(formData.form_x)
     const y_position = Number(formData.form_y)
 
-    const annotation_x = Number(formData.annotation_x)
-    const annotation_y = Number(formData.annotation_y)
-    const annotation_angle = Number(formData.annotation_angle)
-    const annotation_font = Number(formData.annotation_font)
-
+    // Changeable
+    let annotation_x = Number(formData.annotation_x)
+    let annotation_y = Number(formData.annotation_y)
+    // Const
+    const annotation_rotation = Number(formData.annotation_rotation)
+    const annotation_width = Number(formData.annotation_width)
+    const annotation_font_size = Number(formData.annotation_font_size)
     const useAnnotationDocument = embeddedPage.scale(scale)
 
     // Page Size to 8.5 x 13
@@ -81,7 +83,7 @@ export async function CreateAnnotated(user, formData) {
         const textWidth = fontType.widthOfTextAtSize(text, 12) + 3
 
         //if Total Width Reaches Max Limit, it will save the current array
-        const MAX_WIDTH = annotation_angle === Number(-90) ? 900 : 500
+        const MAX_WIDTH = annotation_width
         if (totalWidthSoFar + textWidth >= MAX_WIDTH) {
             filtered.push(currentArray)
 
@@ -148,9 +150,8 @@ export async function CreateAnnotated(user, formData) {
      * dadagdag siya ng blanks/width para sa sakto sa limit na fe. 900
      */
     function addBlanks(data) {
-        const targetWidth = annotation_angle === Number(-90) ? 900 : 500 //Limit The Width
-        const minimumWidthToAddBlanks =
-            annotation_angle === Number(-90) ? 800 : 450 // Minimun Width
+        const targetWidth = annotation_width //Limit The Width
+        const minimumWidthToAddBlanks = annotation_width - 100 // Minimun Width
 
         // Create a new array to store the modified lines without modifying the original data
         let newData = []
@@ -251,32 +252,37 @@ export async function CreateAnnotated(user, formData) {
      */
 
     let splitedwidth = 0
-    let new_line = annotation_angle === Number(-90) ? 600 : 0
+    let new_line = 0
 
     for (const line of sortedData) {
         for (const item of line) {
-            if (annotation_angle === Number(-90)) {
+
+            // Annotation is Vertical
+            if (annotation_rotation === Number(-90)) {
                 firstPage.drawText(item.text, {
-                    x: new_line,
+                    x: annotation_x - new_line,
                     y: height / 2 + annotation_y - splitedwidth,
-                    size: 12,
+                    size: annotation_font_size,
                     font: item.isBold ? timesRomanFontBold : timesRomanFont,
-                    rotate: degrees(annotation_angle),
+                    rotate: degrees(annotation_rotation),
                     lineHeight: 14
                 })
-            } else if (annotation_angle === Number(0)) {
+
+            }
+            // Annotation is Horizontal
+            else if (annotation_rotation === Number(0)) {
                 firstPage.drawText(item.text, {
-                    x: 72 + splitedwidth,
-                    y: 72 - new_line,
-                    size: 12,
+                    x: annotation_x + splitedwidth,
+                    y: annotation_y - new_line,
+                    size: annotation_font_size,
                     font: item.isBold ? timesRomanFontBold : timesRomanFont,
-                    rotate: degrees(annotation_angle),
+                    rotate: degrees(annotation_rotation),
                     lineHeight: 14
                 })
             }
             splitedwidth += item.size
         }
-        new_line += annotation_angle === Number(-90) ? -14 : 14
+        new_line += 14
         splitedwidth = 0
     }
 

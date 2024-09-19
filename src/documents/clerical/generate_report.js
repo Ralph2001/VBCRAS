@@ -114,7 +114,7 @@ export async function generate_by_month_year(data) {
         });
     });
 
-    const output_dir = join(__dirname, `../../exported/${Date.now()}`);
+    const output_dir = join(__dirname, `../../resources/exported/${Date.now()}`);
 
     // Ensure the directory exists
     if (!fs.existsSync(output_dir)) {
