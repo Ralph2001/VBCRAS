@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full" v-show="props.title === selectedTitle">
+    <div class="w-full " v-show="props.title === selectedTitle">
         <slot />
     </div>
 </template>

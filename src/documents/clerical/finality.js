@@ -7,7 +7,7 @@ const dateFns = require('date-fns')
 
 
 const PATHS = {
-    FINALITY_PATH:  path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Finality/finality.docx').replace('app.asar', 'app.asar.unpacked'),
+    FINALITY_PATH: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Finality/finality.docx').replace('app.asar', 'app.asar.unpacked'),
     ENDORSEMENT_LETTER_PATH: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Finality/endorsement.docx').replace('app.asar', 'app.asar.unpacked')
 }
 
@@ -16,7 +16,7 @@ let main_folder_path
 
 
 export async function finality(formData) {
-  
+
     const folderCreation = await document_folder(formData)
     const finalityCreation = await create_finality(formData)
     const endorsementCreation = await create_endorsement(formData)
@@ -74,8 +74,8 @@ async function document_folder(data) {
 }
 
 
- async function create_finality(data) {
-    const content =  fs.readFileSync(PATHS.FINALITY_PATH, 'binary')
+async function create_finality(data) {
+    const content = fs.readFileSync(PATHS.FINALITY_PATH, 'binary')
 
 
     const zip = new PizZip(content)
@@ -111,8 +111,11 @@ async function document_folder(data) {
         data.petition_date_granted,
         'dd MMMM yyyy'
     )
-    const day = dateFns.format(data.petition_date_granted, 'do')
-    const monthyear = dateFns.format(data.petition_date_granted, 'MMMM yyyy')
+
+
+
+    const day = dateFns.format(data.date_filed, 'do')
+    const monthyear = dateFns.format(data.date_filed, 'MMMM yyyy')
 
     doc.render({
         petition_number: data.petition_number,
@@ -131,7 +134,7 @@ async function document_folder(data) {
 }
 
 async function create_endorsement(data) {
-    const content =  fs.readFileSync(PATHS.ENDORSEMENT_LETTER_PATH, 'binary')
+    const content = fs.readFileSync(PATHS.ENDORSEMENT_LETTER_PATH, 'binary')
 
     const zip = new PizZip(content)
     const doc = new Docxtemplater(zip, {
@@ -173,6 +176,7 @@ async function create_endorsement(data) {
 
 
     const event_date = dateFns.format(data.event_date, 'dd MMMM yyyy')
+    const date_filed = dateFns.format(data.date_filed, 'dd MMMM yyyy')
     const date_granted = dateFns.format(
         data.petition_date_granted,
         'dd MMMM yyyy'
@@ -182,6 +186,7 @@ async function create_endorsement(data) {
 
     doc.render({
 
+        date: date_filed,
         subject_code: data.republic_act_number,
 
         event_type: event_type,

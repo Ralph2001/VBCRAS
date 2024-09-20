@@ -23,13 +23,53 @@ class SystemSettings(db.Model):
     updated_on = db.Column(DateTime(timezone=True), server_default=func.now(),  onupdate=func.now(),  nullable=False)
 
 
+# class DateRules(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     type  = db.Column(db.String)
+#     days_after  = db.Column(db.Integer)
+#     exclude_holidays_weekends  = db.Column(db.Boolean)
+#     allow_weekend  = db.Column(db.Boolean)
+#     allow_holiday  = db.Column(db.Boolean)
+
 class DateRules(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
-    type  = db.Column(db.String)
-    days_after  = db.Column(db.Integer)
-    exclude_holidays_weekends  = db.Column(db.Boolean)
-    allow_weekend  = db.Column(db.Boolean)
-    allow_holiday  = db.Column(db.Boolean)
+
+    # Notice
+    notice_days  = db.Column(db.Integer)
+    exclude_holidays_notice = db.Column(db.Boolean)
+    exclude_weekends_notice = db.Column(db.Boolean)
+    allow_weekend_end = db.Column(db.Boolean)
+    allow_holiday_end = db.Column(db.Boolean)
+
+    # Certificate Start
+    certificate_start_days = db.Column(db.Integer)
+    exclude_holidays_start = db.Column(db.Boolean)
+    exclude_weekends_start = db.Column(db.Boolean)
+    allow_weekend_start = db.Column(db.Boolean)
+    allow_holiday_start = db.Column(db.Boolean)
+
+    # Certificate End
+    certificate_end_days  = db.Column(db.Integer)
+    exclude_holidays_end = db.Column(db.Boolean)
+    exclude_weekends_end = db.Column(db.Boolean)
+    allow_weekend_end_cert = db.Column(db.Boolean)
+    allow_holiday_end_cert = db.Column(db.Boolean)
+
+    # Issuance
+    issued_days  = db.Column(db.Integer)
+    exclude_holidays_issued = db.Column(db.Boolean)
+    exclude_weekends_issued = db.Column(db.Boolean)
+    allow_weekend_issued = db.Column(db.Boolean)
+    allow_holiday_issued = db.Column(db.Boolean)
+
+    # Grant
+    grant_days  = db.Column(db.Integer)
+    exclude_holidays_grant = db.Column(db.Boolean)
+    exclude_weekends_grant = db.Column(db.Boolean)
+    allow_weekend_grant = db.Column(db.Boolean)
+    allow_holiday_grant  = db.Column(db.Boolean)
+
 
 class Holidays(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -295,8 +295,6 @@ async function petition(data) {
     // Task: Auto Bold text inside quotation marks
     // Or Nah
     const solo_action = data.petition_actions[0].action_text
-        .replace(`"`, `“`)
-        .replace(`"`, `”`)
 
     doc.render({
         petition_number: data.petition_number,

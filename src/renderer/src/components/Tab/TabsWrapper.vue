@@ -11,7 +11,7 @@
             </li>
         </ul>
     </div>
-    <div class="flex h-full p-4 overflow-y-scroll w-full bg-gray-100">
+    <div class="flex h-full p-4 overflow-y-scroll w-full bg-gray-100 border border-gray-300">
         <slot />
     </div>
 </template>

@@ -1,9 +1,11 @@
     <template>
         <div class="fixed top-0 bottom-0 left-0 right-0 z-50 backdrop-blur-sm backdrop-brightness-75 p-10">
-            <div class="h-full w-full flex rounded-lg bg-gray-50 flex-col p-6 relative">
-                <button @click="emit('close-setting')"
-                    class="absolute right-10 border px-2 rounded outline-none bg-red-500 font-medium text-white">Exit</button>
-                <p class="font-medium p-4">Settings</p>
+            <div class="h-full w-full flex rounded-lg bg-gray-50 flex-col p-2 relative">
+                <div class="flex flex-row items-center px-4">
+                    <p class="font-medium p-4">Settings</p>
+                    <button @click="emit('close-setting')"
+                        class=" text-sm ml-auto border px-10 h-10 rounded w-fit outline-none bg-red-500 hover:bg-red-600 font-medium text-white">Exit</button>
+                </div>
 
                 <!-- <Tab title="Default Values">
                 <div class="flex flex-col h-full">
@@ -65,8 +67,8 @@
                                 </div>
                             </div>
 
-                            <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 h-full w-full mt-5 gap-1">
-                                <div class="flex flex-col border p-6 bg-white shadow-sm">
+                            <div class="grid sm:grid-cols-1 md:lg:grid-cols-3 h-full w-full mt-5 gap-3">
+                                <div class="flex flex-col border border-gray-300  p-6 h-fit bg-white shadow-sm">
                                     <p class="font-medium text-2xl">Holidays</p>
 
 
@@ -119,7 +121,8 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col border p-6 h-[38rem] overflow-y-scroll bg-white shadow-sm">
+                                <div
+                                    class="flex flex-col col-span-2 border-gray-300 border p-6 h-[38rem] overflow-y-scroll bg-white shadow-sm">
                                     <p class="font-medium text-2xl">Automatic Date Counts</p>
 
 
@@ -131,22 +134,31 @@
                                                     <p class="text-sm col-span-5">How many days after the current date
                                                         should the notice be issued?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <Input class="w-20" center />
+                                                        <Input class="w-20" center
+                                                            v-model="date_rules_data.notice_days" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the count of added days exclude
-                                                        holidays and weekends?</p>
+                                                        weekends?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.exclude_weekends_notice" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
+                                                    <p class="text-sm col-span-5">Should the count of added days exclude
+                                                        holidays?</p>
+                                                    <div class="flex items-center justify-center">
+                                                        <CheckBox v-model="date_rules_data.exclude_holidays_notice" />
+                                                    </div>
+                                                </div>
+
+                                                <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the end date be allowed to fall
                                                         on
-                                                        a weekend (Saturday or Sunday)?</p>
+                                                        a weekend ?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_weekend_end" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
@@ -154,7 +166,8 @@
                                                         on
                                                         a holiday?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_holiday_end" />
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -167,22 +180,33 @@
                                                         should
                                                         the certificate start?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <Input class="w-20" center />
+                                                        <Input class="w-20"
+                                                            v-model="date_rules_data.certificate_start_days" center />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the count of added days exclude
-                                                        holidays and weekends?</p>
+                                                        holidays?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.exclude_holidays_start"
+                                                            center />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
+                                                    <p class="text-sm col-span-5">Should the count of added days exclude
+                                                        weekends?</p>
+                                                    <div class="flex items-center justify-center">
+                                                        <CheckBox v-model="date_rules_data.exclude_weekends_start"
+                                                            center />
+                                                    </div>
+                                                </div>
+
+                                                <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the start date be allowed to
                                                         fall
-                                                        on a weekend (Saturday or Sunday)?</p>
+                                                        on a weekend ?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_weekend_start" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
@@ -190,7 +214,7 @@
                                                         fall
                                                         on a holiday?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_holiday_start" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -203,22 +227,32 @@
                                                         start
                                                         should the certificate end?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <Input class="w-20" center />
+                                                        <Input v-model="date_rules_data.certificate_end_days"
+                                                            class="w-20" center />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the count of added days exclude
-                                                        holidays and weekends?</p>
+                                                        holidays?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.exclude_holidays_end" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
+                                                    <p class="text-sm col-span-5">Should the count of added days exclude
+                                                        weekends?</p>
+                                                    <div class="flex items-center justify-center">
+                                                        <CheckBox v-model="date_rules_data.exclude_weekends_end"
+                                                            center />
+                                                    </div>
+                                                </div>
+
+                                                <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the end date be allowed to fall
                                                         on
-                                                        a weekend (Saturday or Sunday)?</p>
+                                                        a weekend ?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_weekend_end_cert" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
@@ -226,7 +260,7 @@
                                                         on
                                                         a holiday?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_holiday_end_cert" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -239,22 +273,30 @@
                                                         end
                                                         should the issued date be?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <Input class="w-20" center />
+                                                        <Input v-model="date_rules_data.issued_days" class="w-20"
+                                                            center />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the count of added days exclude
-                                                        holidays and weekends?</p>
+                                                        holidays?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.exclude_holidays_issued" />
+                                                    </div>
+                                                </div>
+                                                <div class="grid grid-cols-6 items-center h-10">
+                                                    <p class="text-sm col-span-5">Should the count of added days exclude
+                                                        holidays?</p>
+                                                    <div class="flex items-center justify-center">
+                                                        <CheckBox v-model="date_rules_data.exclude_weekends_issued" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the issued date be allowed to
                                                         fall
-                                                        on a weekend (Saturday or Sunday)?</p>
+                                                        on a weekend ?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_weekend_issued" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
@@ -262,7 +304,7 @@
                                                         fall
                                                         on a holiday?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_holiday_issued" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -275,22 +317,30 @@
                                                         should
                                                         the grant date be set?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <Input class="w-20" center />
+                                                        <Input class="w-20" v-model="date_rules_data.grant_days"
+                                                            center />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the count of added days exclude
-                                                        holidays and weekends?</p>
+                                                        holidays?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.exclude_holidays_grant" />
+                                                    </div>
+                                                </div>
+                                                <div class="grid grid-cols-6 items-center h-10">
+                                                    <p class="text-sm col-span-5">Should the count of added days exclude
+                                                        weekends?</p>
+                                                    <div class="flex items-center justify-center">
+                                                        <CheckBox v-model="date_rules_data.exclude_weekends_grant" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
                                                     <p class="text-sm col-span-5">Should the grant date be allowed to
                                                         fall
-                                                        on a weekend (Saturday or Sunday)?</p>
+                                                        on a weekend ?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_weekend_grant" />
                                                     </div>
                                                 </div>
                                                 <div class="grid grid-cols-6 items-center h-10">
@@ -298,7 +348,7 @@
                                                         fall
                                                         on a holiday?</p>
                                                     <div class="flex items-center justify-center">
-                                                        <CheckBox />
+                                                        <CheckBox v-model="date_rules_data.allow_holiday_grant" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -474,16 +524,20 @@ import { complete_municipality, complete_province, complete_municipality_with_pr
 import { useSetup } from '../../stores/Setting/setup';
 import { usePetitions } from '../../stores/Petition/petitions.js'
 import { format } from 'date-fns';
+import { useDate } from '../../stores/Date/index.js';
+
+
+const date = useDate()
+
 
 
 const petitions = usePetitions()
-
-
 const setup = useSetup()
 
 onMounted(async () => {
     await setup.getSystemSetting()
     await setup.getHolidays()
+    await date.get_all_dates()
 })
 
 
@@ -659,6 +713,82 @@ const generate_month_year = async () => {
 
     const main_data = JSON.stringify(formData)
     const generate = await window.ClericalApi.GenerateReportByMonthYear(main_data)
+}
+
+const initialFormData = {
+    notice_days: '1',
+    exclude_holidays_notice: '',
+    exclude_weekends_notice: '',
+    allow_weekend_end: '',
+    allow_holiday_end: '',
+
+
+    certificate_start_days: '1',
+    exclude_holidays_start: '',
+    exclude_weekends_start: '',
+    allow_weekend_start: '',
+    allow_holiday_start: '',
+
+    certificate_end_days: '10',
+    exclude_holidays_end: '',
+    exclude_weekends_end: '',
+    allow_weekend_end_cert: '',
+    allow_holiday_end_cert: '',
+
+
+    issued_days: '1',
+    exclude_holidays_issued: '',
+    exclude_weekends_issued: '',
+    allow_weekend_issued: '',
+    allow_holiday_issued: '',
+
+
+    grant_days: '3',
+    exclude_holidays_grant: '',
+    exclude_weekends_grant: '',
+    allow_weekend_grant: '',
+    allow_holiday_grant: '',
+}
+
+const date_rules_data = reactive({ ...initialFormData })
+
+const create_date_rule = async () => {
+
+    const data = {
+        notice_days: date_rules_data.notice_days,
+        exclude_holidays_notice: date_rules_data.exclude_holidays_notice,
+        exclude_weekends_notice: date_rules_data.exclude_weekends_notice,
+        allow_weekend_end: date_rules_data.allow_weekend_end,
+        allow_holiday_end: date_rules_data.allow_holiday_end,
+
+
+        certificate_start_days: date_rules_data.certificate_start_days,
+        exclude_holidays_start: date_rules_data.exclude_holidays_start,
+        exclude_weekends_start: date_rules_data.exclude_weekends_start,
+        allow_weekend_start: date_rules_data.allow_weekend_start,
+        allow_holiday_start: date_rules_data.allow_holiday_start,
+
+        certificate_end_days: date_rules_data.certificate_end_days,
+        exclude_holidays_end: date_rules_data.exclude_holidays_end,
+        exclude_weekends_end: date_rules_data.exclude_weekends_end,
+        allow_weekend_end_cert: date_rules_data.allow_weekend_end_cert,
+        allow_holiday_end_cert: date_rules_data.allow_holiday_end_cert,
+
+        issued_days: date_rules_data.issued_days,
+        exclude_holidays_issued: date_rules_data.exclude_holidays_issued,
+        exclude_weekends_issued: date_rules_data.exclude_weekends_issued,
+        allow_weekend_issued: date_rules_data.allow_weekend_issued,
+        allow_holiday_issued: date_rules_data.allow_holiday_issued,
+
+        grant_days: date_rules_data.grant_days,
+        exclude_holidays_grant: date_rules_data.exclude_holidays_grant,
+        exclude_weekends_grant: date_rules_data.exclude_weekends_grant,
+        allow_weekend_grant: date_rules_data.allow_weekend_grant,
+        allow_holiday_grant: date_rules_data.allow_holiday_grant,
+    }
+
+    const add = await date.create_date_rules(data)
+    console.log(add)
 }
 
 </script>

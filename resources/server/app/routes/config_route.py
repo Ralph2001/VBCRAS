@@ -91,24 +91,35 @@ def add_scanned_type():
 
 
 # Date Rules
-@configuration.route("/add-date-rules", methods=["POST"])
-def add_date_rules():
-    data = request.get_json()
-    date_rule = date_rule_schema.load(data, session=db.session)
 
-    db.session.add(date_rule)
+@configuration.route("/create-date-rule", methods=["POST"])
+def create_date_rule():
+    data = request.get_json()
+    add_date_rules = date_rule_schema.load(data, session=db.session)
+
+    db.session.add(add_date_rules)
     db.session.commit()
 
-    result = date_rule_schema.dump(date_rule)
+    result = date_rule_schema.dump(add_date_rules)
     return jsonify(result), 201
 
 
 @configuration.route("/get-date-rules", methods=["GET"])
 def get_date_rules():
     date_rules = DateRules.query.all()
-    result = scans_schema.dump(date_rules)
+    result = date_rule_schemas.dump(date_rules)
     return jsonify(result), 200
 
+@configuration.route("/update-date-rules/<int:id>", methods=["PUT"])
+def update_date_rules(id):
+    data = request.json
+    date_rule = DateRules.query.get_or_404(id)
+
+    for key, value in data.items():
+        setattr(date_rule, key, value)
+
+    db.session.commit()
+    return jsonify(date_rule_schema.dump(date_rule)), 200
 
 # Holidays
 @configuration.route("/add-holiday", methods=["POST"])
