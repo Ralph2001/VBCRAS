@@ -82,8 +82,19 @@ const result = ref()
 onClickOutside(suggestion_box, event => suggestions_.value = false)
 
 const typing_input = (e) => {
-    emit('update:modelValue', e.target.value)
-    generate_suggestions(e.target.value)
+    const splitted = e.target.value.split(' ')
+
+    // Capitalize only the first letter of the first word
+    if (splitted.length > 0) {
+        splitted[0] = splitted[0].charAt(0).toUpperCase() + splitted[0].slice(1)
+    }
+
+    // Join the words back together into a string
+    const main_value = splitted.join(' ')
+
+
+    emit('update:modelValue', main_value)
+    generate_suggestions(main_value)
 }
 function i_choose_this(value) {
     suggestions_.value = false

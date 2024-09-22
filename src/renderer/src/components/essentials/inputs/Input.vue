@@ -2,8 +2,9 @@
   <div>
     <label v-if="!nolabel" :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
       <span v-if="error" class="text-red-600">*</span></label>
-    <input @keydown.enter="focusNextInput" :type="type" :id="label" :value="modelValue"
-      @input="value_toUpperCase($event.target.value)" :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
+    <input @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" :type="type"
+      :id="label" :value="modelValue" @input="value_toUpperCase($event.target.value)" :tabindex="skip ? '-1' : ''"
+      :readonly="readonly" :class="{
         'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
         'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
         'flex items-center text-center': center
@@ -67,7 +68,32 @@ const value_toUpperCase = (value) => {
     return
   }
 
+  // // Split the value into words
+  // const splitted = value.split(' ')
+
+  // // Capitalize only the first letter of the first word
+  // if (splitted.length > 0) {
+  //   splitted[0] = splitted[0].charAt(0).toUpperCase() + splitted[0].slice(1)
+  // }
+
+  // // Join the words back together into a string
+  // const main_value = splitted.join(' ')
+
+  // Emit the updated value
+
   emit('update:modelValue', value)
+}
+
+
+const focusPreviousInput = (event) => {
+  if (props.skipnext) {
+    return
+  }
+  const inputs = document.querySelectorAll('input');
+  const index = Array.from(inputs).indexOf(event.target);
+  if (index >= 0 && index < inputs.length - 1) {
+    inputs[index - 1].focus();
+  }
 }
 
 const focusNextInput = (event) => {

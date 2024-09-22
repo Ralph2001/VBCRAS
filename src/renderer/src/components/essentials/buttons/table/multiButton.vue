@@ -13,7 +13,7 @@
     </div> -->
     <div v-if="!isWaiting() && props.params.data.status === 'FINISHED'"
       class="flex h-full w-full bg-green-200 items-center justify-center relative">
-      <p>FINISHED</p>
+      <p class="font-medium">FINISHED</p>
     </div>
   </div>
 

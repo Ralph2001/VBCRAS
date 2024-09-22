@@ -56,19 +56,20 @@
             </Tab> -->
                 <TabsWrapper>
                     <Tab title="Petition Date">
-                        <div class="flex flex-col h-full p-4">
-                            <p class="p-2 font-semibold text-lg ">Output:</p>
+                        <div class="flex flex-col h-full ">
+                            <p class=" font-semibold text-lg ">Output:</p>
                             <div class="flex flex-row flex-wrap gap-2 items-center justify-center ">
-                                <div class="h-[4rem] w-[12rem] bg-white border border-gray-300 rounded-md shadow-sm flex flex-col items-center justify-center"
+                                <div class="h-auto w-[12rem] py-1.5 bg-white border border-gray-300 rounded-md shadow-sm flex flex-col items-center justify-center"
                                     v-for="date in dates" :key="date">
-                                    <p class="text-xs font-gray-600">{{ date.name }}</p>
+                                    <p class="text-xs font-gray-500">{{ date.name }}</p>
                                     <p class="font-medium"> {{ format(date.date, 'MMMM dd, yyyy') }}</p>
-                                    <p class="text-xs font-medium text-blue-700"> {{ format(date.date, 'eeee') }}</p>
+                                    <p class="text-xs font-medium text-blue-600"> {{ format(date.date, 'eeee') }}</p>
                                 </div>
                             </div>
 
-                            <div class="grid sm:grid-cols-1 md:lg:grid-cols-3 h-full w-full mt-5 gap-3">
-                                <div class="flex flex-col border border-gray-300  p-6 h-fit bg-white shadow-sm">
+                            <div class="grid sm:grid-cols-1 md:lg:grid-cols-3 h-full w-full mt-5 gap-2">
+
+                                <div class="flex flex-col border border-gray-300 gap-2 p-6 h-fit bg-white shadow-sm">
                                     <p class="font-medium text-2xl">Holidays</p>
 
 
@@ -80,7 +81,7 @@
                                     </div>
 
 
-                                    <div class="flex flex-col gap-2 mt-10 border h-[20rem] overflow-y-scroll">
+                                    <div class="flex flex-col gap-2 border  overflow-y-scroll">
                                         <div class="relative overflow-x-auto flex justify-center">
                                             <table
                                                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -122,11 +123,11 @@
                                 </div>
 
                                 <div
-                                    class="flex flex-col col-span-2 border-gray-300 border p-6 h-[38rem] overflow-y-scroll bg-white shadow-sm">
+                                    class="flex flex-col col-span-2 border-gray-300 border p-4 h-fit  bg-white shadow-sm">
                                     <p class="font-medium text-2xl">Automatic Date Counts</p>
 
 
-                                    <div class="flex flex-col mt-6 gap-4 p-4">
+                                    <div class="flex flex-col gap-4 p-4">
                                         <div class="flex flex-col">
                                             <p class="font-medium">Date Notice</p>
                                             <div class="flex flex-col indent-8">

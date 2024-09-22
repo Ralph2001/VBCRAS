@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center" v-for="(value, key) in options" :key="key">
-    <input type="radio" :checked="key === props.modelValue" :value="key" :name="name" :class="{
+    <input type="radio"  :checked="key === props.modelValue" :value="key" :name="name" :class="{
       'border-red-400   active:border-blue-500': error,
       'focus:ring-blue-500': !error,
     }" @input="update_"
@@ -40,4 +40,5 @@ const props = defineProps({
     type: [String, Number],
   },
 });
+
 </script>
