@@ -4,7 +4,7 @@
             <div class="flex flex-row gap-2 items-center">
                 <p class="text-md  text-gray-100 font-medium  italic">
                     <!-- Correction of Clerical Error - Ralph Advincula Villanueva -->
-                     Document Viewer
+                    Document Viewer
                 </p>
             </div>
             <div class="flex flex-row gap-3 ml-auto">
@@ -38,17 +38,26 @@
                             :class="[menu === 'Info' ? 'bg-gray-800' : 'hover:bg-gray-800']"
                             class="font-medium transition-all text-gray-50 hover:bg-gray-800">Info</button>
                     </div>
-                    <div class="flex flex-col gap-2 items-center justify-center w-full p-3" v-if="menu === 'Files'">
+                    <div class="flex flex-col gap-2 items-center justify-center w-full p-3 h-full   "
+                        v-if="menu === 'Files'">
                         <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
                             :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
                             class="p-2 shadow-inner outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex items-start">
                             {{ item.name }}
                         </button>
-                     
+                        <button @click="create_certificate_filing(props.details)"
+                            class="bg-yellow-200 hover:bg-yellow-300 flex justify-center items-center mt-auto p-2 shadow-inner outline-none ring-0 w-full  font-medium text-sm rounded-sm ">
+                            Create Certificate of Filing (.docx)
+                        </button>
+
                     </div>
                     <div class="flex flex-col gap-2 items-center justify-center w-full h-full p-3"
                         v-if="menu === 'Info'">
                         <p class="italic text-white">Soon :)</p>
+
+                      <div v-if="props.details" class="flex flex-col h-full overflow-y-scroll">
+                        <div  v-for="(key, value) in details">{{value}}</div>
+                      </div>
                     </div>
 
                 </div>
@@ -91,6 +100,9 @@ const props = defineProps({
     pdf_data: {
         type: [Array, Object, String],
 
+    },
+    details: {
+        type: [String, Object, Array],
     }
 })
 
@@ -138,6 +150,10 @@ const printPDF = async () => {
 
 const printAllPDF = () => {
     // alert('Not Available yet')
+}
+
+const create_certificate_filing = async (data) => {
+    const create = await window.ClericalApi.CreateCertificateFiling(data)
 }
 
 </script>

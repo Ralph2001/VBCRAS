@@ -5,7 +5,7 @@
             <PathWarning :path="missing_path" v-if="path_missing" @cancel="path_missing = false" />
         </Teleport>
 
-        <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
+        <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" :details="props.params.data" />
         <button type="button" @click="dropdown = !dropdown" ref="mainBtn"
             :class="{ 'bg-gray-600 text-white hover:bg-gray-700': dropdown, 'text-gray-900 bg-white hover:bg-gray-100': !dropdown }"
             class="px-3 py-1 text-sm tracking-wide hover:border-gray-400 active:scale-95  font-medium text-center  rounded-sm  border transition-all focus:outline-none">

@@ -63,6 +63,10 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     IsFileBusy: async (path) => {
         const is_busy = await ipcRenderer.invoke('is_file_busy', path)
         return is_busy
+    },
+    CreateCertificateFiling: async (data) => {
+        const certificate_filing = await ipcRenderer.invoke('create_certificate_filing', data)
+        return certificate_filing
     }
 })
 

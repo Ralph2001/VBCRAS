@@ -26,7 +26,8 @@
           </div>
         </div>
       </div>
-      <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
+      <!-- -->
+      <PDFViewerCCE v-if="pdf_viewer"  :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
       <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
 
     </div>
@@ -80,7 +81,7 @@
         <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10   ">
 
           <!-- 1st  Document Selector-->
-          <div class="flex items-center justify-center p-2" ref="isFormVisible">
+          <div class="flex flex-row gap-2 items-start w-full justify-center p-2" ref="isFormVisible">
             <Box title="Document" width="w-fit ">
               <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
                 tabindex="-1">
@@ -90,8 +91,21 @@
                   label="Petition Type" @change="petition_by_type_retriever" />
                 <Select :error="v$.event_type.$error" skip :options="event_type" v-model="formData.event_type"
                   label="Document Type" @change="change_event_selected_error_in()" />
+
+                <div class="flex flex-row items-center gap-2 ml-4 mt-4">
+                  <CheckBox skip v-model="formData.is_migrant" />
+                  <p class="text-sm font-medium text-gray-800 uppercase">Migrant</p>
+                </div>
+
               </div>
             </Box>
+            <!-- <Box title="Migrant Details" width="w-full" v-if="formData.is_migrant">
+              <div class="flex flex-col gap-2 w-full">
+                <Input label="Province" />
+                <Input label="City" cap />
+                <Input label="Address" />
+              </div>
+            </Box> -->
           </div>
           <!-- 2nd Header-->
           <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
@@ -593,9 +607,12 @@
 
       <template v-slot:footer>
         <div class="h-full flex items-center justify-start gap-2 w-full px-5 rounded-md font-medium ">
-          <div class="flex flex-row items-center gap-2">
-            <CheckBox skip v-model="formData.is_to_validate" />
-            <p class="text-sm font-medium text-gray-200">Validate Layout</p>
+          <div class="flex flex-row items-center gap-6">
+            <div class="flex flex-row items-center gap-2">
+              <CheckBox skip v-model="formData.is_to_validate" />
+              <p class="text-sm font-medium text-gray-200">Validate Layout</p>
+            </div>
+           
           </div>
           <button type="button"
             class="bg-white ml-auto px-2.5 py-1  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
@@ -1039,6 +1056,13 @@ function change_document_owner_relation() {
 const initialForm = {
   status: 'PENDING',
   created_by: auth.user_id,
+
+
+  // Petition
+  is_migrant: false,
+
+
+
   date_filed: new Date().toISOString().split('T')[0],
   republic_act_number: '9048',
   petition_type: 'CCE',
@@ -1131,7 +1155,7 @@ const initialForm = {
 const rules = computed(() => {
   return {
     status: { required },
-    created_by: {required},
+    created_by: { required },
 
     date_filed: { required },
     republic_act_number: { required },
@@ -1237,6 +1261,12 @@ const submitForm = async () => {
   }
 
   const petition_ = {
+
+      // Petition
+    is_migrant: formData.is_migrant,
+
+
+
     status: formData.status,
     created_by: formData.created_by,
 
@@ -1349,6 +1379,10 @@ const create_validated_document = async () => {
 
 
   const petition_ = ref({
+
+    is_migrant: formData.is_migrant,
+
+
     status: formData.status,
     created_by: formData.created_by,
 

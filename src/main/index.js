@@ -12,6 +12,7 @@ import { generate_ausf } from '../documents/ausf/create_ausf'
 import { generate_by_month_year } from '../documents/clerical/generate_report'
 
 import { autoUpdater } from "electron-updater"
+import { certificate_filing } from '../documents/clerical/certificate_filing'
 
 
 const log = require('electron-log');
@@ -360,6 +361,23 @@ ipcMain.handle('createFinality', async (event, formData) => {
     }
 })
 
+ipcMain.handle('create_certificate_filing', async (event, data) => {
+    try {
+        const create_certificate_filing = await certificate_filing(data)
+        const filefolder = await shell.openExternal(create_certificate_filing.filepath)
+
+        if (!filefolder) {
+            await shell.openPath(create_certificate_filing.filepath)
+            return true
+        }
+
+        return true
+    } catch (error) {
+
+        return false
+    }
+})
+
 ipcMain.handle('open-clerical', async (event, source) => {
     try {
         const filefolder = await shell.openExternal(source)
@@ -398,7 +416,7 @@ ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
         // Check for required files
         for (const requiredFile of requiredFiles) {
             const filePath = join(mainDirectory, requiredFile);
-            
+
             // Check if the required file exists before reading
             if (fs.existsSync(filePath)) {
                 const fileData = fs.readFileSync(filePath, 'base64');
@@ -411,7 +429,7 @@ ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
         const optionalData = []; // Use a new array for optional files
         for (const optionalFile of optionalFiles) {
             const filePath = join(mainDirectory, optionalFile);
-            
+
             // Check if the optional file exists before reading
             if (fs.existsSync(filePath)) {
                 const fileData = fs.readFileSync(filePath, 'base64');

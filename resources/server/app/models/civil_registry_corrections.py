@@ -4,6 +4,10 @@ import datetime
 class Petitions(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
+    # Petition
+    is_migrant =  db.Column(db.Boolean, default=False)
+    # is_with_cert_filing = db.Column(db.Boolean, default=False)
+
     # Person who create the document
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     status =  db.Column(db.String, default="PENDING")
