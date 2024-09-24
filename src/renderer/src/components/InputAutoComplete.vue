@@ -98,6 +98,7 @@ const typing_input = (e) => {
 }
 function i_choose_this(value) {
     suggestions_.value = false
+ 
     emit('update:modelValue', value)
 
 }

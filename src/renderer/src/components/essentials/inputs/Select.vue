@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[10rem]">
+  <div class="w-auto">
     <label v-if="!nolabel" for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label
       }} <span v-if="error" class="text-red-600">*</span></label>
     <select id="countries" :readonly="readonly" @change="emit('update:modelValue', $event.target.value)"

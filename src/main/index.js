@@ -221,6 +221,7 @@ ipcMain.handle('saveAnnotated', async (event, fileUri) => {
 ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
+        
         const generate_document = await generate(formData);
 
         if (generate_document.status) {

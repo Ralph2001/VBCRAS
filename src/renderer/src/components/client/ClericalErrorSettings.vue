@@ -515,7 +515,7 @@ import {
     add_date_certificate_end,
     add_date_issued,
     add_date_granted,
-} from '../../utils/ClericalDateCount';
+} from '../../utils/ClericalDateCount.js';
 import Input from '../essentials/inputs/Input.vue';
 import Button from '../essentials/buttons/Button.vue';
 import TemplateSettings from './TemplateSettings.vue';

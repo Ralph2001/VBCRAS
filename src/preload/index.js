@@ -28,7 +28,8 @@ contextBridge.exposeInMainWorld('ClericalApi', {
         return result
     },
     createPetitionDocument: async (formData) => {
-        const result = await ipcRenderer.invoke('createPetitionDocument', formData)
+        const data = JSON.parse(formData)
+        const result = await ipcRenderer.invoke('createPetitionDocument', JSON.stringify(data))
 
         return { status: result.status, filepath: result.filepath }
     },

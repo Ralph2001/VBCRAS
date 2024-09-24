@@ -92,6 +92,7 @@ function saveDocument(doc, fileName, folderPath) {
 // PASSES THE DATA TO OTHER FUNCTION AND WHEN DONE RETURN RESULT
 // EXPORT THIS
 async function generate(formData) {
+
     try {
         // CHECK THE FILES BEFORE PROCEEDING
         checkFilesExist([
@@ -111,14 +112,19 @@ async function generate(formData) {
         const data = JSON.parse(formData)
 
         // PASS THE DATA TO THE FUNCTIONS
-        await document_folder(data)
-        await petition(data)
-        await endorsement_letter(data)
-        await record_sheet(data)
-        await posting(data)
+        try {
+            await document_folder(data)
+            await petition(data)
+            await endorsement_letter(data)
+            await record_sheet(data)
+            await posting(data)
+        } catch (error) {
+            console.log(error)
+        }
 
         return { status: true, filepath: main_folder_path }
     } catch (error) {
+        console.log(error)
         return { status: false, error: error.message }
     }
 }
@@ -201,16 +207,16 @@ async function endorsement_letter(data) {
         data.event_type === 'Birth'
             ? 'Certificate of Live Birth'
             : data.event_type === 'Marriage'
-              ? 'Certificate of Marriage'
-              : data.event_type === 'Death'
-                ? 'Certificate of Death'
-                : ''
+                ? 'Certificate of Marriage'
+                : data.event_type === 'Death'
+                    ? 'Certificate of Death'
+                    : ''
     const type_of_petition =
         data.petition_type === 'CCE'
             ? 'Correction of Clerical Error'
             : data.petition_type === 'CFN'
-              ? 'Change of First Name'
-              : ''
+                ? 'Change of First Name'
+                : ''
     const granted_date = dateFns.format(
         data.petition_date_granted,
         'dd MMMM yyyy'
@@ -219,8 +225,8 @@ async function endorsement_letter(data) {
         data.republic_act_number === '9048'
             ? 'R.A 9048'
             : data.republic_act_number === '10172'
-              ? 'R.A 10172'
-              : ''
+                ? 'R.A 10172'
+                : ''
 
     doc.render({
         date: granted_date,
@@ -285,7 +291,8 @@ async function petition(data) {
     // Dates formatted
     const event_date = dateFns.format(data.event_date, 'MMMM dd, yyyy')
     const issued_on = dateFns.format(data.issued_on, 'MMMM dd, yyyy')
-    const date_granted = dateFns.format(data.action_taken_date, 'MMMM dd, yyyy')
+    const date_granted = !data.is_migrant ? dateFns.format(data.action_taken_date, 'MMMM dd, yyyy') : ''
+
     const date_paid =
         data.date_paid === 'Indigent' || data.is_indigent
             ? data.date_paid
@@ -296,8 +303,14 @@ async function petition(data) {
     // Or Nah
     const solo_action = data.petition_actions[0].action_text
 
+    const petition_num = data.is_migrant ? '' : data.petition_number
+    const migrant_pet = data.is_migrant ? `Migrant Petition (${data.petition_number})` : ''
+
+
     doc.render({
-        petition_number: data.petition_number,
+        petition_number: petition_num,
+        migrant: migrant_pet,
+
         petitioner_name: data.petitioner_name,
         nationality: data.nationality,
         petitioner_address: data.petitioner_address,
@@ -401,16 +414,16 @@ async function record_sheet(data) {
         data.event_type === 'Birth'
             ? 'Certificate of Live Birth'
             : data.event_type === 'Marriage'
-              ? 'Certificate of Marriage'
-              : data.event_type === 'Death'
-                ? 'Certificate of Death'
-                : ''
+                ? 'Certificate of Marriage'
+                : data.event_type === 'Death'
+                    ? 'Certificate of Death'
+                    : ''
     const type_of_petition =
         data.petition_type === 'CCE'
             ? 'Correction of Clerical Error'
             : data.petition_type === 'CFN'
-              ? 'Change of First Name'
-              : ''
+                ? 'Change of First Name'
+                : ''
     const start_date_posting = dateFns.format(
         data.certificate_posting_start,
         'dd MMMM yyyy'
@@ -423,6 +436,26 @@ async function record_sheet(data) {
         data.petition_date_granted,
         'dd MMMM yyyy'
     )
+    const first_name_from = data.first_name_from
+    const first_name_to = data.first_name_to
+
+
+    let clerical_errors;
+    if (data.petition_type === "CCE") {
+        clerical_errors = data.clerical_errors
+    } else if (data.petition_type === "CFN") {
+        const main_value = [
+            {
+                description: 'Change of First Name',
+                error_description_from: first_name_from,
+                error_description_to: first_name_to,
+            }
+        ]
+
+        clerical_errors = main_value
+    }
+
+
 
     doc.render({
         petition_number: data.petition_number,
@@ -433,7 +466,7 @@ async function record_sheet(data) {
         type_petition: type_of_petition,
         start_date_posting: start_date_posting,
         end_date_posting: end_date_posting,
-        clerical: data.clerical_errors,
+        clerical: clerical_errors,
         reg_num: data.registry_number,
         date_rendered: granted_date,
         mcr: data.municipal_civil_registrar
@@ -463,16 +496,16 @@ async function posting(data) {
         data.event_type === 'Birth'
             ? 'Certificate of Live Birth'
             : data.event_type === 'Marriage'
-              ? 'Certificate of Marriage'
-              : data.event_type === 'Death'
-                ? 'Certificate of Death'
-                : ''
+                ? 'Certificate of Marriage'
+                : data.event_type === 'Death'
+                    ? 'Certificate of Death'
+                    : ''
     const type_of_petition =
         data.petition_type === 'CCE'
             ? 'Correction of Clerical Error'
             : data.petition_type === 'CFN'
-              ? 'Change of First Name'
-              : ''
+                ? 'Change of First Name'
+                : ''
     const start_date_posting = dateFns.format(
         data.certificate_posting_start,
         'dd MMMM yyyy'

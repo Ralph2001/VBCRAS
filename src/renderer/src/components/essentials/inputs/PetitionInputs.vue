@@ -1,9 +1,9 @@
 <template>
   <div class="grid grid-cols-4 sm:px-5 md:lg:px-20 relative">
-    <input :value="props.type" disabled :class="[props.type === 'CCE' ? 'bg-[#4A90E2]' : 'bg-[#2C7A7B]']"
+    <input :value="type" disabled :class="[props.type === 'CCE' ? 'bg-[#4A90E2]' : 'bg-[#2C7A7B]']"
       class=" select-none border border-e-0 font-bold text-sm block w-full text-white  p-2.5" />
 
-    <input  :tabindex="skip ? '-1' : '0'" :value="props.petition_number_value"
+    <input :tabindex="skip ? '-1' : '0'" :value="props.petition_number_value"
       @input="input_petition_number($event.target.value)"
       class="bg-gray-50 border outline-none ring-0   border-s-0 border-e-0 items-center font-bold text-gray-800 text-sm focus:ring-green-500 focus:border-green-500 flex justify-center text-center w-full active:ring-green-500 p-2.5" />
 
@@ -15,7 +15,7 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const emit = defineEmits(['type-petition-number', 'type-year'])
 
@@ -27,9 +27,17 @@ const props = defineProps({
   republic_act: String,
   modelValue: String,
   petition_number_value: String,
-  skip: Boolean
+  skip: Boolean,
+  migrant: Boolean
 });
 
+
+const type = computed(() => {
+  if(props.migrant){
+    return 'MP' + props.type
+  }
+  return props.type
+})
 
 const input_petition_number = (e) => {
   emit('type-petition-number', e)

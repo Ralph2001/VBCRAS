@@ -14,7 +14,11 @@ let main_folder_path
 
 export async function certificate_filing(formData) {
 
-    await create_certificate_filing(formData)
+    try {
+        await create_certificate_filing(formData)
+    } catch (error) {
+        console.log(error)
+    }
 
     return { success: true, filepath: main_folder_path }
 }
@@ -84,22 +88,47 @@ async function create_certificate_filing(data) {
         relation = data.relation_owner.toLowerCase() + '`s'
     }
 
+    const first_name_from = data.first_name_from
+    const first_name_to = data.first_name_to
+
+    let clerical_errors;
+    if (data.petition_type === "CCE") {
+        clerical_errors = data.clerical_errors
+    } else if (data.petition_type === "CFN") {
+        const main_value = [
+            {
+                description: 'Change of First Name',
+                error_description_from: first_name_from,
+                error_description_to: first_name_to,
+            }
+        ]
+
+        clerical_errors = main_value
+    }
+
+
+
+
+    function capitalizeFirstLetter(value) {
+        const str = value.toLowerCase()
+        return str.replace(/\b\w/g, char => char.toUpperCase());
+    }
+
 
     doc.render({
         date: date,
-        petitioner_name: data.petitioner_name,
+        petitioner_name: capitalizeFirstLetter(data.petitioner_name),
         petition_type: petition_type,
         relation: relation,
 
-        clerical: data.clerical_errors,
-        
+        clerical: clerical_errors,
+
         event_type: document_type,
-        document_owner: document_owner,
+        document_owner: capitalizeFirstLetter(document_owner),
         petition_number: data.petition_number,
         date_filed: date_filed,
         subject_code: data.republic_act_number,
         registry_number: data.registry_number,
-        petitioner_name: data.petitioner_name,
         municipal_civil_registrar: data.municipal_civil_registrar
     })
 

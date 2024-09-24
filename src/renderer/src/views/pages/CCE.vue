@@ -27,7 +27,7 @@
         </div>
       </div>
       <!-- -->
-      <PDFViewerCCE v-if="pdf_viewer"  :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
+      <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
       <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
 
     </div>
@@ -81,9 +81,10 @@
         <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10   ">
 
           <!-- 1st  Document Selector-->
-          <div class="flex flex-row gap-2 items-start w-full justify-center p-2" ref="isFormVisible">
-            <Box title="Document" width="w-fit ">
-              <div class="flex flex-row flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
+          <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-2 items-start w-full justify-center p-2"
+            ref="isFormVisible">
+            <Box title="Document" width="w-full ">
+              <div class="grid grid-cols-2 flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
                 tabindex="-1">
                 <Select :error="v$.republic_act_number.$error" skip :options="republic_act"
                   v-model="formData.republic_act_number" label="Republic Act" />
@@ -93,19 +94,23 @@
                   label="Document Type" @change="change_event_selected_error_in()" />
 
                 <div class="flex flex-row items-center gap-2 ml-4 mt-4">
-                  <CheckBox skip v-model="formData.is_migrant" />
+                  <CheckBox skip v-model="formData.is_migrant" @change="change_migrant()" />
                   <p class="text-sm font-medium text-gray-800 uppercase">Migrant</p>
                 </div>
 
               </div>
             </Box>
-            <!-- <Box title="Migrant Details" width="w-full" v-if="formData.is_migrant">
+            <!-- {{ petitioner_number }} -->
+            <Box title="Header" width="w-full" v-if="formData.is_migrant">
               <div class="flex flex-col gap-2 w-full">
-                <Input label="Province" />
-                <Input label="City" cap />
-                <Input label="Address" />
+                <div class="grid grid-cols-2 gap-2">
+
+                  <Input label="Province" />
+                  <Input label="City/Municipality" cap />
+                </div>
+                <Input label="SS" />
               </div>
-            </Box> -->
+            </Box>
           </div>
           <!-- 2nd Header-->
           <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
@@ -119,8 +124,8 @@
                   <label class="basis-[100%] block mb-2 text-sm font-medium text-gray-900 dark:text-white">Petition
                     Number</label>
                   <MultiInput @type-petition-number="change_petitioner_number" @type-year="change_petitioner_date" skip
-                    :republic_act="is_default_republic_act" :type="is_default_petition_type"
-                    :petition_number_value="is_default_petitioner_number" />
+                    :migrant="formData.is_migrant" :republic_act="is_default_republic_act"
+                    :type="is_default_petition_type" :petition_number_value="is_default_petitioner_number" />
                 </div>
                 <Input :error="v$.petitioner_name.$error" label="Petitioner Name" v-model="formData.petitioner_name"
                   cap />
@@ -460,7 +465,7 @@
               </Box>
             </div>
 
-            <div class="grow">
+            <div class="grow" v-if="!formData.is_migrant">
               <Box title="ADMINISTERING OFFICER" width="w-auto">
                 <div class="grid grid-cols-1 w-full gap-2">
                   <Input skip label="Name" v-model="formData.administering_officer_name"
@@ -500,14 +505,15 @@
                       <Radio :options="action_options" :name="'action_' + 0"
                         v-model="formData.petition_actions[0].action_decision" />
                     </div>
-                    <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
+                    <!-- Migrant -->
+                    <div v-if="!formData.is_migrant" class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
                       <textarea id="message" rows="6" v-model="formData.petition_actions[0].action_text"
                         class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                     </div>
                   </div>
-
+                  <!-- Migrant -->
                   <!-- Subpart 1: Shows when republic act is 10172 -->
-                  <div v-if="formData.republic_act_number === '10172'" class="flex flex-col"
+                  <div v-if="formData.republic_act_number === '10172' && !formData.is_migrant" class="flex flex-col"
                     v-for="(value, index) in clerical_errors_items" :key="index">
                     <div class="flex flex-row justify-evenly">
                       <Radio :options="action_options" :name="'action_' + index"
@@ -519,8 +525,8 @@
                     </div>
                   </div>
 
-
-                  <div class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
+                  <!-- Migrant -->
+                  <div v-if="!formData.is_migrant" class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
                     <Input type="date" label="Date" skip v-model="formData.action_taken_date"
                       :error="v$.action_taken_date.$error" />
                     <Input label="Municipal Civil Registrar" skip v-model="formData.municipal_civil_registrar" cap
@@ -591,7 +597,10 @@
                     </div>
                     <div class="border border-dashed border-yellow-400 w-full mt-5"></div>
                   </div>
-
+                  <div class="grid grid-cols-2 w-full gap-4" v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
+                    <Input skip label="Publication Start" type="date" />
+                    <Input skip label="Publication End" type="date"  />
+                  </div>
                   <div class="flex flex-col justify-start gap-5 mt-3 items-start w-full">
                     <div class="w-[50%]">
                       <Input skip label="Date Granted" type="date" v-model="formData.petition_date_granted"
@@ -612,7 +621,7 @@
               <CheckBox skip v-model="formData.is_to_validate" />
               <p class="text-sm font-medium text-gray-200">Validate Layout</p>
             </div>
-           
+
           </div>
           <button type="button"
             class="bg-white ml-auto px-2.5 py-1  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
@@ -646,7 +655,7 @@ import Box from '../../components/essentials/Box.vue'
 import Select from "../../components/essentials/inputs/Select.vue";
 import HeaderCCE from "../../components/essentials/HeaderCCE.vue";
 import Input from "../../components/essentials/inputs/Input.vue";
-import MultiInput from "../../components/essentials/inputs/MultiInput.vue";
+import MultiInput from "../../components/essentials/inputs/PetitionInputs.vue";
 import Radio from "../../components/essentials/inputs/Radio.vue";
 import InputCurrency from "../../components/essentials/inputs/InputCurrency.vue";
 import { useSetup } from "../../stores/Setting/setup.js";
@@ -666,7 +675,7 @@ import {
   add_date_certificate_end,
   add_date_issued,
   add_date_granted,
-} from "../../utils/ClericalDateCount";
+} from "../../utils/ClericalDateCount.js";
 
 import { grantedText } from "../../utils/GrantedText.js";
 import { factReason } from "../../utils/FactsReasons.js";
@@ -852,7 +861,10 @@ const granted_text_data = computed(() => {
 });
 
 function generate_granted_text() {
-  formData.petition_actions[0].action_text = granted_text_data.value
+  if (!formData.is_migrant) {
+    formData.petition_actions[0].action_text = granted_text_data.value
+  }
+  return
 }
 
 
@@ -883,9 +895,12 @@ function change_petitioner_number(e) {
 function change_petitioner_date(e) {
   is_default_petitioner_year.value = e
 }
+
+// Main Petitioner Number
 const petitioner_number = computed(() => {
-  const is_r_a_10172 = formData.republic_act_number === '10172' ? 'R.A. 10172' : ''
-  let combined = formData.petition_type + "-" + is_default_petitioner_number.value + "-" + is_default_petitioner_year.value + ' ' + is_r_a_10172
+  const is_r_a_10172 = formData.republic_act_number === '10172' ? 'R.A. 10172' : ``
+  const petition_check = formData.is_migrant ? 'MP' + formData.petition_type : formData.petition_type
+  let combined = petition_check + "-" + is_default_petitioner_number.value + "-" + is_default_petitioner_year.value + ' ' + is_r_a_10172
   return combined
 })
 
@@ -1052,6 +1067,23 @@ function change_document_owner_relation() {
 
 }
 
+// Migrant Changes 
+
+
+function change_migrant() {
+  if (formData.is_migrant) {
+    formData.administering_officer_name = ''
+    formData.administering_officer_position = ''
+    formData.municipal_civil_registrar = ''
+    formData.action_taken_date = ''
+
+  } else {
+    formData.administering_officer_name = system_setting.defaults[0].municipal_civil_registrar || '',
+      formData.administering_officer_position = 'Municipal Civil Registrar',
+      formData.municipal_civil_registrar = system_setting.defaults[0].municipal_civil_registrar || ''
+  }
+}
+
 
 const initialForm = {
   status: 'PENDING',
@@ -1067,7 +1099,9 @@ const initialForm = {
   republic_act_number: '9048',
   petition_type: 'CCE',
   event_type: 'Birth',
+
   petition_number: petitioner_number,
+
   petitioner_name: '', // TESTING
   nationality: 'Filipino',
   petitioner_address: '', // Testing 
@@ -1081,7 +1115,8 @@ const initialForm = {
   registry_number: '',// Testing 
   filing_city_municipality: system_setting.defaults[0].petition_default_filling_municipality || '',
   filing_province: system_setting.defaults[0].petition_default_filling_province || '',
-  administering_officer_name: 'ISMAEL D. MALICDEM, JR.', // Testing 
+
+  administering_officer_name: system_setting.defaults[0].municipal_civil_registrar || '', // Testing 
   administering_officer_position: 'Municipal Civil Registrar', // Testing
   subscribe_sworn_date: new Date().toISOString().split('T')[0],
   subscribe_sworn_city_municipality: system_setting.defaults[0].petition_default_subscribe_sworn_municipality || '',
@@ -1175,7 +1210,15 @@ const rules = computed(() => {
     registry_number: { required },
     filing_city_municipality: { required },
     filing_province: { required },
-    administering_officer_name: { required },
+
+
+
+    // Administering Officer
+    administering_officer_name: {
+      requiredIf: requiredIf(() =>
+        !formData.is_migrant ? true : false
+      )
+    },
     // administering_officer_position: { required },
     subscribe_sworn_date: { required },
     subscribe_sworn_city_municipality: { required },
@@ -1187,8 +1230,18 @@ const rules = computed(() => {
 
     issued_at: { required },
     issued_on: { required },
-    action_taken_date: { required },
-    municipal_civil_registrar: { required },
+
+
+    action_taken_date: {
+      requiredIf: requiredIf(() =>
+        !formData.is_migrant ? true : false
+      )
+    },
+    municipal_civil_registrar: {
+      requiredIf: requiredIf(() =>
+        !formData.is_migrant ? true : false
+      )
+    },
 
     /**
      * Change of First Name Fields
@@ -1262,7 +1315,7 @@ const submitForm = async () => {
 
   const petition_ = {
 
-      // Petition
+    // Petition
     is_migrant: formData.is_migrant,
 
 
