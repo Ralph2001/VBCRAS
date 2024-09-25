@@ -101,6 +101,7 @@ class Petitions(db.Model):
 class PetitionClericalErrors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     petition_id = db.Column(db.Integer, db.ForeignKey("petitions.id"), nullable=False)
+    error_num = db.Column(db.String)
     description = db.Column(db.String)
     error_description_from = db.Column(db.String)
     error_description_to = db.Column(db.String)

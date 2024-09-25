@@ -3,7 +3,7 @@
     <input :value="type" disabled :class="[props.type === 'CCE' ? 'bg-[#4A90E2]' : 'bg-[#2C7A7B]']"
       class=" select-none border border-e-0 font-bold text-sm block w-full text-white  p-2.5" />
 
-    <input :tabindex="skip ? '-1' : '0'" :value="props.petition_number_value"
+    <input  :value="props.petition_number_value"
       @input="input_petition_number($event.target.value)"
       class="bg-gray-50 border outline-none ring-0   border-s-0 border-e-0 items-center font-bold text-gray-800 text-sm focus:ring-green-500 focus:border-green-500 flex justify-center text-center w-full active:ring-green-500 p-2.5" />
 

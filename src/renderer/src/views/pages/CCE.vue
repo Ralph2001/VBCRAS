@@ -152,8 +152,11 @@
             ">
               <Box title="seeking for correction of the clerical error in: " width="w-full">
                 <div class="grid grid-rows-2 gap-2 w-full">
-                  <Radio @change_="change_document_owner_relation()" :options="seeking_options"
-                    v-model="formData.petitioner_error_in" name="cce_in" />
+
+
+                  <Selector @change_="change_document_owner_relation()" :options="seeking_options"
+                    v-model="formData.petitioner_error_in" />
+
                 </div>
               </Box>
             </div>
@@ -261,9 +264,7 @@
                   <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
                     :key="index">
                     <div class="basis-[10%]">
-                      <p class="text-sm text-center">
-                        {{ index + 1 }}
-                      </p>
+                      <Input center @change="generate_granted_text()" v-model="formData.error_num" nolabel />
                     </div>
 
                     <div class="grow">
@@ -281,11 +282,14 @@
                     </div>
                   </div>
                   <div class="flex justify-end gap-2 mt-3">
-                    <button type="button" @click="remove_clerical_error()" v-if="clerical_errors_items.length > 1"
+                    <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
+                      @click="remove_clerical_error()" v-if="clerical_errors_items.length > 1"
+                      tabindex="-1"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
                     </button>
-                    <button type="button" @click="add_clerical_error()"
+                    <button type="button" @click="add_clerical_error()" @keydown.down="focusNextInput"
+                      @keydown.up="focusPreviousInput"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Add
                     </button>
@@ -425,11 +429,13 @@
                   </div>
                   <div class="flex justify-end gap-2">
                     <!-- Make this component -->
-                    <button type="button" @click="remove_supporting_documents()" v-if="supporting_items.length > 1"
+                    <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
+                      @click="remove_supporting_documents()" v-if="supporting_items.length > 1"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
                     </button>
-                    <button type="button" @click="add_supporting_documents()"
+                    <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
+                      @click="add_supporting_documents()"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Add
                     </button>
@@ -501,9 +507,11 @@
                 <div class="grid grid-cols-1 w-full gap-2">
                   <!-- Subpart 1: Shows when republic act is 9048 -->
                   <div v-if="formData.republic_act_number === '9048'" class="flex flex-col">
-                    <div class="flex flex-row justify-evenly">
-                      <Radio :options="action_options" :name="'action_' + 0"
-                        v-model="formData.petition_actions[0].action_decision" />
+                    <div class="flex flex-row justify-evenly gap-4">
+                      <Selector :options="action_options" v-model="formData.petition_actions[0].action_decision" />
+
+                      <!-- <Radio :options="action_options" :name="'action_' + 0"
+                        v-model="formData.petition_actions[0].action_decision" /> -->
                     </div>
                     <!-- Migrant -->
                     <div v-if="!formData.is_migrant" class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
@@ -516,8 +524,10 @@
                   <div v-if="formData.republic_act_number === '10172' && !formData.is_migrant" class="flex flex-col"
                     v-for="(value, index) in clerical_errors_items" :key="index">
                     <div class="flex flex-row justify-evenly">
-                      <Radio :options="action_options" :name="'action_' + index"
-                        v-model="formData.petition_actions[index].action_decision" />
+                      <!-- <Radio :options="action_options" :name="'action_' + index"
+                        v-model="formData.petition_actions[index].action_decision" /> -->
+
+                      <Selector :options="action_options" v-model="formData.petition_actions[index].action_decision" />
                     </div>
                     <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
                       <textarea id="message" rows="6" v-model="formData.petition_actions[index].action_text"
@@ -546,7 +556,8 @@
 
                 <div class="grid grid-cols-1 w-full gap-2">
                   <div class="flex flex-row gap-2 items-center p-4">
-                    <CheckBox v-model="formData.is_indigent" @change="is_indigent()" />
+                    <CheckBox @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
+                      v-model="formData.is_indigent" @change="is_indigent()" />
                     <label for="" class="font-medium text-sm">Indigent</label>
                   </div>
                   <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" label="O.R. No." type="text"
@@ -557,7 +568,8 @@
                     v-model="formData.date_paid" />
 
 
-                  <InputCurrency v-if="!formData.is_indigent" label="Amount Paid" v-model="formData.amount_paid" />
+                  <InputCurrency @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
+                    v-if="!formData.is_indigent" label="Amount Paid" v-model="formData.amount_paid" />
                   <Input v-if="!formData.is_indigent" label="Date Paid" type="date" skip v-model="formData.date_paid" />
 
                 </div>
@@ -597,9 +609,10 @@
                     </div>
                     <div class="border border-dashed border-yellow-400 w-full mt-5"></div>
                   </div>
-                  <div class="grid grid-cols-2 w-full gap-4" v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
+                  <div class="grid grid-cols-2 w-full gap-4"
+                    v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
                     <Input skip label="Publication Start" type="date" />
-                    <Input skip label="Publication End" type="date"  />
+                    <Input skip label="Publication End" type="date" />
                   </div>
                   <div class="flex flex-col justify-start gap-5 mt-3 items-start w-full">
                     <div class="w-[50%]">
@@ -618,7 +631,7 @@
         <div class="h-full flex items-center justify-start gap-2 w-full px-5 rounded-md font-medium ">
           <div class="flex flex-row items-center gap-6">
             <div class="flex flex-row items-center gap-2">
-              <CheckBox skip v-model="formData.is_to_validate" />
+              <CheckBox skip v-model="formData.is_to_validate" tabindex="-1" />
               <p class="text-sm font-medium text-gray-200">Validate Layout</p>
             </div>
 
@@ -691,6 +704,7 @@ import { helpers, required, requiredIf } from "@vuelidate/validators";
 import PetitionNumberRenderer from "../../components/PetitionNumberRenderer.vue";
 
 import { AuthStore } from "../../stores/Authentication.js";
+import Selector from "../../components/Selector.vue";
 
 
 const busy = ref(false)
@@ -991,6 +1005,7 @@ function indexToLetter(index) {
 function add_clerical_error() {
   clerical_errors_items.value.push('');
   const newClericalError = {
+    error_num: '',
     description: '',
     error_description_from: '',
     error_description_to: '',
@@ -1081,6 +1096,31 @@ function change_migrant() {
     formData.administering_officer_name = system_setting.defaults[0].municipal_civil_registrar || '',
       formData.administering_officer_position = 'Municipal Civil Registrar',
       formData.municipal_civil_registrar = system_setting.defaults[0].municipal_civil_registrar || ''
+    formData.action_taken_date = add_date_granted().toString()
+  }
+}
+
+
+// Tabs
+
+
+const focusPreviousInput = (event) => {
+  event.preventDefault();
+
+  const inputs = document.querySelectorAll('input, button, [tabindex]');
+  const index = Array.from(inputs).indexOf(event.target);
+  if (index >= 0 && index < inputs.length - 1) {
+    inputs[index - 1].focus();
+  }
+}
+
+const focusNextInput = (event) => {
+  event.preventDefault();
+
+  const inputs = document.querySelectorAll('input, button, [tabindex]');
+  const index = Array.from(inputs).indexOf(event.target);
+  if (index >= 0 && index < inputs.length - 1) {
+    inputs[index + 1].focus();
   }
 }
 
@@ -1172,6 +1212,7 @@ const initialForm = {
 
   clerical_errors: [
     {
+      error_num: '',
       description: '',
       error_description_from: '',
       error_description_to: '',

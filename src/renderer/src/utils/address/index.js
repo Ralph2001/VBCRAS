@@ -1,19 +1,17 @@
-
 import philippines from "../Philippines";
-
 
 export function complete_province(country) {
     const selected_country = country || 'Philippines';
 
     if (selected_country !== 'Philippines') {
-        console.log('Country is not Phippines so it won\'t return any value')
+        console.log('Country is not Philippines so it won\'t return any value');
         return [];
     }
 
     let province_set = [];
     philippines.forEach(regions => {
         Object.values(regions).forEach(region => {
-            Object.entries(region.province_list).forEach(([provinceName, province]) => {
+            Object.entries(region.province_list).forEach(([provinceName]) => {
                 province_set.push(provinceName.toLowerCase());
             });
         });
@@ -21,14 +19,19 @@ export function complete_province(country) {
 
     return province_set
         .sort((a, b) => a.localeCompare(b))
-        .map(province => province.charAt(0).toUpperCase() + province.slice(1));
+        .map(province => 
+            province.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2, p3) => {
+                const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
+            })
+        );
 }
 
 export function complete_municipality(province) {
-    const selectedProvince = province || ''
+    const selectedProvince = province || '';
 
     if (selectedProvince === '') {
-        console.log('No Selected Province')
+        console.log('No Selected Province');
         return [];
     }
 
@@ -37,7 +40,7 @@ export function complete_municipality(province) {
     philippines.forEach(regions => {
         Object.values(regions).forEach(region => {
             Object.entries(region.province_list).forEach(([provinceName, province]) => {
-                Object.entries(province.municipality_list).forEach(([municipalityName, municipality]) => {
+                Object.entries(province.municipality_list).forEach(([municipalityName]) => {
                     if (provinceName.toLowerCase() === selectedProvince.toLowerCase()) {
                         municipalityList.push(municipalityName.toLowerCase());
                     }
@@ -48,13 +51,19 @@ export function complete_municipality(province) {
 
     return municipalityList
         .sort((a, b) => a.localeCompare(b))
-        .map(municipality => municipality.charAt(0).toUpperCase() + municipality.slice(1));
+        .map(municipality =>
+            municipality.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2) => {
+                const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
+            })
+        );
 }
+
 export function complete_municipality_with_province(province) {
-    const selectedProvince = province || ''
+    const selectedProvince = province || '';
 
     if (selectedProvince === '') {
-        console.log('No Selected Province')
+        console.log('No Selected Province');
         return [];
     }
 
@@ -63,7 +72,7 @@ export function complete_municipality_with_province(province) {
     philippines.forEach(regions => {
         Object.values(regions).forEach(region => {
             Object.entries(region.province_list).forEach(([provinceName, province]) => {
-                Object.entries(province.municipality_list).forEach(([municipalityName, municipality]) => {
+                Object.entries(province.municipality_list).forEach(([municipalityName]) => {
                     if (provinceName.toLowerCase() === selectedProvince.toLowerCase()) {
                         municipalitywithProvinceList.push(`${municipalityName}, ${provinceName}`.toLowerCase());
                     }
@@ -74,11 +83,18 @@ export function complete_municipality_with_province(province) {
 
     return municipalitywithProvinceList
         .sort((a, b) => a.localeCompare(b))
-        .map(municipalitywithProvinceList => municipalitywithProvinceList.split(', ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(', '));
+        .map(item =>
+            item.split(', ').map(part =>
+                part.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2) => {
+                    const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
+                })
+            ).join(', ')
+        );
 }
 
 export function all_address() {
-    let address = []
+    let address = [];
     philippines.forEach(regions => {
         Object.values(regions).forEach(region => {
             Object.entries(region.province_list).forEach(([provinceName, province]) => {
@@ -93,6 +109,12 @@ export function all_address() {
 
     return address
         .sort((a, b) => a.localeCompare(b))
-        .map(address => address.split(', ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(', '));
-
+        .map(addr =>
+            addr.split(', ').map(part =>
+                part.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2) => {
+                    const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
+                })
+            ).join(', ')
+        );
 }

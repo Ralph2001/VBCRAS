@@ -22,9 +22,12 @@ export function grantedText(data) {
         }
 
         const lastItem = errorStrings.pop();
+
+        const change_correct = data.value.petition_type === "CCE" ? 'corrected' : 'changed'
+
         const formattedOutput =
             errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
 
-        return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby changed.`;
+        return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby ${change_correct}.`;
     }
 }

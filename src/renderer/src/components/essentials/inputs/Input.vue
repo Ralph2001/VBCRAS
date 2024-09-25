@@ -89,7 +89,7 @@ const focusPreviousInput = (event) => {
   if (props.skipnext) {
     return
   }
-  const inputs = document.querySelectorAll('input');
+  const inputs = document.querySelectorAll('input, button, [tabindex]');
   const index = Array.from(inputs).indexOf(event.target);
   if (index >= 0 && index < inputs.length - 1) {
     inputs[index - 1].focus();
@@ -100,7 +100,7 @@ const focusNextInput = (event) => {
   if (props.skipnext) {
     return
   }
-  const inputs = document.querySelectorAll('input');
+  const inputs = document.querySelectorAll('input, button, [tabindex]');
   const index = Array.from(inputs).indexOf(event.target);
   if (index >= 0 && index < inputs.length - 1) {
     inputs[index + 1].focus();
