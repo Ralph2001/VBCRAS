@@ -60,6 +60,13 @@ class Petitions(db.Model):
     petition_date_issued = db.Column(db.String)
     petition_date_granted = db.Column(db.String)
 
+
+    # Publication for CFN and 10172
+    publication_start =  db.Column(db.String, nullable=True)
+    publication_end =  db.Column(db.String, nullable=True)
+
+
+
     # Change of First Name fields (nullable, for CFN document type only)
     first_name_from = db.Column(db.String, nullable=True)
     first_name_to = db.Column(db.String, nullable=True)

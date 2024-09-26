@@ -45,19 +45,25 @@
                             class="p-2 shadow-inner outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex items-start">
                             {{ item.name }}
                         </button>
-                        <button @click="create_certificate_filing(props.details)"
-                            class="bg-yellow-200 hover:bg-yellow-300 flex justify-center items-center mt-auto p-2 shadow-inner outline-none ring-0 w-full  font-medium text-sm rounded-sm ">
-                            Create Certificate of Filing (.docx)
-                        </button>
+                        <div class="mt-auto flex flex-col gap-2 w-full">
+                            <button v-if="props.details" @click="openfolder(props.details)"
+                                class="bg-blue-200 hover:bg-blue-300 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-sm rounded-sm ">
+                                Open Folder
+                            </button>
+                            <button v-if="props.details" @click="create_certificate_filing(props.details)"
+                                class="bg-yellow-200 hover:bg-yellow-300 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-sm rounded-sm ">
+                                Create Certificate of Filing (.docx)
+                            </button>
+                        </div>
 
                     </div>
                     <div class="flex flex-col gap-2 items-center justify-center w-full h-full p-3"
                         v-if="menu === 'Info'">
                         <p class="italic text-white">Soon :)</p>
 
-                      <div v-if="props.details" class="flex flex-col h-full overflow-y-scroll">
-                        <div  v-for="(key, value) in details">{{value}}</div>
-                      </div>
+                        <!-- <div v-if="props.details" class="flex flex-col h-full overflow-y-scroll">
+                            <div v-for="(key, value) in details">{{ key }}</div>
+                        </div> -->
                     </div>
 
                 </div>
@@ -150,6 +156,16 @@ const printPDF = async () => {
 
 const printAllPDF = () => {
     // alert('Not Available yet')
+}
+
+const openfolder = async (param) => {
+    try {
+        const open = await window.ClericalApi.OpenClerical(param.file_path)
+    } catch (error) {
+        console.log(error)
+        path_missing.value = true
+        missing_path.value = param.file_path
+    }
 }
 
 const create_certificate_filing = async (data) => {

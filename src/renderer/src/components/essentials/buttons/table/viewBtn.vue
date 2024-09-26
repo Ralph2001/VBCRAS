@@ -19,10 +19,10 @@
             <button type="button" @click="opendocuments(props.params.data)"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Document</button>
-
+<!-- 
             <button type="button" @click="openfolder(props.params.data)"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
-                Folder</button>
+                Folder</button> -->
             <button v-if="user.user_role === 1" type="button" @click="delete_cmd(props.params.data)"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete</button>
             <!-- @click="delete_cmd(props.params.data)" -->
@@ -81,15 +81,15 @@ const opendocuments = async (param) => {
     }
 }
 
-const openfolder = async (param) => {
-    try {
-        const open = await window.ClericalApi.OpenClerical(param.file_path)
-    } catch (error) {
-        console.log(error)
-        path_missing.value = true
-        missing_path.value = param.file_path
-    }
-}
+// const openfolder = async (param) => {
+//     try {
+//         const open = await window.ClericalApi.OpenClerical(param.file_path)
+//     } catch (error) {
+//         console.log(error)
+//         path_missing.value = true
+//         missing_path.value = param.file_path
+//     }
+// }
 
 const delete_cmd = async (data) => {
     const id = Number(data.id)

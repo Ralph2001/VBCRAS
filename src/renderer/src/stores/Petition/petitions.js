@@ -6,7 +6,9 @@ export const usePetitions = defineStore('petitions', {
         petitions: [],
         latest: null,
         petitionData: [],
-        relation_to_document_owner: ['Brother', 'Mother', 'Father', 'Sister']
+        relation_to_document_owner: ['Brother', 'Mother', 'Father', 'Sister'],
+        saved_supporting: [],
+        saved_clerical: [],
     }),
     actions: {
         async get_all_petitions() {
@@ -132,6 +134,50 @@ export const usePetitions = defineStore('petitions', {
 
         async refresh() {
             this.get_all_petitions()
-        }
+            this.get_saved_supporting_documents()
+            this.get_saved_clerical_errors()
+        },
+
+
+
+        // ADDITIONALS
+
+        // /petitions/supporting-documents
+        // /petitions/clerical-errors
+
+        async get_saved_supporting_documents() {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/petitions/supporting-documents`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                console.log(response)
+                this.saved_supporting = response.data.supporting_documents
+                return true
+            } catch (error) {
+                return false
+            }
+        },
+        async get_saved_clerical_errors() {
+            try {
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/petitions/clerical-errors`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                console.log(response)
+                this.saved_clerical = response.data.clerical_errors
+                return true
+            } catch (error) {
+                return false
+            }
+        },
+
+
+
+
     }
 })

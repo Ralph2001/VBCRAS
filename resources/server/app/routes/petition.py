@@ -1,5 +1,5 @@
 from ..extensions import db, jsonify, request, create_access_token, Blueprint
-from ..models.civil_registry_corrections import Petitions
+from ..models.civil_registry_corrections import Petitions, PetitionSupportingDocuments, PetitionClericalErrors
 from ..schemas.petition_schema import PetitionSchema
 
 
@@ -86,6 +86,40 @@ def get_latest_cfn_petition():
         return jsonify(result), 200
     else:
         return jsonify({"message": "No CFN petition found"}), 404
+
+
+#########
+# Additionals
+#########
+
+@petitions.route("/petitions/supporting-documents", methods=["GET"])
+def get_all_supporting_documents():
+    supporting_documents = (
+        PetitionSupportingDocuments.query
+        .with_entities(PetitionSupportingDocuments.document_name)
+        .distinct()
+        .all()
+    )
+
+    # Extract document names from the result
+    document_names = [doc.document_name for doc in supporting_documents]
+
+    return jsonify({"supporting_documents": document_names}), 200
+
+
+@petitions.route("/petitions/clerical-errors", methods=["GET"])
+def get_all_clerical_errors():
+    clerical_errors = (
+        PetitionClericalErrors.query
+        .with_entities(PetitionClericalErrors.description)
+        .distinct()
+        .all()
+    )
+
+    # Extract descriptions from the result
+    error_descriptions = [error.description for error in clerical_errors]
+
+    return jsonify({"clerical_errors": error_descriptions}), 200
 
 
 #########

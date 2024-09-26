@@ -456,6 +456,8 @@ async function record_sheet(data) {
     }
 
 
+    const publication = data.petition_type === "CFN" || data.republic_act_number === "10172"? `${data.publication_start} to ${data.publication_end}`: 'N/A'
+
 
     doc.render({
         petition_number: data.petition_number,
@@ -464,6 +466,10 @@ async function record_sheet(data) {
         document_owner: document_owner,
         type_document: type_of_document,
         type_petition: type_of_petition,
+
+        publication: publication,
+
+
         start_date_posting: start_date_posting,
         end_date_posting: end_date_posting,
         clerical: clerical_errors,

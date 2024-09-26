@@ -87,7 +87,7 @@
               <div class="grid grid-cols-2 flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
                 tabindex="-1">
                 <Select :error="v$.republic_act_number.$error" skip :options="republic_act"
-                  v-model="formData.republic_act_number" label="Republic Act" />
+                  v-model="formData.republic_act_number" label="Republic Act" @change="watch_republic_act" />
                 <Select :error="v$.petition_type.$error" skip :options="petition_type" v-model="formData.petition_type"
                   label="Petition Type" @change="petition_by_type_retriever" />
                 <Select :error="v$.event_type.$error" skip :options="event_type" v-model="formData.event_type"
@@ -264,12 +264,13 @@
                   <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
                     :key="index">
                     <div class="basis-[10%]">
-                      <Input center @change="generate_granted_text()" v-model="formData.error_num" nolabel />
+                      <Input center @change="generate_granted_text()"
+                        v-model="formData.clerical_errors[index].error_num" nolabel />
                     </div>
 
                     <div class="grow">
                       <InputAutoComplete @change="generate_granted_text()" nolabel
-                        @keydown.ctrlKey="add_clerical_error()" :suggestion_data="clerical_error_descriptions"
+                        @keydown.ctrlKey="add_clerical_error()" :suggestion_data="petitions.saved_clerical"
                         v-model="formData.clerical_errors[index].description" />
                     </div>
                     <div class="grow">
@@ -283,8 +284,7 @@
                   </div>
                   <div class="flex justify-end gap-2 mt-3">
                     <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
-                      @click="remove_clerical_error()" v-if="clerical_errors_items.length > 1"
-                      tabindex="-1"
+                      @click="remove_clerical_error()" v-if="clerical_errors_items.length > 1" tabindex="-1"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
                     </button>
@@ -424,7 +424,12 @@
                       {{ indexToLetter(index) }} )
                     </p>
                     <div class="basis-[90%]">
-                      <Input v-model="formData.supporting_documents[index].document_name" />
+
+                      <InputAutoComplete nolabel :suggestion_data="petitions.saved_supporting"
+                        v-model="formData.supporting_documents[index].document_name" />
+
+
+                      <!-- <Input v-model="formData.supporting_documents[index].document_name" /> -->
                     </div>
                   </div>
                   <div class="flex justify-end gap-2">
@@ -611,8 +616,10 @@
                   </div>
                   <div class="grid grid-cols-2 w-full gap-4"
                     v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
-                    <Input skip label="Publication Start" type="date" />
-                    <Input skip label="Publication End" type="date" />
+                    <Input skip :error="v$.publication_start.$error" label="Publication Start" type="date"
+                      v-model="formData.publication_start" />
+                    <Input skip :error="v$.publication_end.$error" label="Publication End" type="date"
+                      v-model="formData.publication_end" />
                   </div>
                   <div class="flex flex-col justify-start gap-5 mt-3 items-start w-full">
                     <div class="w-[50%]">
@@ -688,6 +695,8 @@ import {
   add_date_certificate_end,
   add_date_issued,
   add_date_granted,
+  add_publication_start,
+  add_publication_end,
 } from "../../utils/ClericalDateCount.js";
 
 import { grantedText } from "../../utils/GrantedText.js";
@@ -739,6 +748,8 @@ const petition_modal = ref(false)
 onMounted(async () => {
   system_setting.getSystemSetting()
   petitions.get_all_petitions()
+  petitions.get_saved_supporting_documents()
+  petitions.get_saved_clerical_errors()
   auth.isAuthenticated()
 
 });
@@ -771,12 +782,19 @@ const open_modal = async () => {
   formData.petition_date_issued = add_date_issued().toString()
   formData.petition_date_granted = add_date_granted().toString()
   formData.action_taken_date = add_date_granted().toString()
+
+
 }
 
 // Retrieve Latest Petitioner Number
 // CCE and CFN
 const petition_by_type_retriever = computed(async () => {
 
+  if (formData.petition_type === "CFN") {
+    formData.publication_start = add_publication_start().toString()
+    formData.publication_end = add_publication_end().toString()
+  }
+  
   if (formData.petition_type === 'CCE') {
     const cce = await petitions.get_latest_cce()
     console.log(cce)
@@ -1057,8 +1075,24 @@ function remove_supporting_documents() {
   }
 }
 
+function watch_republic_act() {
+  if (formData.republic_act_number === "10172") {
+    formData.publication_start = add_publication_start().toString()
+    formData.publication_end = add_publication_end().toString()
+  } else if (formData.petition_type === "CFN" || formData.republic_act_number === "9048") {
+    formData.publication_start = add_publication_start().toString()
+    formData.publication_end = add_publication_end().toString()
+  }
+  else {
+    formData.publication_start = ''
+    formData.publication_end = ''
+  }
+}
+
 // Document Changer Dynamically Change the Error in 
 function change_event_selected_error_in() {
+
+
 
   formData.event_type === 'Birth' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'N/A') :
     formData.event_type === 'Death' ? (formData.petitioner_error_in = 'the', formData.document_owner = '', formData.relation_owner = '') :
@@ -1196,6 +1230,9 @@ const initialForm = {
   petition_date_issued: '',
   petition_date_granted: '',
 
+  publication_start: '',
+  publication_end: '',
+
   // Actions, Checked
 
   petition_actions: [
@@ -1320,6 +1357,16 @@ const rules = computed(() => {
     petition_date_issued: { required },
     petition_date_granted: { required },
 
+    publication_start: {
+      requiredIf: requiredIf(() =>
+        formData.petition_type === "CFN" || formData.republic_act_number === '10172' ? true : false
+      )
+    },
+    publication_end: {
+      requiredIf: requiredIf(() =>
+        formData.petition_type === "CFN" || formData.republic_act_number === '10172' ? true : false
+      )
+    },
 
     /**
      *  Validation for Dynamically Changing List
@@ -1408,11 +1455,20 @@ const submitForm = async () => {
     ground_f: formData.ground_f,
     ground_b_data: formData.ground_b_data,
     ground_f_data: formData.ground_f_data,
+
+
     notice_posting: formData.notice_posting,
     certificate_posting_start: formData.certificate_posting_start,
     certificate_posting_end: formData.certificate_posting_end,
     petition_date_issued: formData.petition_date_issued,
     petition_date_granted: formData.petition_date_granted,
+
+    // Publication CFN or 10172
+    publication_start: formData.publication_start,
+    publication_end: formData.publication_end,
+
+
+
     petition_actions: formData.petition_actions,
     supporting_documents: formData.supporting_documents,
     clerical_errors: formData.clerical_errors,
@@ -1424,6 +1480,10 @@ const submitForm = async () => {
 
     // For Settings Only, will not be added in database
     is_to_validate: formData.is_to_validate
+
+
+
+
   }
 
   const generate_ = await window.ClericalApi.createPetitionDocument(JSON.stringify(petition_));
@@ -1466,7 +1526,10 @@ const create_validated_document = async () => {
     petition_type: formData.petition_type,
     petitioner_name: formData.petitioner_name,
     document_owner: formData.document_owner,
-    relation_owner: formData.relation_owner
+    relation_owner: formData.relation_owner,
+    prepared_by: auth.user,
+    event_type: formData.event_type,
+    date_filed: formData.date_filed
   }
 
   const check = await window.ClericalApi.proceedCreatePetition(JSON.stringify(settings));
@@ -1531,11 +1594,20 @@ const create_validated_document = async () => {
     ground_f: formData.ground_f,
     ground_b_data: formData.ground_b_data,
     ground_f_data: formData.ground_f_data,
+
+
     notice_posting: formData.notice_posting,
     certificate_posting_start: formData.certificate_posting_start,
     certificate_posting_end: formData.certificate_posting_end,
     petition_date_issued: formData.petition_date_issued,
     petition_date_granted: formData.petition_date_granted,
+
+
+    // Publication CFN or 10172
+    publication_start: formData.publication_start,
+    publication_end: formData.publication_end,
+
+
     petition_actions: formData.petition_actions,
     supporting_documents: formData.supporting_documents,
     clerical_errors: formData.clerical_errors,

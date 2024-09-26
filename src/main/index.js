@@ -221,7 +221,7 @@ ipcMain.handle('saveAnnotated', async (event, fileUri) => {
 ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
-        
+
         const generate_document = await generate(formData);
 
         if (generate_document.status) {
@@ -292,16 +292,22 @@ function executeCommand(excutable, originalDirectory, outputDirectory, args) {
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
-        const doctoPath = join(__dirname, '../../resources/tools/converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
+        // const doctoPath = join(__dirname, '../../resources/tools/converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
 
         const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
 
         const originalDirectory = data.orignal_path
-        const petitionType = data.petition_type;
+        const petitionType = data.petition_type + ' ' + data.event_type;
+        const prepared_by = data.prepared_by
         const republicAct = data.republic_act_number;
         const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
+        
+        const date_filed = data.date_filed
 
-        const outputDirectory = join(data.path_where_to_save, `Correction of Clerical Error and Change of First Name`, `${petitionType} ${republicAct}`, documentOwner);
+        const year = new Date(date_filed).getFullYear().toString();
+
+
+        const outputDirectory = join(data.path_where_to_save, `Petitions`, prepared_by, republicAct, petitionType, year, documentOwner);
 
         if (!fs.existsSync(outputDirectory)) {
             fs.mkdirSync(outputDirectory, { recursive: true })
