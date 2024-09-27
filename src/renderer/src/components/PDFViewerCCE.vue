@@ -8,10 +8,6 @@
                 </p>
             </div>
             <div class="flex flex-row gap-3 ml-auto">
-                <!-- <button class="border  text-sm bg-white shadow-sm rounded-sm px-3 py-1 tracking-wide">Print All</button> -->
-                <!-- <button
-                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide"
-                    v-if="active_pdf_link" @click="printAllPDF">Print All</button> -->
                 <button
                     class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide"
                     v-if="active_pdf_link" @click="printPDF">Print Active Document</button>

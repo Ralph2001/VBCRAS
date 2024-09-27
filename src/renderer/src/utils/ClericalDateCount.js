@@ -77,6 +77,7 @@ export function add_date_granted() {
 export function add_publication_start() {
     const today = useNow();
     const newDate = new Date(today.value);
+
     const publicationStart = new Date();
 
     const dayOfWeek = newDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
@@ -86,9 +87,7 @@ export function add_publication_start() {
         const daysUntilNextSunday = (7 - dayOfWeek) % 7;
         publicationStart.setDate(newDate.getDate() + daysUntilNextSunday);
     } else if (dayOfWeek === 5) { // Friday
-        publicationStart.setDate(newDate.getDate() + 1); // Next Saturday
-    } else if (dayOfWeek === 6) { // Saturday
-        publicationStart.setDate(newDate.getDate() + 1); // Next Sunday
+        publicationStart.setDate(newDate.getDate() + 9); // Next Saturday
     }
 
     return format(publicationStart, 'yyyy-MM-dd');
@@ -102,4 +101,23 @@ export function add_publication_end() {
     publicationEnd.setDate(startDate.getDate() + 13); // 2 weeks later
 
     return format(publicationEnd, 'yyyy-MM-dd');
+}
+
+export function add_date_granted_with_publication() {
+    const publicationEnd = add_publication_end();
+    const startDate = new Date(publicationEnd);
+
+    let dateGranted = new Date(startDate);
+    let daysToAdd = 3;
+
+    while (daysToAdd > 0) {
+        dateGranted.setDate(dateGranted.getDate() + 1);
+        
+        // Check if the day is a weekday (Mon-Fri)
+        if (dateGranted.getDay() !== 0 && dateGranted.getDay() !== 6) {
+            daysToAdd--;
+        }
+    }
+
+    return format(dateGranted, 'yyyy-MM-dd');
 }

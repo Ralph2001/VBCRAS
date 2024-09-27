@@ -1,5 +1,5 @@
     <template>
-        <div class="fixed top-0 bottom-0 left-0 right-0 z-50 backdrop-blur-sm backdrop-brightness-75 p-10">
+        <div class="fixed top-0 bottom-0 left-0 right-0 z-50 backdrop-blur-sm backdrop-brightness-75 ">
             <div class="h-full w-full flex rounded-lg bg-gray-50 flex-col p-2 relative">
                 <div class="flex flex-row items-center px-4">
                     <p class="font-medium p-4">Settings</p>
@@ -65,9 +65,24 @@
                                     <p class="font-medium"> {{ format(date.date, 'MMMM dd, yyyy') }}</p>
                                     <p class="text-xs font-medium text-blue-600"> {{ format(date.date, 'eeee') }}</p>
                                 </div>
+                                <br>
+
                             </div>
 
-                            <div class="grid sm:grid-cols-1 md:lg:grid-cols-3 h-full w-full mt-5 gap-2">
+                            <div class="flex flex-col p-6 gap-4">
+                                <p class="font-medium italic ">if CFN or 10172</p>
+                                <div class="flex flex-row gap-2 ">
+                                    <div class="h-auto w-[12rem] py-1.5 bg-white border border-gray-300 rounded-md shadow-sm flex flex-col items-center justify-center"
+                                        v-for="date in dates_publication" :key="date">
+                                        <p class="text-xs font-gray-500">{{ date.name }}</p>
+                                        <p class="font-medium"> {{ format(date.date, 'MMMM dd, yyyy') }}</p>
+                                        <p class="text-xs font-medium text-blue-600"> {{ format(date.date, 'eeee') }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid sm:grid-cols-1 md:lg:grid-cols-3 h-full w-full  gap-2">
 
                                 <div class="flex flex-col border border-gray-300 gap-2 p-6 h-fit bg-white shadow-sm">
                                     <p class="font-medium text-2xl">Holidays</p>
@@ -123,9 +138,8 @@
                                 </div>
 
                                 <div
-                                    class="flex flex-col col-span-2 border-gray-300 border p-4 h-fit  bg-white shadow-sm">
-                                    <p class="font-medium text-2xl">Automatic Date Counts</p>
-
+                                    class="flex flex-col col-span-2 border-gray-300 border p-4 h-max   overflow-y-scroll  bg-white shadow-sm">
+                                  
 
                                     <div class="flex flex-col gap-4 p-4">
                                         <div class="flex flex-col">
@@ -515,6 +529,9 @@ import {
     add_date_certificate_end,
     add_date_issued,
     add_date_granted,
+    add_publication_start,
+    add_publication_end,
+    add_date_granted_with_publication,
 } from '../../utils/ClericalDateCount.js';
 import Input from '../essentials/inputs/Input.vue';
 import Button from '../essentials/buttons/Button.vue';
@@ -608,6 +625,9 @@ const date_certificate_start = ref(add_date_certificate_start());
 const date_certificate_end = ref(add_date_certificate_end());
 const date_of_issued = ref(add_date_issued());
 const date_of_granted = ref(add_date_granted());
+const publication_start = ref(add_publication_start())
+const publication_end = ref(add_publication_end())
+const date_granted_with_publication = ref(add_date_granted_with_publication())
 
 
 const dates = ref
@@ -619,6 +639,16 @@ const dates = ref
             { name: 'Date Certificate End', date: date_certificate_end },
             { name: 'Date Issued', date: date_of_issued },
             { name: 'Date Granted', date: date_of_granted },
+        ]
+    )
+
+const dates_publication = ref
+    (
+        [
+            { name: 'Publication Start', date: publication_start },
+            { name: 'Publication End', date: publication_end },
+            { name: 'Date Granted', date:date_granted_with_publication },
+
         ]
     )
 

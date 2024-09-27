@@ -5,7 +5,8 @@
             <PathWarning :path="missing_path" v-if="path_missing" @cancel="path_missing = false" />
         </Teleport>
 
-        <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" :details="props.params.data" />
+        <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false"
+            :details="props.params.data" />
         <button type="button" @click="dropdown = !dropdown" ref="mainBtn"
             :class="{ 'bg-gray-600 text-white hover:bg-gray-700': dropdown, 'text-gray-900 bg-white hover:bg-gray-100': !dropdown }"
             class="px-3 py-1 text-sm tracking-wide hover:border-gray-400 active:scale-95  font-medium text-center  rounded-sm  border transition-all focus:outline-none">
@@ -19,7 +20,7 @@
             <button type="button" @click="opendocuments(props.params.data)"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Document</button>
-<!-- 
+            <!-- 
             <button type="button" @click="openfolder(props.params.data)"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
                 Folder</button> -->
@@ -41,7 +42,7 @@ import { AuthStore } from '../../../../stores/Authentication';
 
 const user = AuthStore()
 
-onMounted(()=>{
+onMounted(() => {
     user.isAuthenticated()
 })
 const path_missing = ref(false)
@@ -67,8 +68,8 @@ const props = defineProps({
 const opendocuments = async (param) => {
     try {
         const check = await window.ClericalApi.OpenClericalFiles(param.file_path);
-        if (!check.error) {
-            console.log(check)
+        console.log(check)
+        if (check.length) {
             data_pdfs.value = check
             pdf_viewer.value = !pdf_viewer.value
             return

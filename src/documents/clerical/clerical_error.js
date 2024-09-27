@@ -456,7 +456,18 @@ async function record_sheet(data) {
     }
 
 
-    const publication = data.petition_type === "CFN" || data.republic_act_number === "10172"? `${data.publication_start} to ${data.publication_end}`: 'N/A'
+    const publication_start = data.petition_type === "CFN" || data.republic_act_number === "10172" ? dateFns.format(
+        data.publication_start,
+        'dd MMMM yyyy'
+    ) : ''
+
+    const publication_end = data.petition_type === "CFN" || data.republic_act_number === "10172" ? dateFns.format(
+        data.publication_end,
+        'dd MMMM yyyy'
+    ) : ''
+
+
+    const publication = data.petition_type === "CFN" || data.republic_act_number === "10172" ? `${publication_start} to ${publication_end}` : 'N/A'
 
 
     doc.render({

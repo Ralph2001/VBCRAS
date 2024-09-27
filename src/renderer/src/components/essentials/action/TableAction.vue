@@ -113,7 +113,7 @@ const data_information = ref([
     { label: 'Document Owner:', value: data.child_name },
     { label: 'Affiant Name:', value: data.affiant_name },
     { label: 'Created at:', value: '10:12 AM on July 31, 2024' },
-    { label: 'Filled by:', value: data.created_by_user.username }
+    { label: 'Prepared by:', value: data.created_by_user.username }
 ])
 
 

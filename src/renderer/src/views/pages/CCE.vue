@@ -9,8 +9,9 @@
 
     <AlertPath v-if="busy" />
     <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
-    <ValidateClericalPopup :path="last_saved_filepath" @cancel="cancel_validating_stage"
-      @proceed="create_validated_document" v-if="is_validating" />
+    <!-- v-if="is_validating" -->
+    <ValidateClericalPopup v-if="is_validating" :path="last_saved_filepath" @cancel="cancel_validating_stage"
+      @proceed="create_validated_document"  />
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
@@ -32,7 +33,8 @@
 
     </div>
 
-    <div role="dialog" aria-modal="true" v-if="is_creating"
+    <!-- v-if="is_creating" -->
+    <div role="dialog" aria-modal="true" v-if="is_creating" 
       class="fixed top-0 bottom-0 left-0 right-0 h-full items-center justify-center flex p-4 z-50 backdrop-blur-sm backdrop-brightness-[0.7]"
       tabindex="-1">
       <div
@@ -45,7 +47,8 @@
           <Wave />
         </div>
         <p class="text-2xl text-gray-800 mt-5">Creating Document</p>
-        <p class="text-sm text-gray-600">
+        <p class="text-xs text-gray-600">This may take a while—approximately 20 seconds or more.</p>
+        <p class="text-xs text-gray-600">
           Please wait...
         </p>
       </div>
