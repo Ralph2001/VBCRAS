@@ -86,7 +86,7 @@ export function add_publication_start() {
         // Start the publication from next Sunday
         const daysUntilNextSunday = (7 - dayOfWeek) % 7;
         publicationStart.setDate(newDate.getDate() + daysUntilNextSunday);
-    } else if (dayOfWeek === 5) { // Friday
+    } else if (dayOfWeek === 5) { //Friday
         publicationStart.setDate(newDate.getDate() + 9); // Next Saturday
     }
 
@@ -112,7 +112,7 @@ export function add_date_granted_with_publication() {
 
     while (daysToAdd > 0) {
         dateGranted.setDate(dateGranted.getDate() + 1);
-        
+
         // Check if the day is a weekday (Mon-Fri)
         if (dateGranted.getDay() !== 0 && dateGranted.getDay() !== 6) {
             daysToAdd--;

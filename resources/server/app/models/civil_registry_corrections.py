@@ -4,6 +4,12 @@ import datetime
 class Petitions(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
+
+
+    header_province = db. Column(db.String)
+    header_municipality = db. Column(db.String)
+    header_ss = db. Column(db.String)
+    
     # Petition
     is_migrant =  db.Column(db.Boolean, default=False)
     # is_with_cert_filing = db.Column(db.Boolean, default=False)

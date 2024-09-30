@@ -83,7 +83,8 @@ import {
     faCircleCheck,
     faTriangleExclamation,
     faRightToBracket, 
-    faAnglesRight
+    faAnglesRight,
+    
 
 
 } from '@fortawesome/free-solid-svg-icons'

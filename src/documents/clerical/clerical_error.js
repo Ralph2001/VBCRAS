@@ -308,6 +308,11 @@ async function petition(data) {
 
 
     doc.render({
+
+        header_province: data.header_province,
+        header_municipality: data.header_municipality,
+        header_ss: data.header_ss,
+
         petition_number: petition_num,
         migrant: migrant_pet,
 
@@ -446,6 +451,7 @@ async function record_sheet(data) {
     } else if (data.petition_type === "CFN") {
         const main_value = [
             {
+                error_num: '1',
                 description: 'Change of First Name',
                 error_description_from: first_name_from,
                 error_description_to: first_name_to,

@@ -9,8 +9,9 @@
             </div>
             <div class="flex flex-row gap-3 ml-auto">
                 <button
-                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 py-1 tracking-wide"
-                    v-if="active_pdf_link" @click="printPDF">Print Active Document</button>
+                    class=" hover:text-white hover:bg-green-600  text-sm bg-green-500  shadow-sm rounded-sm  outline-none font-medium px-4 py-1 tracking-wide flex flex-row gap-3 items-center"
+                    v-if="active_pdf_link" @click="printPDF"><font-awesome-icon icon="fa-solid fa-print" /> Print Active
+                    Document</button>
                 <button @click="exit_btn"
                     class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 w-20 py-1 tracking-wide">Exit</button>
             </div>

@@ -5,6 +5,12 @@
             <PathWarning :path="missing_path" v-if="path_missing" @cancel="path_missing = false" />
         </Teleport>
 
+        <Teleport to="body" v-if="isDialogVisible">
+            <Transition>
+                <Dialog :data="data_information" @cancel-dialog="cancel_removal" @proceed-removal="proceed_removal" />
+            </Transition>
+        </Teleport>
+
         <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false"
             :details="props.params.data" />
         <button type="button" @click="dropdown = !dropdown" ref="mainBtn"
@@ -18,15 +24,11 @@
         <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-[10rem]"
             v-if="dropdown">
             <button type="button" @click="opendocuments(props.params.data)"
-                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
+                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">View
                 Document</button>
-            <!-- 
-            <button type="button" @click="openfolder(props.params.data)"
-                class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open
-                Folder</button> -->
-            <button v-if="user.user_role === 1" type="button" @click="delete_cmd(props.params.data)"
+            <button v-if="user.user_role === 1 || user.user_id === props.params.data.created_by" type="button" @click="removeItem()"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete</button>
-            <!-- @click="delete_cmd(props.params.data)" -->
+
         </div>
     </div>
 </template>
@@ -38,6 +40,9 @@ import { usePetitions } from '../../../../stores/Petition/petitions';
 import PDFViewerCCE from '../../../PDFViewerCCE.vue';
 import PathWarning from '../../../client/modal/PathWarning.vue';
 import { AuthStore } from '../../../../stores/Authentication';
+import Dialog from '../../../Dialog.vue';
+import { format } from 'date-fns';
+
 
 
 const user = AuthStore()
@@ -45,6 +50,24 @@ const user = AuthStore()
 onMounted(() => {
     user.isAuthenticated()
 })
+
+
+const isDialogVisible = ref(false)
+
+const removeItem = () => {
+    isDialogVisible.value = true
+}
+
+const cancel_removal = () => {
+    isDialogVisible.value = false
+}
+const proceed_removal = async () => {
+    // console.log(props.params.data)
+    const id = Number(props.params.data.id)
+    const remove_data = await petitions.remove_petition(id)
+}
+
+
 const path_missing = ref(false)
 const missing_path = ref()
 
@@ -64,6 +87,16 @@ const props = defineProps({
         required: true
     }
 })
+
+const data_information = ref([
+    { label: 'Type:', value: `${props.params.data.republic_act_number} ${props.params.data.petition_type} ${props.params.data.event_type}` },
+    { label: 'Petition Number:', value: props.params.data.petition_number },
+    { label: 'Document Owner:', value: props.params.data.document_owner === 'N/A' ? props.params.data.petitioner_name : props.params.data.document_owner },
+    { label: 'Affiant Name:', value: props.params.data.petitioner_name },
+    { label: 'Created at:', value: format(props.params.data.created_at, 'PPpp') },
+    { label: 'Prepared by:', value: props.params.data.created_by_user.username }
+])
+
 
 const opendocuments = async (param) => {
     try {

@@ -4,6 +4,11 @@ from ..extensions import db, func, DateTime
 class SystemSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     
+    header_province = db.Column(db.String())
+    header_municipality = db.Column(db.String())
+    header_ss = db.Column(db.String())
+
+
     municipal_civil_registrar = db.Column(db.String(420))
     mayor = db.Column(db.String(420))
     

@@ -1,5 +1,5 @@
 <template>
-    <div class="relative h-[calc(100vh-60px)] flex  md:lg:flex-row w-full overflow-y-scroll gap-10">
+    <div class="relative h-[calc(100vh-60px)] flex  md:lg:flex-row w-full overflow-y-scroll ">
 
         <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="exit_approval()" />
         <div role="dialog" aria-modal="true" v-if="isCreatingFinality"

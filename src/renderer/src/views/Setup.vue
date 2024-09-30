@@ -24,11 +24,26 @@
 
                     </div>
 
+                    <div class="flex flex-col  md:lg:px-20 gap-5">
+                        <p class="font-medium text-2xl text-gray-800">Header for Correction of Clerical
+                            Error and Change of First Name</p>
+                        <div class="flex flex-col gap-2 w-full">
+                            <div class="grid grid-cols-2 gap-2">
+                                <Input label="Province" :error="v$.header_province.$error"
+                                    v-model="formData.header_province" />
+                                <Input label="City/Municipality" cap :error="v$.header_municipality.$error"
+                                    v-model="formData.header_municipality" />
+                            </div>
+                            <Input label="SS" v-model="formData.header_ss" :error="v$.header_ss.$error" />
+                        </div>
+                    </div>
                     <p class="font-medium text-2xl text-gray-800  md:lg:px-20 ">Correction of Clerical Error and Change
                         of First
                         Name
                     </p>
                     <div class="grid  gap-10 sm:grid-cols-1 md:lg:grid-cols-2 md:lg:px-20 w-full">
+
+
 
                         <div class="flex flex-col gap-2">
                             <p class="font-medium italic">Most Use</p>
@@ -140,6 +155,10 @@ const open = async () => {
 }
 
 const formData = reactive({
+    header_province: '',
+    header_municipality: 'MUNICIPALITY OF ',
+    header_ss: '',
+
     file_path: '',
     nationality: '',
     country: '',
@@ -155,6 +174,10 @@ const formData = reactive({
 
 
 const rules = computed(() => ({
+    header_province: { required },
+    header_municipality: { required },
+    header_ss: { required },
+
     file_path: { required },
     municipal_civil_registrar: { required },
     filing_province: { required },
@@ -174,6 +197,10 @@ const submit_setup = async () => {
     }
 
     const data = {
+        header_province: formData.header_province,
+        header_municipality: formData.header_municipality,
+        header_ss: formData.header_ss,
+
         municipal_civil_registrar: formData.municipal_civil_registrar,
         mayor: formData.mayor,
         petition_default_file_path: formData.file_path,

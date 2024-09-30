@@ -11,7 +11,7 @@
     <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
     <!-- v-if="is_validating" -->
     <ValidateClericalPopup v-if="is_validating" :path="last_saved_filepath" @cancel="cancel_validating_stage"
-      @proceed="create_validated_document"  />
+      @proceed="create_validated_document" />
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
@@ -34,7 +34,7 @@
     </div>
 
     <!-- v-if="is_creating" -->
-    <div role="dialog" aria-modal="true" v-if="is_creating" 
+    <div role="dialog" aria-modal="true" v-if="is_creating"
       class="fixed top-0 bottom-0 left-0 right-0 h-full items-center justify-center flex p-4 z-50 backdrop-blur-sm backdrop-brightness-[0.7]"
       tabindex="-1">
       <div
@@ -104,14 +104,14 @@
               </div>
             </Box>
             <!-- {{ petitioner_number }} -->
-            <Box title="Header" width="w-full" v-if="formData.is_migrant">
+            <Box title="Header" width="w-full">
               <div class="flex flex-col gap-2 w-full">
                 <div class="grid grid-cols-2 gap-2">
-
-                  <Input label="Province" />
-                  <Input label="City/Municipality" cap />
+                  <Input label="Province" :error="v$.header_province.$error" v-model="formData.header_province" />
+                  <Input label="City/Municipality" :error="v$.header_municipality.$error" cap
+                    v-model="formData.header_municipality" />
                 </div>
-                <Input label="SS" />
+                <Input label="SS" :error="v$.header_ss.$error" v-model="formData.header_ss" />
               </div>
             </Box>
           </div>
@@ -267,7 +267,7 @@
                   <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
                     :key="index">
                     <div class="basis-[10%]">
-                      <Input center @change="generate_granted_text()"
+                      <Input center type="number" @change="generate_granted_text()"
                         v-model="formData.clerical_errors[index].error_num" nolabel />
                     </div>
 
@@ -700,6 +700,7 @@ import {
   add_date_granted,
   add_publication_start,
   add_publication_end,
+  add_date_granted_with_publication,
 } from "../../utils/ClericalDateCount.js";
 
 import { grantedText } from "../../utils/GrantedText.js";
@@ -789,21 +790,36 @@ const open_modal = async () => {
 
 }
 
-// Retrieve Latest Petitioner Number
-// CCE and CFN
-const petition_by_type_retriever = computed(async () => {
-
+function publication_date_setter(){
   if (formData.petition_type === "CFN") {
     formData.publication_start = add_publication_start().toString()
     formData.publication_end = add_publication_end().toString()
+    formData.petition_date_granted = add_date_granted_with_publication().toString()
   }
-  
+  else if (formData.petition_type === "CCE" && formData.republic_act_number === "10172") {
+
+    formData.publication_start = add_publication_start().toString()
+    formData.publication_end = add_publication_end().toString()
+    formData.petition_date_granted = add_date_granted_with_publication().toString()
+  }
+  else {
+    formData.publication_start = ''
+    formData.publication_end = ''
+
+    formData.petition_date_granted = add_date_granted().toString()
+  }
+}
+
+// Retrieve Latest Petitioner Number
+// CCE and CFN
+const petition_by_type_retriever = computed(async () => {
   if (formData.petition_type === 'CCE') {
     const cce = await petitions.get_latest_cce()
-    console.log(cce)
+    publication_date_setter()
     if (cce) {
       const latest = cce.data.petition_number.split('-')
       is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
+      return
     }
     else {
       is_default_petitioner_number.value = '0001'
@@ -811,9 +827,11 @@ const petition_by_type_retriever = computed(async () => {
   }
   else if (formData.petition_type === 'CFN') {
     const cfn = await petitions.get_latest_cfn()
+    publication_date_setter()
     if (cfn) {
       const latest = cfn.data.petition_number.split('-')
       is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
+      return
     }
     else {
       is_default_petitioner_number.value = '0001'
@@ -1079,24 +1097,24 @@ function remove_supporting_documents() {
 }
 
 function watch_republic_act() {
-  if (formData.republic_act_number === "10172") {
+  if (formData.republic_act_number === "10172" && formData.petition_type === "CCE") {
     formData.publication_start = add_publication_start().toString()
     formData.publication_end = add_publication_end().toString()
-  } else if (formData.petition_type === "CFN" || formData.republic_act_number === "9048") {
+    formData.petition_date_granted = add_date_granted_with_publication().toString()
+  } else if (formData.petition_type === "CFN" && formData.republic_act_number === "9048") {
     formData.publication_start = add_publication_start().toString()
     formData.publication_end = add_publication_end().toString()
+    formData.petition_date_granted = add_date_granted_with_publication().toString()
   }
   else {
     formData.publication_start = ''
     formData.publication_end = ''
+    formData.petition_date_granted = add_date_granted().toString()
   }
 }
 
 // Document Changer Dynamically Change the Error in 
 function change_event_selected_error_in() {
-
-
-
   formData.event_type === 'Birth' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'N/A') :
     formData.event_type === 'Death' ? (formData.petitioner_error_in = 'the', formData.document_owner = '', formData.relation_owner = '') :
       formData.event_type === 'Marriage' ? (formData.petitioner_error_in = 'my', formData.document_owner = '', formData.relation_owner = 'Spouse') : ''
@@ -1129,12 +1147,23 @@ function change_migrant() {
     formData.municipal_civil_registrar = ''
     formData.action_taken_date = ''
 
-  } else {
-    formData.administering_officer_name = system_setting.defaults[0].municipal_civil_registrar || '',
-      formData.administering_officer_position = 'Municipal Civil Registrar',
-      formData.municipal_civil_registrar = system_setting.defaults[0].municipal_civil_registrar || ''
-    formData.action_taken_date = add_date_granted().toString()
+    formData.header_province = ''
+    formData.header_municipality = 'MUNICIPALITY OF '
+    formData.header_ss = ''
+    return
   }
+  else if (!formData.is_migrant) {
+    formData.administering_officer_name = system_setting.defaults[0].petition_default_administering_officer_name || ''
+    formData.administering_officer_position = system_setting.defaults[0].petition_default_administering_officer_position || ''
+    formData.municipal_civil_registrar = system_setting.defaults[0].municipal_civil_registrar || ''
+    formData.action_taken_date = add_date_granted().toString()
+
+    formData.header_province = system_setting.defaults[0].header_province || ''
+    formData.header_municipality = system_setting.defaults[0].header_municipality || ''
+    formData.header_ss = system_setting.defaults[0].header_ss || ''
+  }
+
+
 }
 
 
@@ -1165,6 +1194,11 @@ const focusNextInput = (event) => {
 const initialForm = {
   status: 'PENDING',
   created_by: auth.user_id,
+
+
+  header_province: system_setting.defaults[0].header_province || '',
+  header_municipality: system_setting.defaults[0].header_municipality || '',
+  header_ss: system_setting.defaults[0].header_ss || '',
 
 
   // Petition
@@ -1270,6 +1304,13 @@ const initialForm = {
 
 const rules = computed(() => {
   return {
+
+
+    header_province: { required },
+    header_municipality: { required },
+    header_ss: { required },
+
+
     status: { required },
     created_by: { required },
 
@@ -1406,6 +1447,12 @@ const submitForm = async () => {
 
   const petition_ = {
 
+
+
+    header_province: formData.header_province,
+    header_municipality: formData.header_municipality,
+    header_ss: formData.header_ss,
+
     // Petition
     is_migrant: formData.is_migrant,
 
@@ -1539,6 +1586,11 @@ const create_validated_document = async () => {
 
 
   const petition_ = ref({
+
+
+    header_province: formData.header_province,
+    header_municipality: formData.header_municipality,
+    header_ss: formData.header_ss,
 
     is_migrant: formData.is_migrant,
 
