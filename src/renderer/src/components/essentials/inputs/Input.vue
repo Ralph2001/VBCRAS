@@ -86,26 +86,31 @@ const value_toUpperCase = (value) => {
 
 
 const focusPreviousInput = (event) => {
-  if (props.skipnext) {
-    return
-  }
-  const inputs = document.querySelectorAll('input, button, [tabindex]');
-  const index = Array.from(inputs).indexOf(event.target);
-  if (index >= 0 && index < inputs.length - 1) {
+  event.preventDefault();
+
+  // Select only focusable elements (input, button, and elements with tabindex >= 0)
+  const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+    .filter(input => input.tabIndex >= 0);
+
+  const index = inputs.indexOf(event.target);
+  if (index > 0) {
     inputs[index - 1].focus();
   }
 }
 
 const focusNextInput = (event) => {
-  if (props.skipnext) {
-    return
-  }
-  const inputs = document.querySelectorAll('input, button, [tabindex]');
-  const index = Array.from(inputs).indexOf(event.target);
+  event.preventDefault();
+
+  // Select only focusable elements (input, button, and elements with tabindex >= 0)
+  const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+    .filter(input => input.tabIndex >= 0);
+
+  const index = inputs.indexOf(event.target);
   if (index >= 0 && index < inputs.length - 1) {
     inputs[index + 1].focus();
   }
 }
+
 </script>
 
 

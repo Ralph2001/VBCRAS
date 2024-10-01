@@ -183,7 +183,7 @@
                     formData.event_type === 'Death' ||
                     (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
                   ">
-                    <InputAutoComplete :error="v$.relation_owner.$error" @input="generate_fact_reason_text()"
+                    <InputAutoComplete :error="v$.relation_owner.$error" @change="generate_fact_reason_text()"
                       :suggestion_data="petitions.relation_to_document_owner" label="Relation"
                       v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                         ? true
@@ -242,10 +242,10 @@
               <Box title="The clerical error(s) to be corrected is (are): " width="w-full">
                 <div class="flex flex-col gap-2 w-full font-bold relative">
                   <div class="absolute w-auto -top-4 right-4">
-                    <!-- <p class="text-xs italic text-gray-400 font-normal">
-                      <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
-                      <span class="font-medium">Crtl + Space</span> to add new column
-                    </p> -->
+                    <p class="text-xs italic text-gray-400 font-normal">
+                      <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1 text-blue-600" />
+                      <span class="font-medium text-blue-600">Crtl + Space</span> to add new column
+                    </p>
                   </div>
                   <div class="flex flex-row w-full items-center justify-center gap-2 mt-4">
                     <div class="basis-[10%]">
@@ -267,22 +267,23 @@
                   <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
                     :key="index">
                     <div class="basis-[10%]">
-                      <Input center type="number" @change="generate_granted_text()"
-                        v-model="formData.clerical_errors[index].error_num" nolabel />
+                      <Input center type="number" @keydown="(event) => handleKeyClerical(event, 1)"
+                        @change="generate_granted_text()" v-model="formData.clerical_errors[index].error_num" nolabel />
                     </div>
 
                     <div class="grow">
-                      <InputAutoComplete @change="generate_granted_text()" nolabel
-                        @keydown.ctrlKey="add_clerical_error()" :suggestion_data="petitions.saved_clerical"
+                      <InputAutoComplete @keydown="(event) => handleKeyClerical(event, 2)"
+                        @change="generate_granted_text()" nolabel @keydown.ctrlKey="add_clerical_error()"
+                        :suggestion_data="petitions.saved_clerical"
                         v-model="formData.clerical_errors[index].description" />
                     </div>
                     <div class="grow">
-                      <Input nolabel @change="generate_granted_text()" cap
-                        v-model="formData.clerical_errors[index].error_description_from" />
+                      <Input nolabel @keydown="(event) => handleKeyClerical(event, 3)" @change="generate_granted_text()"
+                        cap v-model="formData.clerical_errors[index].error_description_from" />
                     </div>
                     <div class="grow">
-                      <Input nolabel @change="generate_granted_text()" cap
-                        v-model="formData.clerical_errors[index].error_description_to" />
+                      <Input nolabel @keydown="(event) => handleKeyClerical(event, 4)" @change="generate_granted_text()"
+                        cap v-model="formData.clerical_errors[index].error_description_to" />
                     </div>
                   </div>
                   <div class="flex justify-end gap-2 mt-3">
@@ -291,7 +292,7 @@
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
                     </button>
-                    <button type="button" @click="add_clerical_error()" @keydown.down="focusNextInput"
+                    <button type="button" @click="add_clerical_error()" tabindex="-1" @keydown.down="focusNextInput"
                       @keydown.up="focusPreviousInput"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Add
@@ -405,7 +406,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 w-full gap-2" v-else>
-                  <TextArea :rows="4" label="Facts/Reasons" v-model="formData.reasons[0].reason" />
+                  <TextArea :rows="4"  label="Facts/Reasons" v-model="formData.reasons[0].reason" />
                 </div>
               </Box>
             </div>
@@ -416,10 +417,10 @@
               <Box title=" documents to support this petition: " width="w-auto">
                 <div class="flex flex-col w-full gap-3 mt-5 relative">
                   <div class="absolute w-auto -top-9 right-4">
-                    <!-- <p class="text-xs italic text-gray-400 font-normal">
-                      <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1" />
-                      <span class="font-medium">Crtl + Space</span> to add new column
-                    </p> -->
+                    <p class="text-xs italic text-gray-400 font-normal">
+                      <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1 text-blue-600" />
+                      <span class="font-medium text-blue-600">Crtl + Space</span> to add new column
+                    </p>
                   </div>
                   <div class="flex flex-row w-full gap-2 items-center" v-for="(value, index) in supporting_items"
                     :key="index">
@@ -428,7 +429,8 @@
                     </p>
                     <div class="basis-[90%]">
 
-                      <InputAutoComplete nolabel :suggestion_data="petitions.saved_supporting"
+                      <InputAutoComplete :skip_next_count="true" @keydown="(event) => handleKeySupporting(event, 1)" nolabel
+                        :suggestion_data="petitions.saved_supporting"
                         v-model="formData.supporting_documents[index].document_name" />
 
 
@@ -437,12 +439,12 @@
                   </div>
                   <div class="flex justify-end gap-2">
                     <!-- Make this component -->
-                    <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
+                    <button tabindex="-1"  @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
                       @click="remove_supporting_documents()" v-if="supporting_items.length > 1"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
                     </button>
-                    <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
+                    <button tabindex="-1" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
                       @click="add_supporting_documents()"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Add
@@ -497,7 +499,7 @@
                     :error="v$.subscribe_sworn_date.$error" />
                   <Input label="City/Municipality" skip v-model="formData.subscribe_sworn_city_municipality"
                     :error="v$.subscribe_sworn_city_municipality.$error" />
-                  <Input label="exhibiting his/her" skip v-model="formData.exhibiting_his_her"
+                  <Input label="exhibiting his/her" v-model="formData.exhibiting_his_her"
                     :error="v$.exhibiting_his_her.$error" />
                   <Input :label="formData.exhibiting_his_her || `No.`" v-model="formData.exhibiting_number"
                     :error="v$.exhibiting_number.$error" />
@@ -523,7 +525,7 @@
                     </div>
                     <!-- Migrant -->
                     <div v-if="!formData.is_migrant" class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
-                      <textarea id="message" rows="6" v-model="formData.petition_actions[0].action_text"
+                      <textarea tabindex="0"  id="message" rows="6" v-model="formData.petition_actions[0].action_text"
                         class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                     </div>
                   </div>
@@ -538,7 +540,7 @@
                       <Selector :options="action_options" v-model="formData.petition_actions[index].action_decision" />
                     </div>
                     <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
-                      <textarea id="message" rows="6" v-model="formData.petition_actions[index].action_text"
+                      <textarea tabindex="0" id="message" rows="6" v-model="formData.petition_actions[index].action_text"
                         class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                     </div>
                   </div>
@@ -646,7 +648,7 @@
             </div>
 
           </div>
-          <button type="button"
+          <button type="button" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
             class="bg-white ml-auto px-2.5 py-1  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
             @click="submitForm()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Submit</button>
         </div>
@@ -790,7 +792,7 @@ const open_modal = async () => {
 
 }
 
-function publication_date_setter(){
+function publication_date_setter() {
   if (formData.petition_type === "CFN") {
     formData.publication_start = add_publication_start().toString()
     formData.publication_end = add_publication_end().toString()
@@ -1040,6 +1042,52 @@ function indexToLetter(index) {
   return alphabet[index].toLowerCase();
 }
 
+
+const handleKeyClerical = (event, index) => {
+  if (event.ctrlKey && event.code === 'Space') {
+
+    event.preventDefault();
+    add_clerical_error()
+
+    const to_add = index === 1 ? 4 : index === 2 ? 3 : index === 3 ? 2 : index === 4 ? 1 : ''
+
+    setTimeout(() => {
+
+      console.log('to add: ' + to_add)
+      next_input(event, to_add)
+    }, 100);
+
+  }
+};
+
+const handleKeySupporting = (event, index) => {
+  if (event.ctrlKey && event.code === 'Space') {
+    event.preventDefault();
+    add_supporting_documents()
+
+    const to_add = index
+    setTimeout(() => {
+      next_input(event, to_add)
+    }, 50);
+
+  }
+
+};
+
+const next_input = (event, to_add) => {
+  event.preventDefault();
+  const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+    .filter(input => input.tabIndex >= 0);
+
+  const index = inputs.indexOf(event.target);
+  if (index > 0) {
+    inputs[index + to_add].focus();
+  }
+}
+
+
+
+
 // Function that adds clerical error field
 function add_clerical_error() {
   clerical_errors_items.value.push('');
@@ -1173,9 +1221,12 @@ function change_migrant() {
 const focusPreviousInput = (event) => {
   event.preventDefault();
 
-  const inputs = document.querySelectorAll('input, button, [tabindex]');
-  const index = Array.from(inputs).indexOf(event.target);
-  if (index >= 0 && index < inputs.length - 1) {
+  // Select only focusable elements (input, button, and elements with tabindex >= 0)
+  const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+    .filter(input => input.tabIndex >= 0);
+
+  const index = inputs.indexOf(event.target);
+  if (index > 0) {
     inputs[index - 1].focus();
   }
 }
@@ -1183,8 +1234,11 @@ const focusPreviousInput = (event) => {
 const focusNextInput = (event) => {
   event.preventDefault();
 
-  const inputs = document.querySelectorAll('input, button, [tabindex]');
-  const index = Array.from(inputs).indexOf(event.target);
+  // Select only focusable elements (input, button, and elements with tabindex >= 0)
+  const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+    .filter(input => input.tabIndex >= 0);
+
+  const index = inputs.indexOf(event.target);
   if (index >= 0 && index < inputs.length - 1) {
     inputs[index + 1].focus();
   }

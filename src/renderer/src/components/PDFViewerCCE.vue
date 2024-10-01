@@ -1,6 +1,6 @@
 <template>
     <div class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
-        <div class="w-full bg-[#525659] flex  absolute  p-4 top-0 z-[99999]">
+        <div class="w-full bg-[#525659] flex  absolute  px-4 py-2 top-0 z-[99999]">
             <div class="flex flex-row gap-2 items-center">
                 <p class="text-md  text-gray-100 font-medium  italic">
                     <!-- Correction of Clerical Error - Ralph Advincula Villanueva -->
@@ -9,9 +9,16 @@
             </div>
             <div class="flex flex-row gap-3 ml-auto">
                 <button
-                    class=" hover:text-white hover:bg-green-600  text-sm bg-green-500  shadow-sm rounded-sm  outline-none font-medium px-4 py-1 tracking-wide flex flex-row gap-3 items-center"
-                    v-if="active_pdf_link" @click="printPDF"><font-awesome-icon icon="fa-solid fa-print" /> Print Active
-                    Document</button>
+                    class="text-white hover:text-white hover:bg-green-600 gap-3  text-sm bg-green-500  shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center"
+                    v-if="active_pdf_link" @click="printPDF">
+                    <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
+                    <div class="flex flex-col  items-start ">
+                        <p class="text-xs">Print Active
+                            Document</p>
+                        <p class="text-xs text-gray-50 font-thin">{{ active_pdf }}</p>
+                    </div>
+
+                </button>
                 <button @click="exit_btn"
                     class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 w-20 py-1 tracking-wide">Exit</button>
             </div>

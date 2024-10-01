@@ -13,11 +13,11 @@
 
         <div v-if="suggestions_ && result.length > 0" ref="suggestion_box"
             class="absolute w-full z-[9999999999] bg-white    max-h-40 overflow-y-scroll scroll-m-0 flex flex-col border shadow-md">
-            <button :tabindex="suggestions_? '0': '-1'"@keydown.down="focusNextInput" @keydown.enter="selectSuggestion(suggestion, $event)"
-                @keydown.up="focusPreviousInput" v-for="suggestion in result" :key="suggestion + '_unique'"
-                @click="i_choose_this(suggestion, $event)"
+            <button :tabindex="suggestions_ ? '0' : '-1'" @keydown.down="focusNextInput"
+                @keydown.enter="selectSuggestion(value, index, $event)" @keydown.up="focusPreviousInput"
+                v-for="(value, index) in result" :key="value + '_unique'" @click="i_choose_this(value, index, $event)"
                 class="w-full flex items-center hover:bg-gray-200  h-8 text-sm py-1 justify-start px-2 font-medium outline-none focus:bg-green-200">{{
-                    suggestion
+                    value
                 }}</button>
         </div>
 
@@ -78,6 +78,12 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    skip_next_count: {
+        type: Boolean,
+        default: false,
+    },
+
+
 
 
 })
@@ -104,17 +110,58 @@ const typing_input = (e) => {
     emit('update:modelValue', main_value)
     generate_suggestions(main_value)
 }
-function i_choose_this(value, e) {
+function i_choose_this(value, index, e) {
     suggestions_.value = false; // Hide suggestions
     emit('update:modelValue', value);
-    focusNextInput(e); // Focus the next input
+
+    const to_minus = index + 1
+    if (props.skip_next_count) {
+        stay_count_result(e, to_minus)
+        return
+    }
+    const to_add = result.value.length - index
+    focus_count_result(e, to_add); // Focus the next input
 }
 
-const selectSuggestion = (value, e) => {
+const focus_count_result = (event, to_add) => {
+
+    event.preventDefault();
+
+    const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+        .filter(input => input.tabIndex >= 0);
+
+    const index = inputs.indexOf(event.target);
+    if (index > 0) {
+        inputs[index + to_add].focus();
+    }
+}
+const stay_count_result = (event, to_minus) => {
+    console.log(to_minus)
+    event.preventDefault();
+    const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+        .filter(input => input.tabIndex >= 0);
+
+    const index = inputs.indexOf(event.target);
+    if (index > 0) {
+        inputs[index - to_minus].focus();
+    }
+}
+
+
+const selectSuggestion = (value, index, e) => {
     suggestions_.value = false; // Hide suggestions
 
     emit('update:modelValue', value);
-    focusNextInput(e); // Focus the next input
+
+    const to_minus = index + 1
+    if (props.skip_next_count) {
+        stay_count_result(e, to_minus)
+        return
+    }
+
+    
+    const to_add = result.value.length - index
+    focus_count_result(e, to_add); // Focus the next input
 };
 
 
@@ -160,27 +207,30 @@ function generate_suggestions(e) {
 
 const focusPreviousInput = (event) => {
     event.preventDefault();
-    if (props.skipnext) {
-        return
-    }
-    const inputs = document.querySelectorAll('input, button, [tabindex]');
-    const index = Array.from(inputs).indexOf(event.target);
-    if (index >= 0 && index < inputs.length - 1) {
+
+    // Select only focusable elements (input, button, and elements with tabindex >= 0)
+    const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+        .filter(input => input.tabIndex >= 0);
+
+    const index = inputs.indexOf(event.target);
+    if (index > 0) {
         inputs[index - 1].focus();
     }
 }
 
 const focusNextInput = (event) => {
     event.preventDefault();
-    if (props.skipnext) {
-        return
-    }
-    const inputs = document.querySelectorAll('input, button, [tabindex]');
-    const index = Array.from(inputs).indexOf(event.target);
+
+    // Select only focusable elements (input, button, and elements with tabindex >= 0)
+    const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
+        .filter(input => input.tabIndex >= 0);
+
+    const index = inputs.indexOf(event.target);
     if (index >= 0 && index < inputs.length - 1) {
         inputs[index + 1].focus();
     }
 }
+
 </script>
 
 
