@@ -8,7 +8,7 @@ class Petitions(db.Model):
 
     header_province = db. Column(db.String)
     header_municipality = db. Column(db.String)
-    header_ss = db. Column(db.String)
+    # header_ss = db. Column(db.String)
     
     # Petition
     is_migrant =  db.Column(db.Boolean, default=False)
@@ -70,6 +70,10 @@ class Petitions(db.Model):
     # Publication for CFN and 10172
     publication_start =  db.Column(db.String, nullable=True)
     publication_end =  db.Column(db.String, nullable=True)
+    publication_newspaper = db.Column(db.String, nullable=True)
+    publication_place = db.Column(db.String, nullable=True)
+
+    # publication date = publication_start + ' to ' + publication_end 
 
 
 

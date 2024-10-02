@@ -34,7 +34,7 @@
                                 <Input label="City/Municipality" cap :error="v$.header_municipality.$error"
                                     v-model="formData.header_municipality" />
                             </div>
-                            <Input label="SS" v-model="formData.header_ss" :error="v$.header_ss.$error" />
+                         
                         </div>
                     </div>
                     <p class="font-medium text-2xl text-gray-800  md:lg:px-20 ">Correction of Clerical Error and Change
@@ -84,6 +84,10 @@
 
                         </div>
                     </div>
+                    <div class="flex flex-col  md:lg:px-20 gap-5">
+                        <p class="font-medium text-2xl text-gray-800">Default Date Configuration</p>
+                        <DateChangerClearical />
+                    </div>
                 </div>
             </div>
 
@@ -126,8 +130,11 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import InputAutoComplete from '../components/InputAutoComplete.vue';
 import { complete_municipality, complete_municipality_with_province, complete_province } from '../utils/Address';
+import DateChangerClearical from '../components/settings/DateChangerClearical.vue';
+import { useDate } from '../stores/Date';
 
 const router = useRouter()
+const date_config = useDate()
 
 const auth = AuthStore()
 const system_setting = useSetup()
@@ -144,9 +151,11 @@ const is_submitting = ref(false)
 
 
 
-onMounted(() => {
+onMounted(async () => {
+    await date_config.get_date_rules()
     system_setting.getSystemSetting()
     system_setting.getScannedType()
+
 })
 
 const open = async () => {
@@ -157,7 +166,7 @@ const open = async () => {
 const formData = reactive({
     header_province: '',
     header_municipality: 'MUNICIPALITY OF ',
-    header_ss: '',
+
 
     file_path: '',
     nationality: '',
@@ -176,7 +185,6 @@ const formData = reactive({
 const rules = computed(() => ({
     header_province: { required },
     header_municipality: { required },
-    header_ss: { required },
 
     file_path: { required },
     municipal_civil_registrar: { required },
@@ -199,7 +207,7 @@ const submit_setup = async () => {
     const data = {
         header_province: formData.header_province,
         header_municipality: formData.header_municipality,
-        header_ss: formData.header_ss,
+      
 
         municipal_civil_registrar: formData.municipal_civil_registrar,
         mayor: formData.mayor,

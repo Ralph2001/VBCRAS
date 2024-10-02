@@ -33,7 +33,7 @@ import { onClickOutside, useDebounceFn } from '@vueuse/core'
 // import countryList from '../utils/country.js';
 // const countries = countryList
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'change_value'])
 const props = defineProps({
     suggestion_data: {
         type: Array
@@ -113,6 +113,7 @@ const typing_input = (e) => {
 function i_choose_this(value, index, e) {
     suggestions_.value = false; // Hide suggestions
     emit('update:modelValue', value);
+    emit('change_value')
 
     const to_minus = index + 1
     if (props.skip_next_count) {
@@ -152,6 +153,7 @@ const selectSuggestion = (value, index, e) => {
     suggestions_.value = false; // Hide suggestions
 
     emit('update:modelValue', value);
+    emit('change_value')
 
     const to_minus = index + 1
     if (props.skip_next_count) {

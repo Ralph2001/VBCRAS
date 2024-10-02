@@ -20,11 +20,20 @@ export const useDate = defineStore('dates', {
                 let tokenStr = localStorage.getItem('token')
 
                 const response = await axios.post(
-                    `http://${hostAdd}:1216/create-date-rule/`,
+                    `http://${hostAdd}:1216/create-date-rule`,
                     data,
-                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${tokenStr}`
+                        }
+                    }
                 )
-                this.get_date_rules()
+                if (response.status === 201) {
+                    this.get_date_rules()
+                    return true
+                }
+                else { return false }
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -40,7 +49,9 @@ export const useDate = defineStore('dates', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.date_rules = response.data
-                console.log(response)
+
+                return response.data
+
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')

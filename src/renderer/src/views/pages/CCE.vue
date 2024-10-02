@@ -15,7 +15,7 @@
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
-      <div class="w-full flex p-2 items-center justify-start">
+      <div class="w-full flex flex-row p-2 items-center justify-between">
         <div class="flex flex-col">
           <div class="flex flex-row gap-1 items-center justify-center">
             <div class="h-2 bg-[#4A90E2] block rounded-sm w-4"></div>
@@ -26,10 +26,15 @@
             <p class="text-xs font-medium">CFN</p>
           </div>
         </div>
+        <div class="w-[25rem]">
+
+
+          <Input label="Search" v-model="search" />
+        </div>
       </div>
       <!-- -->
       <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
-      <TableGrid :data="petitions.petitions" :dataColumns="colDefs" :suppressRowTransform="true" />
+      <TableGrid :data="filteredRowData" :dataColumns="colDefs" :suppressRowTransform="true" />
 
     </div>
 
@@ -106,12 +111,12 @@
             <!-- {{ petitioner_number }} -->
             <Box title="Header" width="w-full">
               <div class="flex flex-col gap-2 w-full">
-                <div class="grid grid-cols-2 gap-2">
-                  <Input label="Province" :error="v$.header_province.$error" v-model="formData.header_province" />
-                  <Input label="City/Municipality" :error="v$.header_municipality.$error" cap
-                    v-model="formData.header_municipality" />
-                </div>
-                <Input label="SS" :error="v$.header_ss.$error" v-model="formData.header_ss" />
+
+                <Input label="Province" :error="v$.header_province.$error" v-model="formData.header_province" />
+                <Input label="City/Municipality" :error="v$.header_municipality.$error" cap
+                  v-model="formData.header_municipality" />
+
+
               </div>
             </Box>
           </div>
@@ -183,7 +188,7 @@
                     formData.event_type === 'Death' ||
                     (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
                   ">
-                    <InputAutoComplete :error="v$.relation_owner.$error" @change="generate_fact_reason_text()"
+                    <InputAutoComplete :error="v$.relation_owner.$error" @change_value="generate_fact_reason_text()"
                       :suggestion_data="petitions.relation_to_document_owner" label="Relation"
                       v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                         ? true
@@ -406,7 +411,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 w-full gap-2" v-else>
-                  <TextArea :rows="4"  label="Facts/Reasons" v-model="formData.reasons[0].reason" />
+                  <TextArea :rows="4" label="Facts/Reasons" v-model="formData.reasons[0].reason" />
                 </div>
               </Box>
             </div>
@@ -429,8 +434,8 @@
                     </p>
                     <div class="basis-[90%]">
 
-                      <InputAutoComplete :skip_next_count="true" @keydown="(event) => handleKeySupporting(event, 1)" nolabel
-                        :suggestion_data="petitions.saved_supporting"
+                      <InputAutoComplete :skip_next_count="true" @keydown="(event) => handleKeySupporting(event, 1)"
+                        nolabel :suggestion_data="petitions.saved_supporting"
                         v-model="formData.supporting_documents[index].document_name" />
 
 
@@ -439,7 +444,7 @@
                   </div>
                   <div class="flex justify-end gap-2">
                     <!-- Make this component -->
-                    <button tabindex="-1"  @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
+                    <button tabindex="-1" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
                       @click="remove_supporting_documents()" v-if="supporting_items.length > 1"
                       class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                       Remove
@@ -525,7 +530,7 @@
                     </div>
                     <!-- Migrant -->
                     <div v-if="!formData.is_migrant" class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
-                      <textarea tabindex="0"  id="message" rows="6" v-model="formData.petition_actions[0].action_text"
+                      <textarea tabindex="0" id="message" rows="6" v-model="formData.petition_actions[0].action_text"
                         class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                     </div>
                   </div>
@@ -540,7 +545,8 @@
                       <Selector :options="action_options" v-model="formData.petition_actions[index].action_decision" />
                     </div>
                     <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
-                      <textarea tabindex="0" id="message" rows="6" v-model="formData.petition_actions[index].action_text"
+                      <textarea tabindex="0" id="message" rows="6"
+                        v-model="formData.petition_actions[index].action_text"
                         class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
                     </div>
                   </div>
@@ -720,6 +726,9 @@ import PetitionNumberRenderer from "../../components/PetitionNumberRenderer.vue"
 
 import { AuthStore } from "../../stores/Authentication.js";
 import Selector from "../../components/Selector.vue";
+
+
+
 
 
 const busy = ref(false)
@@ -1197,7 +1206,7 @@ function change_migrant() {
 
     formData.header_province = ''
     formData.header_municipality = 'MUNICIPALITY OF '
-    formData.header_ss = ''
+
     return
   }
   else if (!formData.is_migrant) {
@@ -1208,10 +1217,8 @@ function change_migrant() {
 
     formData.header_province = system_setting.defaults[0].header_province || ''
     formData.header_municipality = system_setting.defaults[0].header_municipality || ''
-    formData.header_ss = system_setting.defaults[0].header_ss || ''
+
   }
-
-
 }
 
 
@@ -1252,7 +1259,7 @@ const initialForm = {
 
   header_province: system_setting.defaults[0].header_province || '',
   header_municipality: system_setting.defaults[0].header_municipality || '',
-  header_ss: system_setting.defaults[0].header_ss || '',
+  // header_ss: system_setting.defaults[0].header_ss || '',
 
 
   // Petition
@@ -1321,8 +1328,11 @@ const initialForm = {
   petition_date_issued: '',
   petition_date_granted: '',
 
+  // Publications
   publication_start: '',
   publication_end: '',
+  publication_newspaper: '',
+  publication_place: '',
 
   // Actions, Checked
 
@@ -1362,7 +1372,7 @@ const rules = computed(() => {
 
     header_province: { required },
     header_municipality: { required },
-    header_ss: { required },
+
 
 
     status: { required },
@@ -1505,7 +1515,7 @@ const submitForm = async () => {
 
     header_province: formData.header_province,
     header_municipality: formData.header_municipality,
-    header_ss: formData.header_ss,
+
 
     // Petition
     is_migrant: formData.is_migrant,
@@ -1570,6 +1580,8 @@ const submitForm = async () => {
     // Publication CFN or 10172
     publication_start: formData.publication_start,
     publication_end: formData.publication_end,
+    publication_newspaper: formData.publication_newspaper,
+    publication_place: formData.publication_place,
 
 
 
@@ -1625,6 +1637,7 @@ const create_validated_document = async () => {
 
   const settings = {
     orignal_path: last_saved_filepath.value,
+    petition_number: formData.petition_number,
     path_where_to_save: system_setting.defaults[0].petition_default_file_path,
     republic_act_number: formData.republic_act_number,
     petition_type: formData.petition_type,
@@ -1644,7 +1657,7 @@ const create_validated_document = async () => {
 
     header_province: formData.header_province,
     header_municipality: formData.header_municipality,
-    header_ss: formData.header_ss,
+
 
     is_migrant: formData.is_migrant,
 
@@ -1715,6 +1728,8 @@ const create_validated_document = async () => {
     // Publication CFN or 10172
     publication_start: formData.publication_start,
     publication_end: formData.publication_end,
+    publication_newspaper: formData.publication_newspaper,
+    publication_place: formData.publication_place,
 
 
     petition_actions: formData.petition_actions,
@@ -1773,6 +1788,19 @@ const bgTexture = ref(
 
 
 // This is Column Data in Datatable 
+
+
+const search = ref()
+
+const filteredRowData = computed(() => {
+  if (!search.value) return petitions.petitions;
+  return petitions.petitions.filter(row =>
+    Object.values(row).some(value =>
+      String(value).toLowerCase().includes(search.value.toLowerCase())
+    )
+  );
+});
+
 
 const colDefs = ref([
   {

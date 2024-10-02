@@ -295,19 +295,19 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         // const doctoPath = join(__dirname, '../../resources/tools/converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
 
         const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
-
+        const petition_number = data.petition_number
         const originalDirectory = data.orignal_path
         const petitionType = data.petition_type + ' ' + data.event_type;
         const prepared_by = data.prepared_by
         const republicAct = data.republic_act_number;
         const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
-        
+
         const date_filed = data.date_filed
 
         const year = new Date(date_filed).getFullYear().toString();
 
 
-        const outputDirectory = join(data.path_where_to_save, `Petitions`, prepared_by, republicAct, petitionType, year, documentOwner);
+        const outputDirectory = join(data.path_where_to_save, `Petitions`, prepared_by, republicAct, petitionType, year, petition_number + ' - ' + documentOwner);
 
         if (!fs.existsSync(outputDirectory)) {
             fs.mkdirSync(outputDirectory, { recursive: true })

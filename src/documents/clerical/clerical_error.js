@@ -311,7 +311,7 @@ async function petition(data) {
 
         header_province: data.header_province,
         header_municipality: data.header_municipality,
-        header_ss: data.header_ss,
+       
 
         petition_number: petition_num,
         migrant: migrant_pet,
