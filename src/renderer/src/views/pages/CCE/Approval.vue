@@ -20,11 +20,132 @@
             </div>
         </div>
 
-        <div class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col p-10 gap-2 ">
-            <p class="font-medium">Approval</p>
-            <p class="font-bold text-2xl mt-5">Attachments</p>
+        <div class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col px-4 py-6 gap-2 basis-[80%] ">
+            <p class="font-medium  text-2xl">Petition</p>
+            <div v-if="loading" class="flex items-center justify-center h-full">
+                <p class="text-sm text-gray-500">Getting petition info...</p>
+            </div>
+            <!---->
+            <div v-else class="w-full h-full flex flex-col p-3 gap-5 py-4 overflow-y-scroll ">
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Date Filed</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ format(petition_info.date_filed, 'MMMM dd, yyyy') }}
+                    </p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Petition Type</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ petition_info.republic_act_number + ' ' +
+                        petition_info.petition_type }}
+                    </p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Event Type</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ petition_info.event_type }}</p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Petition Number</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ petition_info.petition_number }}</p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Petitioner Name</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ petition_info.petitioner_name }}</p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Document Owner</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ petition_info.document_owner === "N/A" ?
+                        petition_info.petitioner_name : petition_info.document_owner }}</p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Relation</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ petition_info.relation_owner === "N/A" ?
+                        'Owner' : petition_info.relation_owner }}</p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Prepared by</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ petition_info.created_by_user.username }}</p>
+                </div>
+                <div class="flex flex-row h-auto ">
+                    <p class="w-[8rem] font-normal ">Petition Created</p>
+                    <p class="w-fit">:</p>
+                    <p class="grow font-medium px-2">{{ format(petition_info.created_at, 'PPpp') }}
+                    </p>
+                </div>
+                <p class="font-medium p-2">{{ petition_info.petition_type === "CCE" ? `Clerical Errors` : `Change of
+                    First Name` }}</p>
+                <div>
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500  h-full">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50  ">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">
+                                    Item No.
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Description
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    From
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    To
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="h-full">
+                            <tr class="bg-white border-b  " v-for="data in petition_info.clerical_errors">
+                                <th scope="row" class="px-6 py-4  text-gray-900 whitespace-nowrap ">
+                                    {{ data.error_num }}
+                                </th>
+                                <td class="px-6 py-4 font-medium text-gray-900 ">
+                                    {{ data.description }}
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900 ">
+                                    {{ data.error_description_from }}
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900 ">
+                                    {{ data.error_description_to }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="font-medium p-2">Supporting Documents</p>
+                <div>
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50   h-full">
+                            <tr>
 
-            <div class="flex items-center p-4">
+                                <th scope="col" class="px-6 py-3">
+                                    Document Name
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="h-full">
+                            <tr class="bg-white border-b  " v-for="data in petition_info.supporting_documents">
+
+                                <th scope="row" class="px-6 py-4  text-gray-900 ">
+                                    {{ data.document_name }}
+                                </th>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col p-10 gap-2 ">
+
+            <p class="font-bold text-2xl mt-5">Attachments</p>
+            <div class="flex items-center p-2">
                 <p class="font-normal text-sm text-gray-800">
                     <span class="font-medium">Note:</span> Upon approval, a <span class="font-medium">Finality</span>
                     and
@@ -139,112 +260,118 @@
             v-if="AnnotationEditor">
 
             <div class="h-full flex flex-col overflow-y-scroll gap-1">
-
-                <div class="grid sm:grid-cols-1 md:lg:grid-cols-3 w-full h-full gap-5 ">
-                    <div class="flex h-[calc(100vh-100px)] col-span-2  w-full border relative">
+                <div class="grid grid-cols-2 w-full h-full gap-5 ">
+                    <div class="flex h-full  w-full border relative  bottom-0">
                         <div
                             class="absolute right-[3.5rem] top-[0.4rem]  h-[3rem] w-[5rem] flex items-center justify-center bg-[#323639] z-[999]">
                             <p class="text-white text-xs tracking-wider font-medium">VBCRAS</p>
                         </div>
                         <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
                     </div>
-                    <div
-                        class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm overflow-y-scroll h-full">
-                        <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Settings </p>
-                        <div class="h-auto flex flex-col gap-2">
-                            <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
-                            <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
-                                contentType="html" />
-                        </div>
 
-                        <p class="text-gray-800 text-sm font-medium mt-2">Adjustments</p>
-                        <div class="  items-start flex flex-col flex-wrap  p-2 gap-3">
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.form_scale"
-                                    class="w-[6rem] py-1 border-gray-200 rounded">
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
-                                    Form
-                                    102
-                                    Scale</p>
-                            </div>
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.form_x"
-                                    class="w-[6rem] py-1 border-gray-200 rounded">
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-left-right" class="text-xs w-6" /> Form 102
-                                    Horizontal Position</p>
-                            </div>
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.form_y"
-                                    class="w-[6rem] py-1 border-gray-200 rounded">
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-up-down" class="text-xs w-6" /> Form 102 Vertical Position</p>
+                    <div class="flex flex-col">
+                        <div
+                            class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm overflow-y-scroll h-full">
+                            <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Settings </p>
+                            <div class="h-auto flex flex-col gap-2">
+                                <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
+                                <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
+                                    contentType="html" />
                             </div>
 
-                        </div>
-                        <div class="block w-full border border-gray-600"></div>
-                        <div class="  items-start  p-2 gap-2 flex flex-col ">
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.annotation_width"
-                                    class="w-[6rem] py-1 border-gray-200 rounded">
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-left-right" class="text-xs w-6" />
-                                    Annotation Text
-                                    Width</p>
-                            </div>
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.annotation_x"
-                                    class="w-[6rem] py-1 border-gray-200 rounded">
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation Text
-                                    Horizontal Position</p>
-                            </div>
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.annotation_y"
-                                    class="w-[6rem] py-1 border-gray-200 rounded">
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Text Vertical
-                                    Position
-                                </p>
-                            </div>
-
-                            <div class="flex flex-row items-center gap-3">
-                                <input type="number" step="0.1" v-model="formData.annotation_font_size"
-                                    class="w-[6rem] py-1 border-gray-200 rounded">
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Font Size
-                                </p>
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
-                                <div class="flex flex-row text-gray-700 gap-2">
-                                    <button @click="change_annotation_width(-90)"
-                                        class="border p-1 rounded hover:bg-gray-100 hover:shadow-sm w-9">
-                                        <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
-                                    </button>
-                                    <button @click="change_annotation_width(0)"
-                                        class="border p-1 rounded hover:bg-gray-100 hover:shadow-sm w-9">
-                                        <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
-                                    </button>
+                            <p class="text-gray-800 text-sm font-medium mt-2">Adjustments</p>
+                            <div class="  items-start flex flex-col flex-wrap  p-2 gap-3">
+                                <div class="flex flex-row items-center gap-3">
+                                    <input type="number" step="0.1" v-model="formData.form_scale"
+                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
+                                        Form
+                                        102
+                                        Scale</p>
                                 </div>
-                                <p class="text-gray-700 flex items-center"> <font-awesome-icon
-                                        icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Rotation</p>
+                                <div class="flex flex-row items-center gap-3">
+                                    <input type="number" step="0.1" v-model="formData.form_x"
+                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-left-right" class="text-xs w-6" /> Form 102
+                                        Horizontal Position</p>
+                                </div>
+                                <div class="flex flex-row items-center gap-3">
+                                    <input type="number" step="0.1" v-model="formData.form_y"
+                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-up-down" class="text-xs w-6" /> Form 102 Vertical Position
+                                    </p>
+                                </div>
+
                             </div>
+                            <div class="block w-full border border-gray-600"></div>
+                            <div class="  items-start  p-2 gap-2 flex flex-col ">
+                                <div class="flex flex-row items-center gap-3">
+                                    <input type="number" step="0.1" v-model="formData.annotation_width"
+                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-left-right" class="text-xs w-6" />
+                                        Annotation Text
+                                        Width</p>
+                                </div>
+                                <div class="flex flex-row items-center gap-3">
+                                    <input type="number" step="0.1" v-model="formData.annotation_x"
+                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation Text
+                                        Horizontal Position</p>
+                                </div>
+                                <div class="flex flex-row items-center gap-3">
+                                    <input type="number" step="0.1" v-model="formData.annotation_y"
+                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Text Vertical
+                                        Position
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-row items-center gap-3">
+                                    <input type="number" step="0.1" v-model="formData.annotation_font_size"
+                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Font
+                                        Size
+                                    </p>
+                                </div>
+                                <div class="flex flex-row items-center gap-2">
+                                    <div class="flex flex-row text-gray-700 gap-2">
+                                        <button @click="change_annotation_width(-90)"
+                                            :class="[formData.annotation_rotation === -90 ? 'bg-gray-700 text-gray-50 hover:bg-gray-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100']"
+                                            class="border p-1 rounded hover:shadow-sm w-9">
+                                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                                        </button>
+                                        <button @click="change_annotation_width(0)"
+                                            :class="[formData.annotation_rotation === 0 ? 'bg-gray-700 text-gray-50 hover:bg-gray-800' : 'bg-gray-50 text-gray-700 hover:bg-gray-100']"
+                                            class="border p-1 rounded hover:shadow-sm w-9">
+                                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                                        </button>
+                                    </div>
+                                    <p class="text-gray-700 flex items-center"> <font-awesome-icon
+                                            icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Rotation
+                                    </p>
+                                </div>
+                            </div>
+
+
                         </div>
 
-
+                        <div class="mt-2 flex justify-items-end gap-2 w-full">
+                            <button
+                                class=" text-sm tracking-wider ml-auto border rounded font-semibold   hover:bg-red-500 hover:text-white px-3 py-2 "
+                                @click="AnnotationEditor = !AnnotationEditor">Cancel</button>
+                            <button @click="create_annotation()"
+                                class=" text-sm tracking-wider  border px-3 bg-green-500 text-white  py-2  font-semibold rounded hover:bg-green-600"
+                                type="button">Done</button>
+                        </div>
                     </div>
-
                 </div>
-
-            </div>
-            <div class="mt-2 flex justify-items-end gap-2 w-full">
-                <button
-                    class=" text-sm tracking-wider ml-auto border bg-red-500 text-white rounded-sm hover:bg-red-600 px-3 py-2 "
-                    @click="AnnotationEditor = !AnnotationEditor">Close</button>
-                <button @click="create_annotation()"
-                    class=" text-sm tracking-wider  border px-3  py-2 bg-blue-500 text-white rounded-sm hover:bg-blue-600 font-medium"
-                    type="button">Done</button>
             </div>
         </div>
 
@@ -265,6 +392,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useComputerStore } from '../../../stores/Computer';
 import Wave from '../../../components/Wave.vue';
 import PDFViewerCCE from '../../../components/PDFViewerCCE.vue';
+import { format } from 'date-fns';
 
 
 
@@ -337,9 +465,13 @@ onChange((file) => {
     annotated_unannotated.value = false
 
 })
+const loading = ref(true);
 onMounted(async () => {
     computer.getUserName()
     petition_info.value = await petition.get_petition_by_id(route.params.id)
+
+    loading.value = false;
+
 })
 
 

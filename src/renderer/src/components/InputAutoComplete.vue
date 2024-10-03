@@ -102,9 +102,13 @@ const typing_input = (e) => {
     if (splitted.length > 0) {
         splitted[0] = splitted[0].charAt(0).toUpperCase() + splitted[0].slice(1)
     }
-
-    // Join the words back together into a string
-    const main_value = splitted.join(' ')
+    let main_value = ''
+    if (props.cap) {
+        main_value = splitted.join(' ').toUpperCase()
+    } else {
+        // Join the words back together into a string
+        main_value = splitted.join(' ')
+    }
 
 
     emit('update:modelValue', main_value)
@@ -161,7 +165,7 @@ const selectSuggestion = (value, index, e) => {
         return
     }
 
-    
+
     const to_add = result.value.length - index
     focus_count_result(e, to_add); // Focus the next input
 };

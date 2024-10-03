@@ -291,6 +291,7 @@ async function petition(data) {
     // Dates formatted
     const event_date = dateFns.format(data.event_date, 'MMMM dd, yyyy')
     const issued_on = dateFns.format(data.issued_on, 'MMMM dd, yyyy')
+    
     const date_granted = !data.is_migrant ? dateFns.format(data.action_taken_date, 'MMMM dd, yyyy') : ''
 
     const date_paid =
@@ -306,12 +307,15 @@ async function petition(data) {
     const petition_num = data.is_migrant ? '' : data.petition_number
     const migrant_pet = data.is_migrant ? `Migrant Petition (${data.petition_number})` : ''
 
+    // IF MIGRANT LEAVE IT BLANK
+    const municipal_civil_registrar = data.is_migrant ? '' : data.municipal_civil_registrar
+
 
     doc.render({
 
         header_province: data.header_province,
         header_municipality: data.header_municipality,
-       
+
 
         petition_number: petition_num,
         migrant: migrant_pet,
@@ -366,7 +370,7 @@ async function petition(data) {
         action_date: date_granted,
         decision: solo_action,
         // decision: '<w:p>' + toOOXML(data.petition_actions[0].action_text) + '</w:p>',
-        municipal_civil_registrar: data.municipal_civil_registrar,
+        municipal_civil_registrar: municipal_civil_registrar,
 
         o_r_number: data.o_r_number,
         amount_paid: data.amount_paid,

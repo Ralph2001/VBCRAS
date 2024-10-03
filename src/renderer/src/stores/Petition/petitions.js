@@ -27,17 +27,13 @@ export const usePetitions = defineStore('petitions', {
         },
         async get_petition_by_id(id) {
             try {
-                if (!this.isFetched) {
-                    const hostAdd = localStorage.getItem('host')
-                    let tokenStr = localStorage.getItem('token')
-                    const response = await axios.get(
-                        `http://${hostAdd}:1216/petitions/get-petition/${id}`,
-                        { headers: { Authorization: `Bearer ${tokenStr}` } }
-                    )
-                    return response.data
-                } else {
-                    console.log('⚡')
-                }
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/petitions/get-petition/${id}`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                return response.data
             } catch (error) {
                 console.error('Error fetching data:', error)
             }

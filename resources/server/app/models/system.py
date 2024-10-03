@@ -49,31 +49,31 @@ class DateRules(db.Model):
 
     # Certificate Start
     certificate_start = db.Column(db.Integer)
-    include_holidays_certificate_start_day = db.Column(db.Boolean)
-    include_weekends_certificate_start_day = db.Column(db.Boolean)
-    allow_weekend_certificate_start_day = db.Column(db.Boolean)
-    allow_holiday_certificate_start_day = db.Column(db.Boolean)
+    include_holidays_certificate_start = db.Column(db.Boolean)
+    include_weekends_certificate_start = db.Column(db.Boolean)
+    allow_weekend_certificate_start = db.Column(db.Boolean)
+    allow_holiday_certificate_start = db.Column(db.Boolean)
 
     # Certificate End
     certificate_end = db.Column(db.Integer)
-    include_holidays_certificate_end_day = db.Column(db.Boolean)
-    include_weekends_certificate_end_day = db.Column(db.Boolean)
-    allow_weekend_certificate_end_day = db.Column(db.Boolean)
-    allow_holiday_certificate_end_day = db.Column(db.Boolean)
+    include_holidays_certificate_end = db.Column(db.Boolean)
+    include_weekends_certificate_end = db.Column(db.Boolean)
+    allow_weekend_certificate_end = db.Column(db.Boolean)
+    allow_holiday_certificate_end = db.Column(db.Boolean)
 
     # Issuance
     date_issued = db.Column(db.Integer)
-    include_holidays_issued_day = db.Column(db.Boolean)
-    include_weekends_issued_day = db.Column(db.Boolean)
-    allow_weekend_issued_day = db.Column(db.Boolean)
-    allow_holiday_issued_day = db.Column(db.Boolean)
+    include_holidays_date_issued = db.Column(db.Boolean)
+    include_weekends_date_issued = db.Column(db.Boolean)
+    allow_weekend_date_issued = db.Column(db.Boolean)
+    allow_holiday_date_issued = db.Column(db.Boolean)
 
     # Grant
     date_granted  = db.Column(db.Integer)
-    include_holidays_grant_day = db.Column(db.Boolean)
-    include_weekends_grant_day = db.Column(db.Boolean)
-    allow_weekend_grant_day = db.Column(db.Boolean)
-    allow_holiday_grant_day  = db.Column(db.Boolean)
+    include_holidays_date_granted = db.Column(db.Boolean)
+    include_weekends_date_granted = db.Column(db.Boolean)
+    allow_weekend_date_granted = db.Column(db.Boolean)
+    allow_holiday_date_granted  = db.Column(db.Boolean)
 
 
 class Holidays(db.Model):

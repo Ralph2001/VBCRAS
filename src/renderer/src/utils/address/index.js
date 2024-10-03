@@ -19,7 +19,7 @@ export function complete_province(country) {
 
     return province_set
         .sort((a, b) => a.localeCompare(b))
-        .map(province => 
+        .map(province =>
             province.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2, p3) => {
                 const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                 return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
@@ -92,6 +92,35 @@ export function complete_municipality_with_province(province) {
             ).join(', ')
         );
 }
+
+export function complete_municipality_with_province_with_words(province) {
+    const selectedProvince = province || '';
+
+    if (selectedProvince === '') {
+        console.log('No Selected Province');
+        return [];
+    }
+
+    let municipalityWithProvinceList = [];
+
+    philippines.forEach(regions => {
+        Object.values(regions).forEach(region => {
+            Object.entries(region.province_list).forEach(([provinceName, province]) => {
+                Object.entries(province.municipality_list).forEach(([municipalityName]) => {
+                    if (provinceName.toLowerCase() === selectedProvince.toLowerCase()) {
+                        municipalityWithProvinceList.push(`MUNICIPALITY OF ${municipalityName}`);
+                    }
+                });
+            });
+        });
+    });
+
+    return municipalityWithProvinceList
+        .sort((a, b) => a.localeCompare(b))
+      
+}
+
+
 
 export function all_address() {
     let address = [];

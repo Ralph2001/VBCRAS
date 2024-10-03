@@ -29,12 +29,12 @@
                             Error and Change of First Name</p>
                         <div class="flex flex-col gap-2 w-full">
                             <div class="grid grid-cols-2 gap-2">
-                                <Input label="Province" :error="v$.header_province.$error"
-                                    v-model="formData.header_province" />
-                                <Input label="City/Municipality" cap :error="v$.header_municipality.$error"
-                                    v-model="formData.header_municipality" />
+                                <InputAutoComplete label="Province" v-model="formData.header_province"
+                                    :suggestion_data="province" :error="v$.header_province.$error" />
+                                <InputAutoComplete label="City/Municipality" cap :error="v$.header_municipality.$error"
+                                    v-model="formData.header_municipality" :suggestion_data="municipality_with_word"  />
                             </div>
-                         
+
                         </div>
                     </div>
                     <p class="font-medium text-2xl text-gray-800  md:lg:px-20 ">Correction of Clerical Error and Change
@@ -129,7 +129,7 @@ import SetupSVG from '../components/svg/setupSVG.vue';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import InputAutoComplete from '../components/InputAutoComplete.vue';
-import { complete_municipality, complete_municipality_with_province, complete_province } from '../utils/Address';
+import { complete_municipality, complete_municipality_with_province, complete_municipality_with_province_with_words, complete_province } from '../utils/Address';
 import DateChangerClearical from '../components/settings/DateChangerClearical.vue';
 import { useDate } from '../stores/Date';
 
@@ -145,6 +145,10 @@ const municipality = computed(() => {
 })
 const municipality_province = computed(() => {
     return complete_municipality_with_province(formData.filing_province)
+})
+
+const municipality_with_word = computed(() => {
+    return complete_municipality_with_province_with_words(formData.header_province)
 })
 
 const is_submitting = ref(false)
@@ -169,8 +173,8 @@ const formData = reactive({
 
 
     file_path: '',
-    nationality: '',
-    country: '',
+    nationality: 'Filipino',
+    country: 'Philippines',
     filing_province: '',
     filing_municipality: '',
     administering_officer_name: '',
@@ -207,7 +211,7 @@ const submit_setup = async () => {
     const data = {
         header_province: formData.header_province,
         header_municipality: formData.header_municipality,
-      
+
 
         municipal_civil_registrar: formData.municipal_civil_registrar,
         mayor: formData.mayor,

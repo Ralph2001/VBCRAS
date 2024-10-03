@@ -49,7 +49,6 @@ export const useDate = defineStore('dates', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.date_rules = response.data
-
                 return response.data
 
             } catch (error) {

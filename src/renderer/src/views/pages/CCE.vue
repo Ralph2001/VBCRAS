@@ -555,8 +555,9 @@
                   <div v-if="!formData.is_migrant" class="grid grid-cols-2 gap-4 px-14 lg:px-24 lg:gap-10">
                     <Input type="date" label="Date" skip v-model="formData.action_taken_date"
                       :error="v$.action_taken_date.$error" />
-                    <Input label="Municipal Civil Registrar" skip v-model="formData.municipal_civil_registrar" cap
-                      :error="v$.municipal_civil_registrar.$error" />
+                    <Input label="Municipal Civil Registrar" v-if="formData.is_migrant" skip readonly />
+                    <Input label="Municipal Civil Registrar" skip v-if="!formData.is_migrant"
+                      v-model="formData.municipal_civil_registrar" cap :error="v$.municipal_civil_registrar.$error" />
                   </div>
                 </div>
               </Box>
@@ -1120,7 +1121,7 @@ function add_clerical_error() {
     // Actions
     const newActions = {
       error_num: clerical_errors_items.value.length.toString(),
-      action_decision: '',
+      action_decision: 'Granted',
       action_text: ''
     }
     formData.petition_actions.push(newActions);
@@ -1201,9 +1202,9 @@ function change_migrant() {
   if (formData.is_migrant) {
     formData.administering_officer_name = ''
     formData.administering_officer_position = ''
-    formData.municipal_civil_registrar = ''
-    formData.action_taken_date = ''
 
+
+    formData.action_taken_date = ''
     formData.header_province = ''
     formData.header_municipality = 'MUNICIPALITY OF '
 
@@ -1212,9 +1213,9 @@ function change_migrant() {
   else if (!formData.is_migrant) {
     formData.administering_officer_name = system_setting.defaults[0].petition_default_administering_officer_name || ''
     formData.administering_officer_position = system_setting.defaults[0].petition_default_administering_officer_position || ''
-    formData.municipal_civil_registrar = system_setting.defaults[0].municipal_civil_registrar || ''
-    formData.action_taken_date = add_date_granted().toString()
 
+
+    formData.action_taken_date = add_date_granted().toString()
     formData.header_province = system_setting.defaults[0].header_province || ''
     formData.header_municipality = system_setting.defaults[0].header_municipality || ''
 
