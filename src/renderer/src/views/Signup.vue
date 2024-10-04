@@ -15,7 +15,7 @@
             <div class="h-full flex  w-full flex-col gap-2   px-20">
                 <Input :error="v$.username.$error" v-model="formData.username" label="Username" />
                 <Input :error="v$.username.$error" v-model="formData.password" label="Password" type="password" />
-                <Input :error="v$.confirmPassword.$error" v-model="formData.confirmPassword" label="Confirm Password"
+                <Input :error="v$.confirmPassword.$error" v-model="formData.confirmPassword" label="Confirm Password" skipnext
                     type="password" @keydown.enter="signup()" />
 
                 <div class="w-full flex flex-col gap2">

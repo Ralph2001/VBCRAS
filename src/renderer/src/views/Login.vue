@@ -12,8 +12,8 @@
             </div>
 
             <div class="h-full flex  w-full flex-col gap-2   px-20">
-                <Input :error="v$.username.$error" v-model="formData.username" label="Username" />
-                <Input :error="v$.username.$error" v-model="formData.password" label="Password" type="password" skipnext
+                <Input skipnext :error="v$.username.$error" v-model="formData.username" label="Username" />
+                <Input skipnext :error="v$.username.$error" v-model="formData.password" label="Password" type="password" 
                     @keydown.enter="login()" />
 
                 <div class="w-full flex flex-col gap2">

@@ -83,6 +83,7 @@
               <div id="dropdownNavbar"
                 class="z-50 hidden absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
+
                   <li>
                     <button
                       class="w-full  items-center px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
@@ -91,8 +92,15 @@
                     </button>
                   </li>
                   <li>
+                    <router-link to="/settings/dashboard"
+                      class="w-full text-center  items-center px-4 block py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-medium">
+                      Settings
+                    </router-link>
+                  </li>
+
+                  <li>
                     <a href="#"
-                      class="items-center tracking-wide flex justify-center w-full  px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      class="items-center tracking-wide flex justify-center w-full  text-xs  hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
 
                       {{ appVersion }}</a>
                   </li>

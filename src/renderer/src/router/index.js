@@ -126,7 +126,7 @@ const router = createRouter({
         {
             path: '/signup',
             name: 'signup',
-            component: () => import('../views/signup.vue'),
+            component: () => import('../views/Signup.vue'),
             beforeEnter: async (to, from) => {
                 const auth = AuthStore()
                 const connection = useHostStore()
@@ -180,6 +180,44 @@ const router = createRouter({
                 }
                 return { name: 'client' }
             },
+        },
+        {
+            path: '/settings/',
+            name: 'system_settings',
+            component: () => import('../layouts/Settings.vue'),
+            beforeEnter: navGuard,
+
+            /**
+             * /settings/cce-holidays
+                /settings/cce-templates
+                /settings/cce-templates
+             */
+            children: [
+                {
+                    path: 'dashboard',
+                    name: 'dashboard',
+                    component: () => import('../views/pages/Settings/Dashboard.vue'),
+                    beforeEnter: navGuard
+                },
+                {
+                    path: 'cce-date-counts',
+                    name: 'cce_date_counts',
+                    component: () => import('../views/pages/Settings/CCE/DateCount.vue'),
+                    beforeEnter: navGuard
+                },
+                {
+                    path: 'cce-holidays',
+                    name: 'cce_holidays',
+                    component: () => import('../views/pages/Settings/CCE/Holidays.vue'),
+                    beforeEnter: navGuard
+                },
+                {
+                    path: 'cce-templates',
+                    name: 'cce_templates',
+                    component: () => import('../views/pages/Settings/CCE/Templates.vue'),
+                    beforeEnter: navGuard
+                },
+            ],
         },
 
 
@@ -235,6 +273,7 @@ const router = createRouter({
                     component: () => import('../views/pages/AUSF.vue'),
                     beforeEnter: navGuard
                 },
+
             ],
         },
     ],

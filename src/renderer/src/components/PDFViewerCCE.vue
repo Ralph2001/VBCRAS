@@ -38,9 +38,9 @@
                         <button @click="changeMenu('Files')"
                             :class="[menu === 'Files' ? 'bg-gray-800' : 'hover:bg-gray-800']"
                             class="font-medium transition-all text-gray-50 ">Files</button>
-                        <button @click="changeMenu('Info')"
+                        <button @click="changeMenu('Info')" disabled
                             :class="[menu === 'Info' ? 'bg-gray-800' : 'hover:bg-gray-800']"
-                            class="font-medium transition-all text-gray-50 hover:bg-gray-800">Info</button>
+                            class="font-medium transition-all text-gray-50 hover:bg-gray-800 hover:cursor-not-allowed">Info</button>
                     </div>
                     <div class="flex flex-col gap-2 items-center justify-center w-full p-3 h-full   "
                         v-if="menu === 'Files'">

@@ -66,7 +66,6 @@
                                     <p class="text-xs font-medium text-blue-600"> {{ format(date.date, 'eeee') }}</p>
                                 </div>
                                 <br>
-
                             </div>
 
                             <div class="flex flex-col p-6 gap-4">

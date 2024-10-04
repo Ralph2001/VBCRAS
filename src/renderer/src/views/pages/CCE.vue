@@ -15,7 +15,7 @@
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
-      <div class="w-full flex flex-row p-2 items-center justify-between">
+      <div class="w-full flex flex-row p-1 items-center justify-between">
         <div class="flex flex-col">
           <div class="flex flex-row gap-1 items-center justify-center">
             <div class="h-2 bg-[#4A90E2] block rounded-sm w-4"></div>
@@ -1803,6 +1803,8 @@ const filteredRowData = computed(() => {
 });
 
 
+
+
 const colDefs = ref([
   {
     field: "petition_number",
@@ -1813,9 +1815,9 @@ const colDefs = ref([
     lockPinned: true,
     cellStyle: { border: "none" },
     width: 240,
-    cellStyle: { overflow: "visible", border: "none" },
-    cellRenderer: PetitionNumberRenderer
-  }, {
+    cellRenderer: PetitionNumberRenderer,
+  },
+  {
     field: "petitioner_name",
     headerName: "Petitioner Name",
     flex: 1,
@@ -1832,33 +1834,37 @@ const colDefs = ref([
   {
     field: "relation_owner",
     cellClass: "font-medium tracking-wider w-full text-gray-600",
-
     headerName: "Relationship",
     flex: 1,
     filter: true,
   },
   {
     field: "petition_type",
-    cellClass: "font-medium tracking-wider w-full text-gray-600 ",
+    cellClass: "font-medium tracking-wider w-full text-gray-600",
     headerName: "Petition Type",
     flex: 1,
     filter: true,
   },
   {
     field: "event_type",
-    cellClass: "font-medium tracking-wider w-full text-gray-600 ",
+    cellClass: "font-medium tracking-wider w-full text-gray-600",
     headerName: "Document Type",
     flex: 1,
     filter: true,
   },
-
   {
     field: "date_filed",
     headerName: "Date Filed",
     flex: 1,
-
     filter: true,
     cellClass: "font-medium tracking-wider w-full text-gray-600",
+  },
+  {
+    field: "created_by_user.username",
+    cellClass: "font-medium tracking-wider w-full text-gray-600",
+    headerName: "Prepared by",
+    flex: 1,
+    filter: true,
   },
   {
     headerName: "Document Status",
@@ -1871,17 +1877,6 @@ const colDefs = ref([
     cellStyle: { overflow: "visible", border: "none" },
     sortable: false,
   },
-  // {
-  //   headerName: "Remarks",
-  //   flex: 1,
-  //   pinned: "right",
-  //   lockPinned: true,
-  //   resizable: false,
-  //   // cellRenderer: MultiButton,
-  //   cellClass: "text-center",
-  //   cellStyle: { overflow: "visible", border: "none" },
-  //   sortable: false,
-  // },
   {
     headerName: "Action",
     cellStyle: { border: "none" },
@@ -1891,9 +1886,11 @@ const colDefs = ref([
     resizable: true,
     sortable: false,
     cellStyle: { overflow: "visible", border: "none" },
-
     cellRenderer: ViewBTn,
   },
+
 ]);
+
+
 
 </script>

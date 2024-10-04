@@ -99,6 +99,9 @@ const focusPreviousInput = (event) => {
 }
 
 const focusNextInput = (event) => {
+  if (props.skipnext) {
+    return
+  }
   event.preventDefault();
 
   // Select only focusable elements (input, button, and elements with tabindex >= 0)
