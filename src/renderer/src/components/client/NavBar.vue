@@ -98,12 +98,7 @@
                     </router-link>
                   </li>
 
-                  <li>
-                    <a href="#"
-                      class="items-center tracking-wide flex justify-center w-full  text-xs  hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-
-                      {{ appVersion }}</a>
-                  </li>
+                 
                 </ul>
                 <div class="">
                   <button @click="logout()"
@@ -140,19 +135,13 @@ const dropdownmenu = () => {
 const logout = () => {
   auth.logout();
 };
-const appVersion = ref('Loading...')
+
 
 onMounted(async () => {
   initFlowbite();
   auth.isAuthenticated();
 
-  try {
-    const version = await window.UpdateApi.appVersion();
-    appVersion.value = 'v' + version; // Set the fetched version
-  } catch (error) {
-    console.error('Failed to fetch app version:', error);
-    appVersion.value = 'Error fetching version'; // Handle error
-  }
+
 });
 
 

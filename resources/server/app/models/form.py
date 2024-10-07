@@ -1,6 +1,7 @@
 from ..extensions import db
 
 class Forms(db.Model):
+    __tablename__ = 'forms'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(50), nullable=False)
     date_filed = db.Column(db.Date, nullable=False)
@@ -15,6 +16,8 @@ class Forms(db.Model):
     or_number = db.Column(db.String(20), nullable=False)
     date_paid = db.Column(db.Date, nullable=False)
     is_authenticated = db.Column(db.Boolean, nullable=False, default=False)
+    remarks = db.Column(db.Text, nullable=True)
+
 
     # Relationships
     birth_records = db.relationship('BirthAvailable', backref='form', lazy=True)
@@ -33,7 +36,6 @@ class BirthAvailable(db.Model):
     citizenship_father = db.Column(db.String(50), nullable=False)
     date_marriage_parents = db.Column(db.Date, nullable=False)
     place_marriage_parents = db.Column(db.String(100), nullable=False)
-    remarks = db.Column(db.Text, nullable=True)
     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
 
 class DeathAvailable(db.Model):

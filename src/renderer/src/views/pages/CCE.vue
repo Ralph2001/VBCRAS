@@ -3,12 +3,10 @@
 
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
-      <button class="text-gray-600 " v-if="auth.user_role === 1" @click="settings = true"><font-awesome-icon
-          icon="fa-solid fa-gear" /></button>
+   
     </Header>
 
     <AlertPath v-if="busy" />
-    <ClericalErrorSettings v-if="settings" @close-setting="settings = false" />
     <!-- v-if="is_validating" -->
     <ValidateClericalPopup v-if="is_validating" :path="last_saved_filepath" @cancel="cancel_validating_stage"
       @proceed="create_validated_document" />
@@ -717,7 +715,7 @@ import { factReason } from "../../utils/FactsReasons.js";
 import ValidateClericalPopup from "../../components/ValidateClericalPopup.vue";
 import PDFViewerCCE from "../../components/PDFViewerCCE.vue";
 import Wave from "../../components/Wave.vue";
-import ClericalErrorSettings from "../../components/client/ClericalErrorSettings.vue";
+
 
 import { all_address, complete_municipality, complete_province } from '../../utils/Address/index.js'
 
@@ -743,9 +741,11 @@ const auth = AuthStore()
  */
 
 const province = ref(complete_province())
+
 const municipality = computed(() => {
   return complete_municipality(formData.event_province)
 })
+
 const all_ = ref(all_address())
 
 
@@ -771,7 +771,7 @@ onMounted(async () => {
 });
 
 
-const settings = ref(false)
+
 // Validating Stage
 const is_validating = ref(false)
 const is_creating = ref(false)

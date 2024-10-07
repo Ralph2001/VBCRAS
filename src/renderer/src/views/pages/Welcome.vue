@@ -6,11 +6,11 @@
 </style>
 
 <template>
-  <div class="flex flex-col h-[calc(100vh-190px)] relative w-full">
+  <div class="flex flex-col h-[calc(100vh-100px)] relative w-full">
     <!-- Crtl + F -->
     <Menu />
     <div
-      class="bg-transparent rounded-sm flex md:flex-row sm:flex-col p-4 h-[calc(100vh-139px)] sm:px-10 md:lg:px-40 items-center flex-wrap">
+      class="bg-transparent border h-full rounded-sm flex md:flex-row sm:flex-col p-4 sm:px-10 md:lg:px-40 items-center flex-wrap">
       <div class="flex flex-col grow items-center h-full justify-center px-10">
         <!-- <p class="text-lg tracking-wide font-normal text-justify text-pretty">For I know the plans I have for you,
           declares the Lord, plans for welfare and
@@ -45,13 +45,17 @@
 
         </div>
       </div>
+      <div class="absolute bottom-10 right-10 flex flex-row items-center gap-2">
+        <p class="text-xs text-gray-600">
+          App Version:
+        </p>
+        <p class="text-xs text-blue-800 font-medium">{{ appVersion }}</p>
+      </div>
 
-      <!-- <div class="md:basis-[35%] h-[calc(100vh-300px)] sm:hidden md:block">
-        <Carousel />
-      </div> -->
     </div>
 
     <div class="fixed flex flex-row sm:gap-5 md:gap-[5rem] bottom-0 right-0 left-0 px-10 py-2 bg-slate-50">
+
       <div class="flex md:flex-row lg:flex-row sm:flex-col sm:gap-2 md:gap-[5rem]">
         <div>
           <p class="text-sm text-slate-800 font-bold text-nowrap antialiased tracking-widest">
@@ -92,21 +96,20 @@ import { useSetup } from "../../stores/Setting/setup.js";
 
 
 const system_setting = useSetup()
+const appVersion = ref()
 
 onMounted(async () => {
   system_setting.getSystemSetting()
 
-
+  try {
+    const version = await window.UpdateApi.appVersion();
+    appVersion.value = 'v' + version; // Set the fetched version
+  } catch (error) {
+    console.error('Failed to fetch app version:', error);
+    appVersion.value = 'Error fetching version'; // Handle error
+  }
 
 })
-
-
-
-const appVersion = () => {
-  const version = window.UpdateApi.appVersion()
-  console.log(version)
-}
-
 
 const Vital = ref();
 const Bridge = ref();

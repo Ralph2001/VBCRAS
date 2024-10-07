@@ -20,62 +20,69 @@
             </div>
         </div>
 
-        <div class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col px-4 py-6 gap-2 basis-[80%] ">
+        <div
+            class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col px-4 py-6 gap-2 basis-[80%] shadow-md ">
             <p class="font-medium  text-2xl">Petition</p>
             <div v-if="loading" class="flex items-center justify-center h-full">
                 <p class="text-sm text-gray-500">Getting petition info...</p>
             </div>
             <!---->
-            <div v-else class="w-full h-full flex flex-col p-3 gap-5 py-4 overflow-y-scroll ">
+            <div v-else class="w-full h-full flex flex-col p-3 gap-5 py-4 overflow-y-scroll shadow-inner ">
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Date Filed</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ format(petition_info.date_filed, 'MMMM dd, yyyy') }}
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Date Filed</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ format(petition_info.date_filed,
+                        'MMMM dd, yyyy') }}
                     </p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Petition Type</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ petition_info.republic_act_number + ' ' +
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Petition Type</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ petition_info.republic_act_number + `
+                        ` +
                         petition_info.petition_type }}
                     </p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Event Type</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ petition_info.event_type }}</p>
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Event Type</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ petition_info.event_type }}</p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Petition Number</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ petition_info.petition_number }}</p>
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Petition Number</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ petition_info.petition_number }}</p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Petitioner Name</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ petition_info.petitioner_name }}</p>
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Petitioner Name</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ petition_info.petitioner_name }}</p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Document Owner</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ petition_info.document_owner === "N/A" ?
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Document Owner</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ petition_info.document_owner ===
+                        "N/A" ?
                         petition_info.petitioner_name : petition_info.document_owner }}</p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Relation</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ petition_info.relation_owner === "N/A" ?
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Relation</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ petition_info.relation_owner ===
+                        "N/A" ?
                         'Owner' : petition_info.relation_owner }}</p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Prepared by</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ petition_info.created_by_user.username }}</p>
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Prepared by</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{
+                        petition_info.created_by_user.username }}</p>
                 </div>
                 <div class="flex flex-row h-auto ">
-                    <p class="w-[8rem] font-normal ">Petition Created</p>
-                    <p class="w-fit">:</p>
-                    <p class="grow font-medium px-2">{{ format(petition_info.created_at, 'PPpp') }}
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Petition Created</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ format(petition_info.created_at,
+                        'PPpp') }}
                     </p>
                 </div>
                 <p class="font-medium p-2">{{ petition_info.petition_type === "CCE" ? `Clerical Errors` : `Change of
@@ -99,7 +106,7 @@
                             </tr>
                         </thead>
                         <tbody class="h-full">
-                            <tr class="bg-white border-b  " v-for="data in petition_info.clerical_errors">
+                            <tr class="bg-white border-b  " v-for="data in clerical_errors">
                                 <th scope="row" class="px-6 py-4  text-gray-900 whitespace-nowrap ">
                                     {{ data.error_num }}
                                 </th>
@@ -188,10 +195,9 @@
                     </div> -->
                 </div>
             </div>
-            <div v-else class="flex flex-row gap-2">
-                <p class="font-medium text-sm text-green-500">Annotation Added</p>
-
-
+            <div v-else class="flex flex-row gap-2 items-center text-green-500">
+                <p class="font-medium text-sm ">Annotation Added</p>
+                <font-awesome-icon icon="fa-solid fa-check" />
             </div>
 
 
@@ -272,7 +278,7 @@
                     <div class="flex flex-col">
                         <div
                             class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm overflow-y-scroll h-full">
-                            <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Settings </p>
+                            <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Adjustments </p>
                             <div class="h-auto flex flex-col gap-2">
                                 <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
                                 <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
@@ -465,12 +471,34 @@ onChange((file) => {
     annotated_unannotated.value = false
 
 })
+
+const clerical_errors = ref();
 const loading = ref(true);
 onMounted(async () => {
     computer.getUserName()
     petition_info.value = await petition.get_petition_by_id(route.params.id)
 
+
+    const first_name_from = petition_info.value.first_name_from
+    const first_name_to = petition_info.value.first_name_to
+    if (petition_info.value.petition_type === "CCE") {
+        clerical_errors.value = petition_info.value.clerical_errors
+    } else if (petition_info.value.petition_type === "CFN") {
+        const main_value = [
+            {
+                error_num: '1',
+                description: 'Change of First Name',
+                error_description_from: first_name_from,
+                error_description_to: first_name_to,
+            }
+        ]
+        clerical_errors.value = main_value
+    }
+
+
     loading.value = false;
+    console.log(clerical_errors.value)
+
 
 })
 

@@ -84,6 +84,7 @@ import {
     faTriangleExclamation,
     faRightToBracket, 
     faAnglesRight,
+    faCheck
     
 
 
@@ -152,7 +153,8 @@ library.add(
     faCircleCheck,
     faTriangleExclamation,
     faRightToBracket, 
-    faAnglesRight
+    faAnglesRight,
+    faCheck
 
 )
 

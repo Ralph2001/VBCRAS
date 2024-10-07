@@ -117,7 +117,7 @@ export function complete_municipality_with_province_with_words(province) {
 
     return municipalityWithProvinceList
         .sort((a, b) => a.localeCompare(b))
-      
+
 }
 
 

@@ -40,11 +40,13 @@
                     </div>
                     <div class="flex items-center justify-end">
                         <div class="w-[15rem]">
-                            <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
+                            <InputforForm middle width="full" bold v-model="formData.date_filed"
+                                :error="v$.date_filed.$error" />
+                            <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
                                 format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_filed" :teleport="true"
                                 :model-value="date_filed" @update:model-value="handleDateFiled"
                                 @cleared="formData.date_filed = ''">
-                            </VueDatePicker>
+                            </VueDatePicker> -->
                         </div>
                         <!-- <InputforForm middle v-model="formData.date_filed" :error="v$.date_filed.$error" /> -->
                     </div>
@@ -84,7 +86,7 @@
                                     @update:model-value="handleDateRegistration"
                                     @cleared="formData.date_registration = ''">
                                 </VueDatePicker> -->
-                                <InputforForm  width="100%" bold v-model="formData.date_registration"
+                                <InputforForm width="100%" bold v-model="formData.date_registration"
                                     :error="v$.date_registration.$error" />
                             </InputLabel>
 
@@ -96,7 +98,9 @@
 
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Sex">
                                 :
-                                <InputforForm width="100%" v-model="formData.sex" :error="v$.sex.$error" />
+                                <!-- <InputforForm width="100%" v-model="formData.sex" :error="v$.sex.$error" /> -->
+
+                                <SelectforForm width="100%" v-model="formData.sex" :error="v$.sex.$error" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Date of Birth">
@@ -107,19 +111,20 @@
                                     :model-value="date_of" @update:model-value="handleDateOf"
                                     @cleared="formData.date_of = ''">
                                 </VueDatePicker> -->
-                                <InputforForm  width="100%" bold v-model="formData.date_of"
-                                :error="v$.date_of.$error" />
+                                <InputforForm width="100%" bold v-model="formData.date_of" :error="v$.date_of.$error" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Birth">
                                 :
-                                <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" />
+                                <!-- <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" /> -->
+                                <FormAutoComplete width="100%" v-model="formData.place_of" :error="v$.place_of.$error"
+                                    :suggestion_data="all_" :wait="true" />
                                 <!-- <AutoCompleteAddress width="100%" v-model="formData.place_of"
                                     :error="v$.place_of.$error" nolabel /> -->
 
                                 <!-- <SuggestionInputforForm width="100%" v-model="formData.place_of"
                                     :error="v$.place_of.$error" :suggestion_data="municipality_province" nolabel /> -->
-                                    <!-- <InputforForm  width="100%" bold v-model="formData.place_of"
+                                <!-- <InputforForm  width="100%" bold v-model="formData.place_of"
                                     :error="v$.place_of.$error" /> -->
 
                             </InputLabel>
@@ -150,7 +155,10 @@
 
                             <InputLabel v-if="selectedType === '1A'" label="Date of Marriage">
                                 :
-                                <div class="flex flex-row w-full relative">
+
+                                <InputforForm width="100%" v-model="formData.date_marriage"
+                                    :error="v$.date_marriage.$error" />
+                                <!-- <div class="flex flex-row w-full relative">
                                     <InputforForm width="100%" v-model="formData.date_marriage"
                                         :error="v$.date_marriage.$error" v-if="nodateforparentsmarriage" isReadOnly />
 
@@ -171,13 +179,16 @@
                                                 {{ option }}</li>
                                         </ul>
                                     </div>
-                                </div>
+                                </div> -->
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Marriage of Parents">
                                 :
-                                <InputforForm width="100%" v-model="formData.place_of_marriage_parents"
-                                    :error="v$.place_of_marriage_parents.$error" />
+                   
+
+                                <FormAutoComplete width="100%" v-model="formData.place_of_marriage_parents"
+                                :error="v$.place_of_marriage_parents.$error" 
+                                    :suggestion_data="all_" :wait="true" />
                                 <!-- 
                                 <AutoCompleteAddress width="100%" v-model="formData.place_of_marriage_parents"
                                     :error="v$.place_of_marriage_parents.$error" nolabel /> -->
@@ -377,8 +388,7 @@
                         </div> upon his/her request.
                     </div>
 
-                    <div class="flex w-full flex-col  items-center justify-center "
-                        >
+                    <div class="flex w-full flex-col  items-center justify-center ">
 
 
                         <!-- As Remarks  v-if="formData.form_type.includes('A')"-->
@@ -441,8 +451,7 @@
                                 :model-value="date_paid" @update:model-value="handleDatePaid"
                                 @cleared="formData.date_paid = ''">
                             </VueDatePicker> -->
-                            <InputforForm  width="100%" bold v-model="formData.date_paid"
-                          />
+                            <InputforForm width="100%" bold v-model="formData.date_paid" />
                         </InputLabel>
                     </div>
 
@@ -514,12 +523,16 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import { format } from 'date-fns'
-import AutoCompleteAddress from '../../components/Form/AutoCompleteAddress.vue'
+import AutoCompleteAddress from '../../components/Form/FormAutoComplete.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import Cookies from 'js-cookie'; // Import js-cookie library
 import SuggestionInputforForm from '../../components/Form/SuggestionInputforForm.vue';
 import { all_address, complete_municipality, complete_municipality_with_province, complete_province } from '../../utils/Address/index.js'
+import SelectforForm from '../../components/Form/SelectforForm.vue';
+import FormAutoComplete from '../../components/Form/FormAutoComplete.vue';
+
+
 const all_ = ref(all_address())
 
 
@@ -714,9 +727,9 @@ const initialFormData = {
     date_of: '',
     place_of: '',
     name_of_mother: '',
-    citizenship_mother: '',
+    citizenship_mother: 'Filipino',
     name_of_father: '',
-    citizenship_father: '',
+    citizenship_father: 'Filipino',
     date_marriage: '',
     place_of_marriage_parents: '',
 
