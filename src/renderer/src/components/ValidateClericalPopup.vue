@@ -58,7 +58,7 @@ const props = defineProps({
 })
 
 const open_folder_instead = async (path) => {
-    await window.ClericalApi.OpenClerical(path)
+    await window.ClericalApi.OpenClericalFolder(path)
 }
 const open_file = async (path) => {
     await window.ClericalApi.OpenClerical(path + `petition.docx`)

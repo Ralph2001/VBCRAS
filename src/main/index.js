@@ -218,16 +218,29 @@ ipcMain.handle('saveAnnotated', async (event, fileUri) => {
         console.log(error)
     }
 })
+
 ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
-
         const generate_document = await generate(formData);
+
 
         if (generate_document.status) {
             if (data.is_to_validate) {
-                const saved_file_path = await shell.openExternal(join(generate_document.filepath, 'petition.docx'))
+                const filePath = join(generate_document.filepath, 'petition.docx');
+                console.log('This is running: ' + filePath)
+                try {
+                    const open_file = await shell.openExternal(filePath);
+                    if (!open_file) {
+                        await shell.openPath(filePath)
+                    }
+                } catch (openError) {
+                    console.error('Error opening file:', openError);
+                }
             }
+
+            console.log('Returining this: ' + generate_document.filepath)
+
             return { status: generate_document.status, filepath: generate_document.filepath };
         }
         return { status: generate_document.status, filepath: generate_document.filepath };
@@ -387,13 +400,26 @@ ipcMain.handle('create_certificate_filing', async (event, data) => {
 
 ipcMain.handle('open-clerical', async (event, source) => {
     try {
+        console.log('This is Source' + source)
         const filefolder = await shell.openExternal(source)
         return true
     } catch (error) {
-        win.close()
+        console.log(error)
         return false
     }
 })
+
+ipcMain.handle('open-clerical-folder', async (event, source) => {
+    try {
+        console.log('This is Source ' + source)
+        const filefolder = await shell.openPath(source)
+        return true
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+})
+
 
 ipcMain.handle('remove-item', async (event, path) => {
     try {
@@ -760,7 +786,15 @@ ipcMain.handle('select-file', async (event) => {
 
 ipcMain.handle('is_file_busy', async (event, path) => {
     try {
+
+        console.log(path)
+        // Check if the file exists
+        if (!fs.existsSync(path)) {
+            return false; // File does not exist
+        }
+
         // Try to open the file in read-write mode.
+
         const fileDescriptor = fs.openSync(path, 'r+');
         fs.closeSync(fileDescriptor);
         return false; // File is not locked
@@ -770,7 +804,7 @@ ipcMain.handle('is_file_busy', async (event, path) => {
         }
         throw error; // Some other error occurred
     }
-})
+});
 
 
 

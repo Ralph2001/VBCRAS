@@ -49,6 +49,12 @@ contextBridge.exposeInMainWorld('ClericalApi', {
             return true
         }
     },
+    OpenClericalFolder: async (source) => {
+        const result = await ipcRenderer.invoke('open-clerical-folder', source)
+        if (result) {
+            return true
+        }
+    },
     OpenClericalFiles: async (source) => {
         const result = await ipcRenderer.invoke('open-clerical-files', source)
         return result

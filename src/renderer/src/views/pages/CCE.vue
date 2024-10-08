@@ -3,7 +3,7 @@
 
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
-   
+
     </Header>
 
     <AlertPath v-if="busy" />
@@ -1510,7 +1510,7 @@ const submitForm = async () => {
     return;
   }
 
-  const petition_ = {
+  const data = {
 
 
 
@@ -1598,12 +1598,11 @@ const submitForm = async () => {
     // For Settings Only, will not be added in database
     is_to_validate: formData.is_to_validate
 
-
-
-
   }
 
-  const generate_ = await window.ClericalApi.createPetitionDocument(JSON.stringify(petition_));
+  const petition_ = JSON.stringify(data);
+
+  const generate_ = await window.ClericalApi.createPetitionDocument(petition_);
   last_saved_filepath.value = generate_.filepath
 
 

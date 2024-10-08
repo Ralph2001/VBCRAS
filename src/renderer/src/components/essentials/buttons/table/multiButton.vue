@@ -6,9 +6,9 @@
       class="px-3 py-1 text-xs tracking-wide  bg-green-500 hover:bg-green-600 text-white rounded font-medium active:scale-95 text-center    transition-all focus:outline-none">
       CREATE FINALITY
     </button>
-    <div v-else class="flex h-full w-full bg-blue-200 items-center justify-center relative">
+    <!-- <div v-else class="flex h-full w-full bg-blue-200 items-center justify-center relative">
       <p class="font-medium">Pending</p>
-    </div>
+    </div> -->
 
     <!-- <div v-if="isWaiting()" class="flex h-full w-full bg-yellow-200 items-center justify-center relative">
       <p class=" font-medium text-gray-700 -mt-2 ">TO BE GRANTED</p> <br>

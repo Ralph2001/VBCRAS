@@ -109,6 +109,8 @@ async function generate(formData) {
             ADDITIONAL_FILES_TEMPLATE.RECORD_SHEET
         ])
 
+        // const data = formData
+      
         const data = JSON.parse(formData)
 
         // PASS THE DATA TO THE FUNCTIONS
@@ -291,7 +293,7 @@ async function petition(data) {
     // Dates formatted
     const event_date = dateFns.format(data.event_date, 'MMMM dd, yyyy')
     const issued_on = dateFns.format(data.issued_on, 'MMMM dd, yyyy')
-    
+
     const date_granted = !data.is_migrant ? dateFns.format(data.action_taken_date, 'MMMM dd, yyyy') : ''
 
     const date_paid =
