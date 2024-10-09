@@ -142,7 +142,7 @@ export function all_address() {
             addr.split(', ').map(part =>
                 part.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2) => {
                     const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                    return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
+                    return `${capitalizeWords(p1)}${p2 ? ` ${capitalizeWords(p2)}` : ''}`;
                 })
             ).join(', ')
         );

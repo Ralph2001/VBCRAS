@@ -9,7 +9,7 @@
       <div class="h-full bg-gray-200 flex w-full overflow-y-scroll shadow-inne relative">
         <slot> </slot>
       </div>
-      <div class=" w-full bg-gray-800 py-1.5  p-1">
+      <div class=" w-full bg-gray-800 py-1.5  p-1" v-if="props.footer">
         <slot name="footer"> </slot>
       </div>
     </div>
@@ -28,6 +28,10 @@
   first: String,
   second: String,
   dropbox: Boolean,
+  footer: {
+    type: Boolean,
+    default: true
+  },
   doctype: {
     type: String,
     default: "",

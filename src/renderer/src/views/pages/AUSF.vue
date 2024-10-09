@@ -72,8 +72,9 @@
                                 </div>
                                 <div class="flex flex-row w-full">
                                     <p class="text-nowrap">and a resident of</p>
-                                    <InputButtomBorder :error="v$.address.$error" v-model="formData.address"
-                                        label="Complete Address" />
+                                    <AutoCompleteInputBottomBorder :error="v$.address.$error" v-model="formData.address"
+                                        :suggestion_data="_all" label="Complete Address" :wait="true" />
+
                                     <p class="text-nowrap">after having been duly</p>
                                 </div>
                                 <p>sworn in accordance with law, do hereby declare that:</p>
@@ -220,11 +221,13 @@
                                     <InputButtomBorder v-model="formData.exhibiting" skip />
                                     <InputButtomBorder v-model="formData.exhibiting_number" :width="'50%'" />
                                     <p class="text-gray-700 text-md">issued at</p>
-                                    <InputButtomBorder v-model="formData.exhibiting_at" skip />
-                                    <p class="text-gray-700 text-md">on</p>
+
+                                    <AutoCompleteInputBottomBorder v-model="formData.exhibiting_at" :wait="true"
+                                        :suggestion_data="municipality_with_province" />
+
                                 </div>
                                 <div class="flex flex-row gap-2 w-full items-center text-nowrap">
-                                    <InputButtomBorder v-model="formData.exhibiting_on" skip />
+                                    <InputButtomBorder v-model="formData.exhibiting_on" />
                                     <p class="text-gray-700 text-md text-justify">
                                         . I certify that I personally examined the affiant and that he
                                         voluntarily executed
@@ -331,10 +334,12 @@
                                         <InputButtomBorder v-model="formData.attestation_exhibiting_number"
                                             :error="v$.attestation_exhibiting_number.$error" />
                                         <p class="text-nowrap">issued at</p>
-                                        <InputButtomBorder skip v-model="formData.attestation_issued_at"
-                                            :error="v$.attestation_issued_at.$error" />
-                                        <p class="text-nowrap">on</p>
-                                        <InputButtomBorder skip v-model="formData.attestation_issued_on"
+
+
+                                        <InputButtomBorder v-model="formData.attestation_issued_at"
+                                            :error="v$.attestation_issued_at.$error" />.
+
+                                        <InputButtomBorder v-model="formData.attestation_issued_on"
                                             :error="v$.attestation_issued_on.$error" />.
                                     </div>
                                     <div class="mt-10">
@@ -383,7 +388,7 @@ import Header from "../../components/essentials/header.vue";
 import Button from "../../components/essentials/buttons/Button.vue";
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
 import InputforForm from "../../components/Form/InputforForm.vue";
-import InputButtomBorder from "../../components/essentials/inputs/InputButtomBorder.vue";
+import InputButtomBorder from "../../components/essentials/inputs/InputBottomBorder.vue";
 import { format } from "date-fns";
 import { useAusf } from "../../stores/Ausf";
 import TableGrid from "../../components/TableGrid.vue";
@@ -392,6 +397,15 @@ import { AuthStore } from "../../stores/Authentication";
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric } from "@vuelidate/validators";
 import PDFViewer from "../../components/PDFViewer.vue";
+import AutoCompleteInputBottomBorder from "../../components/essentials/inputs/AutoCompleteInputBottomBorder.vue";
+import { all_address, complete_municipality_with_province } from "../../utils/Address";
+
+
+const municipality_with_province = computed(() => {
+    return complete_municipality_with_province(formData.at_province)
+})
+
+const _all = ref(all_address())
 
 const aufs_ = useAusf();
 const auth = AuthStore();
@@ -472,7 +486,7 @@ const colDefs = ref([
 
 const initalForm = {
     created_by: auth.user_id,
-    registry_number: `${year} -`,
+    registry_number: `${year} - `,
     date_registration: `${format(date, "MMMM")}      , ${year}`,
     affiant_name: "",
     citizenship: "Filipino",

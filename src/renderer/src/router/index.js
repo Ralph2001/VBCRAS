@@ -268,6 +268,12 @@ const router = createRouter({
                     beforeEnter: navGuard
                 },
                 {
+                    path: 'marriage-license',
+                    name: 'marriage_license',
+                    component: () => import('../views/pages/MarriageLicense.vue'),
+                    beforeEnter: navGuard
+                },
+                {
                     path: 'ausf',
                     name: 'page_ausf',
                     component: () => import('../views/pages/AUSF.vue'),

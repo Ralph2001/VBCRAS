@@ -344,7 +344,7 @@
                     <div class="relative">
                       I have/He/She has habitually and continuously used
                       <div class="absolute -top-[1.2rem] left-[23rem]">
-                        <Input :error="v$.ground_b_data.$error" nolabel :class="`flex text-center`"
+                        <Input :error="v$.ground_b_data.$error" cap nolabel :class="`flex text-center`"
                           v-model="formData.ground_b_data" :readonly="formData.ground_b ? false : true"
                           :skip="formData.ground_b ? false : true" />
                       </div>
