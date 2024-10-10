@@ -6,7 +6,8 @@
             <ul class="space-y-2 font-medium  h-full">
                 <li>
                     <router-link to="/settings/dashboard" active-class="bg-blue-500 text-white group hover:bg-blue-600"
-                        class="flex items-center p-2 text-gray-900  rounded ">
+         
+                        class="flex items-center p-2 text-gray-900 rounded  ">
                         <svg class="w-5 h-5  transition duration-75 " aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
                             <path
@@ -23,7 +24,7 @@
 
                 <li>
                     <button @click="toggleDropdown('cceCFN')"
-                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group ">
+                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group hover:bg-gray-200 ">
                         <span class="flex-1 ms-3 text-left">CCE & CFN</span>
                         <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -46,13 +47,13 @@
                             active-class="bg-blue-500 text-white group hover:bg-blue-600">
                             <span class="ms-3">Templates</span>
                         </router-link>
-                       
+
                     </ul>
                 </li>
 
                 <li>
                     <button @click="toggleDropdown('forms')"
-                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group ">
+                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group  hover:bg-gray-200">
                         <span class="flex-1 ms-3 text-left">Forms</span>
                         <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -69,7 +70,7 @@
 
                 <li>
                     <button @click="toggleDropdown('ausf')"
-                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group  ">
+                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group hover:bg-gray-200 ">
                         <span class="flex-1 ms-3 text-left">AUSF</span>
                         <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -85,7 +86,7 @@
                 </li>
                 <li>
                     <button @click="toggleDropdown('scanned')"
-                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group  ">
+                        class="flex items-center w-full p-2 text-base text-gray-900  transition duration-75 rounded group  hover:bg-gray-200">
                         <span class="flex-1 ms-3 text-left">Scanned</span>
                         <svg class="w-3 h-3" aria-hidden="true" fill="none" viewBox="0 0 10 6">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
