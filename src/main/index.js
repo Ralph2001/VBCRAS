@@ -254,33 +254,11 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
 // Execute external command helper
 function executeCommand(excutable, originalDirectory, outputDirectory, args) {
     return new Promise((resolve, reject) => {
-        // const process = spawn(commandPath, args);
-        // let output = '';
-        // let error = '';
-
-        // process.stdout.on('data', (data) => {
-        //     output += data.toString();
-        // });
-
-        // process.stderr.on('data', (data) => {
-        //     error += data.toString();
-        // });
-
-        // process.on('close', (code) => {
-        //     if (code === 0) {
-        //         resolve(output);
-        //     } else {
-        //         reject(new Error(`Process failed with code ${code}: ${error}`));
-        //     }
-        // });
-
         const pythonProcess = spawn(excutable, [
             originalDirectory,
             outputDirectory,
             args
         ]);
-
-
         let output = '';
         let error = '';
 
@@ -302,24 +280,35 @@ function executeCommand(excutable, originalDirectory, outputDirectory, args) {
     });
 };
 
+
+/**
+ *  Dito page nakapag decide kana 
+ *  para i convert na ito
+ */
+
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
-        // const doctoPath = join(__dirname, '../../resources/tools/converter/docto.exe').replace('app.asar', 'app.asar.unpacked');
+
 
         const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
+
+        /**
+         *  Name of Folder
+         */
         const petition_number = data.petition_number
         const originalDirectory = data.orignal_path
         const petitionType = data.petition_type + ' ' + data.event_type;
         const prepared_by = data.prepared_by
         const republicAct = data.republic_act_number;
         const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
-
         const date_filed = data.date_filed
-
         const year = new Date(date_filed).getFullYear().toString();
 
-
+        /**
+         * Where to Save;
+         * Output Directory
+         */
         const outputDirectory = join(data.path_where_to_save, `Petitions`, prepared_by, republicAct, petitionType, year, petition_number + ' - ' + documentOwner);
 
         if (!fs.existsSync(outputDirectory)) {
@@ -328,6 +317,10 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
 
 
         const deleteOriginal = 'true';
+
+        /**
+         * Convert Function
+         */
 
         const conversionResult = await executeCommand(excutable,
             originalDirectory,

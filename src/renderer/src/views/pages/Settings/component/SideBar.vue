@@ -6,7 +6,6 @@
             <ul class="space-y-2 font-medium  h-full">
                 <li>
                     <router-link to="/settings/dashboard" active-class="bg-blue-500 text-white group hover:bg-blue-600"
-         
                         class="flex items-center p-2 text-gray-900 rounded  ">
                         <svg class="w-5 h-5  transition duration-75 " aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
@@ -105,8 +104,12 @@
             <div class="w-full flex items-center justify-center">
                 <router-link to="/pages/welcome"
                     class="border w-full p-2 font-medium text-md justify-center items-center flex text-gray-600 hover:bg-red-400 hover:text-white bg-white shadow-md">
-                    Return
+                    Apps
                 </router-link>
+                <!-- <router-link @click="logout"
+                    class="border w-full p-2 font-medium text-md justify-center items-center flex text-gray-600 hover:bg-red-400 hover:text-white bg-white shadow-md">
+                    Logout
+                </router-link> -->
 
             </div>
         </div>
@@ -115,7 +118,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { AuthStore } from '../../../../stores/Authentication';
 
+const auth = AuthStore()
 const dropdowns = ref({
     cceCFN: false,
     forms: false
@@ -124,6 +129,12 @@ const dropdowns = ref({
 const toggleDropdown = (key) => {
     dropdowns.value[key] = !dropdowns.value[key];
 };
+
+const logout = () => {
+    auth.logout();
+};
+
+
 </script>
 
 <style>

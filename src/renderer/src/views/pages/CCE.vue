@@ -1,10 +1,46 @@
 <template>
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
-
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
-
     </Header>
+
+    <div v-if="tutorial"
+      class="fixed top-0 bottom-0 left-0 h-full z-50 right-0 backdrop-blur-sm flex items-center justify-center backdrop-brightness-75">
+      <div class="w-[80%] h-[80%] bg-white flex flex-col shadow-sm border border-gray-200 p-4 rounded">
+        <p class="font-semibold text-lg">Welcome</p>
+        <p class="font-medium text-sm indent-8">How to Use the App</p>
+        <div class="flex flex-col w-full h-full px-10 py-4">
+          <ul class="list-none">
+            <li class="text-sm">To get started, click the "Create" button to open the document maker, where you can
+              choose the type of document you want to create.</li>
+            <li class="text-sm">In the Document Selector section, you can specify whether the individual is a migrant or
+              not.</li>
+            <li class="text-sm">If you select "Migrant," you can also edit the document header accordingly.</li>
+            <li class="text-sm">Next, input all relevant client details based on the specific type of petition.</li>
+            <li class="text-sm">To add fields for clerical errors and supporting documents, press Ctrl + Space instead
+              of manually clicking the "Add" button.</li>
+            <li class="text-sm">At the bottom, you'll find the Date Preview section, which automatically calculates
+              dates based on admin-provided settings; you can modify these dates as needed. Note: Admins can configure
+              global settings for automatic date calculations.</li>
+            <li class="text-sm">At the bottom, you can choose to validate the layout by checking the "Validate" button.
+              This will open the Word document, allowing you to adjust the layout and margins for optimal output—always
+              check this box. If you don't select it, the document will be generated directly.</li>
+            <li class="text-sm">After submitting, the app will generate all the documents. Please note that this may
+              take some time. Once the documents are ready, the document viewer will open, allowing you to view and
+              print them by clicking the "Print" button.</li>
+
+            <li class="text-sm">You can now view your completed petition and manage it as needed.</li>
+            <li class="text-sm">In the data table, you can view your completed petition and find the "Create Finality"
+              button.</li>
+            <li class="text-sm">In the data table, you can view your completed petition and find the "Create Finality"
+              button to generate the petition finality letter, annotation, and endorsement letter.</li>
+
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
 
     <AlertPath v-if="busy" />
     <!-- v-if="is_validating" -->
@@ -727,7 +763,7 @@ import { AuthStore } from "../../stores/Authentication.js";
 import Selector from "../../components/Selector.vue";
 
 
-
+const tutorial = ref(false)
 
 
 const busy = ref(false)

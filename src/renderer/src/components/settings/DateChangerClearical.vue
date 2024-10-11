@@ -24,7 +24,7 @@
                 Save Date Configuration
             </button>
             <button v-if="isSubmitted" class="border rounded px-4 py-1.5 w-max text-gray-800 ml-auto font-medium"
-                @click="save_configuration">
+                @click="reset_configuration">
                 Reset
             </button>
             <p class="text-xs text-gray-500">Note: This will be the default date counts.</p>
@@ -73,6 +73,13 @@ function mapDateRules(dateRule) {
 }
 
 const save_configuration = async () => {
+    const data = { ...formData }; // Spread operator to simplify data extraction
+    const add = await date_config.create_date_rules(data);
+    if (add) {
+        config_status.value = true;
+    }
+}
+const reset_configuration = async () => {
     const data = { ...formData }; // Spread operator to simplify data extraction
     const add = await date_config.create_date_rules(data);
     if (add) {
