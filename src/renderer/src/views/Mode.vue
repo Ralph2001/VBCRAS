@@ -74,8 +74,14 @@ import { required, maxLength, ipAddress } from "@vuelidate/validators";
 import { onClickOutside } from '@vueuse/core/index.cjs';
 import { useHostStore } from '../stores/Connection';
 
+import { useServerStore } from '../stores/ServerApp';
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter()
 const mode = useModeStore();
 const connection = useHostStore();
+const server = useServerStore()
 
 
 const connection_status = ref('Connect')
@@ -126,19 +132,14 @@ const connect_host = async () => {
 }
 
 const createOwnServer = async () => {
-    const server_status = await connection.isServerRunning()
-    console.log(server_status)
-}
-// const mode = useModeStore()
-// onMounted(() => {
-//     mode.checkMode()
-// })
+    const start = await server.start_server()
+    if (!start) {
+        return
+    }
 
-// const serverMode = () => {
-//     mode.changeMode('server')
-// }
-// const clientMode = () => {
-//     mode.changeMode('client')
-// }
+    router.push('login')
+    console.log(router.push('login'))
+}
+
 
 </script>

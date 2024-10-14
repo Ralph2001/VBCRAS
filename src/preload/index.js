@@ -121,6 +121,7 @@ contextBridge.exposeInMainWorld('ScannedApi', {
 })
 
 contextBridge.exposeInMainWorld('LocalCivilApi', {
+    
     IsServerRunning: async () => {
         const result = await ipcRenderer.invoke('is-server-running')
         return result
@@ -141,6 +142,12 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
         const result = await ipcRenderer.invoke('select-folder')
         return result
     },
+
+
+
+
+
+
     selectFile: async () => {
         const { canceled, filePaths } = await ipcRenderer.invoke('select-file')
         return canceled ? null : filePaths[0]

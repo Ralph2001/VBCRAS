@@ -667,84 +667,116 @@ ipcMain.handle('open-scanned-sidebar', async (event, source) => {
 
 
 let dialogOpen = false
+
+
 let pythonProcess = null
+
 async function startServer() {
     try {
-        // pythonProcess = execFile(
-        //     join(__dirname, '../../resources/script/dist/app/app.exe')
-        // )
+        const executable = join(__dirname, '../../resources/server/dist/main.exe').replace('app.asar', 'app.asar.unpacked');
 
-        pythonProcess = spawn(
-            'python',
-            [join(__dirname, '../../resources/server/main.py')],
-            {}
-        )
+        // Start the Python process
+        pythonProcess = spawn(executable);
+
+        pythonProcess.stdout.on('data', (data) => {
+            console.log(`Python stdout: ${data}`);
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Python stderr: ${data}`);
+        });
 
         pythonProcess.on('error', (error) => {
-            console.error('Error starting Python process:', error)
-            pythonProcess = null
-        })
+            console.error('Error starting Python process:', error);
+        });
 
-        pythonProcess.on('exit', (code, signal) => {
-            console.log(
-                `Python process exited with code ${code} and signal ${signal}`
-            )
-            pythonProcess = null
-        })
+        pythonProcess.on('close', (code) => {
+            console.log(`Python process exited with code ${code}`);
+            pythonProcess = null; // Reset the process variable after it exits
+        });
 
-        return true
+        return true;
     } catch (error) {
-        console.error('Error starting server:', error)
-        return false
+        console.error('Error starting server:', error);
+        return false;
     }
 }
 
+function closeServer() {
+    if (pythonProcess) {
+        pythonProcess.kill();
+        console.log('Python process terminated');
+        pythonProcess = null; // Reset the process after termination
+    } else {
+        console.log('No Python process running');
+    }
+}
+
+// Check if server is running
 ipcMain.handle('is-server-running', async (event) => {
     try {
         if (pythonProcess) {
             return true
-        } else {
-            return false
         }
+        return false;
     } catch (error) {
-        console.log(error)
-        return false
+        console.error('Error checking server status:', error);
+        return false;
     }
-})
+});
 
+// Start the server
 ipcMain.handle('start-server', async (event) => {
     try {
         if (pythonProcess) {
-            console.warn('Server is already running, cannot start again.')
-            return false
+            console.warn('Server is already running, cannot start again.');
+            return false;
         }
-        const success = await startServer()
-        return { success, addresses }
+        const success = await startServer();
+        return { success }; // Removed 'addresses' as it's undefined
     } catch (error) {
-        console.error('Error handling start-server request:', error)
-        return false
+        console.error('Error handling start-server request:', error);
+        return false;
     }
-})
+});
 
+// Stop the server
 ipcMain.handle('stop-server', async (event) => {
     if (pythonProcess) {
         try {
-            if (pythonProcess.connected) {
-                pythonProcess.send('SIGTERM')
-                await new Promise((resolve) => setTimeout(resolve, 500))
-            }
-            pythonProcess.kill()
-            pythonProcess = null
-            return true
+            closeServer(); // Call the function properly
+            return true;
         } catch (error) {
-            console.error('Error stopping server:', error)
-            return false
+            console.error('Error stopping server:', error);
+            return false;
         }
     } else {
-        console.warn('Server is not running, cannot stop.')
-        return false
+        console.warn('Server is not running, cannot stop.');
+        return false;
     }
-})
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ipcMain.handle('select-folder', async (event) => {
     if (dialogOpen) return

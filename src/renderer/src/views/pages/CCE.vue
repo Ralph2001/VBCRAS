@@ -61,8 +61,6 @@
           </div>
         </div>
         <div class="w-[25rem]">
-
-
           <Input label="Search" v-model="search" />
         </div>
       </div>
@@ -628,7 +626,7 @@
             </div>
 
             <div class="grow">
-              <Box title="DATE PREVIEW" width="w-auto">
+              <Box title="DATES" width="w-auto">
                 <div class="flex flex-col w-full gap-2 items-start">
                   <div class="grid grid-cols-2 w-full gap-4">
                     <Input skip label="Date Filled" type="date" v-model="formData.date_filed"

@@ -16,7 +16,7 @@ export const AuthStore = defineStore('auth', {
         async login(username, password) {
             try {
                 const host = useHostStore()
-                const hostAddress = host.host
+                const hostAddress = host.host || localStorage.getItem('host')
                 const response = await axios.post(
                     'http://' + hostAddress + ':1216/login',
                     { username, password },
@@ -55,7 +55,7 @@ export const AuthStore = defineStore('auth', {
             const token = localStorage.getItem('token')
             if (token) {
                 const host = useHostStore()
-                const hostAddress = host.host
+                const hostAddress = host.host || localStorage.getItem('host')
                 const tokenStr = token
                 try {
                     const user = await axios.get(

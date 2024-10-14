@@ -10,11 +10,14 @@ import {
 import { useSetup } from '../stores/Setting/setup'
 
 import { navGuard } from './Guards'
+import { useServerStore } from '../stores/ServerApp'
 
 
 /**
  *  Return True = Stay To That Path
  */
+
+
 
 const router = createRouter({
     /**
@@ -40,6 +43,7 @@ const router = createRouter({
             beforeEnter: async (to, from) => {
                 const mode = useModeStore()
                 const connection = useHostStore()
+                const server = useServerStore()
                 // If 'Client' check the saved host address and try to connect to it, if connection error stay at home
                 // If 'Server' check the server app status if running, if not try to run the server and redirect to login
                 if (mode.checkMode()) {
@@ -57,11 +61,13 @@ const router = createRouter({
                         } else return true
                     }
                     else if (storedMode === 'server') {
-                        // Check if the server app is running or not 
-                        // Not Running? Stay Home
-                        // Running? Proceed to Login Page
+                        const check_server_status = await server.isServerRunning()
+                        if (check_server_status) {
+                            return { name: 'login' }
+                        }
+                        else return true
                     }
-                    else { return true }
+
                     // return
                 }
 
@@ -97,25 +103,37 @@ const router = createRouter({
                 const connection = useHostStore()
                 const authKey = await auth.isAuthenticated()
                 const mode = useModeStore()
+                const server = useServerStore()
 
                 if (mode.checkMode()) {
-                    if (await connection.isConnected()) {
-                        if (authKey) {
+                    const storedMode = localStorage.getItem('mode')
+
+                    if (storedMode === 'client') {
+                        if (await connection.isConnected()) {
+                            if (authKey) {
+                                /**
+                                 * Connected and Authenticated, redirect to Welcome Page
+                                 */
+                                return { name: 'page_welcome' }
+                            }
                             /**
-                             * Connected and Authenticated, redirect to Welcome Page
+                             *  If Not Authenticated, Stay in this Path
                              */
-                            return { name: 'page_welcome' }
+                            return true
                         }
-                        /**
-                         *  If Not Authenticated, Stay in this Path
-                         */
+                    }
+                    else if (storedMode === 'server') {
+                        if (await server.isServerRunning() === false) {
+                            next({ name: 'Home' })
+                        }
                         return true
+                    } else {
+                        return { name: 'Home' }
                     }
 
                     /**
                      *  Not Connected, redirect to home
                      */
-                    return { name: 'Home' }
                 }
                 /**
                  *  No Mode Selected, redirect to home
