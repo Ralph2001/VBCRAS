@@ -47,7 +47,7 @@ def create_admin():
                 username="Admin",
                 role=1,
             )
-            admin.set_password("vbcras")  # Ensure this method hashes the password
+            admin.set_password("123")  # First Main Password
 
             db.session.add(admin)
             db.session.add(IsAdminCreated(is_created=True))

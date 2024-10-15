@@ -20,7 +20,11 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info'; // Set log level
 
 
-const { execFile } = require('child_process')
+let flaskServerProcess = null
+let flaskPID = null
+
+
+const { execFile, exec } = require('child_process')
 const { spawn } = require('child_process')
 const { dialog } = require('electron')
 
@@ -254,7 +258,7 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
 // Execute external command helper
 function executeCommand(excutable, originalDirectory, outputDirectory, args) {
     return new Promise((resolve, reject) => {
-        const pythonProcess = spawn(excutable, [
+        const flaskServerProcess = spawn(excutable, [
             originalDirectory,
             outputDirectory,
             args
@@ -262,15 +266,15 @@ function executeCommand(excutable, originalDirectory, outputDirectory, args) {
         let output = '';
         let error = '';
 
-        pythonProcess.stdout.on('data', (data) => {
+        flaskServerProcess.stdout.on('data', (data) => {
             output += data.toString();
         });
 
-        pythonProcess.stderr.on('data', (data) => {
+        flaskServerProcess.stderr.on('data', (data) => {
             error += data.toString();
         });
 
-        pythonProcess.on('close', (code) => {
+        flaskServerProcess.on('close', (code) => {
             if (code === 0) {
                 resolve(output);
             } else {
@@ -623,14 +627,32 @@ app.whenReady().then(() => {
     })
 
 })
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
+        // Unregister all global shortcuts
         globalShortcut.unregisterAll();
+
+        // Kill the Flask server if it's running
+        if (flaskPID) {
+            console.log(`Killing Flask server process with PID: ${flaskPID}`);
+            killProcessTree(flaskPID);
+        } else {
+            console.log('No Flask server process to kill.');
+        }
+
+        // Quit the app
         app.quit();
     }
 });
 
-
+app.on('before-quit', () => {
+    // Optional: Cleanup any resources before quitting
+    if (flaskPID) {
+        console.log(`Cleaning up Flask server process with PID: ${flaskPID}`);
+        killProcessTree(flaskPID);
+    }
+});
 
 /**
  * List of IPC
@@ -669,31 +691,32 @@ ipcMain.handle('open-scanned-sidebar', async (event, source) => {
 let dialogOpen = false
 
 
-let pythonProcess = null
 
 async function startServer() {
     try {
         const executable = join(__dirname, '../../resources/server/dist/main.exe').replace('app.asar', 'app.asar.unpacked');
 
-        // Start the Python process
-        pythonProcess = spawn(executable);
+        // Start the Flask process
+        flaskServerProcess = execFile(executable);
 
-        pythonProcess.stdout.on('data', (data) => {
-            console.log(`Python stdout: ${data}`);
+        flaskServerProcess.stdout.on('data', (data) => {
+            console.log(`Flask stdout: ${data}`);
         });
 
-        pythonProcess.stderr.on('data', (data) => {
-            console.error(`Python stderr: ${data}`);
+        flaskServerProcess.stderr.on('data', (data) => {
+            console.error(`Flask stderr: ${data}`);
         });
 
-        pythonProcess.on('error', (error) => {
-            console.error('Error starting Python process:', error);
+        flaskServerProcess.on('error', (error) => {
+            console.error('Error starting Flask process:', error);
         });
 
-        pythonProcess.on('close', (code) => {
-            console.log(`Python process exited with code ${code}`);
-            pythonProcess = null; // Reset the process variable after it exits
+        flaskServerProcess.on('close', (code) => {
+            console.log(`Flask process exited with code ${code}`);
+            flaskServerProcess = null; // Reset the process variable after it exits
         });
+
+        flaskPID = flaskServerProcess.pid
 
         return true;
     } catch (error) {
@@ -702,20 +725,23 @@ async function startServer() {
     }
 }
 
-function closeServer() {
-    if (pythonProcess) {
-        pythonProcess.kill();
-        console.log('Python process terminated');
-        pythonProcess = null; // Reset the process after termination
-    } else {
-        console.log('No Python process running');
-    }
+
+function killProcessTree(pid) {
+    exec(`taskkill /F /PID ${pid} /T`, (error) => {
+        if (error) {
+            console.error(`Error killing process tree: ${error}`);
+        } else {
+            console.log(`Process tree for PID ${pid} killed successfully.`);
+        }
+    });
 }
+
+
 
 // Check if server is running
 ipcMain.handle('is-server-running', async (event) => {
     try {
-        if (pythonProcess) {
+        if (flaskServerProcess) {
             return true
         }
         return false;
@@ -728,7 +754,9 @@ ipcMain.handle('is-server-running', async (event) => {
 // Start the server
 ipcMain.handle('start-server', async (event) => {
     try {
-        if (pythonProcess) {
+        console.log(flaskServerProcess)
+        if (flaskServerProcess) {
+
             console.warn('Server is already running, cannot start again.');
             return false;
         }
@@ -742,17 +770,17 @@ ipcMain.handle('start-server', async (event) => {
 
 // Stop the server
 ipcMain.handle('stop-server', async (event) => {
-    if (pythonProcess) {
+    if (flaskServerProcess) {
         try {
-            closeServer(); // Call the function properly
-            return true;
+            killProcessTree(flaskPID)
+            return true
         } catch (error) {
-            console.error('Error stopping server:', error);
-            return false;
+            console.error('Error stopping server:', error)
+            return false
         }
     } else {
-        console.warn('Server is not running, cannot stop.');
-        return false;
+        console.warn('Server is not running, cannot stop.')
+        return false
     }
 });
 

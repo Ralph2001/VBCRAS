@@ -1,4 +1,4 @@
-import { useModeStore } from '../stores/Mode'
+import { useModeStore } from '../stores/mode'
 import { useHostStore } from '../stores/Connection'
 import { AuthStore } from '../stores/Authentication'
 
@@ -105,7 +105,7 @@ const router = createRouter({
                 const mode = useModeStore()
                 const server = useServerStore()
 
-                if (mode.checkMode()) {
+                if (mode.checkMode() || localStorage.getItem('mode')) {
                     const storedMode = localStorage.getItem('mode')
 
                     if (storedMode === 'client') {
@@ -123,10 +123,20 @@ const router = createRouter({
                         }
                     }
                     else if (storedMode === 'server') {
-                        if (await server.isServerRunning() === false) {
-                            next({ name: 'Home' })
+                        const is_running = await server.isServerRunning()
+                        if (is_running) {
+                            if (authKey) {
+                                /**
+                                 * Connected and Authenticated, redirect to Welcome Page
+                                 */
+                                return { name: 'page_welcome' }
+                            }
+                            /**
+                             *  If Not Authenticated, Stay in this Path
+                             */
+                            return true
                         }
-                        return true
+                        return { name: 'Home' }
                     } else {
                         return { name: 'Home' }
                     }
@@ -135,10 +145,10 @@ const router = createRouter({
                      *  Not Connected, redirect to home
                      */
                 }
-                /**
-                 *  No Mode Selected, redirect to home
-                 */
-                return { name: 'Home' }
+                else {
+                    return { name: 'Home' }
+                }
+
             },
         },
         {

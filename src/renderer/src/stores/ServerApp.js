@@ -4,40 +4,59 @@ import { useRouter } from 'vue-router'
 
 export const useServerStore = defineStore('server', {
     state: () => ({
-        server: localStorage.getItem('server'),
-        auto: localStorage.getItem('auto'),
     }),
     actions: {
         async isServerRunning() {
-            const isit_running = await window.LocalCivilApi.IsServerRunning()
-            console.log(isit_running)
-            if (isit_running) {
-                return true
+            try {
+                const isit_running = await window.LocalCivilApi.IsServerRunning()
+                if (isit_running) {
+                    return true
+                }
+                return false
+            } catch (error) {
+                return false
             }
-            return false
-
         },
 
         async start_server() {
-            if (await this.isServerRunning()) {
-                localStorage.setItem('host', '127.0.0.1')
-                localStorage.setItem('mode', 'server')
+            try {
+                if (await this.isServerRunning()) {
+                    localStorage.setItem('host', '127.0.0.1')
+                    localStorage.setItem('mode', 'server')
+                    return true
+                }
+                else {
+                    const start = await window.LocalCivilApi.StartServer()
 
-                return true
-            }
-            const start = await window.LocalCivilApi.StartServer()
+                    if (start.success) {
+                        localStorage.setItem('host', '127.0.0.1')
+                        localStorage.setItem('mode', 'server')
+                        this.router.push('/login')
 
-            if (start.success) {
-                localStorage.setItem('host', '127.0.0.1')
-                localStorage.setItem('mode', 'server')
-                return true
+
+                        return true
+                    }
+                    return false
+                }
+            } catch (error) {
+                return false
             }
-            return false
         },
 
         async close_server() {
-            const close = await await window.LocalCivilApi.StopServer()
-            return close
+            try {
+                const close = await await window.LocalCivilApi.StopServer()
+                if (close) {
+                    localStorage.removeItem('host')
+                    localStorage.removeItem('mode')
+                    this.router.push('/')
+                    return true
+                }
+                return false
+            } catch (error) {
+                console.log(error)
+                return false
+            }
         }
 
 

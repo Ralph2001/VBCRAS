@@ -13,7 +13,7 @@
 
             <div class="h-full flex  w-full flex-col gap-2   px-20">
                 <Input skipnext :error="v$.username.$error" v-model="formData.username" label="Username" />
-                <Input skipnext :error="v$.username.$error" v-model="formData.password" label="Password" type="password" 
+                <Input skipnext :error="v$.username.$error" v-model="formData.password" label="Password" type="password"
                     @keydown.enter="login()" />
 
                 <div class="w-full flex flex-col gap2">
@@ -28,13 +28,10 @@
                 </div>
 
             </div>
-        </div>
-        <KillSwitch title="Disconnect" @click="disconnect()">
-            <template #icon>
-                <font-awesome-icon icon="fa-solid fa-power-off" />
-            </template>
-        </KillSwitch>
 
+            <KillSwitch />
+
+        </div>
     </div>
 </template>
 
@@ -45,9 +42,8 @@ import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { AuthStore } from '../stores/Authentication'
 import Input from "../components/essentials/inputs/Input.vue";
+import KillSwitch from "../components/client/KillSwitch.vue";
 
-const con = useHostStore();
-const router = useRouter();
 const loader = ref(false)
 
 const auth = AuthStore()
@@ -55,13 +51,7 @@ onMounted(() => {
     auth.error = null
 })
 
-import { useHostStore } from '../stores/Connection'
-import InputField from "../components/client/InputField.vue";
-import KillSwitch from "../components/client/KillSwitch.vue";
 
-const disconnect = () => {
-    con.removeConnection()
-}
 
 
 const formData = reactive({

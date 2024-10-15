@@ -66,7 +66,7 @@
 <script setup>
 import Wave from '../components/Wave.vue';
 import ButtonMode from '../components/mode/ButtonMode.vue';
-import { useModeStore } from '../stores/Mode'
+import { useModeStore } from '../stores/mode'
 import { computed, onMounted, reactive, ref } from 'vue';
 import ConnectModal from '../components/ConnectModal.vue';
 import { useVuelidate } from "@vuelidate/core";
@@ -137,8 +137,6 @@ const createOwnServer = async () => {
         return
     }
 
-    router.push('login')
-    console.log(router.push('login'))
 }
 
 

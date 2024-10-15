@@ -1,6 +1,6 @@
 import { AuthStore } from "../stores/Authentication";
 import { useHostStore } from "../stores/Connection";
-import { useModeStore } from "../stores/Mode";
+import { useModeStore } from "../stores/mode";
 import { useSetup } from "../stores/Setting/setup";
 
 
