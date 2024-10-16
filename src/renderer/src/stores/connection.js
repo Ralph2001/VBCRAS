@@ -10,9 +10,10 @@ export const useHostStore = defineStore('host', {
     }),
     actions: {
         async isConnected() {
-            if (!this.host) {
-                console.log('No Host Waah, He needs some milk')
-                return false
+            console.log(this.host)
+            if (!this.host || !localStorage.getItem('host')) {
+                console.log('No Host Waah, He needs some milk');
+                return false;
             }
             try {
                 const hostAdd = localStorage.getItem('host')

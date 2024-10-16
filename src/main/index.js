@@ -255,10 +255,12 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
     // Not Needed
 });
 
-// Execute external command helper
+
+
+// Helper; uses convert.exe
 function executeCommand(excutable, originalDirectory, outputDirectory, args) {
     return new Promise((resolve, reject) => {
-        const flaskServerProcess = spawn(excutable, [
+        const converProcess = spawn(excutable, [
             originalDirectory,
             outputDirectory,
             args
@@ -266,20 +268,24 @@ function executeCommand(excutable, originalDirectory, outputDirectory, args) {
         let output = '';
         let error = '';
 
-        flaskServerProcess.stdout.on('data', (data) => {
+        converProcess.stdout.on('data', (data) => {
             output += data.toString();
         });
 
-        flaskServerProcess.stderr.on('data', (data) => {
+        converProcess.stderr.on('data', (data) => {
             error += data.toString();
         });
 
-        flaskServerProcess.on('close', (code) => {
+        converProcess.on('close', (code) => {
             if (code === 0) {
                 resolve(output);
             } else {
                 reject(new Error(`Process failed with code ${code}: ${error}`));
             }
+        });
+
+        converProcess.on('error', (err) => {
+            reject(new Error(`Failed to start process: ${err.message}`));
         });
     });
 };
@@ -294,12 +300,9 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
 
-
         const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
 
-        /**
-         *  Name of Folder
-         */
+        // Name of Folder
         const petition_number = data.petition_number
         const originalDirectory = data.orignal_path
         const petitionType = data.petition_type + ' ' + data.event_type;
@@ -309,40 +312,28 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         const date_filed = data.date_filed
         const year = new Date(date_filed).getFullYear().toString();
 
-        /**
-         * Where to Save;
-         * Output Directory
-         */
+        // Output Directory
         const outputDirectory = join(data.path_where_to_save, `Petitions`, prepared_by, republicAct, petitionType, year, petition_number + ' - ' + documentOwner);
 
         if (!fs.existsSync(outputDirectory)) {
             fs.mkdirSync(outputDirectory, { recursive: true })
         }
 
-
         const deleteOriginal = 'true';
 
-        /**
-         * Convert Function
-         */
-
-        const conversionResult = await executeCommand(excutable,
-            originalDirectory,
-            outputDirectory,
-            deleteOriginal);
+        // Convert Function
+        const conversionResult = await executeCommand(excutable, originalDirectory, outputDirectory, deleteOriginal);
 
         if (conversionResult) {
             return { status: true, filepath: outputDirectory };
         } else {
             return { status: false, filepath: null };
         }
-
     } catch (error) {
         console.error('Error during file conversion:', error);
         return { status: false, filepath: null };
     }
 });
-
 
 
 

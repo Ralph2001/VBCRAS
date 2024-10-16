@@ -46,7 +46,8 @@
                 class="absolute flex  flex-col gap-2 top-10 right-4 items-center justify-center border shadow-md  rounded bg-white h-[10rem] w-[20rem]">
                 <button @click="createOwnServer()" class="rounded-full border w-20 h-20 text-xs font-mono bg-white
                     font-bold shadow-sm
-                     border-[#1cbfff] hover:bg-blue-500 hover:text-white active:scale-95 transition-all">Start</button>
+                     border-[#1cbfff] hover:bg-blue-500 hover:text-white active:scale-95 transition-all">{{ server_stat
+                    }}</button>
                 <p class="font-mono font-medium mt-3">Start your own local server.</p>
             </div>
         </Transition>
@@ -90,6 +91,7 @@ const is_connecting = ref(false)
 const more_option = ref(false)
 const connect_modal = ref(false)
 const start_server_ref = ref(null)
+const server_stat = ref('Start')
 
 onClickOutside(start_server_ref, event => more_option.value = false)
 
@@ -132,8 +134,10 @@ const connect_host = async () => {
 }
 
 const createOwnServer = async () => {
+    server_stat.value = 'Starting'
     const start = await server.start_server()
     if (!start) {
+        server_stat.value = 'Start'
         return
     }
 

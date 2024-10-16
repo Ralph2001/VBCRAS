@@ -22,7 +22,7 @@ export function complete_province(country) {
         .map(province =>
             province.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2, p3) => {
                 const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
+                return `${capitalizeWords(p1)}${p2 ? ` ${capitalizeWords(p2)}` : ''}`;
             })
         );
 }
@@ -54,7 +54,7 @@ export function complete_municipality(province) {
         .map(municipality =>
             municipality.replace(/([A-Za-z]+)(?:\s*|\s*\(\s*)([A-Za-z\s]*)(\))?/g, (match, p1, p2) => {
                 const capitalizeWords = (str) => str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-                return `${capitalizeWords(p1)}${p2 ? ` (${capitalizeWords(p2)})` : ''}`;
+                return `${capitalizeWords(p1)}${p2 ? ` ${capitalizeWords(p2)}` : ''}`;
             })
         );
 }

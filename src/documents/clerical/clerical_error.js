@@ -131,6 +131,10 @@ async function generate(formData) {
     }
 }
 
+
+/**
+ * For Temporary files
+ */
 function generateRandomString() {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     const numbers = '0123456789'

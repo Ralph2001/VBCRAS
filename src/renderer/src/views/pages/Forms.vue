@@ -26,8 +26,8 @@
             <div class="flex flex-col w-full items-center   h-max bg-gray-100 py-2  gap-4 relative font-medium"
                 v-if="!isPreview">
 
-                <div ref="scalableDiv" :style="scalableDivStyle"
-                    class="h-full w-[65rem] flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg ">
+                <div ref="scalableDiv" :style="[scalableDivStyle, paperStyle]"
+                    class="flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg ">
 
                     <div
                         class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
@@ -184,11 +184,10 @@
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Marriage of Parents">
                                 :
-                   
+
 
                                 <FormAutoComplete width="100%" v-model="formData.place_of_marriage_parents"
-                                :error="v$.place_of_marriage_parents.$error" 
-                                    :suggestion_data="all_" :wait="true" />
+                                    :error="v$.place_of_marriage_parents.$error" :suggestion_data="all_" :wait="true" />
                                 <!-- 
                                 <AutoCompleteAddress width="100%" v-model="formData.place_of_marriage_parents"
                                     :error="v$.place_of_marriage_parents.$error" nolabel /> -->
@@ -543,12 +542,42 @@ const municipality_province = computed(() => {
 
 // Get scale from cookie if available on mounted
 onMounted(() => {
+    calculatePPI();
     const savedScale = Cookies.get('scale');
     if (savedScale) {
         scale.value = parseFloat(savedScale); // Parse the cookie value as a number
     }
     window.addEventListener('wheel', handleWheel, { passive: false });
 });
+
+
+const ppi = ref(0);
+
+const calculatePPI = () => {
+    const screenWidthPx = window.screen.width;
+    const screenHeightPx = window.screen.height;
+
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+    const dpi = isPortrait ? 96 : 113;
+
+    const widthInches = screenWidthPx / dpi;
+    const heightInches = screenHeightPx / dpi;
+
+    const ppiValue = Math.sqrt((screenWidthPx ** 2) + (screenHeightPx ** 2)) / Math.sqrt((widthInches ** 2) + (heightInches ** 2));
+    ppi.value = Math.round(ppiValue);
+};
+
+const paperDimensions = computed(() => ({
+    width: 8.5 * ppi.value,
+    height: 13 * ppi.value,
+}));
+
+const paperStyle = computed(() => ({
+    height: `${paperDimensions.value.height}px`,
+    width: `${paperDimensions.value.width}px`,
+}));
+
+
 
 onBeforeUnmount(() => {
     window.removeEventListener('wheel', handleWheel);

@@ -19,8 +19,8 @@
 
             <div
                 class="flex flex-col  sm:px-2 md:lg:px-40 h-max bg-gray-100 py-2 gap-4 w-full items-center justify-center relative font-medium">
-                <div
-                    class="h-full w-[65rem] flex flex-col py-16 ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg">
+                <div :style="paperStyle"
+                    class=" flex flex-col py-16 ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg">
                     <div
                         class="fixed flex flex-row items-center p-3 shadow-sm z-50 bg-white gap-2 top-[2.6rem] left-0 border-b border-e">
                         <input type="checkbox" id="assertation" class="border rounded border-gray-400"
@@ -33,7 +33,8 @@
                         <PDFViewer :pdf="previewUrl" @cancel-btn="previewUrl = ''" @save-print="submit"
                             :status="document_status" @exit-btn="close_ausf()" />
                     </div>
-                    <div class="flex flex-col h-full w-full scale-95 relative" v-if="!previewUrl">
+                    <div class="flex flex-col h-full w-full  relative" v-if="!previewUrl">
+
                         <div class="grid grid-cols-2 w-full">
                             <div class="flex p-4"></div>
                             <div class="flex flex-col gap-1">
@@ -413,7 +414,37 @@ const auth = AuthStore();
 onMounted(() => {
     aufs_.getAUSF();
     auth.isAuthenticated();
+    calculatePPI();
 });
+
+const ppi = ref(0);
+
+const calculatePPI = () => {
+    const screenWidthPx = window.screen.width;
+    const screenHeightPx = window.screen.height;
+
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+    const dpi = isPortrait ? 96 : 113;
+
+    const widthInches = screenWidthPx / dpi;
+    const heightInches = screenHeightPx / dpi;
+
+    const ppiValue = Math.sqrt((screenWidthPx ** 2) + (screenHeightPx ** 2)) / Math.sqrt((widthInches ** 2) + (heightInches ** 2));
+    ppi.value = Math.round(ppiValue);
+};
+
+const paperDimensions = computed(() => ({
+    width: 8.5 * ppi.value, // 8.5 inches in pixels
+    height: 13 * ppi.value, // 14 inches in pixels
+}));
+
+const paperStyle = computed(() => ({
+    height: `${paperDimensions.value.height}px`,
+    width: `${paperDimensions.value.width}px`,
+}));
+
+
+
 
 const previewUrl = ref(); //PDF Base64
 const printValue = ref();

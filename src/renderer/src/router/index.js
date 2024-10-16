@@ -102,54 +102,20 @@ const router = createRouter({
                 const auth = AuthStore()
                 const connection = useHostStore()
                 const authKey = await auth.isAuthenticated()
-                const mode = useModeStore()
-                const server = useServerStore()
 
-                if (mode.checkMode() || localStorage.getItem('mode')) {
-                    const storedMode = localStorage.getItem('mode')
+                const is_connected = await connection.isConnected()
 
-                    if (storedMode === 'client') {
-                        if (await connection.isConnected()) {
-                            if (authKey) {
-                                /**
-                                 * Connected and Authenticated, redirect to Welcome Page
-                                 */
-                                return { name: 'page_welcome' }
-                            }
-                            /**
-                             *  If Not Authenticated, Stay in this Path
-                             */
-                            return true
-                        }
-                    }
-                    else if (storedMode === 'server') {
-                        const is_running = await server.isServerRunning()
-                        if (is_running) {
-                            if (authKey) {
-                                /**
-                                 * Connected and Authenticated, redirect to Welcome Page
-                                 */
-                                return { name: 'page_welcome' }
-                            }
-                            /**
-                             *  If Not Authenticated, Stay in this Path
-                             */
-                            return true
-                        }
-                        return { name: 'Home' }
-                    } else {
-                        return { name: 'Home' }
+                if (is_connected) {
+                    if (authKey) {
+
+                        return { name: 'page_welcome' }
                     }
 
-                    /**
-                     *  Not Connected, redirect to home
-                     */
+                    return true
                 }
-                else {
-                    return { name: 'Home' }
-                }
+                console.log(is_connected)
+            }
 
-            },
         },
         {
             path: '/signup',
@@ -204,9 +170,9 @@ const router = createRouter({
                         }
                         return true
                     }
-                    return { name: 'client' }
+                    return { name: 'login' }
                 }
-                return { name: 'client' }
+                return { name: 'Home' }
             },
         },
         {

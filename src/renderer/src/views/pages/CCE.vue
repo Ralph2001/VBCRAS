@@ -203,24 +203,31 @@
             <div class="basis-[60%] grow">
               <Box title="Document Owner & Relationship to the Owner" width="w-full">
                 <div class=" grid grid-cols-1 w-full gap-2">
-                  <div class="w-full">
-                    <Input :error="v$.document_owner.$error" :label="formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my'
-                      ? 'Complete Name of Spouse'
-                      : 'Document Owner'
-                      " v-model="formData.document_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
-                        ? true
-                        : false || formData.petitioner_error_in === ''
-                        " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
-                          ? true
-                          : false || formData.petitioner_error_in === ''
-                          " @input="formData.document_owner = $event.target.value.toUpperCase()" />
+                  <div class="w-full flex flex-col gap-2">
+                    <p v-if="formData.petitioner_error_in === 'my'" class="text-xs text-gray-700">Note: If the name of
+                      the
+                      petitioner differs from the name on the birth certificate, please provide the name of the original
+                      document owner. </p>
+                    <div v-if="formData.petitioner_error_in === 'my'" class="flex flex-row gap-2 items-center">
+                      <CheckBox v-model="is_same_as_petitioner_name" @change="changes_document_owner" />
+                      <p class="text-xs font-medium">Same as Petitioner Name</p>
+                    </div>
+                    <Input v-if="formData.petitioner_error_in" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                      && is_same_as_petitioner_name ? true
+                      : false || formData.petitioner_error_in === ''
+                      " :error="v$.document_owner.$error" :label="formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my'
+                        ? 'Complete Name of Spouse'
+                        : 'Document Owner'
+                        " v-model="formData.document_owner"
+                      @input="formData.document_owner = $event.target.value.toUpperCase()" />
                   </div>
                   <div v-if="
                     formData.event_type === 'Birth' ||
                     formData.event_type === 'Death' ||
                     (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
                   ">
-                    <InputAutoComplete :error="v$.relation_owner.$error" @change_value="generate_fact_reason_text()"
+                    <InputAutoComplete v-if="formData.petitioner_error_in === 'the'" :error="v$.relation_owner.$error"
+                      @change_value="generate_fact_reason_text()"
                       :suggestion_data="petitions.relation_to_document_owner" label="Relation"
                       v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                         ? true
@@ -782,7 +789,6 @@ const municipality = computed(() => {
 
 const all_ = ref(all_address())
 
-
 /**
  * 
  * System Default Settings
@@ -804,8 +810,16 @@ onMounted(async () => {
 
 });
 
+const is_same_as_petitioner_name = ref(true)
+const changes_document_owner = () => {
 
-
+  if (is_same_as_petitioner_name.value === false) {
+    formData.document_owner = ''
+  }
+  else {
+    formData.document_owner = 'N/A'
+  }
+}
 // Validating Stage
 const is_validating = ref(false)
 const is_creating = ref(false)
