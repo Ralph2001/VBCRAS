@@ -2,9 +2,9 @@
     <div class="relative">
         <label v-if="!nolabel" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
         </label>
-        <input @keydown.up="focusPreviousInput" @keydown.enter="focusNextInput" @keydown.down="focusNextInput"
-            @input="typing_input" :type="type" :id="label" :value="modelValue" :tabindex="skip ? '-1' : ''"
-            :readonly="readonly" :class="{
+        <input ref="suggestion_input_field" @keydown.up="focusPreviousInput" @keydown.enter="focusNextInput"
+            @keydown.down="focusNextInput" @input="typing_input" :type="type" :id="label" :value="modelValue"
+            :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
                 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
                 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
                 'text-center': center
@@ -13,7 +13,7 @@
 
         <div v-if="suggestions_ && result.length > 0" ref="suggestion_box"
             class="absolute w-full z-[9999999999] bg-white    max-h-40 overflow-y-scroll scroll-m-0 flex flex-col border shadow-md">
-            <button :tabindex="suggestions_ ? '0' : '-1'" @keydown.down="focusNextInput"
+            <button @keydown="typing_input_button" :tabindex="suggestions_ ? '0' : '-1'" @keydown.down="focusNextInput"
                 @keydown.enter="selectSuggestion(value, index, $event)" @keydown.up="focusPreviousInput"
                 v-for="(value, index) in result" :key="value + '_unique'" @click="i_choose_this(value, index, $event)"
                 class="w-full flex items-center hover:bg-gray-200  h-8 text-sm py-1 justify-start px-2 font-medium outline-none focus:bg-green-200">{{
@@ -25,13 +25,15 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { onClickOutside, useDebounceFn } from '@vueuse/core'
 
 
 // Example Array of Data
 // import countryList from '../utils/country.js';
 // const countries = countryList
+
+const suggestion_input_field = ref(null)
 
 const emit = defineEmits(['update:modelValue', 'change_value'])
 const props = defineProps({
@@ -95,6 +97,13 @@ const result = ref()
 //Hide Suggestion Box when click outside
 onClickOutside(suggestion_box, event => suggestions_.value = false)
 
+const typing_input_button = (e) => {
+    if (e.code === 'Tab' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+        return
+    }
+    suggestion_input_field.value.focus()
+}
+
 const typing_input = (e) => {
     const splitted = e.target.value.split(' ')
 
@@ -109,7 +118,6 @@ const typing_input = (e) => {
         // Join the words back together into a string
         main_value = splitted.join(' ')
     }
-
 
     emit('update:modelValue', main_value)
     generate_suggestions(main_value)
@@ -205,7 +213,9 @@ function generate_suggestions(e) {
             suggestion_item.toLowerCase().includes(input)
         );
 
-        suggestions_.value = result.value.length > 0; // Show suggestions only if there are results
+        suggestions_.value = result.value.length > 0;
+
+
     }
 }
 
@@ -224,8 +234,20 @@ const focusPreviousInput = (event) => {
     }
 }
 
+// watch(x, (newX) => {
+
+// })
+
+const how_many_downs = ref(1)
 const focusNextInput = (event) => {
-    event.preventDefault();
+    // console.log(how_many_downs.value)
+    // console.log(result.value.length)
+    // how_many_downs.value++
+
+    // event.preventDefault();
+    // if (result.value.length  how_many_downs.value) {
+    //     return
+    // }
 
     // Select only focusable elements (input, button, and elements with tabindex >= 0)
     const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))

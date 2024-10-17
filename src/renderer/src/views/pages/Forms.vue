@@ -59,10 +59,10 @@
                                 certify that among others, the following facts of {{ fact_of }} appear in our Register
                                 of {{
                                     register_of }} on page
-                                <InputforForm middle width="6rem" bold v-model="formData.page_number"
+                                <InputforForm type="number" middle width="6rem" bold v-model="formData.page_number"
                                     :error="v$.page_number.$error" />
                                 of book number
-                                <InputforForm middle width="6rem" bold v-model="formData.book_number"
+                                <InputforForm type="number" middle width="6rem" bold v-model="formData.book_number"
                                     :error="v$.book_number.$error" /> .
                             </p>
                         </div>

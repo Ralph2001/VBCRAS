@@ -65,6 +65,14 @@
                         "N/A" ?
                         petition_info.petitioner_name : petition_info.document_owner }}</p>
                 </div>
+                <div class="flex flex-row h-auto "
+                    v-if="petition_info.spouse_name !== '' && petition_info.relation_owner === 'Spouse'">
+                    <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Spouse Name</p>
+                    <p class="w-fit text-sm justify-start flex">:</p>
+                    <p class="grow font-medium px-2 text-sm justify-start flex">{{ petition_info.spouse_name ===
+                        "N/A" ?
+                        petition_info.petitioner_name : petition_info.spouse_name }}</p>
+                </div>
                 <div class="flex flex-row h-auto ">
                     <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Relation</p>
                     <p class="w-fit text-sm justify-start flex">:</p>
@@ -283,12 +291,14 @@
                                 <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
                                 <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
                                     contentType="html" />
+                                <button @click="submit()"
+                                    class="border rounded border-gray-300 font-medium text-sm hover:bg-blue-500 hover:text-white w-fit p-2 ml-auto">Change</button>
                             </div>
 
                             <p class="text-gray-800 text-sm font-medium mt-2">Adjustments</p>
                             <div class="  items-start flex flex-col flex-wrap  p-2 gap-3">
                                 <div class="flex flex-row items-center gap-3">
-                                    <input type="number" step="0.1" v-model="formData.form_scale"
+                                    <input type="number" step="0.1" v-model="formData.form_scale" @input="submit"
                                         class="w-[6rem] py-1 border-gray-200 rounded">
                                     <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                             icon="fa-solid fa-up-right-and-down-left-from-center" class="text-xs w-6" />
@@ -297,14 +307,14 @@
                                         Scale</p>
                                 </div>
                                 <div class="flex flex-row items-center gap-3">
-                                    <input type="number" step="0.1" v-model="formData.form_x"
+                                    <input type="number" step="0.1" v-model="formData.form_x" @input="submit"
                                         class="w-[6rem] py-1 border-gray-200 rounded">
                                     <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                             icon="fa-solid fa-left-right" class="text-xs w-6" /> Form 102
                                         Horizontal Position</p>
                                 </div>
                                 <div class="flex flex-row items-center gap-3">
-                                    <input type="number" step="0.1" v-model="formData.form_y"
+                                    <input type="number" step="0.1" v-model="formData.form_y" @input="submit"
                                         class="w-[6rem] py-1 border-gray-200 rounded">
                                     <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                             icon="fa-solid fa-up-down" class="text-xs w-6" /> Form 102 Vertical Position
@@ -315,7 +325,7 @@
                             <div class="block w-full border border-gray-600"></div>
                             <div class="  items-start  p-2 gap-2 flex flex-col ">
                                 <div class="flex flex-row items-center gap-3">
-                                    <input type="number" step="0.1" v-model="formData.annotation_width"
+                                    <input type="number" step="0.1" v-model="formData.annotation_width" @input="submit"
                                         class="w-[6rem] py-1 border-gray-200 rounded">
                                     <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                             icon="fa-solid fa-left-right" class="text-xs w-6" />
@@ -323,14 +333,14 @@
                                         Width</p>
                                 </div>
                                 <div class="flex flex-row items-center gap-3">
-                                    <input type="number" step="0.1" v-model="formData.annotation_x"
+                                    <input type="number" step="0.1" v-model="formData.annotation_x" @input="submit"
                                         class="w-[6rem] py-1 border-gray-200 rounded">
                                     <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                             icon="fa-solid fa-left-right" class="text-xs w-6" /> Annotation Text
                                         Horizontal Position</p>
                                 </div>
                                 <div class="flex flex-row items-center gap-3">
-                                    <input type="number" step="0.1" v-model="formData.annotation_y"
+                                    <input type="number" step="0.1" v-model="formData.annotation_y" @input="submit"
                                         class="w-[6rem] py-1 border-gray-200 rounded">
                                     <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                             icon="fa-solid fa-up-down" class="text-xs w-6" /> Annotation Text Vertical
@@ -340,7 +350,7 @@
 
                                 <div class="flex flex-row items-center gap-3">
                                     <input type="number" step="0.1" v-model="formData.annotation_font_size"
-                                        class="w-[6rem] py-1 border-gray-200 rounded">
+                                        @input="submit" class="w-[6rem] py-1 border-gray-200 rounded">
                                     <p class="text-gray-700 flex items-center"> <font-awesome-icon
                                             icon="fa-solid fa-text-height" class="text-xs w-6" /> Annotation Text Font
                                         Size
@@ -512,6 +522,7 @@ function change_annotation_width(val) {
     val === -90 ? formData.annotation_width = 900 : formData.annotation_width = 500
     val === -90 ? formData.annotation_x = 590 : formData.annotation_x = 50
     val === -90 ? formData.annotation_y = 450 : formData.annotation_y = 50
+    submit()
 }
 
 const initialFormData = {
@@ -519,7 +530,7 @@ const initialFormData = {
     //Make This Dynamic
 
     annotation:
-        `<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong> dated 03 November 2022 and affirmed by <strong>CRG under OCRG No. 22-2373313,</strong> the child&rsquo;s first name from <strong>"LODOVICO"</strong> to <strong>"LUDOVIGO"</strong> and child&rsquo;s date of birth from <strong>"MAY 17, 1967&rdquo; </strong> to <strong>"APRIL 26, 1967&rdquo; </strong> are hereby corrected.</p>`,
+        `<p>Pursuant to the decision rendered by <strong>MCR ISMAEL D. MALICDEM, JR. </strong> </p>`,
     form_scale: 0.9,
     form_x: 1.7,
     form_y: 25,
@@ -534,9 +545,6 @@ const initialFormData = {
 
 const formData = reactive({ ...initialFormData });
 
-watch(formData, (newValue, oldValue) => {
-    submit()
-})
 
 const submit = async () => {
 

@@ -28,7 +28,11 @@ class Petitions(db.Model):
     nationality = db.Column(db.String)
     petitioner_address = db.Column(db.String)
     petitioner_error_in = db.Column(db.String)
+    
     document_owner = db.Column(db.String)
+    # If event type = `Marriage`
+    spouse_name = db.Column(db.String, nullable=True)
+
     relation_owner = db.Column(db.String)
     event_date = db.Column(db.String)
     event_country = db.Column(db.String)

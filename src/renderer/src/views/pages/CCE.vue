@@ -144,9 +144,12 @@
             <Box title="Header" width="w-full">
               <div class="flex flex-col gap-2 w-full">
 
-                <Input label="Province" :error="v$.header_province.$error" v-model="formData.header_province" />
-                <Input label="City/Municipality" :error="v$.header_municipality.$error" cap
-                  v-model="formData.header_municipality" />
+                <InputAutoComplete label="Province" @change="formData.header_municipality = ''"
+                  :error="v$.header_province.$error" v-model="formData.header_province" :suggestion_data="province" />
+                <InputAutoComplete label="City/Municipality" :error="v$.header_municipality.$error" cap
+                  v-model="formData.header_municipality" :suggestion_data="municipality_of" />
+
+
 
 
               </div>
@@ -204,22 +207,31 @@
               <Box title="Document Owner & Relationship to the Owner" width="w-full">
                 <div class=" grid grid-cols-1 w-full gap-2">
                   <div class="w-full flex flex-col gap-2">
-                    <p v-if="formData.petitioner_error_in === 'my'" class="text-xs text-gray-700">Note: If the name of
+                    <p v-if="formData.petitioner_error_in === 'my'" class="text-xs text-gray-700"><span
+                        class="font-medium">Note:</span> If the petitioner's
+                      name
+                      differs from the one on the birth certificate, please provide the name exactly as it appears on
                       the
-                      petitioner differs from the name on the birth certificate, please provide the name of the original
-                      document owner. </p>
+                      birth certificate in this field. If the names match, leave the box checked. </p>
                     <div v-if="formData.petitioner_error_in === 'my'" class="flex flex-row gap-2 items-center">
                       <CheckBox v-model="is_same_as_petitioner_name" @change="changes_document_owner" />
                       <p class="text-xs font-medium">Same as Petitioner Name</p>
                     </div>
+
                     <Input v-if="formData.petitioner_error_in" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                       && is_same_as_petitioner_name ? true
                       : false || formData.petitioner_error_in === ''
-                      " :error="v$.document_owner.$error" :label="formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my'
-                        ? 'Complete Name of Spouse'
-                        : 'Document Owner'
-                        " v-model="formData.document_owner"
+                      " :error="v$.document_owner.$error" label="Document Owner" v-model="formData.document_owner"
                       @input="formData.document_owner = $event.target.value.toUpperCase()" />
+                      <p v-else class="text-sm italic text-gray-700">Please choose an option. </p>
+
+                    <!-- If Marriage -->
+                    <Input v-if="formData.petitioner_error_in === 'my' && formData.event_type === 'Marriage'"
+                      label="Spouse Name" v-model="formData.spouse_name" :error="v$.spouse_name.$error"
+                      @input="formData.spouse_name = $event.target.value.toUpperCase()" />
+
+                    
+
                   </div>
                   <div v-if="
                     formData.event_type === 'Birth' ||
@@ -758,7 +770,7 @@ import PDFViewerCCE from "../../components/PDFViewerCCE.vue";
 import Wave from "../../components/Wave.vue";
 
 
-import { all_address, complete_municipality, complete_province } from '../../utils/Address/index.js'
+import { all_address, complete_municipality, complete_municipality_with_province_with_words, complete_province } from '../../utils/Address/index.js'
 
 import { useVuelidate } from "@vuelidate/core";
 import { helpers, required, requiredIf } from "@vuelidate/validators";
@@ -766,6 +778,7 @@ import PetitionNumberRenderer from "../../components/PetitionNumberRenderer.vue"
 
 import { AuthStore } from "../../stores/Authentication.js";
 import Selector from "../../components/Selector.vue";
+
 
 
 const tutorial = ref(false)
@@ -782,6 +795,10 @@ const auth = AuthStore()
  */
 
 const province = ref(complete_province())
+const municipality_of = computed(() => {
+  return complete_municipality_with_province_with_words(formData.header_province)
+})
+
 
 const municipality = computed(() => {
   return complete_municipality(formData.event_province)
@@ -1254,7 +1271,7 @@ function change_migrant() {
 
     formData.action_taken_date = ''
     formData.header_province = ''
-    formData.header_municipality = 'MUNICIPALITY OF '
+    formData.header_municipality = ''
 
     return
   }
@@ -1327,7 +1344,13 @@ const initialForm = {
   nationality: 'Filipino',
   petitioner_address: '', // Testing 
   petitioner_error_in: '',
+
   document_owner: '',
+  // For Marriage Only
+  spouse_name: '',
+
+
+
   relation_owner: '',
   event_date: '',// Testing 
   event_country: 'Philippines',
@@ -1436,7 +1459,15 @@ const rules = computed(() => {
     nationality: { required },
     petitioner_address: { required },
     petitioner_error_in: { required },
+
+
     document_owner: { required },
+    spouse_name: {
+      requiredIf: requiredIf(() =>
+        formData.petitioner_error_in === 'my' && formData.event_type === 'Marriage'
+      )
+    },
+
     relation_owner: { required },
     event_date: { required },
     event_country: { required },
@@ -1583,7 +1614,11 @@ const submitForm = async () => {
     nationality: formData.nationality,
     petitioner_address: formData.petitioner_address,
     petitioner_error_in: formData.petitioner_error_in,
+
     document_owner: formData.document_owner,
+    // If marriage
+    spouse_name: formData.spouse_name,
+
     relation_owner: formData.relation_owner,
     event_date: formData.event_date,
     event_country: formData.event_country,
@@ -1725,7 +1760,11 @@ const create_validated_document = async () => {
     nationality: formData.nationality,
     petitioner_address: formData.petitioner_address,
     petitioner_error_in: formData.petitioner_error_in,
+
     document_owner: formData.document_owner,
+    // If marriage
+    spouse_name: formData.spouse_name,
+
     relation_owner: formData.relation_owner,
     event_date: formData.event_date,
     event_country: formData.event_country,

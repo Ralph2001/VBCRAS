@@ -110,7 +110,7 @@ async function generate(formData) {
         ])
 
         // const data = formData
-      
+
         const data = JSON.parse(formData)
 
         // PASS THE DATA TO THE FUNCTIONS
@@ -274,16 +274,22 @@ async function petition(data) {
 
     const spouse_name =
         data.petitioner_error_in === 'my' && data.event_type === 'Marriage'
-            ? data.document_owner
+            ? data.spouse_name
             : 'N/A'
+
+
+    // Parang may mali dito
     const document_owner =
-        data.petitioner_error_in === 'my' && data.event_type === 'Marriage'
-            ? 'N/A'
-            : data.document_owner
+        data.petitioner_error_in === 'my' ? 'N/A' : data.document_owner
+
+
     const relation_owner =
         data.petitioner_error_in === 'my' && data.event_type === 'Marriage'
             ? 'N/A'
             : data.relation_owner
+
+
+
 
     const error_in_my = data.petitioner_error_in === 'my' ? true : false
     const error_in_the = data.petitioner_error_in === 'the' ? true : false
@@ -425,6 +431,8 @@ async function record_sheet(data) {
         data.document_owner === 'N/A' || data.document_owner === ''
             ? data.petitioner_name
             : data.document_owner
+
+
     const type_of_document =
         data.event_type === 'Birth'
             ? 'Certificate of Live Birth'
