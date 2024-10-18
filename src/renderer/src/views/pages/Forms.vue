@@ -391,7 +391,7 @@
 
 
                         <!-- As Remarks  v-if="formData.form_type.includes('A')"-->
-                        <div class="h-[15rem]"></div>
+                        <div class="h-[8rem]"></div>
                         <!-- <button @click="formData.isWithRemarks = true" v-if="!formData.isWithRemarks"
                             class="text-xs mt-5 border px-2.5 py-1.5 bg-white self-start ml-20  font-mono hover:bg-gray-100 shadow-sm">ADD
                             REMARKS</button> -->
@@ -417,7 +417,15 @@
                     </div>
 
                     <div
-                        class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-10     relative text-nowrap gap-2  px-2">
+                        class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-10     relative text-nowrap gap-2  px-2   ">
+                        <div class="absolute -right-[15rem]">
+                            <button class="text-xs text-blue-500 border rounded-sm p-2 hover:bg-white">
+                                <p>
+                                    ADD <span class="italic">"For and in the
+                                        absence:"</span>
+                                </p>
+                            </button>
+                        </div>
                         <div class="flex flex-col items-start sm:gap-2 md:lg:gap-10">
                             <p class="italic">Verified by:</p>
                             <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
@@ -429,13 +437,22 @@
                             </div>
                         </div>
                         <div class="flex flex-col items-center">
+                            <p class="italic font-medium text-sm">For and in the absence of:</p>
                             <InputforForm skip middle width="20rem" bold v-model="formData.mcr"
                                 @input="formData.mcr = $event.target.value.toUpperCase()" :error="v$.mcr.$error" />
                             <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
+
+                            <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
+                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
+                                    :error="v$.verified_by.$error"
+                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
+                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
+                                    v-model="formData.position" :error="v$.position.$error" />
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex  flex-col px-2 gap-2 w-[25rem] mt-5">
+                    <div class="flex  flex-col px-2 gap-2 w-[25rem] mt-auto">
                         <InputLabel label="Amount Paid">
                             <InputforForm width="100%" v-model="formData.amount_paid" />
                             <!-- <InputforForm width="100%" v-model="formData.amount_paid" /> -->

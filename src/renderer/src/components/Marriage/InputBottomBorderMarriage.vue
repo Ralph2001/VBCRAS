@@ -12,9 +12,10 @@ input[type="number"]::-webkit-outer-spin-button {
         <label for="" class="text-[10px] font-medium  text-zinc-800" v-if="label && top_label">({{ props.label
             }})</label>
         <input :disabled="disabled" :type="type" :tabindex="skip ? -1 : 1" :id="label" @input="emitValue"
-            :value="modelValue" :class="[props.error ? 'bg-red-100' : props.modelValue ? 'bg-yellow-50'
-                : ' bg-blue-50', middle ? 'text-center ' : 'text-start'], $attrs['text-position']"
-            class="border-t-0 border-l-0 w-full disabled:bg-blue-50 disabled:cursor-not-allowed text-xs  border-e-0 border-b-0  py-0  font-bold tracking-wide   border-gray-400 outline-none focus:ring-0 ring-0 ">
+            :value="modelValue"
+            :class="[props.error ? 'bg-red-100' : props.modelValue ? 'bg-yellow-50'
+                : ' bg-blue-50', middle ? 'text-center ' : 'text-start', page_2 ? 'text-md font-normal' : 'text-xs  font-bold'], $attrs['text-position', 'weigth']"
+            class="border-t-0 border-l-0 w-full disabled:bg-blue-50 disabled:cursor-not-allowed  border-e-0 border-b-0  py-0   tracking-wide   border-gray-400 outline-none focus:ring-0 ring-0 ">
         <label for="" class="text-xs italic text-zinc-400" v-if="label && !top_label">({{ props.label }})</label>
     </div>
 </template>
@@ -57,6 +58,10 @@ const props = defineProps({
         default: false
     },
     middle: {
+        type: Boolean,
+        default: false
+    },
+    page_2: {
         type: Boolean,
         default: false
     }
