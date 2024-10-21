@@ -36,7 +36,7 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     proceedCreatePetition: async (formData) => {
         const result = await ipcRenderer.invoke('proceedCreatePetition', formData)
 
-        return { status: result.status, filepath: result.filepath }
+        return { status: result.status, filepath: result.filepath, message: result.message }
     },
 
     CreateFinality: async (formData) => {

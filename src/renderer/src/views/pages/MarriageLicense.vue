@@ -5,6 +5,7 @@
         </Header>
 
         <div class="h-[calc(100vh-250px)] relative">
+
             Soon :)
         </div>
 
@@ -35,7 +36,7 @@
 
                 <div class="h-[calc(100vh-76px)] w-full flex p-10 overflow-y-scroll  justify-center">
                     <div :style="paperStyle" class="flex bg-gray-50 shadow-md flex-col scale-110"
-                        :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'p-20']">
+                        :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
 
                         <div v-if="page === 1" class="w-full h-full border-[3px] border-gray-700 flex flex-col">
 
@@ -707,16 +708,17 @@
                                         </p>
                                         <div class="flex flex-row gap-1 ">
                                             <div class="w-[48%] ">
-                                                <InputBottomBorderMarriage  v-model="formData.groom_ss_day" isBold />
+                                                <InputBottomBorderMarriage v-model="formData.groom_ss_day" isBold />
                                             </div>
                                             <p class="font-serif  text-nowrap text-xs italic">day of</p>
-                                            <InputBottomBorderMarriage middle v-model="formData.groom_ss_month" isBold/>
+                                            <InputBottomBorderMarriage middle v-model="formData.groom_ss_month"
+                                                isBold />
                                             <p class="font-serif  text-nowrap text-xs italic">,</p>
                                             <InputBottomBorderMarriage middle v-model="formData.groom_ss_year" />
                                             <p class="font-serif  text-nowrap text-xs italic">, at</p>
                                         </div>
                                         <div class="flex flex-row gap-1 ">
-                                            <InputBottomBorderMarriage middle v-model="formData.groom_ss_at" isBold/>
+                                            <InputBottomBorderMarriage middle v-model="formData.groom_ss_at" isBold />
                                             <p class="font-serif  text-nowrap text-xs italic">, Philippines, affiant who
                                             </p>
                                         </div>
@@ -765,13 +767,14 @@
                                                 <InputBottomBorderMarriage v-model="formData.bride_ss_day" isBold />
                                             </div>
                                             <p class="font-serif  text-nowrap text-xs italic">day of</p>
-                                            <InputBottomBorderMarriage middle v-model="formData.bride_ss_month" isBold/>
+                                            <InputBottomBorderMarriage middle v-model="formData.bride_ss_month"
+                                                isBold />
                                             <p class="font-serif  text-nowrap text-xs italic">,</p>
-                                            <InputBottomBorderMarriage middle v-model="formData.bride_ss_year"/>
+                                            <InputBottomBorderMarriage middle v-model="formData.bride_ss_year" />
                                             <p class="font-serif  text-nowrap text-xs italic">, at</p>
                                         </div>
                                         <div class="flex flex-row gap-1 ">
-                                            <InputBottomBorderMarriage middle v-model="formData.bride_ss_at" isBold/>
+                                            <InputBottomBorderMarriage middle v-model="formData.bride_ss_at" isBold />
                                             <p class="font-serif  text-nowrap text-xs italic">, Philippines, affiant who
                                             </p>
                                         </div>
@@ -804,8 +807,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div v-if="page === 2" class="w-full h-full flex flex-col">
-                            <p class="text-xs text-gray-600">Note: Mockup only.</p>
+                        <div v-if="page === 2" class="w-full h-full flex flex-col relative ">
+                            <p class="text-xs text-gray-600 ">Note: Mockup only.</p>
                             <!-- <div class="justify-center flex  items-center flex-col">
                                 <p class="text-sm font-sans">Republic of the Philippines</p>
                                 <p class="text-sm font-sans">Province of Pangasinan</p>
@@ -815,7 +818,7 @@
                             <p class="text-sm">Municipal Form No. 94 (Form 9)</p> -->
 
 
-                            <div class="justify-center flex  items-center flex-col gap-1 mt-10 mb-10">
+                            <div class="justify-center flex  items-center flex-col gap-1 mb-10">
                                 <p class="font-bold text-4xl font-sans tracking-widest">NOTICE</p>
                                 <p class="font-bold text-2xl mt-5 font-sans">APPLICANTS FOR MARRIAGE LICENSE</p>
                                 <div class="w-[50%] mt-2">
@@ -830,7 +833,11 @@
                             </div>
 
                             <div class="justify-center flex  items-center flex-row gap-10 mb-4">
-                                <div class="basis-[30%] h-[10rem] w-[10rem] bg-gray-200 "></div>
+                                <div class="basis-[30%] h-auto  ">
+                                    <Camera @capture="handle_groom_image" v-if="!groom_picture" />
+                                    <img :src="groom_picture" alt="Captured photo" v-if="groom_picture" />
+
+                                </div>
                                 <div class="flex flex-col grow gap-2">
                                     <div class="flex flex-row w-full">
                                         <div class="flex flex-row grow items-center ">
@@ -870,7 +877,9 @@
                             <div class="justify-center flex  items-center flex-row gap-10 mt-5">
 
 
-                                <div class="basis-[30%] h-[10rem] w-[10rem] bg-gray-200 "></div>
+                                <div class="basis-[30%]  h-auto  ">
+                                    <Camera />
+                                </div>
                                 <div class="flex flex-col grow gap-2 relative">
                                     <p class="font-bold absolute -top-8 left-24">WISHES TO CONTRACT MARRIAGE WITH</p>
                                     <div class="flex flex-row w-full">
@@ -921,9 +930,11 @@
 
                                 <div class="flex flex-col">
                                     <p class="font-bold italic">Copy Furnished:</p>
-                                    <div class="w-[10rem]">
+                                    <div class="w-[20rem] flex flex-col gap-1">
                                         <InputBottomBorderMarriage page_2
                                             v-model="formData.marriage_notice_copy_furnished" />
+                                        <InputBottomBorderMarriage page_2 />
+                                        <InputBottomBorderMarriage page_2 />
                                     </div>
                                 </div>
                                 <div class="flex flex-col items-center">
@@ -960,6 +971,7 @@ import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
 import InputBottomBorderMarriage from '../../components/Marriage/InputBottomBorderMarriage.vue';
 import { format } from 'date-fns';
+import Camera from '../../components/Camera.vue';
 
 
 const page = ref(1)
@@ -1153,7 +1165,7 @@ const updateNotices = () => {
 
     formData.groom_father_last_name = formData.groom_last_name ? formData.groom_last_name : ''
     formData.groom_mother_last_name = formData.groom_middle_name ? formData.groom_middle_name : ''
-    formData.groom_signature = formData.groom_first_name + ' ' + formData.groom_middle_name + ' ' + formData.groom_last_name;
+
 
     formData.groom_contract_marriage_with = formData.bride_first_name || formData.bride_last_name ? formData.bride_first_name + ' ' + formData.bride_middle_name + ' ' + formData.bride_last_name : '';
     formData.bride_contract_marriage_with = formData.groom_first_name || formData.groom_last_name ? formData.groom_first_name + ' ' + formData.groom_middle_name + ' ' + formData.groom_last_name : '';
@@ -1185,7 +1197,7 @@ const updateNotices = () => {
 
     formData.bride_father_last_name = formData.bride_last_name ? formData.bride_last_name : ''
     formData.bride_mother_last_name = formData.bride_middle_name ? formData.bride_middle_name : ''
-    formData.bride_signature = formData.bride_first_name + ' ' + formData.bride_middle_name + ' ' + formData.bride_last_name;
+
 
 
     const brideInitialMiddleName = formData.bride_middle_name ? formData.bride_middle_name.charAt(0) : '';
@@ -1229,9 +1241,21 @@ const handleInputChange = () => {
     updateNotices();
 };
 
-
+const groom_picture = ref(null)
+const handle_groom_image = (capturedImage) => {
+    groom_picture.value = capturedImage
+}
 
 
 
 // And similarly for bride's input fields...
 </script>
+
+<style scoped>
+
+img {
+    transform: scaleX(-1);
+
+}
+
+</style>

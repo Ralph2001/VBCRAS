@@ -4,45 +4,9 @@
       <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
     </Header>
 
-    <div v-if="tutorial"
-      class="fixed top-0 bottom-0 left-0 h-full z-50 right-0 backdrop-blur-sm flex items-center justify-center backdrop-brightness-75">
-      <div class="w-[80%] h-[80%] bg-white flex flex-col shadow-sm border border-gray-200 p-4 rounded">
-        <p class="font-semibold text-lg">Welcome</p>
-        <p class="font-medium text-sm indent-8">How to Use the App</p>
-        <div class="flex flex-col w-full h-full px-10 py-4">
-          <ul class="list-none">
-            <li class="text-sm">To get started, click the "Create" button to open the document maker, where you can
-              choose the type of document you want to create.</li>
-            <li class="text-sm">In the Document Selector section, you can specify whether the individual is a migrant or
-              not.</li>
-            <li class="text-sm">If you select "Migrant," you can also edit the document header accordingly.</li>
-            <li class="text-sm">Next, input all relevant client details based on the specific type of petition.</li>
-            <li class="text-sm">To add fields for clerical errors and supporting documents, press Ctrl + Space instead
-              of manually clicking the "Add" button.</li>
-            <li class="text-sm">At the bottom, you'll find the Date Preview section, which automatically calculates
-              dates based on admin-provided settings; you can modify these dates as needed. Note: Admins can configure
-              global settings for automatic date calculations.</li>
-            <li class="text-sm">At the bottom, you can choose to validate the layout by checking the "Validate" button.
-              This will open the Word document, allowing you to adjust the layout and margins for optimal output—always
-              check this box. If you don't select it, the document will be generated directly.</li>
-            <li class="text-sm">After submitting, the app will generate all the documents. Please note that this may
-              take some time. Once the documents are ready, the document viewer will open, allowing you to view and
-              print them by clicking the "Print" button.</li>
-
-            <li class="text-sm">You can now view your completed petition and manage it as needed.</li>
-            <li class="text-sm">In the data table, you can view your completed petition and find the "Create Finality"
-              button.</li>
-            <li class="text-sm">In the data table, you can view your completed petition and find the "Create Finality"
-              button to generate the petition finality letter, annotation, and endorsement letter.</li>
-
-          </ul>
-        </div>
-
-      </div>
-    </div>
 
 
-    <AlertPath v-if="busy" />
+    <AlertPath v-if="alertmodal" :title="alertmodal_title" :body="alertmodal_body" />
     <!-- v-if="is_validating" -->
     <ValidateClericalPopup v-if="is_validating" :path="last_saved_filepath" @cancel="cancel_validating_stage"
       @proceed="create_validated_document" />
@@ -218,19 +182,19 @@
                       <p class="text-xs font-medium">Same as Petitioner Name</p>
                     </div>
 
-                    <Input v-if="formData.petitioner_error_in" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                    <Input v-if="formData.petitioner_error_in" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth' || formData.event_type === 'Marriage'
                       && is_same_as_petitioner_name ? true
                       : false || formData.petitioner_error_in === ''
                       " :error="v$.document_owner.$error" label="Document Owner" v-model="formData.document_owner"
                       @input="formData.document_owner = $event.target.value.toUpperCase()" />
-                      <p v-else class="text-sm italic text-gray-700">Please choose an option. </p>
+                    <p v-else class="text-sm italic text-gray-700">Please choose an option. </p>
 
                     <!-- If Marriage -->
                     <Input v-if="formData.petitioner_error_in === 'my' && formData.event_type === 'Marriage'"
                       label="Spouse Name" v-model="formData.spouse_name" :error="v$.spouse_name.$error"
                       @input="formData.spouse_name = $event.target.value.toUpperCase()" />
 
-                    
+
 
                   </div>
                   <div v-if="
@@ -784,7 +748,9 @@ import Selector from "../../components/Selector.vue";
 const tutorial = ref(false)
 
 
-const busy = ref(false)
+const alertmodal = ref(false)
+const alertmodal_title = ref()
+const alertmodal_body = ref()
 const auth = AuthStore()
 /**
  * 
@@ -828,8 +794,8 @@ onMounted(async () => {
 });
 
 const is_same_as_petitioner_name = ref(true)
-const changes_document_owner = () => {
 
+const changes_document_owner = () => {
   if (is_same_as_petitioner_name.value === false) {
     formData.document_owner = ''
   }
@@ -1238,6 +1204,7 @@ function watch_republic_act() {
 
 // Document Changer Dynamically Change the Error in 
 function change_event_selected_error_in() {
+  changes_document_owner()
   formData.event_type === 'Birth' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'N/A') :
     formData.event_type === 'Death' ? (formData.petitioner_error_in = 'the', formData.document_owner = '', formData.relation_owner = '') :
       formData.event_type === 'Marriage' ? (formData.petitioner_error_in = 'my', formData.document_owner = '', formData.relation_owner = 'Spouse') : ''
@@ -1703,14 +1670,17 @@ const submitForm = async () => {
 const last_saved_filepath = ref()
 
 const create_validated_document = async () => {
-  if (busy.value) { return }
+  if (alertmodal.value) { return }
   const is_busy = await window.ClericalApi.IsFileBusy(last_saved_filepath.value + 'petition.docx')
 
   if (is_busy) {
-    busy.value = true
-
+    alertmodal.value = true
+    alertmodal_body = 'The file is currently open. Please save and close the file before proceeding.'
+    alertmodal_title = 'File Busy'
     setTimeout(() => {
-      busy.value = false
+      alertmodal.value = false
+      alertmodal_body = ''
+      alertmodal_title = ''
     }, 3000);
     return
   }
@@ -1733,6 +1703,24 @@ const create_validated_document = async () => {
   }
 
   const check = await window.ClericalApi.proceedCreatePetition(JSON.stringify(settings));
+
+  if (!check.status) {
+    is_validating.value = true
+    is_creating.value = false
+
+
+    alertmodal.value = true
+    alertmodal_title = 'Something went wrong... Please Try Again'
+    alertmodal_body = check.message
+
+    setTimeout(() => {
+      alertmodal.value = false
+      alertmodal_title = ''
+      alertmodal_body = ''
+    }, 3000);
+
+    return
+  }
 
 
   const petition_ = ref({
@@ -1835,18 +1823,23 @@ const create_validated_document = async () => {
     is_creating.value = false
     open_generated(check.filepath)
   }
+
 }
 
 const cancel_validating_stage = async () => {
-  if (busy.value) { return }
+  if (alertmodal.value) { return }
 
   const is_busy = await window.ClericalApi.IsFileBusy(last_saved_filepath.value + 'petition.docx')
 
   if (is_busy) {
-    busy.value = true
+    alertmodal.value = true
+    alertmodal_body = 'The file is currently open. Please save and close the file before proceeding.'
+    alertmodal_title = 'File Busy'
 
     setTimeout(() => {
-      busy.value = false
+      alertmodal.value = false
+      alertmodal_body = ''
+      alertmodal_title = ''
     }, 3000);
     return
   }

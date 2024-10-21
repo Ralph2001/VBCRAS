@@ -5,10 +5,13 @@ import win32com.client
 import pythoncom
 
 def convert_docx_to_pdf_word(docx_path, pdf_path, retries=3):
-    """Attempt to convert using Microsoft Word."""
+    """Attempt to convert using Microsoft Word with retries and graceful cleanup."""
+    word = None
+    doc = None
     for attempt in range(retries):
         try:
             # Create an instance of Word application
+            pythoncom.CoInitialize()
             word = win32com.client.Dispatch('Word.Application')
             word.Visible = False  # Keep Word hidden
             
@@ -16,21 +19,36 @@ def convert_docx_to_pdf_word(docx_path, pdf_path, retries=3):
             doc = word.Documents.Open(docx_path)
             doc.SaveAs(pdf_path, FileFormat=17)  # 17 is the format for PDF
             doc.Close()
+            doc = None  # Release document reference
             word.Quit()
+            word = None  # Release Word application reference
             return True  # Indicate success
         except Exception as e:
             print(f"[Word] Error on attempt {attempt + 1}: {e}")
             if attempt < retries - 1:
+                print(f"[Word] Retrying in 2 seconds...")
                 time.sleep(2)  # Wait before retrying
             else:
                 print(f"[Word] Failed to convert '{docx_path}' after {retries} attempts.")
-                return False
+        finally:
+            if doc:
+                doc.Close()
+            if word:
+                word.Quit()
+            doc = None
+            word = None
+            pythoncom.CoUninitialize()
+
+    return False  # If all attempts fail
 
 def convert_docx_to_pdf_wps(docx_path, pdf_path, retries=3):
-    """Attempt to convert using WPS Office."""
+    """Attempt to convert using WPS Office with retries and graceful cleanup."""
+    wps = None
+    doc = None
     for attempt in range(retries):
         try:
             # Create an instance of WPS application
+            pythoncom.CoInitialize()
             wps = win32com.client.Dispatch('KWPS.Application')
             wps.Visible = False  # Keep WPS hidden
             
@@ -38,18 +56,30 @@ def convert_docx_to_pdf_wps(docx_path, pdf_path, retries=3):
             doc = wps.Documents.Open(docx_path)
             doc.SaveCopyAs(pdf_path)  # Use SaveCopyAs for WPS
             doc.Close()
+            doc = None  # Release document reference
             wps.Quit()
+            wps = None  # Release WPS application reference
             return True  # Indicate success
         except Exception as e:
             print(f"[WPS] Error on attempt {attempt + 1}: {e}")
             if attempt < retries - 1:
+                print(f"[WPS] Retrying in 2 seconds...")
                 time.sleep(2)  # Wait before retrying
             else:
                 print(f"[WPS] Failed to convert '{docx_path}' after {retries} attempts.")
-                return False
+        finally:
+            if doc:
+                doc.Close()
+            if wps:
+                wps.Quit()
+            doc = None
+            wps = None
+            pythoncom.CoUninitialize()
+
+    return False  # If all attempts fail
 
 def convert_docx_to_pdf(docx_path, pdf_path):
-    """Try to convert DOCX to PDF using Word, then WPS if it fails."""
+    """Try to convert DOCX to PDF using Word, then WPS if Word fails."""
     print(f"Trying to convert '{docx_path}' to '{pdf_path}' using Microsoft Word...")
     
     if convert_docx_to_pdf_word(docx_path, pdf_path):

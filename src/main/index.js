@@ -232,7 +232,7 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
         if (generate_document.status) {
             if (data.is_to_validate) {
                 const filePath = join(generate_document.filepath, 'petition.docx');
-                console.log('This is running: ' + filePath)
+
                 try {
                     const open_file = await shell.openExternal(filePath);
                     if (!open_file) {
@@ -242,9 +242,6 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
                     console.error('Error opening file:', openError);
                 }
             }
-
-            console.log('Returining this: ' + generate_document.filepath)
-
             return { status: generate_document.status, filepath: generate_document.filepath };
         }
         return { status: generate_document.status, filepath: generate_document.filepath };
@@ -257,10 +254,9 @@ ipcMain.handle('createPetitionDocument', async (event, formData) => {
 
 
 
-// Helper; uses convert.exe
-function executeCommand(excutable, originalDirectory, outputDirectory, args) {
+function executeCommand(executable, originalDirectory, outputDirectory, args) {
     return new Promise((resolve, reject) => {
-        const converProcess = spawn(excutable, [
+        const convertProcess = spawn(executable, [
             originalDirectory,
             outputDirectory,
             args
@@ -268,70 +264,72 @@ function executeCommand(excutable, originalDirectory, outputDirectory, args) {
         let output = '';
         let error = '';
 
-        converProcess.stdout.on('data', (data) => {
+        convertProcess.stdout.on('data', (data) => {
             output += data.toString();
         });
 
-        converProcess.stderr.on('data', (data) => {
+        convertProcess.stderr.on('data', (data) => {
             error += data.toString();
         });
 
-        converProcess.on('close', (code) => {
+        convertProcess.on('close', (code) => {
             if (code === 0) {
-                resolve(output);
+                resolve(output);  // Conversion succeeded
             } else {
-                reject(new Error(`Process failed with code ${code}: ${error}`));
+                reject(new Error(`Process failed with code ${code}: ${error}`));  // Capture non-zero exit codes
             }
         });
 
-        converProcess.on('error', (err) => {
-            reject(new Error(`Failed to start process: ${err.message}`));
+        convertProcess.on('error', (err) => {
+            reject(new Error(`Failed to start process: ${err.message}`));  // Capture spawn errors
         });
     });
-};
+}
 
 
 /**
- *  Dito page nakapag decide kana 
+ *  Dito pag nakapag decide kana 
  *  para i convert na ito
  */
 
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
-        const data = JSON.parse(formData)
+        const data = JSON.parse(formData);
 
-        const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
+        const executable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
 
-        // Name of Folder
-        const petition_number = data.petition_number
-        const originalDirectory = data.orignal_path
+        const petition_number = data.petition_number;
+        const originalDirectory = data.orignal_path;
         const petitionType = data.petition_type + ' ' + data.event_type;
-        const prepared_by = data.prepared_by
+        const prepared_by = data.prepared_by;
         const republicAct = data.republic_act_number;
         const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
-        const date_filed = data.date_filed
+        const date_filed = data.date_filed;
         const year = new Date(date_filed).getFullYear().toString();
 
-        // Output Directory
-        const outputDirectory = join(data.path_where_to_save, `Petitions`, prepared_by, republicAct, petitionType, year, petition_number + ' - ' + documentOwner);
+        const outputDirectory = join(data.path_where_to_save, 'Petitions', prepared_by, republicAct, petitionType, year, `${petition_number} - ${documentOwner}`);
+
 
         if (!fs.existsSync(outputDirectory)) {
-            fs.mkdirSync(outputDirectory, { recursive: true })
+            fs.mkdirSync(outputDirectory, { recursive: true });
         }
 
         const deleteOriginal = 'true';
 
-        // Convert Function
-        const conversionResult = await executeCommand(excutable, originalDirectory, outputDirectory, deleteOriginal);
 
-        if (conversionResult) {
-            return { status: true, filepath: outputDirectory };
-        } else {
-            return { status: false, filepath: null };
-        }
+        const conversionResult = await executeCommand(executable, originalDirectory, outputDirectory, deleteOriginal);
+
+        return { status: true, filepath: outputDirectory, message: 'Success' };
     } catch (error) {
         console.error('Error during file conversion:', error);
-        return { status: false, filepath: null };
+
+        if (error.message.includes('Failed to start process')) {
+            return { status: false, filepath: null, message: 'Failed to start the conversion process. Please check the executable and try again.' };
+        } else if (error.message.includes('Process failed with code')) {
+            return { status: false, filepath: null, message: 'Conversion failed. You can retry the conversion.' };
+        } else {
+            return { status: false, filepath: null, message: 'An unexpected error occurred during the conversion process. Please try again later.' };
+        }
     }
 });
 

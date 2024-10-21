@@ -85,7 +85,8 @@ import {
     faRightToBracket, 
     faAnglesRight,
     faCheck,
-    faFile
+    faFile, 
+    faCamera
     
 
 
@@ -156,7 +157,8 @@ library.add(
     faRightToBracket, 
     faAnglesRight,
     faCheck,
-    faFile
+    faFile, 
+    faCamera
 
 )
 
