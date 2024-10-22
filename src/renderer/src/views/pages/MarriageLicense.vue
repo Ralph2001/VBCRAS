@@ -833,11 +833,20 @@
                             </div>
 
                             <div class="justify-center flex  items-center flex-row gap-10 mb-4">
-                                <div class="basis-[30%] h-auto  ">
+                                <div class="basis-[30%] h-[10rem]">
                                     <Camera @capture="handle_groom_image" v-if="!groom_picture" />
-                                    <img :src="groom_picture" alt="Captured photo" v-if="groom_picture" />
-
+                                    <div v-if="groom_picture"
+                                        class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
+                                        <button @click="groom_picture = ''"
+                                            class="absolute -top-3 -right-2.5 z-50 bg-red-400 hover:bg-red-500 text-white rounded-full px-1.5 hidden group-hover:block">
+                                            <font-awesome-icon icon="fa-solid fa-xmark" />
+                                        </button>
+                                        <img :src="groom_picture" alt="Captured photo"
+                                            class="object-cover w-full h-full" />
+                                    </div>
                                 </div>
+
+
                                 <div class="flex flex-col grow gap-2">
                                     <div class="flex flex-row w-full">
                                         <div class="flex flex-row grow items-center ">
@@ -877,9 +886,19 @@
                             <div class="justify-center flex  items-center flex-row gap-10 mt-5">
 
 
-                                <div class="basis-[30%]  h-auto  ">
-                                    <Camera />
+                                <div class="basis-[30%] h-[10rem]">
+                                    <Camera @capture="handle_bride_image" v-if="!bride_picture" />
+                                    <div v-if="bride_picture"
+                                        class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
+                                        <button @click="bride_picture = ''"
+                                            class="absolute -top-3 -right-2.5 z-50 bg-red-400 hover:bg-red-500 text-white rounded-full px-1.5 hidden group-hover:block">
+                                            <font-awesome-icon icon="fa-solid fa-xmark" />
+                                        </button>
+                                        <img :src="bride_picture" alt="Captured photo"
+                                            class="object-cover w-full h-full" />
+                                    </div>
                                 </div>
+
                                 <div class="flex flex-col grow gap-2 relative">
                                     <p class="font-bold absolute -top-8 left-24">WISHES TO CONTRACT MARRIAGE WITH</p>
                                     <div class="flex flex-row w-full">
@@ -1245,6 +1264,10 @@ const groom_picture = ref(null)
 const handle_groom_image = (capturedImage) => {
     groom_picture.value = capturedImage
 }
+const bride_picture = ref(null)
+const handle_bride_image = (capturedImage) => {
+    bride_picture.value = capturedImage
+}
 
 
 
@@ -1252,10 +1275,8 @@ const handle_groom_image = (capturedImage) => {
 </script>
 
 <style scoped>
-
 img {
     transform: scaleX(-1);
 
 }
-
 </style>

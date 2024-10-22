@@ -13,6 +13,7 @@ import { generate_by_month_year } from '../documents/clerical/generate_report'
 
 import { autoUpdater } from "electron-updater"
 import { certificate_filing } from '../documents/clerical/certificate_filing'
+import { generate_marriage_notice } from '../documents/marriage'
 
 
 const log = require('electron-log');
@@ -890,3 +891,15 @@ ipcMain.handle('get-user', async (event) => {
      */
     return username
 })
+
+
+/**
+ *  Marriage
+ * 
+ */
+
+function generate_marriage() {
+    generate_marriage_notice()
+}
+
+generate_marriage()

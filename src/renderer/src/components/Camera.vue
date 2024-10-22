@@ -25,8 +25,12 @@
                         </select>
                     </div>
 
-                    <div v-if="capturedImage === null" class="video h-[85%]">
+                    <div v-if="capturedImage === null" class="video h-[85%] relative">
                         <video class="h-full" ref="videoElement" autoplay playsinline></video>
+                        <div class="overlay absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <!-- Transparent Guide (Centered Circle) -->
+                            <div class="border-2 border-white  h-64 w-64"></div>
+                        </div>
                     </div>
 
                     <div v-if="capturedImage">
