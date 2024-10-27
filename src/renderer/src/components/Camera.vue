@@ -60,7 +60,9 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-const emit = defineEmits(['capture'])
+
+
+const emit = defineEmits(['capture']);
 
 
 const videoElement = ref(null);
@@ -70,19 +72,17 @@ const selectedDeviceId = ref(null);
 let mediaStream = null;
 const isFullScreen = ref(false);
 const countdown = ref(0); // Countdown variable
-const timer = ref(3)
-
+const timer = ref(3);
 
 const save_image = () => {
-
     isFullScreen.value = false;
     if (mediaStream) {
         mediaStream.getTracks().forEach(track => track.stop()); // Stop all media tracks
         mediaStream = null;
     }
 
-    emit('capture', capturedImage.value)
-}
+    emit('capture', capturedImage.value);
+};
 
 // Open the camera and show full-screen mode
 const openCamera = () => {
@@ -105,10 +105,9 @@ const startCamera = async () => {
         videoElement.value.srcObject = mediaStream;
     } catch (error) {
         console.error('Error accessing the camera: ', error);
+        // toast.error("No camera detected. Please connect a camera to continue.");
     }
 };
-
-
 
 // Capture the image after a countdown
 const captureImage = () => {
@@ -168,9 +167,14 @@ const getCameras = async () => {
         videoDevices.value = devices.filter(device => device.kind === 'videoinput');
         if (videoDevices.value.length > 0) {
             selectedDeviceId.value = videoDevices.value[0].deviceId; // Select first camera by default
+        } else {
+            // Show toast if no cameras are found
+            console.log('No Camera')    
+            // toast.error("No camera devices detected.");
         }
     } catch (error) {
         console.error('Error fetching cameras:', error);
+        // toast.error("Error accessing the camera devices.");
     }
 };
 
@@ -183,37 +187,3 @@ onBeforeUnmount(() => {
     closeCamera(); // Ensure camera is closed when component is destroyed
 });
 </script>
-
-
-<style scoped>
-video {
-    width: 100%;
-    transform: scaleX(-1);
-    /* Flip for mirrored effect */
-}
-
-img {
-    transform: scaleX(-1);
-    /* Flip the captured image to match video */
-}
-
-/* Countdown Timer Styling */
-.countdown-timer {
-    font-size: 5rem;
-    font-weight: bold;
-    color: white;
-    animation: fadeInOut 1s ease-in-out infinite;
-}
-
-@keyframes fadeInOut {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-}
-</style>
