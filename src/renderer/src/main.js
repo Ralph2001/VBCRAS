@@ -1,4 +1,4 @@
-import devtools from '@vue/devtools'
+
 import { createApp, markRaw } from 'vue'
 import { createPinia } from 'pinia'
 
@@ -15,7 +15,7 @@ import 'sweetalert2/dist/sweetalert2.min.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-import { RecycleScroller } from 'vue-virtual-scroller'
+// import { RecycleScroller } from 'vue-virtual-scroller'
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -166,7 +166,7 @@ import './assets/index.css'
 import 'animate.css';
 import 'flowbite'
 import 'animate.css'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 
 const app = createApp(App)
@@ -178,7 +178,7 @@ pinia.use(({ store }) => {
 app.use(router)
 app.use(pinia)
 
-app.component('RecycleScroller', RecycleScroller)
+// app.component('RecycleScroller', RecycleScroller)
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(VueSweetalert2)
 app.component('VueDatePicker', VueDatePicker)

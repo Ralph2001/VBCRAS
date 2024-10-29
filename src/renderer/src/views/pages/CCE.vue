@@ -1675,12 +1675,12 @@ const create_validated_document = async () => {
 
   if (is_busy) {
     alertmodal.value = true
-    alertmodal_body = 'The file is currently open. Please save and close the file before proceeding.'
-    alertmodal_title = 'File Busy'
+    alertmodal_body.value = 'The file is currently open. Please save and close the file before proceeding.'
+    alertmodal_title.value = 'File Busy'
     setTimeout(() => {
       alertmodal.value = false
-      alertmodal_body = ''
-      alertmodal_title = ''
+      alertmodal_body.value = ''
+      alertmodal_title.value = ''
     }, 3000);
     return
   }
@@ -1710,13 +1710,13 @@ const create_validated_document = async () => {
 
 
     alertmodal.value = true
-    alertmodal_title = 'Something went wrong... Please Try Again'
-    alertmodal_body = check.message
+    alertmodal_title.value = 'Something went wrong... Please Try Again'
+    alertmodal_body.value = check.message
 
     setTimeout(() => {
       alertmodal.value = false
-      alertmodal_title = ''
-      alertmodal_body = ''
+      alertmodal_title.value = ''
+      alertmodal_body.value = ''
     }, 3000);
 
     return
@@ -1833,13 +1833,13 @@ const cancel_validating_stage = async () => {
 
   if (is_busy) {
     alertmodal.value = true
-    alertmodal_body = 'The file is currently open. Please save and close the file before proceeding.'
-    alertmodal_title = 'File Busy'
+    alertmodal_body.value = 'The file is currently open. Please save and close the file before proceeding.'
+    alertmodal_title.value = 'File Busy'
 
     setTimeout(() => {
       alertmodal.value = false
-      alertmodal_body = ''
-      alertmodal_title = ''
+      alertmodal_body.value = ''
+      alertmodal_title.value = ''
     }, 3000);
     return
   }

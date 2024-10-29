@@ -56,14 +56,12 @@
     "primevue": "4.1.1",
     "quill": "2.0.2",
     "vue-router": "4.4.5",
-    "vue-sweetalert2": "5.0.11",
-    "vue-virtual-scroller": "1.1.2"
+    "vue-sweetalert2": "5.0.11"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "1.0.2",
     "@rushstack/eslint-patch": "1.10.4",
     "@vitejs/plugin-vue": "5.1.4",
-    "@vue/devtools": "7.5.3",
     "@vue/eslint-config-prettier": "10.1.0",
     "autoprefixer": "10.4.20",
     "electron": "33.0.2",
