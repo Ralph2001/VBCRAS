@@ -187,7 +187,7 @@
 
       <div class="h-full flex flex-row" v-if="type && year && month && searchQuery == ''">
         <div :class="{ 'sm:hidden md:lg:block h-full': pdfSource }" class="h-full grow">
-          <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full"
+          <!-- <RecycleScroller v-if="type && year && month && searchQuery == ''" :items="files" class="h-full"
             :item-size="28" key-field="name" v-slot="{ item }">
             <li @dblclick.prevent="openFile(item.filepath, item.name, item.id)" tabindex="0" :class="{
               'bg-blue-500 hover:bg-blue-500 text-white group ':
@@ -205,7 +205,7 @@
                 {{ item.year }}
               </p>
             </li>
-          </RecycleScroller>
+          </RecycleScroller> -->
         </div>
         <div class="border-s sm:hidden md:lg:block h-full"></div>
         <div :class="{ 'flex flex-col': pdfSource, 'sm:hidden md:lg:flex': !pdfSource }"
@@ -256,7 +256,7 @@
 
       <div class="h-full flex flex-row" v-if="searchQuery != ''">
         <div :class="{ 'sm:hidden md:lg:block h-full': pdfSource }" class="h-full grow">
-          <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
+          <!-- <RecycleScroller v-if="searchQuery != '' && searchData.length" :items="searchData" class="h-full"
             :item-size="28" key-field="name" v-slot="{ item }">
             <li tabindex="0" @dblclick="openFile(item.filepath, item.name)"
               class="text-md flex-row justify-between font-semibold antialiased flex items-center gap-1 hover:bg-blue-100 hover:cursor-pointer rounded-sm group">
@@ -266,11 +266,10 @@
               </div>
               <p class="text-sm italic text-gray-600 font-normal group-hover:mr-5 duration-300 mr-2">
                 {{ item.type }} {{ item.month }} {{ item.year }}
-                <!-- <font-awesome-icon icon="fa-solid fa-folder-open" title="Open file path"
-                  class="ms-2 text-gray-400 hover:text-gray-700 text-md hidden group-hover:inline-block transition-all" /> -->
+               
               </p>
             </li>
-          </RecycleScroller>
+          </RecycleScroller> -->
         </div>
         <div class="border-s sm:hidden md:lg:block h-full"></div>
         <div :class="{ 'flex flex-col': pdfSource, 'sm:hidden md:lg:flex': !pdfSource }"
@@ -329,7 +328,7 @@ import Alert from "../Alert.vue";
 import { watchDebounced, refDebounced, onStartTyping } from "@vueuse/core";
 import { onClickOutside } from "@vueuse/core";
 import Wave from "../Wave.vue";
-import { RecycleScroller } from "vue-virtual-scroller";
+// import { RecycleScroller } from "vue-virtual-scroller";
 
 const full_screen = ref(false);
 

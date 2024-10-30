@@ -6,7 +6,7 @@
       <div class="w-full flex flex-row h-auto bg-gray-700 outline-none px-3  p-1 items-center ">
         <slot name="header"></slot>
       </div>
-      <div class="h-full bg-gray-200 flex w-full overflow-y-scroll shadow-inne relative">
+      <div class="h-full bg-gray-50 rounded-b-lg flex w-full overflow-y-scroll shadow-inne relative">
         <slot> </slot>
       </div>
       <div class=" w-full bg-gray-800 py-1.5  p-1" v-if="props.footer">

@@ -23,11 +23,11 @@
                     {{ isPreview ? 'Return to form editor' : 'Preview' }}
                 </button>
             </div>
-            <div class="flex flex-col w-full items-center   h-max bg-gray-100 py-2  gap-4 relative font-medium"
+            <div class="flex flex-row w-full items-center  justify-center  h-max bg-gray-100 py-10  gap-4 relative font-medium"
                 v-if="!isPreview">
 
                 <div ref="scalableDiv" :style="[scalableDivStyle, paperStyle]"
-                    class="flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white border rounded shadow-lg ">
+                    class="flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white border rounded shadow border-gray-200 ">
 
                     <div
                         class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
@@ -387,33 +387,15 @@
                         </div> upon his/her request.
                     </div>
 
-                    <div class="flex w-full flex-col  items-center justify-center ">
+                    <div class="flex  flex-col  px-14 py-2 w-full gap-2" v-if="is_with_remarks">
 
-
+                        <p class="font-bold font-serif">REMARKS: <span class="text-xs font-sans italic font-normal text-gray-600">(Leave it blank if no
+                                remarks)</span></p>
                         <!-- As Remarks  v-if="formData.form_type.includes('A')"-->
-                        <div class="h-[8rem]"></div>
-                        <!-- <button @click="formData.isWithRemarks = true" v-if="!formData.isWithRemarks"
-                            class="text-xs mt-5 border px-2.5 py-1.5 bg-white self-start ml-20  font-mono hover:bg-gray-100 shadow-sm">ADD
-                            REMARKS</button> -->
+                        <div class="w-full flex flex-col gap-1">
+                            <QuillEditor theme="snow" :toolbar="['bold', 'italic']" />
 
-                        <!-- 
-                        <div class="flex-row flex  w-full px-10 gap-2 mt-3" v-if="formData.isWithRemarks">
-                            <div class="flex  flex-row items-start gap-1 mb-2">
-                                <div class="flex items-center">
-                                    <button class="px-2.5 py-1 rounded-full  hover:bg-gray-100 group scale-75"
-                                        title="Remove Remarks" @click="formData.isWithRemarks = false">
-                                        <font-awesome-icon icon="fa-solid fa-xmark"
-                                            class="text-sm text-red-500 group-hover:text-red-400" />
-                                    </button>
-                                    <p>REMARKS: </p>
-                                </div>
-                            </div>
-                            <div class="w-full mt-5 mb-10">
-                                <QuillEditor ref="remarks" theme="snow" :toolbar="['']"
-                                    v-model:content="formData.remarks" contentType="html" @ready="addremarksvalue" />
-                              
-                            </div>
-                        </div> -->
+                        </div>
                     </div>
 
                     <div
@@ -472,6 +454,7 @@
                     </div>
 
                 </div>
+
 
             </div>
 
@@ -552,6 +535,10 @@ import FormAutoComplete from '../../components/Form/FormAutoComplete.vue';
 const all_ = ref(all_address())
 
 
+
+const is_with_remarks = computed(() => {
+    return formData.form_type.includes('A') ? true : false
+})
 const municipality_province = computed(() => {
     return complete_municipality_with_province(formData.filing_province)
 })
@@ -584,9 +571,13 @@ const calculatePPI = () => {
     ppi.value = Math.round(ppiValue);
 };
 
+const paper_height = computed(() => {
+    return formData.form_type.includes('A') ? 13 : 11
+})
+
 const paperDimensions = computed(() => ({
     width: 8.5 * ppi.value,
-    height: 13 * ppi.value,
+    height: paper_height * ppi.value,
 }));
 
 const paperStyle = computed(() => ({

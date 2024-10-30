@@ -79,12 +79,12 @@ export async function generate_form(formData) {
     }
 
 
-    const position_logo_paper_by_type_x = FORM_TYPE.includes('A') ? 131 : 120
+    const position_logo_paper_by_type_x = FORM_TYPE.includes('A') ? 121 : 120
     const position_logo_paper_by_type_y = FORM_TYPE.includes('A') ? 802.75 : 700
     /////////Logo Here//////////
     /// Left Logo
     page.drawImage(left_logo, {
-        x: 410,
+        x: 420,
         y: position_logo_paper_by_type_y,
         width: left_logo_scale.width,
         height: left_logo_scale.height,

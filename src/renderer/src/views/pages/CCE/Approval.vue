@@ -220,7 +220,7 @@
 
                 </div>
                 <div class="h-full  rounded-md  truncate overflow-x-hidden ">
-                    <RecycleScroller :items="data" class="h-full " :item-size="34" key-field="name" v-slot="{ item }"
+                    <!-- <RecycleScroller :items="data" class="h-full " :item-size="34" key-field="name" v-slot="{ item }"
                         v-if="data.length > 1">
                         <li :class="{ 'bg-blue-200': formData.filepath === item.name }"
                             class="w-full overflow-hidden truncate px-3 p-1 hover:bg-blue-100  flex items-center">
@@ -231,7 +231,7 @@
                                     icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
                                 {{ item.name.replace(".pdf", "") }} </label>
                         </li>
-                    </RecycleScroller>
+                    </RecycleScroller> -->
                     <div class="h-full w-full flex items-center justify-center" v-if="data.length < 1">
                         No Result
                     </div>
@@ -400,7 +400,7 @@ import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { usePetitions } from '../../../stores/Petition/petitions';
 import ExplorerView from '../../../components/client/ExplorerView.vue';
 import { useFileDialog } from '@vueuse/core'
-import { RecycleScroller } from 'vue-virtual-scroller';
+// import { RecycleScroller } from 'vue-virtual-scroller';
 import { useScannedDocuments } from '../../../stores/Scanned';
 import { computed } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
@@ -472,9 +472,10 @@ onChange((file) => {
         annotated_unannotated.value = false
         return
     }
+    console.log(file[0].path)
 
-    formData.filepath = file[0].path.replace(`C:\\Users\\${computer.desktop_name}\\`, '')
-    console.log(formData.filepath)
+    // formData.filepath = file[0].path.replace(`C:\\Users\\${computer.desktop_name}\\`, '')
+    // console.log(formData.filepath)
 
     // console.log(file[0])
     submit()

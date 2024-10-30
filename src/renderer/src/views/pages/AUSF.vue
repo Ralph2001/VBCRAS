@@ -8,7 +8,7 @@
             <TableGrid :data="aufs_.ausf" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
-        <Modal v-if="ausf_modal" medium label=" Affidavit to use the Surname of the Father" footerBG="bg-white">
+        <Modal v-if="ausf_modal" large label=" Affidavit to use the Surname of the Father" footerBG="bg-white">
             <template v-slot:header>
                 <button
                     class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
