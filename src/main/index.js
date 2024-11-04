@@ -1,8 +1,14 @@
-import { app, shell, BrowserWindow, ipcMain, globalShortcut, Notification } from 'electron'
+import {
+    app,
+    shell,
+    BrowserWindow,
+    ipcMain,
+    globalShortcut,
+    Notification
+} from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
-
 
 import { generate } from '../documents/clerical/clerical_error'
 import { finality } from '../documents/clerical/finality'
@@ -11,19 +17,19 @@ import { CreateAnnotated } from '../documents/clerical/annotation'
 import { generate_ausf } from '../documents/ausf/create_ausf'
 import { generate_by_month_year } from '../documents/clerical/generate_report'
 
-import { autoUpdater } from "electron-updater"
+import { autoUpdater } from 'electron-updater'
 import { certificate_filing } from '../documents/clerical/certificate_filing'
-import { generate_marriage_notice } from '../documents/marriage'
+import {
+    generate_marriage_notice,
+    generate_marriage_license
+} from '../documents/marriage'
 
-
-const log = require('electron-log');
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info'; // Set log level
-
+const log = require('electron-log')
+autoUpdater.logger = log
+autoUpdater.logger.transports.file.level = 'info' // Set log level
 
 let flaskServerProcess = null
 let flaskPID = null
-
 
 const { execFile, exec } = require('child_process')
 const { spawn } = require('child_process')
@@ -34,18 +40,18 @@ const username = os.userInfo().username
 const fse = require('fs-extra')
 const fs = require('fs')
 
-
 /**
  * Main Printer Opener
  */
-const sumatraPath = join(__dirname, '../../resources/tools/printer/SumatraPDF.exe').replace('app.asar', 'app.asar.unpacked');
-
+const sumatraPath = join(
+    __dirname,
+    '../../resources/tools/printer/SumatraPDF.exe'
+).replace('app.asar', 'app.asar.unpacked')
 
 // Updater Flags
 
 // autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = true
-
 
 let interfaces = os.networkInterfaces()
 let addresses = []
@@ -58,63 +64,67 @@ for (let k in interfaces) {
     }
 }
 
-
 function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
+    const characters =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let result = ''
+    const charactersLength = characters.length
     for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+        )
     }
-    return result;
+    return result
 }
-
 
 // Create Print Window without gui
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
-
-    const randomFileName = `temp_${generateRandomString(20)}.pdf`;
-    const pdfPath = join(__dirname, '../../resources/temp/', randomFileName).replace('app.asar', 'app.asar.unpacked');
-    const fileDirectory = join(__dirname, '../../resources/temp/').replace('app.asar', 'app.asar.unpacked')
+    const randomFileName = `temp_${generateRandomString(20)}.pdf`
+    const pdfPath = join(
+        __dirname,
+        '../../resources/temp/',
+        randomFileName
+    ).replace('app.asar', 'app.asar.unpacked')
+    const fileDirectory = join(__dirname, '../../resources/temp/').replace(
+        'app.asar',
+        'app.asar.unpacked'
+    )
 
     fs.writeFile(pdfPath, Buffer.from(base64Data, 'base64'), (err) => {
         if (err) {
-            console.error('Failed to write PDF to file', err);
-            return;
+            console.error('Failed to write PDF to file', err)
+            return
         }
 
-        const printProcess = spawn(sumatraPath, ['-print-dialog', '-exit-when-done', pdfPath]);
+        const printProcess = spawn(sumatraPath, [
+            '-print-dialog',
+            '-exit-when-done',
+            pdfPath
+        ])
 
         printProcess.on('error', (error) => {
-            console.error('Failed to start SumatraPDF process:', error);
-        });
+            console.error('Failed to start SumatraPDF process:', error)
+        })
 
         printProcess.on('close', (code) => {
             if (code === 0) {
-                console.log('Printed successfully');
+                console.log('Printed successfully')
             } else {
-                console.error(`SumatraPDF process exited with code ${code}`);
+                console.error(`SumatraPDF process exited with code ${code}`)
             }
 
             fs.unlink(pdfPath, (err) => {
                 if (err) {
-                    console.error('Failed to delete temp PDF file', err);
+                    console.error('Failed to delete temp PDF file', err)
                 } else {
-                    console.log('Temp PDF file deleted successfully');
+                    console.log('Temp PDF file deleted successfully')
                 }
-            });
+            })
 
-            fse.emptyDirSync(fileDirectory);
-        });
-    });
-});
-
-
-
-
-
-
-
+            fse.emptyDirSync(fileDirectory)
+        })
+    })
+})
 
 // Form IPCMAIN
 
@@ -125,7 +135,7 @@ ipcMain.handle('createPdfForm', async (event, formData) => {
             return {
                 status: generate_record.status,
                 filepath: true,
-                dataurl: generate_record.pdfbase64,
+                dataurl: generate_record.pdfbase64
             }
         }
     } catch (error) {
@@ -138,11 +148,11 @@ ipcMain.handle('open-form', async (event, source) => {
         win = new BrowserWindow({
             webPreferences: {
                 plugins: true,
-                devTools: true,
+                devTools: true
             },
 
             autoHideMenuBar: true,
-            show: true,
+            show: true
         })
 
         const load = await win.loadURL(source)
@@ -152,7 +162,6 @@ ipcMain.handle('open-form', async (event, source) => {
         return false
     }
 })
-
 
 /////////////
 /////////////
@@ -167,7 +176,7 @@ ipcMain.handle('createAUSF', async (event, formData) => {
             return {
                 status: createAUSF.status,
                 filepath: true,
-                dataurl: createAUSF.pdfbase64,
+                dataurl: createAUSF.pdfbase64
             }
         }
     } catch (error) {
@@ -183,24 +192,23 @@ ipcMain.handle('createAUSF', async (event, formData) => {
 
 function saveBase64AsPDF(base64Data, path, fileName) {
     // Remove the prefix if it exists (data:application/pdf;base64,)
-    const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '');
+    const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '')
 
     // Convert base64 to a buffer
-    const buffer = Buffer.from(base64, 'base64');
+    const buffer = Buffer.from(base64, 'base64')
 
     // Define the path where the PDF will be saved
-    const filePath = join(path, fileName);
+    const filePath = join(path, fileName)
 
     // Write the buffer to a file
     fs.writeFile(filePath, buffer, (err) => {
         if (err) {
-            console.error('Error saving PDF:', err);
+            console.error('Error saving PDF:', err)
         } else {
-            console.log('PDF saved successfully:', filePath);
+            console.log('PDF saved successfully:', filePath)
         }
-    });
+    })
 }
-
 
 ipcMain.handle('CreateAnnotated', async (event, formData) => {
     try {
@@ -208,7 +216,7 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
         const generate_document = await CreateAnnotated(user, formData)
         return {
             status: generate_document.status,
-            pdfbase64: generate_document.pdfbase64,
+            pdfbase64: generate_document.pdfbase64
         }
     } catch (error) {
         console.log(error)
@@ -218,7 +226,7 @@ ipcMain.handle('CreateAnnotated', async (event, formData) => {
 ipcMain.handle('saveAnnotated', async (event, fileUri) => {
     try {
         const data = JSON.parse(fileUri)
-        saveBase64AsPDF(data.file, data.path, 'Annotation.pdf');
+        saveBase64AsPDF(data.file, data.path, 'Annotation.pdf')
     } catch (error) {
         console.log(error)
     }
@@ -227,33 +235,39 @@ ipcMain.handle('saveAnnotated', async (event, fileUri) => {
 ipcMain.handle('createPetitionDocument', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
-        const generate_document = await generate(formData);
-
+        const generate_document = await generate(formData)
 
         if (generate_document.status) {
             if (data.is_to_validate) {
-                const filePath = join(generate_document.filepath, 'petition.docx');
+                const filePath = join(
+                    generate_document.filepath,
+                    'petition.docx'
+                )
 
                 try {
-                    const open_file = await shell.openExternal(filePath);
+                    const open_file = await shell.openExternal(filePath)
                     if (!open_file) {
                         await shell.openPath(filePath)
                     }
                 } catch (openError) {
-                    console.error('Error opening file:', openError);
+                    console.error('Error opening file:', openError)
                 }
             }
-            return { status: generate_document.status, filepath: generate_document.filepath };
+            return {
+                status: generate_document.status,
+                filepath: generate_document.filepath
+            }
         }
-        return { status: generate_document.status, filepath: generate_document.filepath };
+        return {
+            status: generate_document.status,
+            filepath: generate_document.filepath
+        }
     } catch (error) {
-        console.log(error);
-        return { status: false, filepath: null };
+        console.log(error)
+        return { status: false, filepath: null }
     }
     // Not Needed
-});
-
-
+})
 
 function executeCommand(executable, originalDirectory, outputDirectory, args) {
     return new Promise((resolve, reject) => {
@@ -261,117 +275,150 @@ function executeCommand(executable, originalDirectory, outputDirectory, args) {
             originalDirectory,
             outputDirectory,
             args
-        ]);
-        let output = '';
-        let error = '';
+        ])
+        let output = ''
+        let error = ''
 
         convertProcess.stdout.on('data', (data) => {
-            output += data.toString();
-        });
+            output += data.toString()
+        })
 
         convertProcess.stderr.on('data', (data) => {
-            error += data.toString();
-        });
+            error += data.toString()
+        })
 
         convertProcess.on('close', (code) => {
             if (code === 0) {
-                resolve(output);  // Conversion succeeded
+                resolve(output) // Conversion succeeded
             } else {
-                reject(new Error(`Process failed with code ${code}: ${error}`));  // Capture non-zero exit codes
+                reject(new Error(`Process failed with code ${code}: ${error}`)) // Capture non-zero exit codes
             }
-        });
+        })
 
         convertProcess.on('error', (err) => {
-            reject(new Error(`Failed to start process: ${err.message}`));  // Capture spawn errors
-        });
-    });
+            reject(new Error(`Failed to start process: ${err.message}`)) // Capture spawn errors
+        })
+    })
 }
 
-
 /**
- *  Dito pag nakapag decide kana 
+ *  Dito pag nakapag decide kana
  *  para i convert na ito
  */
 
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
-        const data = JSON.parse(formData);
+        const data = JSON.parse(formData)
 
-        const executable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
+        const executable = join(
+            __dirname,
+            '../../resources/tools/converter/app/dist/convert.exe'
+        ).replace('app.asar', 'app.asar.unpacked')
 
-        const petition_number = data.petition_number;
-        const originalDirectory = data.orignal_path;
-        const petitionType = data.petition_type + ' ' + data.event_type;
-        const prepared_by = data.prepared_by;
-        const republicAct = data.republic_act_number;
-        const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
-        const date_filed = data.date_filed;
-        const year = new Date(date_filed).getFullYear().toString();
+        const petition_number = data.petition_number
+        const originalDirectory = data.orignal_path
+        const petitionType = data.petition_type + ' ' + data.event_type
+        const prepared_by = data.prepared_by
+        const republicAct = data.republic_act_number
+        const documentOwner =
+            data.document_owner === 'N/A'
+                ? data.petitioner_name
+                : data.document_owner
+        const date_filed = data.date_filed
+        const year = new Date(date_filed).getFullYear().toString()
 
-        const outputDirectory = join(data.path_where_to_save, 'Petitions', prepared_by, republicAct, petitionType, year, `${petition_number} - ${documentOwner}`);
-
+        const outputDirectory = join(
+            data.path_where_to_save,
+            'Petitions',
+            prepared_by,
+            republicAct,
+            petitionType,
+            year,
+            `${petition_number} - ${documentOwner}`
+        )
 
         if (!fs.existsSync(outputDirectory)) {
-            fs.mkdirSync(outputDirectory, { recursive: true });
+            fs.mkdirSync(outputDirectory, { recursive: true })
         }
 
-        const deleteOriginal = 'true';
+        const deleteOriginal = 'true'
 
+        const conversionResult = await executeCommand(
+            executable,
+            originalDirectory,
+            outputDirectory,
+            deleteOriginal
+        )
 
-        const conversionResult = await executeCommand(executable, originalDirectory, outputDirectory, deleteOriginal);
-
-        return { status: true, filepath: outputDirectory, message: 'Success' };
+        return { status: true, filepath: outputDirectory, message: 'Success' }
     } catch (error) {
-        console.error('Error during file conversion:', error);
+        console.error('Error during file conversion:', error)
 
         if (error.message.includes('Failed to start process')) {
-            return { status: false, filepath: null, message: 'Failed to start the conversion process. Please check the executable and try again.' };
+            return {
+                status: false,
+                filepath: null,
+                message:
+                    'Failed to start the conversion process. Please check the executable and try again.'
+            }
         } else if (error.message.includes('Process failed with code')) {
-            return { status: false, filepath: null, message: 'Conversion failed. You can retry the conversion.' };
+            return {
+                status: false,
+                filepath: null,
+                message: 'Conversion failed. You can retry the conversion.'
+            }
         } else {
-            return { status: false, filepath: null, message: 'An unexpected error occurred during the conversion process. Please try again later.' };
+            return {
+                status: false,
+                filepath: null,
+                message:
+                    'An unexpected error occurred during the conversion process. Please try again later.'
+            }
         }
     }
-});
-
-
+})
 
 ipcMain.handle('createFinality', async (event, formData) => {
-
     try {
         const data = JSON.parse(formData)
-        const generate_document = await finality(data);
+        const generate_document = await finality(data)
 
         if (generate_document.success) {
+            const deleteOriginal = 'true'
 
-            const deleteOriginal = 'true';
-
-            const excutable = join(__dirname, '../../resources/tools/converter/app/dist/convert.exe').replace('app.asar', 'app.asar.unpacked');
+            const excutable = join(
+                __dirname,
+                '../../resources/tools/converter/app/dist/convert.exe'
+            ).replace('app.asar', 'app.asar.unpacked')
             const outputDirectory = data.file_path
 
-            const conversionResult = await executeCommand(excutable,
+            const conversionResult = await executeCommand(
+                excutable,
                 generate_document.filepath,
                 outputDirectory,
-                deleteOriginal);
+                deleteOriginal
+            )
 
             if (conversionResult) {
-                return { status: true, filepath: outputDirectory };
+                return { status: true, filepath: outputDirectory }
             } else {
-                return { status: false, filepath: null };
+                return { status: false, filepath: null }
             }
         }
 
-        return { status: false, filepath: null };
+        return { status: false, filepath: null }
     } catch (error) {
-        console.log(error);
-        return { status: false, filepath: null };
+        console.log(error)
+        return { status: false, filepath: null }
     }
 })
 
 ipcMain.handle('create_certificate_filing', async (event, data) => {
     try {
         const create_certificate_filing = await certificate_filing(data)
-        const filefolder = await shell.openExternal(create_certificate_filing.filepath)
+        const filefolder = await shell.openExternal(
+            create_certificate_filing.filepath
+        )
 
         if (!filefolder) {
             await shell.openPath(create_certificate_filing.filepath)
@@ -380,7 +427,6 @@ ipcMain.handle('create_certificate_filing', async (event, data) => {
 
         return true
     } catch (error) {
-
         return false
     }
 })
@@ -407,16 +453,15 @@ ipcMain.handle('open-clerical-folder', async (event, source) => {
     }
 })
 
-
 ipcMain.handle('remove-item', async (event, path) => {
     try {
         fs.rm(path, { recursive: true, force: true }, (err) => {
             if (err) {
-                console.error(`Error removing directory: ${err.message}`);
-                return;
+                console.error(`Error removing directory: ${err.message}`)
+                return
             }
-            console.log(`Directory ${path} removed successfully.`);
-        });
+            console.log(`Directory ${path} removed successfully.`)
+        })
         return
     } catch (error) {
         console.log(error)
@@ -424,94 +469,116 @@ ipcMain.handle('remove-item', async (event, path) => {
     }
 })
 
-
 ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
     try {
         // Define the required and optional files
-        const requiredFiles = ['Petition.pdf', 'Posting.pdf', 'Endorsement Letter.pdf', 'Record Sheet.pdf'];
-        const optionalFiles = ['Annotation.pdf', 'Certificate of Finality.pdf', 'Finality Endorsement Letter.pdf'];
+        const requiredFiles = [
+            'Petition.pdf',
+            'Posting.pdf',
+            'Endorsement Letter.pdf',
+            'Record Sheet.pdf'
+        ]
+        const optionalFiles = [
+            'Annotation.pdf',
+            'Certificate of Finality.pdf',
+            'Finality Endorsement Letter.pdf'
+        ]
 
-        const data = [];
+        const data = []
 
         // Check for required files
         for (const requiredFile of requiredFiles) {
-            const filePath = join(mainDirectory, requiredFile);
+            const filePath = join(mainDirectory, requiredFile)
 
             // Check if the required file exists before reading
             if (fs.existsSync(filePath)) {
-                const fileData = fs.readFileSync(filePath, 'base64');
-                const name = requiredFile.substring(0, requiredFile.lastIndexOf('.'));
-                data.push({ name, link: fileData });
+                const fileData = fs.readFileSync(filePath, 'base64')
+                const name = requiredFile.substring(
+                    0,
+                    requiredFile.lastIndexOf('.')
+                )
+                data.push({ name, link: fileData })
             }
         }
 
         // Check for optional files
-        const optionalData = []; // Use a new array for optional files
+        const optionalData = [] // Use a new array for optional files
         for (const optionalFile of optionalFiles) {
-            const filePath = join(mainDirectory, optionalFile);
+            const filePath = join(mainDirectory, optionalFile)
 
             // Check if the optional file exists before reading
             if (fs.existsSync(filePath)) {
-                const fileData = fs.readFileSync(filePath, 'base64');
-                const name = optionalFile.substring(0, optionalFile.lastIndexOf('.'));
-                optionalData.push({ name, link: fileData }); // Push to optionalData
+                const fileData = fs.readFileSync(filePath, 'base64')
+                const name = optionalFile.substring(
+                    0,
+                    optionalFile.lastIndexOf('.')
+                )
+                optionalData.push({ name, link: fileData }) // Push to optionalData
             }
         }
 
         // Combine required and optional data
-        return [...data, ...optionalData];
-
+        return [...data, ...optionalData]
     } catch (error) {
-        return { error: 'Failed to open clerical files' };
+        return { error: 'Failed to open clerical files' }
     }
-});
+})
 ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
     try {
         const generate = await generate_by_month_year(formData)
-        shell.showItemInFolder(generate.dir.replace('app.asar', 'app.asar.unpacked'))
+        shell.showItemInFolder(
+            generate.dir.replace('app.asar', 'app.asar.unpacked')
+        )
     } catch (error) {
         console.log(error)
     }
 })
 
-
-
 function showNotification(NOTIFICATION_TITLE, NOTIFICATION_BODY) {
-    new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
+    new Notification({
+        title: NOTIFICATION_TITLE,
+        body: NOTIFICATION_BODY
+    }).show()
 }
 
 /**
  * Main Window
- * 
+ *
  */
 
 // Function to handle updates
 function handleUpdates(mainWindow) {
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify()
 
     autoUpdater.on('checking-for-update', (info) => {
-        mainWindow.webContents.send('checking-for-update', info);
-    });
+        mainWindow.webContents.send('checking-for-update', info)
+    })
 
     autoUpdater.on('update-available', (info) => {
-        showNotification('Update Available', 'A new update is ready for download. The process will begin shortly to ensure you have the latest features and improvements. Thank you for keeping your application up-to-date.')
-        mainWindow.webContents.send('update-available', info);
-    });
+        showNotification(
+            'Update Available',
+            'A new update is ready for download. The process will begin shortly to ensure you have the latest features and improvements. Thank you for keeping your application up-to-date.'
+        )
+        mainWindow.webContents.send('update-available', info)
+    })
     autoUpdater.on('update-not-available', (info) => {
-        mainWindow.webContents.send('update-not-available', info);
-    });
+        mainWindow.webContents.send('update-not-available', info)
+    })
 
     autoUpdater.on('update-downloaded', (info) => {
-        showNotification('Update Available', 'An update is starting to download. Please keep the app open to complete the download. Restart the app when done to apply the update.')
-        mainWindow.webContents.send('update-downloaded', info);
+        showNotification(
+            'Update Available',
+            'An update is starting to download. Please keep the app open to complete the download. Restart the app when done to apply the update.'
+        )
+        mainWindow.webContents.send('update-downloaded', info)
         // Do Not Quit
         // autoUpdater.quitAndInstall();
-    });
+    })
 
     autoUpdater.on('error', (err) => {
-        log.error('Error while checking for updates:', err);
-        mainWindow.webContents.send('update-error', err.message);
-    });
+        log.error('Error while checking for updates:', err)
+        mainWindow.webContents.send('update-error', err.message)
+    })
 }
 
 // // Function to check if the executable is already whitelisted
@@ -526,8 +593,6 @@ function handleUpdates(mainWindow) {
 //     // Create a file to mark the executable as whitelisted
 //     fs.writeFileSync(whitelistFilePath, 'whitelisted', 'utf8');
 // }
-
-
 
 // function runPermissionController() {
 //     try {
@@ -561,13 +626,12 @@ function mainWindow() {
         show: false,
         frame: true,
 
-
         autoHideMenuBar: true,
         ...(process.platform === 'linux' ? { icon } : {}),
         webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
-            sandbox: false,
-        },
+            sandbox: false
+        }
     })
 
     // mainWindow.setMinimumSize(1050, 500)
@@ -585,13 +649,12 @@ function mainWindow() {
         mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
     } else {
         mainWindow.loadFile(join(__dirname, '../renderer/index.html'), {
-            hash: 'home',
+            hash: 'home'
         })
     }
 
-    ipcMain.handle('app-version', () => app.getVersion());
-    handleUpdates(mainWindow);
-
+    ipcMain.handle('app-version', () => app.getVersion())
+    handleUpdates(mainWindow)
 }
 
 app.whenReady().then(() => {
@@ -603,8 +666,6 @@ app.whenReady().then(() => {
     // runPermissionController()
     mainWindow()
 
-
-
     // Registert Shortcut that can affect Suste,
     // globalShortcut.register('CommandOrControl+R', () => { });
     // globalShortcut.register('F5', () => { });
@@ -615,51 +676,48 @@ app.whenReady().then(() => {
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) mainWindow()
     })
-
 })
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         // Unregister all global shortcuts
-        globalShortcut.unregisterAll();
+        globalShortcut.unregisterAll()
 
         // Kill the Flask server if it's running
         if (flaskPID) {
-            console.log(`Killing Flask server process with PID: ${flaskPID}`);
-            killProcessTree(flaskPID);
+            console.log(`Killing Flask server process with PID: ${flaskPID}`)
+            killProcessTree(flaskPID)
         } else {
-            console.log('No Flask server process to kill.');
+            console.log('No Flask server process to kill.')
         }
 
         // Quit the app
-        app.quit();
+        app.quit()
     }
-});
+})
 
 app.on('before-quit', () => {
     // Optional: Cleanup any resources before quitting
     if (flaskPID) {
-        console.log(`Cleaning up Flask server process with PID: ${flaskPID}`);
-        killProcessTree(flaskPID);
+        console.log(`Cleaning up Flask server process with PID: ${flaskPID}`)
+        killProcessTree(flaskPID)
     }
-});
+})
 
 /**
  * List of IPC
  **/
 
-
 /**
  * Scanned Document IPC's
  */
 
-
 ipcMain.handle('open-scanned-sidebar', async (event, source) => {
     /**
-      *  Open Scanned Documents in Side Bar
-      *  Get Relative Path, Add the destop name 
-      *  Convert to base64  
-      */
+     *  Open Scanned Documents in Side Bar
+     *  Get Relative Path, Add the destop name
+     *  Convert to base64
+     */
     try {
         const fiepath = 'C:\\Users\\' + username + '\\' + source
         const data = fs.readFileSync(fiepath)
@@ -672,61 +730,57 @@ ipcMain.handle('open-scanned-sidebar', async (event, source) => {
     }
 })
 
-
 /**
  * LocalCivil IPC
  */
 
-
 let dialogOpen = false
-
-
 
 async function startServer() {
     try {
-        const executable = join(__dirname, '../../resources/server/dist/main.exe').replace('app.asar', 'app.asar.unpacked');
+        const executable = join(
+            __dirname,
+            '../../resources/server/dist/main.exe'
+        ).replace('app.asar', 'app.asar.unpacked')
 
         // Start the Flask process
-        flaskServerProcess = execFile(executable);
+        flaskServerProcess = execFile(executable)
 
         flaskServerProcess.stdout.on('data', (data) => {
-            console.log(`Flask stdout: ${data}`);
-        });
+            console.log(`Flask stdout: ${data}`)
+        })
 
         flaskServerProcess.stderr.on('data', (data) => {
-            console.error(`Flask stderr: ${data}`);
-        });
+            console.error(`Flask stderr: ${data}`)
+        })
 
         flaskServerProcess.on('error', (error) => {
-            console.error('Error starting Flask process:', error);
-        });
+            console.error('Error starting Flask process:', error)
+        })
 
         flaskServerProcess.on('close', (code) => {
-            console.log(`Flask process exited with code ${code}`);
-            flaskServerProcess = null; // Reset the process variable after it exits
-        });
+            console.log(`Flask process exited with code ${code}`)
+            flaskServerProcess = null // Reset the process variable after it exits
+        })
 
         flaskPID = flaskServerProcess.pid
 
-        return true;
+        return true
     } catch (error) {
-        console.error('Error starting server:', error);
-        return false;
+        console.error('Error starting server:', error)
+        return false
     }
 }
-
 
 function killProcessTree(pid) {
     exec(`taskkill /F /PID ${pid} /T`, (error) => {
         if (error) {
-            console.error(`Error killing process tree: ${error}`);
+            console.error(`Error killing process tree: ${error}`)
         } else {
-            console.log(`Process tree for PID ${pid} killed successfully.`);
+            console.log(`Process tree for PID ${pid} killed successfully.`)
         }
-    });
+    })
 }
-
-
 
 // Check if server is running
 ipcMain.handle('is-server-running', async (event) => {
@@ -734,29 +788,28 @@ ipcMain.handle('is-server-running', async (event) => {
         if (flaskServerProcess) {
             return true
         }
-        return false;
+        return false
     } catch (error) {
-        console.error('Error checking server status:', error);
-        return false;
+        console.error('Error checking server status:', error)
+        return false
     }
-});
+})
 
 // Start the server
 ipcMain.handle('start-server', async (event) => {
     try {
         console.log(flaskServerProcess)
         if (flaskServerProcess) {
-
-            console.warn('Server is already running, cannot start again.');
-            return false;
+            console.warn('Server is already running, cannot start again.')
+            return false
         }
-        const success = await startServer();
-        return { success }; // Removed 'addresses' as it's undefined
+        const success = await startServer()
+        return { success } // Removed 'addresses' as it's undefined
     } catch (error) {
-        console.error('Error handling start-server request:', error);
-        return false;
+        console.error('Error handling start-server request:', error)
+        return false
     }
-});
+})
 
 // Stop the server
 ipcMain.handle('stop-server', async (event) => {
@@ -772,38 +825,19 @@ ipcMain.handle('stop-server', async (event) => {
         console.warn('Server is not running, cannot stop.')
         return false
     }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})
 
 ipcMain.handle('select-folder', async (event) => {
     if (dialogOpen) return
     try {
         dialogOpen = true
         const { canceled, filePaths } = await dialog.showOpenDialog({
-            properties: ['openDirectory'],
+            properties: ['openDirectory']
         })
-        const file_path = filePaths[0].replace('C:\\Users\\' + username + '\\', '')
+        const file_path = filePaths[0].replace(
+            'C:\\Users\\' + username + '\\',
+            ''
+        )
         return file_path
     } catch (err) {
         console.error('There was an error', err)
@@ -818,7 +852,7 @@ ipcMain.handle('select-file', async (event) => {
         dialogOpen = true
         const { canceled, filePaths } = await dialog.showOpenDialog({
             properties: ['openFile'],
-            filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+            filters: [{ name: 'PDF Files', extensions: ['pdf'] }]
         })
         return { canceled, filePaths }
     } finally {
@@ -826,30 +860,30 @@ ipcMain.handle('select-file', async (event) => {
     }
 })
 
-
 ipcMain.handle('is_file_busy', async (event, path) => {
     try {
-
         console.log(path)
         // Check if the file exists
         if (!fs.existsSync(path)) {
-            return false; // File does not exist
+            return false // File does not exist
         }
 
         // Try to open the file in read-write mode.
 
-        const fileDescriptor = fs.openSync(path, 'r+');
-        fs.closeSync(fileDescriptor);
-        return false; // File is not locked
+        const fileDescriptor = fs.openSync(path, 'r+')
+        fs.closeSync(fileDescriptor)
+        return false // File is not locked
     } catch (error) {
-        if (error.code === 'EBUSY' || error.code === 'EACCES' || error.code === 'EPERM') {
-            return true; // File is locked, likely open in another program
+        if (
+            error.code === 'EBUSY' ||
+            error.code === 'EACCES' ||
+            error.code === 'EPERM'
+        ) {
+            return true // File is locked, likely open in another program
         }
-        throw error; // Some other error occurred
+        throw error // Some other error occurred
     }
-});
-
-
+})
 
 ipcMain.handle('open-file', async (event, source) => {
     let win
@@ -857,12 +891,12 @@ ipcMain.handle('open-file', async (event, source) => {
         win = new BrowserWindow({
             webPreferences: {
                 plugins: true,
-                devTools: true,
+                devTools: true
                 // preload: join(__dirname, 'custom.css'),
             },
 
             autoHideMenuBar: true,
-            show: true,
+            show: true
         })
 
         const load = await win.loadURL('C:\\Users\\' + username + '\\' + source)
@@ -884,7 +918,6 @@ ipcMain.handle('open-file-folder', async (event, path) => {
     }
 })
 
-
 ipcMain.handle('get-user', async (event) => {
     /**
      *  Return user name directory
@@ -892,14 +925,34 @@ ipcMain.handle('get-user', async (event) => {
     return username
 })
 
-
 /**
  *  Marriage
- * 
+ *  @MARRIAGE_LICENSE
+ *  @MARRIAGE_NOTICE
  */
+
+ipcMain.handle('previewApplicationMarriage', async (event, formData) => {
+    try {
+        const generate_application_for_marriage_license =
+            await generate_marriage_license(formData)
+        console.log(generate_application_for_marriage_license)
+    } catch (error) {
+        console.log(error)
+    }
+})
+ipcMain.handle('previewMarriageNotice', async (event, formData) => {
+    try {
+        const generate_application_for_marriage_license =
+            await generate_marriage_license(formData)
+        console.log(generate_application_for_marriage_license)
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 function generate_marriage() {
     generate_marriage_notice()
+    generate_marriage_license()
 }
 
 generate_marriage()

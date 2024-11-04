@@ -389,12 +389,13 @@
 
                     <div class="flex  flex-col  px-14 py-2 w-full gap-2" v-if="is_with_remarks">
 
-                        <p class="font-bold font-serif">REMARKS: <span class="text-xs font-sans italic font-normal text-gray-600">(Leave it blank if no
+                        <p class="font-bold font-serif">REMARKS: <span
+                                class="text-xs font-sans italic font-normal text-gray-600">(Leave it blank if no
                                 remarks)</span></p>
                         <!-- As Remarks  v-if="formData.form_type.includes('A')"-->
                         <div class="w-full flex flex-col gap-1">
-                            <QuillEditor theme="snow" :toolbar="['bold', 'italic']" />
-
+                            <!-- <QuillEditor theme="snow" :toolbar="['bold', 'italic']" v-model:content="formData.remarks" /> -->
+                            <Try />
                         </div>
                     </div>
 
@@ -530,6 +531,7 @@ import SuggestionInputforForm from '../../components/Form/SuggestionInputforForm
 import { all_address, complete_municipality, complete_municipality_with_province, complete_province } from '../../utils/Address/index.js'
 import SelectforForm from '../../components/Form/SelectforForm.vue';
 import FormAutoComplete from '../../components/Form/FormAutoComplete.vue';
+import Try from '../../components/try.vue';
 
 
 const all_ = ref(all_address())
