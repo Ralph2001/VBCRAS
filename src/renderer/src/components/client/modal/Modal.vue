@@ -25,7 +25,7 @@
   titleCard: Boolean,
   settings: Boolean,
   medium: {
-    type: String,
+    type: Boolean,
     default: false,
   },
   first: String,

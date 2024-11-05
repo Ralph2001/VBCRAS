@@ -18,20 +18,35 @@
                 </button>
             </template>
 
-            <div class="flex h-full border borer-red-700 justify-center items-center w-full pt-10">
+            <div class="flex h-full border borer-red-700 justify-center items-center w-full pt-8">
                 <div class="fixed flex flex-row right-0 left-0 bg-blue-400 top-9 px-4 z-50">
                     <div class="flex flex-row items-center">
                         <button class="hover:bg-blue-300 font-medium text-sm p-2" @click="change_page(1)"
-                            :class="[page === 1 ? '' : 'text-gray-500']">Marriage
+                            :class="[page === 1 ? '' : 'text-gray-600']">Marriage
                             License</button>
-                        <div class="block border border-gray-400 h-6"></div>
+                        <div class="block border border-blue-600 h-6"></div>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2 " @click="change_page(2)"
-                            :class="[page === 2 ? '' : 'text-gray-500']">Notice</button>
+                            :class="[page === 2 ? '' : 'text-gray-600']">Notice</button>
                     </div>
                     <div class="flex flex-row gap-3 ml-auto">
-                        <button class="hover:bg-blue-300 font-medium text-sm p-2">Save</button>
-                        <button class="hover:bg-blue-300 font-medium text-sm p-2"
-                            @click="change_mode()">Preview</button>
+                        <button class="hover:bg-blue-300 font-medium text-sm p-2 flex items-center gap-1">
+                            <font-awesome-icon icon="fa-regular fa-floppy-disk" /> Save</button>
+                        <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
+                            @click="change_mode()">
+                            <font-awesome-icon icon="fa-regular fa-eye" /> Preview</button>
+                        <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
+                            @click="change_mode()">
+                            <font-awesome-icon icon="fa-solid fa-print" />Print</button>
+                    </div>
+                </div>
+
+                <div v-if="show_input" ref="pop_up_div"
+                    class="fixed bottom-0 right-0 left-0 bg-yellow-100 h-20 z-[50] flex items-center justify-center transition-all">
+                    <div class="flex flex-col gap-1 ">
+                        <label for="" class="text-xs text-gray-800 font-medium "> Please enter groom date of birth <span
+                                class="italic text-xs">(mm/dd/yyyy)</span></label>
+                        <input type="text" ref="input_pop_up" v-model="input_pop_value"
+                            class=" w-[25rem] py-1 font-medium border border-gray-400 outline-none ring-0">
                     </div>
                 </div>
 
@@ -86,7 +101,7 @@
                                     <div class="flex flex-col  border-r border-gray-500 p-1">
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Received by:</p>
-                                            <InputBottomBorderMarriage isBold v-model="formData.recieved_by" />
+                                            <InputBottomBorderMarriage isBold v-model="formData.received_by" />
                                         </div>
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Date of Receipt:</p>
@@ -220,11 +235,21 @@
                                 </div>
                                 <!-- 6 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
-                                    <div class="basis-[45%] grid grid-cols-4  items-center border-r border-gray-500  ">
-                                        <InputBottomBorderMarriage isBold label="Day" top_label middle />
-                                        <InputBottomBorderMarriage isBold label="Month" top_label middle />
-                                        <InputBottomBorderMarriage isBold label="Year" top_label middle />
-                                        <div class="border-l border-gray-500 h-full flex items-center">
+                                    <div class="basis-[45%] flex flex-row  items-center border-r border-gray-500  ">
+                                        <div class="grow">
+                                            <div class="flex flex-row justify-around">
+                                                <label for=""
+                                                    class="text-[10px] font-medium  text-zinc-800">(Day)</label>
+                                                <label for=""
+                                                    class="text-[10px] font-medium  text-zinc-800">(Month)</label>
+                                                <label for=""
+                                                    class="text-[10px] font-medium  text-zinc-800">(Year)</label>
+                                            </div>
+                                            <button @click="showDateInput" @focus="showDateInput"
+                                                class="w-full bg-blue-50 h-4 ring-0 outline-none focus:bg-blue-100"
+                                                tabindex="1"></button>
+                                        </div>
+                                        <div class="border-l border-gray-500 h-full flex items-center basis-[25%]">
                                             <InputBottomBorderMarriage v-model="formData.groom_age" isBold label="Age"
                                                 @change="handleInputChange" middle top_label />
                                         </div>
@@ -238,9 +263,7 @@
                                     </div>
 
                                     <div class="basis-[45%] grid grid-cols-4  items-center border-l border-gray-500  ">
-                                        <InputBottomBorderMarriage isBold label="Day" top_label middle />
-                                        <InputBottomBorderMarriage isBold label="Month" top_label middle />
-                                        <InputBottomBorderMarriage isBold label="Year" top_label middle />
+
                                         <div class="border-l border-gray-500 h-full flex items-center">
                                             <InputBottomBorderMarriage v-model="formData.bride_age" isBold label="Age"
                                                 @change="handleInputChange" middle top_label />
@@ -324,6 +347,7 @@
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
 
+
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -337,6 +361,10 @@
                                             @change="handleInputChange" middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
+                                        <!-- <InputBottomBorderMarriage v-model="formData.bride_residence_country"
+                                            @change="handleInputChange" middle isBold
+                                            label="House No., St., Barangay, City/Municipality, Province, Country"
+                                            top_label /> -->
                                     </div>
                                 </div>
                                 <!-- 7 -->
@@ -524,7 +552,7 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_father_residense" isBold
+                                        <InputBottomBorderMarriage v-model="formData.groom_father_residence" isBold
                                             middle
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
@@ -537,7 +565,7 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_father_residense" isBold
+                                        <InputBottomBorderMarriage v-model="formData.bride_father_residence" isBold
                                             middle
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
@@ -620,7 +648,7 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_person_who_give_consent"
+                                        <InputBottomBorderMarriage v-model="formData.groom_person_who_gave_consent"
                                             isBold />
 
 
@@ -635,7 +663,7 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_person_who_give_consent"
+                                        <InputBottomBorderMarriage v-model="formData.bride_person_who_gave_consent"
                                             isBold />
                                     </div>
                                 </div>
@@ -643,7 +671,8 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_relation" isBold />
+                                        <InputBottomBorderMarriage
+                                            v-model="formData.groom_person_who_gave_consent_relation" isBold />
 
                                     </div>
                                     <div
@@ -654,7 +683,8 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_relation" isBold />
+                                        <InputBottomBorderMarriage
+                                            v-model="formData.bride_person_who_gave_consent_relation" isBold />
 
                                     </div>
                                 </div>
@@ -662,7 +692,8 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_citizenship" isBold />
+                                        <InputBottomBorderMarriage
+                                            v-model="formData.groom_person_who_gave_consent_citizenship" isBold />
 
                                     </div>
                                     <div
@@ -673,15 +704,15 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_citizenship" isBold />
+                                        <InputBottomBorderMarriage
+                                            v-model="formData.bride_person_who_gave_consent_citizenship" isBold />
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_residence_consent" middle
-                                            isBold
+                                        <InputBottomBorderMarriage middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
 
@@ -695,8 +726,7 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_residence_consent" middle
-                                            isBold
+                                        <InputBottomBorderMarriage middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
 
@@ -711,8 +741,8 @@
                                     <div
                                         class="border-r border-gray-500  flex flex-col items-center justify-center h-full">
                                         <div class="mt-3 mb-3 w-full">
-                                            <InputBottomBorderMarriage isBold label="Signature of Applicant" middle
-                                                v-model="formData.groom_signature" />
+                                            <InputBottomBorderMarriage disabled isBold label="Signature of Applicant"
+                                                middle />
                                         </div>
                                         <div class="flex flex-col gap-1 pr-14 pl-2 mt-auto mb-auto">
                                             <p class="italic text-xs tracking-widest font-serif indent-10"><span
@@ -742,12 +772,13 @@
                                                 <p class="font-serif  text-nowrap text-xs italic">exhibited to me his
                                                     Community Tax
                                                     Cert.</p>
-                                                <InputBottomBorderMarriage middle />
+                                                <InputBottomBorderMarriage e v-model="formData.groom_ctc_number"
+                                                    middle />
                                                 <p class="font-serif  text-nowrap text-xs italic">issued</p>
                                             </div>
                                             <div class="flex flex-row gap-1 ">
                                                 <p class="font-serif  text-nowrap text-xs italic">on</p>
-                                                <InputBottomBorderMarriage middle />
+                                                <InputBottomBorderMarriage v-model="formData.groom_ctc_on" middle />
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
                                                 <div class="w-[30%]">
                                                     <InputBottomBorderMarriage middle />
@@ -756,20 +787,20 @@
                                             </div>
                                             <div class="flex flex-row gap-1">
                                                 <p class="font-serif  text-nowrap text-xs italic">at</p>
-                                                <InputBottomBorderMarriage middle />
+                                                <InputBottomBorderMarriage v-model="formData.groom_ctc_at" middle />
                                             </div>
                                         </div>
                                         <div class="mt-auto">
                                             <InputBottomBorderMarriage isBold middle
                                                 label="Signature Over Printed Name of the Civil Registrar"
-                                                v-model="formData.municipal_civil_registrar" />
+                                                v-model="formData.civil_registrar" />
                                         </div>
 
                                     </div>
                                     <div class=" flex flex-col items-center justify-center h-full">
                                         <div class="mt-3 mb-3 w-full">
-                                            <InputBottomBorderMarriage isBold label="Signature of Applicant" middle
-                                                v-model="formData.bride_signature" />
+                                            <InputBottomBorderMarriage disabled isBold label="Signature of Applicant"
+                                                middle />
                                         </div>
 
                                         <div class="flex flex-col gap-1 pl-16 pr-2 mt-auto mb-auto">
@@ -800,12 +831,12 @@
                                                 <p class="font-serif  text-nowrap text-xs italic">exhibited to me his
                                                     Community Tax
                                                     Cert.</p>
-                                                <InputBottomBorderMarriage middle />
+                                                <InputBottomBorderMarriage middle v-model="formData.bride_ctc_number" />
                                                 <p class="font-serif  text-nowrap text-xs italic">issued</p>
                                             </div>
                                             <div class="flex flex-row gap-1 ">
                                                 <p class="font-serif  text-nowrap text-xs italic">on</p>
-                                                <InputBottomBorderMarriage middle />
+                                                <InputBottomBorderMarriage middle v-model="formData.bride_ctc_on" />
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
                                                 <div class="w-[30%]">
                                                     <InputBottomBorderMarriage middle />
@@ -814,13 +845,13 @@
                                             </div>
                                             <div class="flex flex-row gap-1">
                                                 <p class="font-serif  text-nowrap text-xs italic">at</p>
-                                                <InputBottomBorderMarriage middle />
+                                                <InputBottomBorderMarriage v-model="formData.bride_ctc_at" middle />
                                             </div>
                                         </div>
                                         <div class="mt-auto">
                                             <InputBottomBorderMarriage isBold
                                                 label="Signature Over Printed Name of the Civil Registrar" middle
-                                                v-model="formData.municipal_civil_registrar" />
+                                                v-model="formData.civil_registrar" />
                                         </div>
                                     </div>
                                 </div>
@@ -1003,13 +1034,18 @@
                         </div>
                     </div>
                     <div class="h-full w-full flex items-center justify-center  relative" v-if="preview">
-                        <div></div>
-                        <iframe v-if="preview && page === 1"
-                            src="https://www.learningcontainer.com/wp-content/uploads/2019/09/sample-pdf-file.pdf"
-                            frameborder="0" class="h-full w-full"></iframe>
-                        <iframe v-if="preview && page === 2"
-                            src="https://www.learningcontainer.com/wp-content/uploads/2019/09/sample-pdf-file.pdf"
-                            frameborder="0" class="h-full w-full"></iframe>
+                        <div class="absolute w-full left-0 right-0 top-0 h-16 bg-[#525659]">
+                        </div>
+
+                        <div class="absolute  right-0 top-0 w-5 h-full bg-[#525659]">
+                        </div>
+
+
+
+                        <iframe v-if="preview && page === 1" :src="pdf_content" frameborder="0"
+                            class="h-full w-full"></iframe>
+                        <iframe v-if="preview && page === 2" :src="notice_pdf_content" frameborder="0"
+                            class="h-full w-full"></iframe>
 
                     </div>
                 </div>
@@ -1019,7 +1055,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref } from 'vue';
 import Button from '../../components/essentials/buttons/Button.vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
@@ -1027,6 +1063,7 @@ import InputBottomBorderMarriage from '../../components/Marriage/InputBottomBord
 import { format } from 'date-fns';
 import Camera from '../../components/Camera.vue';
 import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
+import { onClickOutside } from '@vueuse/core'
 
 
 const page = ref(1)
@@ -1034,16 +1071,63 @@ const paper_size = computed(() => {
     return page.value === 1 ? 14 : 10
 })
 const change_page = (value) => {
+    if (page.value === value) { return }
     page.value = value
+
+    if (preview.value) {
+        preview_document()
+    }
 }
 
+const pop_up_div = ref(null)
+const input_pop_up = ref()
+const input_pop_value = ref()
+const show_input = ref(false)
+
+onClickOutside(pop_up_div, event => show_input.value = false)
+
+const showDateInput = async () => {
+    show_input.value = true
+    // Use nextTick to wait for DOM to update
+    await nextTick(() => {
+        // Focus input after it's rendered
+        if (input_pop_up.value) {
+            input_pop_up.value.focus();
+        }
+    });
+};
 
 const preview = ref(false)
-
+const pdf_content = ref()
+const notice_pdf_content = ref()
 
 const change_mode = () => {
     preview.value = !preview.value
+
+    if (preview.value) {
+        preview_document()
+    }
 }
+
+const preview_document = async () => {
+    if (preview.value) {
+        if (page.value === 1) {
+
+            const data = JSON.stringify({ ...formData })
+            const previewData = await window.MarriageApi.previewMarriage(data);
+            pdf_content.value = previewData.pdfbase64;
+
+        }
+        else if (page.value === 2) {
+            const previewData = await window.MarriageApi.previewNotice();
+            notice_pdf_content.value = previewData.pdfbase64;
+
+
+        }
+    }
+}
+
+
 
 const ppi = ref(0);
 
@@ -1099,36 +1183,37 @@ const close_modal = () => {
 };
 
 
-
-
 const initialForm = {
     header_province: '',
     header_municipality: '',
     registry_number: '',
-    recieved_by: '',
+    received_by: '',
     date_of_receipt: '',
     marriage_license_number: '',
     date_issuance_marriage_license: '',
-
     groom_contract_marriage_with: '',
     bride_contract_marriage_with: '',
 
-    municipal_civil_registrar: '',
+    civil_registrar: '',
 
-    marriage_notice_date: '',
-    marriage_notice_copy_furnished: 'FILE',
-
-    // GROOM SIDE
     groom_first_name: '',
     groom_middle_name: '',
     groom_last_name: '',
-    groom_date_of_birth: '',
+
+    groom_day: '',
+    groom_month: '',
+    groom_year: '',
+
     groom_age: '',
+
     groom_municipality: '',
     groom_province: '',
     groom_country: '',
+
     groom_sex: '',
+    groom_citizenship: '',
     groom_residence: '',
+    groom_residence_country: '', // 
     groom_religion: '',
     groom_civil_status: '',
     groom_previously_married_dissolved: '',
@@ -1139,26 +1224,84 @@ const initialForm = {
     groom_father_middle_name: '',
     groom_father_last_name: '',
     groom_father_citizenship: '',
-    groom_father_residense: '',
+    groom_father_residence: '',
+    groom_father_residence_country: '',
     groom_mother_first_name: '',
     groom_mother_middle_name: '',
     groom_mother_last_name: '',
     groom_mother_citizenship: '',
     groom_mother_residence: '',
-    groom_person_who_give_consent: '',
-    groom_relation: '',
-    groom_citizenship: '',
-    groom_residence_consent: '',
+    groom_mother_residence_country: '',
+    groom_person_who_gave_consent: '',
+    groom_person_who_gave_consent_relation: '',
+    groom_person_who_gave_consent_citizenship: '',
+    groom_person_who_gave_consent_residence: '',
+    groom_person_who_gave_consent_residence_country: '',
 
-    groom_signature: '',
     groom_ss_day: '',
     groom_ss_month: '',
     groom_ss_year: '',
     groom_ss_at: '',
-    groom_community_tax_certificate: '',
-    groom_community_tax_certificate_on: '',
-    groom_community_tax_certificate_at: '',
+    groom_ctc_number: '',
+    groom_ctc_on: '',
+    groom_ctc_at: '',
 
+
+    bride_first_name: '',
+    bride_middle_name: '',
+    bride_last_name: '',
+
+    bride_day: '',
+    bride_month: '',
+    bride_year: '',
+
+    bride_age: '',
+    bride_municipality: '',
+    bride_province: '',
+    bride_country: '',
+    bride_sex: '',
+    bride_citizenship: '',
+    bride_residence: '',
+    bride_residence_country: '', //
+    bride_religion: '',
+    bride_civil_status: '',
+    bride_previously_married_dissolved: '',
+    bride_place_dissolved: '', //
+    bride_date_dissolved: '', //
+    bride_degree_relation: '',
+    bride_father_first_name: '',
+    bride_father_middle_name: '',
+    bride_father_last_name: '',
+    bride_father_citizenship: '',
+    bride_father_residence: '', //
+    bride_father_residence_country: '',//
+    bride_mother_first_name: '',
+    bride_mother_middle_name: '',
+    bride_mother_last_name: '',
+    bride_mother_citizenship: '',
+    bride_mother_residence: '', //
+    bride_mother_residence_country: '',//
+    bride_person_who_gave_consent: '',
+    bride_person_who_gave_consent_relation: '',
+    bride_person_who_gave_consent_citizenship: '',
+    bride_person_who_gave_consent_residence: '', //
+    bride_person_who_gave_consent_residence_country: '', //
+
+    bride_ss_day: '',
+    bride_ss_month: '',
+    bride_ss_year: '',
+    bride_ss_at: '',
+    bride_ctc_number: '',
+    bride_ctc_on: '',
+    bride_ctc_at: '',
+
+
+
+
+
+    /**
+     *  Notice Input Fields
+     */
 
     groom_notice_name: '',
     groom_notice_age: '',
@@ -1167,57 +1310,14 @@ const initialForm = {
     groom_notice_father: '',
     groom_notice_mother: '',
 
-    // BRIDE SIDE
-    bride_first_name: '',
-    bride_middle_name: '',
-    bride_last_name: '',
-    bride_date_of_birth: '',
-    bride_age: '',
-    bride_municipality: '',
-    bride_province: '',
-    bride_country: '',
-    bride_sex: '',
-    bride_residence: '',
-    bride_religion: '',
-    bride_civil_status: '',
-    bride_previously_married_dissolved: '',
-    bride_place_dissolved: '',
-    bride_date_dissolved: '',
-    bride_degree_relation: '',
-    bride_father_first_name: '',
-    bride_father_middle_name: '',
-    bride_father_last_name: '',
-    bride_father_citizenship: '',
-    bride_father_residense: '',
-    bride_mother_first_name: '',
-    bride_mother_middle_name: '',
-    bride_mother_last_name: '',
-    bride_mother_citizenship: '',
-    bride_mother_residence: '',
-    bride_person_who_give_consent: '',
-    bride_relation: '',
-    bride_citizenship: '',
-    bride_residence_consent: '',
-
-    bride_signature: '',
-    bride_ss_day: '',
-    bride_ss_month: '',
-    bride_ss_year: '',
-    bride_ss_at: '',
-    bride_community_tax_certificate: '',
-    bride_community_tax_certificate_on: '',
-    bride_community_tax_certificate_at: '',
-
-
-
     bride_notice_name: '',
     bride_notice_age: '',
     bride_notice_birthplace: '',
     bride_notice_residence: '',
     bride_notice_father: '',
     bride_notice_mother: '',
-
 }
+
 
 const formData = reactive({ ...initialForm })
 
@@ -1299,7 +1399,6 @@ const capitalizeWords = (sentence) => {
         .join(' ');
 };
 
-
 const handleInputChange = () => {
     updateNotices();
 };
@@ -1313,9 +1412,6 @@ const handle_bride_image = (capturedImage) => {
     bride_picture.value = capturedImage
 }
 
-
-
-// And similarly for bride's input fields...
 </script>
 
 <style scoped>

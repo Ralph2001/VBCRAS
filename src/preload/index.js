@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld('ClericalApi', {
         const result = await ipcRenderer.invoke('CreateAnnotated', formData)
         return {
             status: result.status,
-            pdfbase64: result.pdfbase64,
+            pdfbase64: result.pdfbase64
         }
     },
     SaveAnnotated: async (fileUri) => {
@@ -29,14 +29,24 @@ contextBridge.exposeInMainWorld('ClericalApi', {
     },
     createPetitionDocument: async (formData) => {
         const data = JSON.parse(formData)
-        const result = await ipcRenderer.invoke('createPetitionDocument', JSON.stringify(data))
+        const result = await ipcRenderer.invoke(
+            'createPetitionDocument',
+            JSON.stringify(data)
+        )
 
         return { status: result.status, filepath: result.filepath }
     },
     proceedCreatePetition: async (formData) => {
-        const result = await ipcRenderer.invoke('proceedCreatePetition', formData)
+        const result = await ipcRenderer.invoke(
+            'proceedCreatePetition',
+            formData
+        )
 
-        return { status: result.status, filepath: result.filepath, message: result.message }
+        return {
+            status: result.status,
+            filepath: result.filepath,
+            message: result.message
+        }
     },
 
     CreateFinality: async (formData) => {
@@ -60,19 +70,23 @@ contextBridge.exposeInMainWorld('ClericalApi', {
         return result
     },
     GenerateReportByMonthYear: async (formData) => {
-        const generate = await ipcRenderer.invoke('generateReportByMonthYear', formData)
-
+        const generate = await ipcRenderer.invoke(
+            'generateReportByMonthYear',
+            formData
+        )
     },
     RemoveItem: async (path) => {
         const remove_item = await ipcRenderer.invoke('remove-item', path)
-
     },
     IsFileBusy: async (path) => {
         const is_busy = await ipcRenderer.invoke('is_file_busy', path)
         return is_busy
     },
     CreateCertificateFiling: async (data) => {
-        const certificate_filing = await ipcRenderer.invoke('create_certificate_filing', data)
+        const certificate_filing = await ipcRenderer.invoke(
+            'create_certificate_filing',
+            data
+        )
         return certificate_filing
     }
 })
@@ -87,13 +101,13 @@ contextBridge.exposeInMainWorld('FormApi', {
         return {
             status: result.status,
             filepath: result.filepath,
-            dataurl: result.dataurl,
+            dataurl: result.dataurl
         }
     },
     openPdfForm: async (source) => {
         const result = await ipcRenderer.invoke('open-form', source)
         return true
-    },
+    }
 })
 
 //  AUSF
@@ -103,13 +117,29 @@ contextBridge.exposeInMainWorld('AusfApi', {
         return {
             status: result.status,
             filepath: result.filepath,
-            dataurl: result.dataurl,
+            dataurl: result.dataurl
         }
-    },
+    }
 })
 
+/**
+ * Marriage API
+ */
 
+contextBridge.exposeInMainWorld('MarriageApi', {
+    previewMarriage: async (formData) => {
+        const preview = await ipcRenderer.invoke('previewMarriage', formData)
+        return preview
+    },
+    previewNotice: async (formData) => {
+        const preview = await ipcRenderer.invoke('previewNotice', formData)
+        return preview
+    }
+})
 
+/**
+ *  Scanned API
+ */
 contextBridge.exposeInMainWorld('ScannedApi', {
     OpenInSideBar: async (formData) => {
         const result = await ipcRenderer.invoke(
@@ -117,11 +147,10 @@ contextBridge.exposeInMainWorld('ScannedApi', {
             formData
         )
         return { status: result.status, fileUrl: result.fileUrl }
-    },
+    }
 })
 
 contextBridge.exposeInMainWorld('LocalCivilApi', {
-    
     IsServerRunning: async () => {
         const result = await ipcRenderer.invoke('is-server-running')
         return result
@@ -143,11 +172,6 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
         return result
     },
 
-
-
-
-
-
     selectFile: async () => {
         const { canceled, filePaths } = await ipcRenderer.invoke('select-file')
         return canceled ? null : filePaths[0]
@@ -155,14 +179,14 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     moveFile: async (source, destination) => {
         const result = await ipcRenderer.invoke('move-file', {
             source,
-            destination,
+            destination
         })
         return result
     },
     copyFile: async (source, destination) => {
         const result = await ipcRenderer.invoke('copy-file', {
             source,
-            destination,
+            destination
         })
         return result
     },
@@ -183,15 +207,19 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
         if (result) {
             return true
         }
-    },
+    }
 })
 
 contextBridge.exposeInMainWorld('UpdateApi', {
     // Listen for updates and forward them to Vue.js
-    onUpdateCheck: (callback) => ipcRenderer.on('checking-for-update', callback),
-    onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),
-    onUpdateNotAvailable: (callback) => ipcRenderer.on('update-not-available', callback),
-    onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', callback),
+    onUpdateCheck: (callback) =>
+        ipcRenderer.on('checking-for-update', callback),
+    onUpdateAvailable: (callback) =>
+        ipcRenderer.on('update-available', callback),
+    onUpdateNotAvailable: (callback) =>
+        ipcRenderer.on('update-not-available', callback),
+    onUpdateDownloaded: (callback) =>
+        ipcRenderer.on('update-downloaded', callback),
     onUpdateError: (callback) => ipcRenderer.on('update-error', callback),
     appVersion: (callback) => ipcRenderer.invoke('app-version')
-});
+})

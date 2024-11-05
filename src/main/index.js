@@ -931,28 +931,21 @@ ipcMain.handle('get-user', async (event) => {
  *  @MARRIAGE_NOTICE
  */
 
-ipcMain.handle('previewApplicationMarriage', async (event, formData) => {
+ipcMain.handle('previewMarriage', async (event, formData) => {
     try {
         const generate_application_for_marriage_license =
             await generate_marriage_license(formData)
-        console.log(generate_application_for_marriage_license)
+        return generate_application_for_marriage_license
     } catch (error) {
         console.log(error)
     }
 })
-ipcMain.handle('previewMarriageNotice', async (event, formData) => {
+ipcMain.handle('previewNotice', async (event, formData) => {
     try {
-        const generate_application_for_marriage_license =
-            await generate_marriage_license(formData)
-        console.log(generate_application_for_marriage_license)
+        const generate_application_notice =
+            await generate_marriage_notice(formData)
+            return generate_application_notice
     } catch (error) {
         console.log(error)
     }
 })
-
-function generate_marriage() {
-    generate_marriage_notice()
-    generate_marriage_license()
-}
-
-generate_marriage()
