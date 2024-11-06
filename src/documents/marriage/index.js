@@ -1,3 +1,4 @@
+import { exec } from 'child_process'
 import { PDFDocument, StandardFonts } from 'pdf-lib'
 const path = require('path')
 const fs = require('fs')
@@ -26,7 +27,7 @@ function checkFilesExist(paths) {
     return true
 }
 
-async function generate_marriage_notice() {
+async function generate_marriage_notice(formData) {
     try {
         // Ensure file exists before proceeding
         checkFilesExist([MARRIAGE_TEMPLATE_PATHS.NOTICE])
@@ -36,9 +37,17 @@ async function generate_marriage_notice() {
         const pdfDoc = await PDFDocument.load(content)
         const form = pdfDoc.getForm()
 
+        /**
+         *  Data
+         * @data
+         */
+
+        const data = JSON.parse(formData)
+
         // Retrieve form fields
         // const left_icon = form.getButton('left_icon')
         // const right_icon = form.getButton('right_icon')
+
         const province = form.getTextField('province')
         const municipality = form.getTextField('municipality')
 
@@ -46,8 +55,6 @@ async function generate_marriage_notice() {
             StandardFonts.TimesRomanBold
         )
         const office = form.getTextField('office')
-        office.setText('LOCAL CIVIL REGISTRY')
-        office.updateAppearances(font)
 
         const groom_name = form.getTextField('groom_name')
         const bride_name = form.getTextField('bride_name')
@@ -80,34 +87,38 @@ async function generate_marriage_notice() {
         // left_icon.setImage('')
         // right_icon.setImage('')
 
-        province.setText('Province of Pangasinan')
-        municipality.setText('MUNICIPALITY OF BAYAMBANG')
+        office.setText('LOCAL CIVIL REGISTRY') //
+        office.updateAppearances(font)
 
-        groom_name.setText('')
-        bride_name.setText('')
+        province.setText('Province of Pangasinan') //
+        municipality.setText('MUNICIPALITY OF BAYAMBANG')
+        municipality.updateAppearances(font)
+
+        groom_name.setText(data.notice_groom_name)
+        bride_name.setText(data.notice_bride_name)
 
         // groom_picture.setImage('')
         // bride_picture.setImage('')
 
-        groom_age.setText('')
-        groom_birthplace.setText('')
-        groom_residence.setText('')
-        groom_father.setText('')
-        groom_mother.setText('')
+        groom_age.setText(data.notice_groom_age)
+        groom_birthplace.setText(data.notice_groom_birthplace)
+        groom_residence.setText(data.notice_groom_residence)
+        groom_father.setText(data.notice_groom_father)
+        groom_mother.setText(data.notice_groom_mother)
 
-        bride_age.setText('')
-        bride_birthplace.setText('')
-        bride_residence.setText('')
-        bride_father.setText('')
-        bride_mother.setText('')
+        bride_age.setText(data.notice_bride_age)
+        bride_birthplace.setText(data.notice_bride_birthplace)
+        bride_residence.setText(data.notice_bride_residence)
+        bride_father.setText(data.notice_bride_father)
+        bride_mother.setText(data.notice_bride_mother)
 
-        date_posting.setText('')
-        civil_registrar.setText('')
-        position.setText('')
+        date_posting.setText(data.notice_date_posting)
+        civil_registrar.setText(data.civil_registrar)
+        position.setText('Municipal Civil Registrar')
 
-        copy_furnished1.setText('')
-        copy_furnished2.setText('')
-        copy_furnished3.setText('')
+        copy_furnished1.setText(data.notice_copy_furnished1)
+        copy_furnished2.setText(data.notice_copy_furnished2)
+        copy_furnished3.setText(data.notice_copy_furnished3)
 
         // form.flatten();
 
@@ -139,55 +150,127 @@ async function generate_marriage_license(formData) {
         const data = JSON.parse(formData)
 
         const fields = [
-            'header_province', 'header_municipality', 'registry_number', 'received_by',
-            'date_of_receipt', 'marriage_license_number', 'date_issuance_marriage_license',
-            'groom_contract_marriage_with', 'bride_contract_marriage_with', 'civil_registrar',
-            'groom_first_name', 'groom_middle_name', 'groom_last_name', 'groom_day',
-            'groom_month', 'groom_year', 'groom_age', 'groom_municipality', 'groom_province',
-            'groom_country', 'groom_sex', 'groom_citizenship', 'groom_residence',
-            'groom_residence_country', 'groom_religion', 'groom_civil_status',
-            'groom_previously_married_dissolved', 'groom_place_dissolved', 'groom_date_dissolved',
-            'groom_degree_relation', 'groom_father_first_name', 'groom_father_middle_name',
-            'groom_father_last_name', 'groom_father_citizenship', 'groom_father_residence',
-            'groom_father_residence_country', 'groom_mother_first_name', 'groom_mother_middle_name',
-            'groom_mother_last_name', 'groom_mother_citizenship', 'groom_mother_residence',
-            'groom_mother_residence_residence', 'groom_person_who_gave_consent',
-            'groom_person_who_gave_consent_relation', 'groom_person_who_gave_consent_citizenship',
-            'groom_person_who_gave_consent_residence', 'groom_person_who_gave_consent_residence_country',
-            'groom_ss_day', 'groom_ss_month', 'groom_ss_year', 'groom_ss_at', 'groom_ctc_number',
-            'groom_ctc_on', 'groom_ctc_at', 'bride_first_name', 'bride_middle_name', 'bride_last_name',
-            'bride_day', 'bride_month', 'bride_year', 'bride_age', 'bride_municipality', 'bride_province',
-            'bride_country', 'bride_sex', 'bride_citizenship', 'bride_residence', 'bride_residence_country',
-            'bride_religion', 'bride_civil_status', 'bride_previously_married_dissolved',
-            'bride_place_dissolved', 'bride_date_dissolved', 'bride_degree_relation', 'bride_father_first_name',
-            'bride_father_middle_name', 'bride_father_last_name', 'bride_father_citizenship',
-            'bride_father_residence', 'bride_father_residence_country', 'bride_mother_first_name',
-            'bride_mother_middle_name', 'bride_mother_last_name', 'bride_mother_citizenship',
-            'bride_mother_residence', 'bride_mother_residence_country', 'bride_person_who_gave_consent',
-            'bride_person_who_gave_consent_relation', 'bride_person_who_gave_consent_citizenship',
-            'bride_person_who_gave_consent_residence', 'bride_person_who_gave_consent_residence_country',
-            'bride_ss_day', 'bride_ss_month', 'bride_ss_year', 'bride_ss_at', 'bride_ctc_number',
-            'bride_ctc_on', 'bride_ctc_at'
-        ];
+            'header_province',
+            'header_municipality',
+            'registry_number',
+            'received_by',
+            'date_of_receipt',
+            'marriage_license_number',
+            'date_issuance_marriage_license',
+            'groom_contract_marriage_with',
+            'bride_contract_marriage_with',
+            'civil_registrar',
+            'groom_first_name',
+            'groom_middle_name',
+            'groom_last_name',
+            'groom_day',
+            'groom_month',
+            'groom_year',
+            'groom_age',
+            'groom_municipality',
+            'groom_province',
+            'groom_country',
+            'groom_sex',
+            'groom_citizenship',
+            'groom_residence',
+            'groom_residence_country',
+            'groom_religion',
+            'groom_civil_status',
+            'groom_previously_married_dissolved',
+            'groom_place_dissolved',
+            'groom_date_dissolved',
+            'groom_degree_relation',
+            'groom_father_first_name',
+            'groom_father_middle_name',
+            'groom_father_last_name',
+            'groom_father_citizenship',
+            'groom_father_residence',
+            'groom_father_residence_country',
+            'groom_mother_first_name',
+            'groom_mother_middle_name',
+            'groom_mother_last_name',
+            'groom_mother_citizenship',
+            'groom_mother_residence',
+            'groom_mother_residence_residence',
+            'groom_person_who_gave_consent',
+            'groom_person_who_gave_consent_relation',
+            'groom_person_who_gave_consent_citizenship',
+            'groom_person_who_gave_consent_residence',
+            'groom_person_who_gave_consent_residence_country',
+            'groom_ss_day',
+            'groom_ss_month',
+            'groom_ss_year',
+            'groom_ss_at',
+            'groom_ctc_number',
+            'groom_ctc_on',
+            'groom_ctc_at',
+            'bride_first_name',
+            'bride_middle_name',
+            'bride_last_name',
+            'bride_day',
+            'bride_month',
+            'bride_year',
+            'bride_age',
+            'bride_municipality',
+            'bride_province',
+            'bride_country',
+            'bride_sex',
+            'bride_citizenship',
+            'bride_residence',
+            'bride_residence_country',
+            'bride_religion',
+            'bride_civil_status',
+            'bride_previously_married_dissolved',
+            'bride_place_dissolved',
+            'bride_date_dissolved',
+            'bride_degree_relation',
+            'bride_father_first_name',
+            'bride_father_middle_name',
+            'bride_father_last_name',
+            'bride_father_citizenship',
+            'bride_father_residence',
+            'bride_father_residence_country',
+            'bride_mother_first_name',
+            'bride_mother_middle_name',
+            'bride_mother_last_name',
+            'bride_mother_citizenship',
+            'bride_mother_residence',
+            'bride_mother_residence_country',
+            'bride_person_who_gave_consent',
+            'bride_person_who_gave_consent_relation',
+            'bride_person_who_gave_consent_citizenship',
+            'bride_person_who_gave_consent_residence',
+            'bride_person_who_gave_consent_residence_country',
+            'bride_ss_day',
+            'bride_ss_month',
+            'bride_ss_year',
+            'bride_ss_at',
+            'bride_ctc_number',
+            'bride_ctc_on',
+            'bride_ctc_at'
+        ]
 
         // Set values for each field
         fields.forEach((fieldName) => {
-            const field = form.getTextField(fieldName);  
-            const fieldValue = data[fieldName] || '';    
+            const field = form.getTextField(fieldName)
+            const fieldValue = data[fieldName] || ''
 
-            const fontSize = 9;
-            field.setText(fieldValue);
-            field.updateAppearances(helveticaFont);
+            const fontSize = 9
+            field.setText(fieldValue)
+            field.updateAppearances(helveticaFont)
             // field.setFontSize(fontSize); Update Font???
-        });
+        })
 
-        form.flatten()
+        // form.flatten()
 
         const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
+        
+
         return { status: true, pdfbase64: pdfBytes }
     } catch (error) {
         console.log(error)
     }
 }
+
 
 export { generate_marriage_notice, generate_marriage_license }

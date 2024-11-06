@@ -33,7 +33,9 @@
                             <font-awesome-icon icon="fa-regular fa-floppy-disk" /> Save</button>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
                             @click="change_mode()">
-                            <font-awesome-icon icon="fa-regular fa-eye" /> Preview</button>
+                            <font-awesome-icon icon="fa-regular fa-eye" v-if="!preview" />
+                            <font-awesome-icon icon="fa-solid fa-pen-to-square" v-else/>
+                            {{ !preview ? 'Preview' : 'Edit' }}</button>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
                             @click="change_mode()">
                             <font-awesome-icon icon="fa-solid fa-print" />Print</button>
@@ -57,7 +59,7 @@
                             <div v-if="page === 1" class="w-full h-full border-[3px] border-gray-700 flex flex-col">
 
                                 <!-- First -->
-                                <div class="border-b border-gray-500 flex flex-col relative p-1 w-full">
+                                <!-- <div class="border-b border-gray-500 flex flex-col relative p-1 w-full">
                                     <div class="w-full flex flex-row">
                                         <p class="text-xs">Municipal Form. 90 (Form No. 2)</p>
                                         <p class="text-xs ml-auto">(To be accomplished in quadrupicate using black ink)
@@ -76,7 +78,7 @@
                                         LICENSE
                                     </p>
 
-                                </div>
+                                </div> -->
                                 <!-- Second -->
                                 <div class="border-b border-gray-500 flex flex-row relative  w-full">
                                     <div class="basis-[70%] flex flex-col  border-r border-gray-500 p-1">
@@ -131,7 +133,7 @@
                                         <p class="text-sm font-bold ">BRIDE</p>
                                     </div>
                                 </div>
-                                <div class="border-b border-gray-500 grid grid-cols-2 relative  w-full">
+                                <!-- <div class="border-b border-gray-500 grid grid-cols-2 relative  w-full">
                                     <div class="flex flex-col  border-r border-gray-500 px-5">
                                         <p class="text-sm font-bold ">The Civil Registrar</p>
                                         <p class="text-xs indent-5">Sir/Madam:</p>
@@ -181,7 +183,7 @@
                                             information:</span>
 
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- 5 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div class="basis-[45%] flex flex-col  border-r border-gray-500 p-1">
@@ -857,7 +859,7 @@
                                 </div>
                             </div>
                             <div v-if="page === 2" class="w-full h-full flex flex-col relative ">
-                                <p class="text-xs text-gray-600 ">Note: Mockup only.</p>
+                                <!-- <p class="text-xs text-gray-600 ">Note: Mockup only.</p> -->
                                 <!-- <div class="justify-center flex  items-center flex-col">
                                 <p class="text-sm font-sans">Republic of the Philippines</p>
                                 <p class="text-sm font-sans">Province of Pangasinan</p>
@@ -872,12 +874,12 @@
                                     <p class="font-bold text-2xl mt-5 font-sans">APPLICANTS FOR MARRIAGE LICENSE</p>
                                     <div class="w-[50%] mt-2">
                                         <InputBottomBorderMarriage page_2 text="text-sm" middle isBold
-                                            v-model="formData.groom_notice_name" />
+                                            v-model="formData.notice_groom_name" />
                                     </div>
                                     <p>and</p>
                                     <div class="w-[50%] mt-2">
                                         <InputBottomBorderMarriage isBold page_2 middle
-                                            v-model="formData.bride_notice_name" />
+                                            v-model="formData.notice_bride_name" />
                                     </div>
                                 </div>
 
@@ -901,31 +903,31 @@
                                             <div class="flex flex-row grow items-center ">
                                                 <p>Name: </p>
                                                 <InputBottomBorderMarriage page_2 middle
-                                                    v-model="formData.groom_notice_name" isBold />
+                                                    v-model="formData.notice_groom_name" isBold />
                                             </div>
                                             <div class="flex flex-row basis-[30%]  items-center">
                                                 <p>Age: </p>
                                                 <InputBottomBorderMarriage page_2 middle
-                                                    v-model="formData.groom_notice_age" />
+                                                    v-model="formData.notice_groom_age" />
                                             </div>
                                         </div>
                                         <div class="flex flex-row  items-center">
                                             <p>Birthplace: </p>
                                             <InputBottomBorderMarriage page_2
-                                                v-model="formData.groom_notice_birthplace" />
+                                                v-model="formData.notice_groom_birthplace" />
                                         </div>
                                         <div class="flex flex-row  items-center">
                                             <p>Residence: </p>
                                             <InputBottomBorderMarriage page_2
-                                                v-model="formData.groom_notice_residence" />
+                                                v-model="formData.notice_groom_residence" />
                                         </div>
                                         <div class="flex flex-row  items-center">
                                             <p>Father: </p>
-                                            <InputBottomBorderMarriage page_2 v-model="formData.groom_notice_father" />
+                                            <InputBottomBorderMarriage page_2 v-model="formData.notice_groom_father" />
                                         </div>
                                         <div class="flex flex-row  items-center">
                                             <p>Mother: </p>
-                                            <InputBottomBorderMarriage page_2 v-model="formData.groom_notice_mother" />
+                                            <InputBottomBorderMarriage page_2 v-model="formData.notice_groom_mother" />
                                         </div>
                                     </div>
 
@@ -957,31 +959,31 @@
                                             <div class="flex flex-row grow items-center">
                                                 <p>Name: </p>
                                                 <InputBottomBorderMarriage page_2 middle isBold
-                                                    v-model="formData.bride_notice_name" />
+                                                    v-model="formData.notice_bride_name" />
                                             </div>
                                             <div class="flex flex-row basis-[30%] items-center">
                                                 <p>Age: </p>
                                                 <InputBottomBorderMarriage page_2 middle
-                                                    v-model="formData.bride_notice_age" />
+                                                    v-model="formData.notice_bride_age" />
                                             </div>
                                         </div>
                                         <div class="flex flex-row ">
                                             <p>Birthplace: </p>
                                             <InputBottomBorderMarriage page_2
-                                                v-model="formData.bride_notice_birthplace" />
+                                                v-model="formData.notice_bride_birthplace" />
                                         </div>
                                         <div class="flex flex-row ">
                                             <p>Residence: </p>
                                             <InputBottomBorderMarriage page_2
-                                                v-model="formData.bride_notice_residence" />
+                                                v-model="formData.notice_bride_residence" />
                                         </div>
                                         <div class="flex flex-row ">
                                             <p>Father: </p>
-                                            <InputBottomBorderMarriage page_2 v-model="formData.bride_notice_father" />
+                                            <InputBottomBorderMarriage page_2 v-model="formData.notice_bride_father" />
                                         </div>
                                         <div class="flex flex-row ">
                                             <p>Mother: </p>
-                                            <InputBottomBorderMarriage page_2 v-model="formData.bride_notice_mother" />
+                                            <InputBottomBorderMarriage page_2 v-model="formData.notice_bride_mother" />
                                         </div>
                                     </div>
 
@@ -996,7 +998,7 @@
                                 <div class="flex flex-col  justify-center items-center mt-3">
                                     <div class="w-[30%]">
                                         <InputBottomBorderMarriage page_2 middle
-                                            v-model="formData.marriage_notice_date" />
+                                            v-model="formData.notice_date_posting" />
                                     </div>
 
                                     <p>Date</p>
@@ -1007,15 +1009,17 @@
                                         <p class="font-bold italic">Copy Furnished:</p>
                                         <div class="w-[20rem] flex flex-col gap-1">
                                             <InputBottomBorderMarriage page_2
-                                                v-model="formData.marriage_notice_copy_furnished" />
-                                            <InputBottomBorderMarriage page_2 />
-                                            <InputBottomBorderMarriage page_2 />
+                                                v-model="formData.notice_copy_furnished1" />
+                                            <InputBottomBorderMarriage page_2
+                                                v-model="formData.notice_copy_furnished2" />
+                                            <InputBottomBorderMarriage page_2
+                                                v-model="formData.notice_copy_furnished3" />
                                         </div>
                                     </div>
                                     <div class="flex flex-col items-center">
                                         <div class="w-[18rem]">
                                             <InputBottomBorderMarriage middle isBold page_2
-                                                v-model="formData.municipal_civil_registrar" />
+                                                v-model="formData.civil_registrar" />
                                         </div>
                                         <p class="italic">Municipal Civil Registrar</p>
                                     </div>
@@ -1068,7 +1072,7 @@ import { onClickOutside } from '@vueuse/core'
 
 const page = ref(1)
 const paper_size = computed(() => {
-    return page.value === 1 ? 14 : 10
+    return page.value === 1 ? 12 : 10
 })
 const change_page = (value) => {
     if (page.value === value) { return }
@@ -1111,18 +1115,15 @@ const change_mode = () => {
 
 const preview_document = async () => {
     if (preview.value) {
-        if (page.value === 1) {
+        const data = JSON.stringify({ ...formData })
 
-            const data = JSON.stringify({ ...formData })
+        if (page.value === 1) {
             const previewData = await window.MarriageApi.previewMarriage(data);
             pdf_content.value = previewData.pdfbase64;
-
         }
         else if (page.value === 2) {
-            const previewData = await window.MarriageApi.previewNotice();
+            const previewData = await window.MarriageApi.previewNotice(data);
             notice_pdf_content.value = previewData.pdfbase64;
-
-
         }
     }
 }
@@ -1297,25 +1298,32 @@ const initialForm = {
 
 
 
-
-
     /**
      *  Notice Input Fields
      */
 
-    groom_notice_name: '',
-    groom_notice_age: '',
-    groom_notice_birthplace: '',
-    groom_notice_residence: '',
-    groom_notice_father: '',
-    groom_notice_mother: '',
 
-    bride_notice_name: '',
-    bride_notice_age: '',
-    bride_notice_birthplace: '',
-    bride_notice_residence: '',
-    bride_notice_father: '',
-    bride_notice_mother: '',
+    notice_province: '',
+    notice_municipality: '',
+    notice_office: '',
+    notice_groom_name: '',
+    notice_bride_name: '',
+    notice_groom_age: '',
+    notice_groom_birthplace: '',
+    notice_groom_residence: '',
+    notice_groom_father: '',
+    notice_groom_mother: '',
+    notice_bride_age: '',
+    notice_bride_birthplace: '',
+    notice_bride_residence: '',
+    notice_bride_father: '',
+    notice_bride_mother: '',
+    notice_date_posting: '',
+    notice_position: '',
+    notice_copy_furnished1: '',
+    notice_copy_furnished2: '',
+    notice_copy_furnished3: '',
+
 }
 
 
@@ -1326,67 +1334,67 @@ const formData = reactive({ ...initialForm })
 const updateNotices = () => {
     // GROOM NOTICE
 
-    formData.groom_father_last_name = formData.groom_last_name ? formData.groom_last_name : ''
-    formData.groom_mother_last_name = formData.groom_middle_name ? formData.groom_middle_name : ''
+    // formData.groom_father_last_name = formData.groom_last_name ? formData.groom_last_name : ''
+    // formData.groom_mother_last_name = formData.groom_middle_name ? formData.groom_middle_name : ''
 
 
-    formData.groom_contract_marriage_with = formData.bride_first_name || formData.bride_last_name ? formData.bride_first_name + ' ' + formData.bride_middle_name + ' ' + formData.bride_last_name : '';
-    formData.bride_contract_marriage_with = formData.groom_first_name || formData.groom_last_name ? formData.groom_first_name + ' ' + formData.groom_middle_name + ' ' + formData.groom_last_name : '';
+    // formData.groom_contract_marriage_with = formData.bride_first_name || formData.bride_last_name ? formData.bride_first_name + ' ' + formData.bride_middle_name + ' ' + formData.bride_last_name : '';
+    // formData.bride_contract_marriage_with = formData.groom_first_name || formData.groom_last_name ? formData.groom_first_name + ' ' + formData.groom_middle_name + ' ' + formData.groom_last_name : '';
 
-    const groomInitialMiddleName = formData.groom_middle_name ? formData.groom_middle_name.charAt(0) : '';
-    const groomFatherInitialMiddleName = formData.groom_father_middle_name ? formData.groom_father_middle_name.charAt(0) : '';
-    const groomMotherInitialMiddleName = formData.groom_mother_middle_name ? formData.groom_mother_middle_name.charAt(0) : '';
-    const groomBirthPlace = formData.groom_municipality && formData.groom_province ? formData.groom_municipality + ', ' + formData.groom_province : ''
+    // const groomInitialMiddleName = formData.groom_middle_name ? formData.groom_middle_name.charAt(0) : '';
+    // const groomFatherInitialMiddleName = formData.groom_father_middle_name ? formData.groom_father_middle_name.charAt(0) : '';
+    // const groomMotherInitialMiddleName = formData.groom_mother_middle_name ? formData.groom_mother_middle_name.charAt(0) : '';
+    // const groomBirthPlace = formData.groom_municipality && formData.groom_province ? formData.groom_municipality + ', ' + formData.groom_province : ''
 
-    formData.groom_notice_name = `${formData.groom_first_name} ${groomInitialMiddleName}. ${formData.groom_last_name}`;
-    formData.groom_notice_age = formData.groom_age ? `${formData.groom_age} yrs. old` : '';
+    // formData.groom_notice_name = `${formData.groom_first_name} ${groomInitialMiddleName}. ${formData.groom_last_name}`;
+    // formData.groom_notice_age = formData.groom_age ? `${formData.groom_age} yrs. old` : '';
 
-    formData.groom_notice_father = formData.groom_father_first_name
-        ? `${formData.groom_father_first_name} ${groomFatherInitialMiddleName}. ${formData.groom_father_last_name}`
-        : '';
+    // formData.groom_notice_father = formData.groom_father_first_name
+    //     ? `${formData.groom_father_first_name} ${groomFatherInitialMiddleName}. ${formData.groom_father_last_name}`
+    //     : '';
 
-    formData.groom_notice_mother = formData.groom_mother_first_name
-        ? `${formData.groom_mother_first_name} ${groomMotherInitialMiddleName}. ${formData.groom_mother_last_name}`
-        : '';
-    formData.groom_notice_birthplace = formData.groom_municipality
-        ? capitalizeWords(groomBirthPlace)
-        : '';
-    formData.groom_notice_residence = formData.groom_residence
-        ? capitalizeWords(formData.groom_residence).replace(', PHILIPPINES', '')
-        : '';
-
-
-    // BRIDE NOTICE
-
-    formData.bride_father_last_name = formData.bride_last_name ? formData.bride_last_name : ''
-    formData.bride_mother_last_name = formData.bride_middle_name ? formData.bride_middle_name : ''
+    // formData.groom_notice_mother = formData.groom_mother_first_name
+    //     ? `${formData.groom_mother_first_name} ${groomMotherInitialMiddleName}. ${formData.groom_mother_last_name}`
+    //     : '';
+    // formData.groom_notice_birthplace = formData.groom_municipality
+    //     ? capitalizeWords(groomBirthPlace)
+    //     : '';
+    // formData.groom_notice_residence = formData.groom_residence
+    //     ? capitalizeWords(formData.groom_residence).replace(', PHILIPPINES', '')
+    //     : '';
 
 
+    // // BRIDE NOTICE
 
-    const brideInitialMiddleName = formData.bride_middle_name ? formData.bride_middle_name.charAt(0) : '';
-    const brideFatherInitialMiddleName = formData.bride_father_middle_name ? formData.bride_father_middle_name.charAt(0) : '';
-    const brideMotherInitialMiddleName = formData.bride_mother_middle_name ? formData.bride_mother_middle_name.charAt(0) : '';
-    const brideBirthPlace = formData.bride_municipality && formData.bride_province ? formData.bride_municipality + ', ' + formData.bride_province : ''
-
-    formData.bride_notice_name = `${formData.bride_first_name} ${brideInitialMiddleName}. ${formData.bride_last_name}`;
-    formData.bride_notice_age = formData.bride_age ? `${formData.bride_age} yrs. old` : '';
+    // formData.bride_father_last_name = formData.bride_last_name ? formData.bride_last_name : ''
+    // formData.bride_mother_last_name = formData.bride_middle_name ? formData.bride_middle_name : ''
 
 
 
-    formData.bride_notice_father = formData.bride_father_first_name
-        ? `${formData.bride_father_first_name} ${brideFatherInitialMiddleName}. ${formData.bride_father_last_name}`
-        : '';
+    // const brideInitialMiddleName = formData.bride_middle_name ? formData.bride_middle_name.charAt(0) : '';
+    // const brideFatherInitialMiddleName = formData.bride_father_middle_name ? formData.bride_father_middle_name.charAt(0) : '';
+    // const brideMotherInitialMiddleName = formData.bride_mother_middle_name ? formData.bride_mother_middle_name.charAt(0) : '';
+    // const brideBirthPlace = formData.bride_municipality && formData.bride_province ? formData.bride_municipality + ', ' + formData.bride_province : ''
+
+    // formData.bride_notice_name = `${formData.bride_first_name} ${brideInitialMiddleName}. ${formData.bride_last_name}`;
+    // formData.bride_notice_age = formData.bride_age ? `${formData.bride_age} yrs. old` : '';
 
 
-    formData.bride_notice_mother = formData.bride_mother_first_name
-        ? `${formData.bride_mother_first_name} ${brideMotherInitialMiddleName}. ${formData.bride_mother_last_name}`
-        : '';
-    formData.bride_notice_birthplace = formData.bride_municipality
-        ? capitalizeWords(brideBirthPlace)
-        : '';
-    formData.bride_notice_residence = formData.bride_residence
-        ? capitalizeWords(formData.bride_residence).replace(', PHILIPPINES', '')
-        : '';
+
+    // formData.bride_notice_father = formData.bride_father_first_name
+    //     ? `${formData.bride_father_first_name} ${brideFatherInitialMiddleName}. ${formData.bride_father_last_name}`
+    //     : '';
+
+
+    // formData.bride_notice_mother = formData.bride_mother_first_name
+    //     ? `${formData.bride_mother_first_name} ${brideMotherInitialMiddleName}. ${formData.bride_mother_last_name}`
+    //     : '';
+    // formData.bride_notice_birthplace = formData.bride_municipality
+    //     ? capitalizeWords(brideBirthPlace)
+    //     : '';
+    // formData.bride_notice_residence = formData.bride_residence
+    //     ? capitalizeWords(formData.bride_residence).replace(', PHILIPPINES', '')
+    //     : '';
 };
 
 const capitalizeWords = (sentence) => {

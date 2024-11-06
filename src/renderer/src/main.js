@@ -86,7 +86,8 @@ import {
     faAnglesRight,
     faCheck,
     faFile, 
-    faCamera
+    faCamera,
+    faPenToSquare
     
 
 
@@ -159,7 +160,8 @@ library.add(
     faCheck,
     faFile, 
     faCamera,
-    faFloppyDisk
+    faFloppyDisk,
+    faPenToSquare
 
 )
 

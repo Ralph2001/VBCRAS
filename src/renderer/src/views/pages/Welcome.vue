@@ -12,11 +12,18 @@
     <div
       class="bg-transparent border h-full rounded-sm flex md:flex-row sm:flex-col p-4 sm:px-10 md:lg:px-40 items-center flex-wrap">
       <div class="flex flex-col grow items-center h-full justify-center px-10">
-        <!-- <p class="text-lg tracking-wide font-normal text-justify text-pretty">For I know the plans I have for you,
-          declares the Lord, plans for welfare and
-          not for evil,
-          to give you a future and a hope.</p>
-        <p class="font-semibold italic text-md">Jeremiah 29:11</p> -->
+        <!-- <div class="w-full flex justify-center">
+          <p class="font-semibold p-4 text-gray-700 text-2xl">System</p>
+        </div>
+
+        <div class="w-full flex flex-row gap-2 justify-center items-center">
+          <div v-for="app in system_class"
+            class="w-[10rem] h-[5rem] p-2 bg-gray-200 hover:cursor-pointer rounded flex items-center justify-center shadow hover:bg-gray-300 transition-all">
+            <p class="text-xs text-center font-semibold">
+
+              {{ app.name }}</p>
+          </div>
+        </div> -->
 
         <div
           class="flex flex-row gap-2 items-center text-lg uFppercase font-semibold text-nowrap text-gray-800 justify-center h-[5rem]">
@@ -45,6 +52,8 @@
 
         </div>
       </div>
+
+
       <div class="absolute bottom-10 right-10 flex flex-row items-center gap-2">
         <p class="text-xs text-gray-600">
           App Version:
@@ -138,4 +147,36 @@ const hoverTitle = () => {
     }, 100 * (index + 1));
   });
 };
+
+const system_class = ref([
+  {
+    name: 'Correction in Clearical Error & Change of First Name',
+    link: ''
+  },
+  {
+    name: 'Forms',
+    link: ''
+  },
+
+  {
+    name: 'Marriage License',
+    link: ''
+  },
+
+
+  {
+    name: 'Legitimation',
+    link: ''
+  },
+
+  {
+    name: 'AUSF',
+    link: ''
+  },
+
+  {
+    name: 'Scanned Documents',
+    link: ''
+  }
+])
 </script>
