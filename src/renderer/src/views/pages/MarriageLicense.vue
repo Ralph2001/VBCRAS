@@ -736,17 +736,14 @@
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2  w-full h-full relative">
-                                    <div
+                                    <!-- <div
                                         class="absolute border px-3 flex items-center justify-center border-gray-500 z-50 top-[4.5rem] bg-gray-50 right-[23.5rem] w-[6.5rem] h-[9.5rem]">
                                         <p class="text-xs text-center leading-5">Excempt from documentary stamp tax</p>
-                                    </div>
+                                    </div> -->
                                     <div
                                         class="border-r border-gray-500  flex flex-col items-center justify-center h-full">
-                                        <div class="mt-3 mb-3 w-full">
-                                            <InputBottomBorderMarriage disabled isBold label="Signature of Applicant"
-                                                middle />
-                                        </div>
-                                        <div class="flex flex-col gap-1 pr-14 pl-2 mt-auto mb-auto">
+                                        <div class="mt-auto"></div>
+                                        <div class="flex flex-col gap-1  px-3 mt-auto mb-auto">
                                             <p class="italic text-xs tracking-widest font-serif indent-10"><span
                                                     class="font-bold text-sm not-italic">SUBSCRIBE
                                                     AND
@@ -800,12 +797,11 @@
 
                                     </div>
                                     <div class=" flex flex-col items-center justify-center h-full">
-                                        <div class="mt-3 mb-3 w-full">
-                                            <InputBottomBorderMarriage disabled isBold label="Signature of Applicant"
-                                                middle />
+                                        <div class="mt-auto">
+                                         
                                         </div>
 
-                                        <div class="flex flex-col gap-1 pl-16 pr-2 mt-auto mb-auto">
+                                        <div class="flex flex-col gap-1 px-3 mt-auto mb-auto">
                                             <p class="italic text-xs tracking-widest font-serif indent-10 text-nowrap">
                                                 <span class="font-bold text-sm not-italic ">SUBSCRIBE
                                                     AND
