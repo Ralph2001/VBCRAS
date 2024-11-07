@@ -1,5 +1,5 @@
 import { exec } from 'child_process'
-import { PDFDocument, StandardFonts } from 'pdf-lib'
+import { PageSizes, PDFDocument, StandardFonts } from 'pdf-lib'
 const path = require('path')
 const fs = require('fs')
 
@@ -13,7 +13,13 @@ const MARRIAGE_TEMPLATE_PATHS = {
     MARRIAGE_LICENSE: path
         .resolve(
             __dirname,
-            '../../resources/documents/Marriage License/Application.pdf'
+            '../../resources/documents/Marriage License/Marriage License Base.pdf'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    MARRIAGE_LICENSE_PRINT: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/Marriage License/Marriage License Print.pdf'
         )
         .replace('app.asar', 'app.asar.unpacked')
 }
@@ -173,7 +179,7 @@ async function generate_marriage_license(formData) {
             'groom_sex',
             'groom_citizenship',
             'groom_residence',
-            'groom_residence_country',
+
             'groom_religion',
             'groom_civil_status',
             'groom_previously_married_dissolved',
@@ -185,18 +191,18 @@ async function generate_marriage_license(formData) {
             'groom_father_last_name',
             'groom_father_citizenship',
             'groom_father_residence',
-            'groom_father_residence_country',
+
             'groom_mother_first_name',
             'groom_mother_middle_name',
             'groom_mother_last_name',
             'groom_mother_citizenship',
             'groom_mother_residence',
-            'groom_mother_residence_residence',
+
             'groom_person_who_gave_consent',
             'groom_person_who_gave_consent_relation',
             'groom_person_who_gave_consent_citizenship',
             'groom_person_who_gave_consent_residence',
-            'groom_person_who_gave_consent_residence_country',
+
             'groom_ss_day',
             'groom_ss_month',
             'groom_ss_year',
@@ -217,7 +223,7 @@ async function generate_marriage_license(formData) {
             'bride_sex',
             'bride_citizenship',
             'bride_residence',
-            'bride_residence_country',
+
             'bride_religion',
             'bride_civil_status',
             'bride_previously_married_dissolved',
@@ -229,18 +235,18 @@ async function generate_marriage_license(formData) {
             'bride_father_last_name',
             'bride_father_citizenship',
             'bride_father_residence',
-            'bride_father_residence_country',
+
             'bride_mother_first_name',
             'bride_mother_middle_name',
             'bride_mother_last_name',
             'bride_mother_citizenship',
             'bride_mother_residence',
-            'bride_mother_residence_country',
+
             'bride_person_who_gave_consent',
             'bride_person_who_gave_consent_relation',
             'bride_person_who_gave_consent_citizenship',
             'bride_person_who_gave_consent_residence',
-            'bride_person_who_gave_consent_residence_country',
+
             'bride_ss_day',
             'bride_ss_month',
             'bride_ss_year',
@@ -261,10 +267,9 @@ async function generate_marriage_license(formData) {
             // field.setFontSize(fontSize); Update Font???
         })
 
-        // form.flatten()
+        form.flatten()
 
         const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
-        
 
         return { status: true, pdfbase64: pdfBytes }
     } catch (error) {
@@ -272,5 +277,172 @@ async function generate_marriage_license(formData) {
     }
 }
 
+// print_decided_license
+async function print_decided_license(formData, params) {
+    try {
+        // Check if the required template exists
+        checkFilesExist([MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE_PRINT]);
 
-export { generate_marriage_notice, generate_marriage_license }
+        const content = fs.readFileSync(MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE_PRINT);
+        const pdfDoc = await PDFDocument.load(content);
+        const form = pdfDoc.getForm();
+
+        // Embed Helvetica font
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+        const data = JSON.parse(formData);
+        const adjustments = JSON.parse(params);
+
+        // List of form fields to update
+        const fields = [
+            'header_province',
+            'header_municipality',
+            'registry_number',
+            'received_by',
+            'date_of_receipt',
+            'marriage_license_number',
+            'date_issuance_marriage_license',
+            'groom_contract_marriage_with',
+            'bride_contract_marriage_with',
+            'civil_registrar',
+            'groom_first_name',
+            'groom_middle_name',
+            'groom_last_name',
+            'groom_day',
+            'groom_month',
+            'groom_year',
+            'groom_age',
+            'groom_municipality',
+            'groom_province',
+            'groom_country',
+            'groom_sex',
+            'groom_citizenship',
+            'groom_residence',
+            'groom_religion',
+            'groom_civil_status',
+            'groom_previously_married_dissolved',
+            'groom_place_dissolved',
+            'groom_date_dissolved',
+            'groom_degree_relation',
+            'groom_father_first_name',
+            'groom_father_middle_name',
+            'groom_father_last_name',
+            'groom_father_citizenship',
+            'groom_father_residence',
+            'groom_mother_first_name',
+            'groom_mother_middle_name',
+            'groom_mother_last_name',
+            'groom_mother_citizenship',
+            'groom_mother_residence',
+            'groom_person_who_gave_consent',
+            'groom_person_who_gave_consent_relation',
+            'groom_person_who_gave_consent_citizenship',
+            'groom_person_who_gave_consent_residence',
+            'groom_ss_day',
+            'groom_ss_month',
+            'groom_ss_year',
+            'groom_ss_at',
+            'groom_ctc_number',
+            'groom_ctc_on',
+            'groom_ctc_at',
+            'bride_first_name',
+            'bride_middle_name',
+            'bride_last_name',
+            'bride_day',
+            'bride_month',
+            'bride_year',
+            'bride_age',
+            'bride_municipality',
+            'bride_province',
+            'bride_country',
+            'bride_sex',
+            'bride_citizenship',
+            'bride_residence',
+            'bride_religion',
+            'bride_civil_status',
+            'bride_previously_married_dissolved',
+            'bride_place_dissolved',
+            'bride_date_dissolved',
+            'bride_degree_relation',
+            'bride_father_first_name',
+            'bride_father_middle_name',
+            'bride_father_last_name',
+            'bride_father_citizenship',
+            'bride_father_residence',
+            'bride_mother_first_name',
+            'bride_mother_middle_name',
+            'bride_mother_last_name',
+            'bride_mother_citizenship',
+            'bride_mother_residence',
+            'bride_person_who_gave_consent',
+            'bride_person_who_gave_consent_relation',
+            'bride_person_who_gave_consent_citizenship',
+            'bride_person_who_gave_consent_residence',
+            'bride_ss_day',
+            'bride_ss_month',
+            'bride_ss_year',
+            'bride_ss_at',
+            'bride_ctc_number',
+            'bride_ctc_on',
+            'bride_ctc_at'
+        ];
+
+        // Set values for each field
+        fields.forEach((fieldName) => {
+            const field = form.getTextField(fieldName);
+            const fieldValue = data[fieldName] || '';
+            // const fontSize = 9;
+            field.setText(fieldValue);
+            // field.updateAppearances(helveticaFont);
+        });
+
+        form.flatten();
+
+        // Form to be copied
+        const pdfBytes = await pdfDoc.save();
+
+        // Create a new PDF document
+        const newPdfDoc = await PDFDocument.create();
+
+        // Load the original PDF document (note: pdfBytes is in a buffer format here)
+        const originalPdfDoc = await PDFDocument.load(pdfBytes);
+
+        // Ensure we're copying a valid page (copy the first page)
+        const pages = await originalPdfDoc.copyPages(originalPdfDoc, [0]);
+
+        if (!pages || !pages[0]) {
+            throw new Error('Failed to copy the page correctly.');
+        }
+
+        const firstDonorPage = pages[0];
+
+        // Get the original page size
+        const originalPageWidth = firstDonorPage.getWidth();
+        const originalPageHeight = firstDonorPage.getHeight();
+
+        // Add a new page with the same size as the original
+        const newPage = newPdfDoc.addPage([originalPageWidth, originalPageHeight]);
+
+        // Embed the copied page onto the new page
+        const embeddedPage = await newPdfDoc.embedPage(firstDonorPage);
+
+        // Optional: Adjust positioning with given x and y offsets
+        const x_axis_adjustments = !isNaN(Number(adjustments.x)) ? Number(adjustments.x) : 0;
+        const y_axis_adjustments = !isNaN(Number(adjustments.y)) ? Number(adjustments.y) : 0;
+
+        newPage.drawPage(embeddedPage, {
+            x: 12,
+            y: -27,
+        });
+
+        // Save the new PDF
+        const pdfBytesToBePrinted = await newPdfDoc.saveAsBase64();
+
+        return { status: true, pdfbase64: pdfBytesToBePrinted };
+    } catch (error) {
+        console.error('Error:', error);
+        return { status: false, message: error.message };
+    }
+}
+
+export { generate_marriage_notice, generate_marriage_license, print_decided_license }

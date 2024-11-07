@@ -21,7 +21,8 @@ import { autoUpdater } from 'electron-updater'
 import { certificate_filing } from '../documents/clerical/certificate_filing'
 import {
     generate_marriage_notice,
-    generate_marriage_license
+    generate_marriage_license,
+    print_decided_license
 } from '../documents/marriage'
 
 const log = require('electron-log')
@@ -77,53 +78,53 @@ function generateRandomString(length) {
     return result
 }
 
-// Create Print Window without gui
-ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
-    const randomFileName = `temp_${generateRandomString(20)}.pdf`
-    const pdfPath = join(
-        __dirname,
-        '../../resources/temp/',
-        randomFileName
-    ).replace('app.asar', 'app.asar.unpacked')
-    const fileDirectory = join(__dirname, '../../resources/temp/').replace(
-        'app.asar',
-        'app.asar.unpacked'
-    )
 
-    fs.writeFile(pdfPath, Buffer.from(base64Data, 'base64'), (err) => {
-        if (err) {
-            console.error('Failed to write PDF to file', err)
-            return
-        }
 
-        const printProcess = spawn(sumatraPath, [
-            '-print-dialog',
-            '-exit-when-done',
-            pdfPath
-        ])
+
+async function printPDF(base64Data, sumatraPath) {
+    try {
+        const randomFileName = `temp_${generateRandomString(20)}.pdf`;
+        const pdfPath = join(__dirname, '../../resources/temp/', randomFileName).replace('app.asar', 'app.asar.unpacked');
+        const fileDirectory = join(__dirname, '../../resources/temp/').replace('app.asar', 'app.asar.unpacked');
+
+        // Write the base64 PDF data to a temporary file
+        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'));
+
+        // Spawn the SumatraPDF process to print the PDF
+        const printProcess = spawn(sumatraPath, ['-print-dialog', '-exit-when-done', pdfPath]);
 
         printProcess.on('error', (error) => {
-            console.error('Failed to start SumatraPDF process:', error)
-        })
+            console.error('Failed to start SumatraPDF process:', error);
+        });
 
         printProcess.on('close', (code) => {
             if (code === 0) {
-                console.log('Printed successfully')
+                console.log('Printed successfully');
             } else {
-                console.error(`SumatraPDF process exited with code ${code}`)
+                console.error(`SumatraPDF process exited with code ${code}`);
             }
 
+            // Clean up: delete the temporary PDF file
             fs.unlink(pdfPath, (err) => {
                 if (err) {
-                    console.error('Failed to delete temp PDF file', err)
+                    console.error('Failed to delete temp PDF file', err);
                 } else {
-                    console.log('Temp PDF file deleted successfully')
+                    console.log('Temp PDF file deleted successfully');
                 }
-            })
+            });
 
-            fse.emptyDirSync(fileDirectory)
-        })
-    })
+            // Empty the temp directory
+            fse.emptyDirSync(fileDirectory);
+        });
+    } catch (error) {
+        console.error('Error printing PDF:', error);
+    }
+}
+
+
+
+ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
+    await printPDF(base64Data, sumatraPath);
 })
 
 // Form IPCMAIN
@@ -940,11 +941,26 @@ ipcMain.handle('previewMarriage', async (event, formData) => {
         console.log(error)
     }
 })
+ipcMain.handle('printMarriage', async (event, formData, params) => {
+    try {
+        const print_application_for_marriage_license = await print_decided_license(formData, params);
+        if (print_application_for_marriage_license && print_application_for_marriage_license.pdfbase64) {
+            await printPDF(print_application_for_marriage_license.pdfbase64, sumatraPath);
+            return {status: true}
+        } else {
+            console.error("Failed to generate valid PDF base64 data.");
+        }
+    } catch (error) {
+        console.error('Error in printing marriage application:', error);
+    }
+});
+
+
 ipcMain.handle('previewNotice', async (event, formData) => {
     try {
         const generate_application_notice =
             await generate_marriage_notice(formData)
-            return generate_application_notice
+        return generate_application_notice
     } catch (error) {
         console.log(error)
     }

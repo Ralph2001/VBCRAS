@@ -34,11 +34,58 @@
                         <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
                             @click="change_mode()">
                             <font-awesome-icon icon="fa-regular fa-eye" v-if="!preview" />
-                            <font-awesome-icon icon="fa-solid fa-pen-to-square" v-else/>
+                            <font-awesome-icon icon="fa-solid fa-pen-to-square" v-else />
                             {{ !preview ? 'Preview' : 'Edit' }}</button>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
-                            @click="change_mode()">
+                            @click="print()">
                             <font-awesome-icon icon="fa-solid fa-print" />Print</button>
+                        <button v-if="page === 1"
+                            class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1">
+                            <font-awesome-icon icon="fa-solid fa-wrench" @click="open_adjustment" />Adjust
+                            Margins</button>
+                    </div>
+                </div>
+
+                <div v-if="adjustment_setting"
+                    class="fixed top-20 right-4 w-[20rem] h-auto z-50 bg-gray-700 rounded flex flex-col p-2 shadow-md">
+                    <div class="flex flex-row h-full pt-5">
+
+
+                        <div class="grow  w-full grid grid-rows-3 text-gray-50 h-full items-center  ">
+                            <div class="w-full flex items-center justify-center "><button
+                                    class="w-max px-12 items-center justify-center flex h-12  hover:bg-gray-600 "><font-awesome-icon
+                                        icon="fa-solid fa-chevron-up" /></button></div>
+
+                            <div class="grid grid-cols-2 w-full items-center justify-center px-2 ">
+                                <button
+                                    class="w-full px-1.5 items-center justify-center flex h-12  hover:bg-gray-600 "><font-awesome-icon
+                                        icon="fa-solid fa-chevron-left" /></button>
+                                <button
+                                    class="w-full px-1.5 items-center justify-center flex h-12  hover:bg-gray-600"><font-awesome-icon
+                                        icon="fa-solid fa-chevron-right" /></button>
+                            </div>
+
+                            <div class="flex flex-row w-full items-center justify-center"><button
+                                    class="w-max px-12 items-center justify-center flex h-12  hover:bg-gray-600 "><font-awesome-icon
+                                        icon="fa-solid fa-chevron-down" /></button></div>
+                        </div>
+
+
+
+                        <div class="basis-[55%] flex flex-col text-gray-50 text-md">
+                            <p>x:</p>
+                            <p>y:</p>
+                        </div>
+                    </div>
+                    <div class="mt-auto flex flex-row items-center px-2">
+                        <div class="flex flex-col">
+                            <p class="text-xs text-gray-50 font-mono">Click buttons to adjust margins.</p>
+                            <p class="text-xs text-gray-300 font-mono ">Adjustments only take effect when you print the
+                                document.
+                            </p>
+                        </div>
+                        <button
+                            class="hover:bg-blue-300 ml-auto font-medium text-xs p-2 rounded  flex items-center gap-1  w-fit bg-blue-500 text-white px-4">Save</button>
                     </div>
                 </div>
 
@@ -798,7 +845,7 @@
                                     </div>
                                     <div class=" flex flex-col items-center justify-center h-full">
                                         <div class="mt-auto">
-                                         
+
                                         </div>
 
                                         <div class="flex flex-col gap-1 px-3 mt-auto mb-auto">
@@ -1065,6 +1112,12 @@ import Camera from '../../components/Camera.vue';
 import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
 import { onClickOutside } from '@vueuse/core'
 
+const adjustment_setting = ref(false)
+const open_adjustment = () => {
+    adjustment_setting.value = true
+}
+
+
 
 const page = ref(1)
 const paper_size = computed(() => {
@@ -1109,6 +1162,11 @@ const change_mode = () => {
     }
 }
 
+const pdf_settings = reactive({
+    x: 0,
+    y: 0,
+})
+
 const preview_document = async () => {
     if (preview.value) {
         const data = JSON.stringify({ ...formData })
@@ -1121,6 +1179,15 @@ const preview_document = async () => {
             const previewData = await window.MarriageApi.previewNotice(data);
             notice_pdf_content.value = previewData.pdfbase64;
         }
+    }
+}
+
+const print = async () => {
+    if (page.value === 1) {
+        const data = JSON.stringify({ ...formData })
+        const settings = JSON.stringify({ ...pdf_settings })
+        const previewData = await window.MarriageApi.printMarriage(data, settings);
+        console.log(previewData)
     }
 }
 

@@ -57,12 +57,12 @@ import {
     faLightbulb,
     faListCheck,
     faCircleInfo,
-    faChevronUp,
+
     faHouse,
     faLandmarkDome,
     faFilePen,
     faFileLines,
-    faChevronDown,
+
     faMarker,
     faExpand,
     faCompress,
@@ -87,7 +87,12 @@ import {
     faCheck,
     faFile, 
     faCamera,
-    faPenToSquare
+    faPenToSquare,
+    faWrench,
+    faChevronLeft,
+    faChevronRight,
+    faChevronUp,
+    faChevronDown,
     
 
 
@@ -127,14 +132,14 @@ library.add(
     faLightbulb,
     faListCheck,
     faCircleInfo,
-    faChevronUp,
+
     faHouse,
     faLandmarkDome,
     faFilePen,
     faFileLines,
     faUser,
     faEye,
-    faChevronDown,
+
     faMarker,
     faExpand,
     faCompress,
@@ -161,7 +166,12 @@ library.add(
     faFile, 
     faCamera,
     faFloppyDisk,
-    faPenToSquare
+    faPenToSquare,
+    faWrench,
+    faChevronLeft,
+    faChevronRight,
+    faChevronUp,
+    faChevronDown,
 
 )
 
