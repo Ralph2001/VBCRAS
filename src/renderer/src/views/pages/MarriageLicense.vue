@@ -39,65 +39,76 @@
                         <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
                             @click="print()">
                             <font-awesome-icon icon="fa-solid fa-print" />Print</button>
-                        <button v-if="page === 1"
+                        <!-- <button v-if="page === 1 || page === 1 && preview" @click="open_adjustment"
                             class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1">
-                            <font-awesome-icon icon="fa-solid fa-wrench" @click="open_adjustment" />Adjust
-                            Margins</button>
+                            <font-awesome-icon icon="fa-solid fa-wrench" />Adjust
+                            Margins</button> -->
                     </div>
                 </div>
 
-                <div v-if="adjustment_setting"
+                <div v-if="adjustment_setting" ref="adjustment_div"
                     class="fixed top-20 right-4 w-[20rem] h-auto z-50 bg-gray-700 rounded flex flex-col p-2 shadow-md">
                     <div class="flex flex-row h-full pt-5">
 
-
-                        <div class="grow  w-full grid grid-rows-3 text-gray-50 h-full items-center  ">
-                            <div class="w-full flex items-center justify-center "><button
-                                    class="w-max px-12 items-center justify-center flex h-12  hover:bg-gray-600 "><font-awesome-icon
-                                        icon="fa-solid fa-chevron-up" /></button></div>
-
-                            <div class="grid grid-cols-2 w-full items-center justify-center px-2 ">
-                                <button
-                                    class="w-full px-1.5 items-center justify-center flex h-12  hover:bg-gray-600 "><font-awesome-icon
-                                        icon="fa-solid fa-chevron-left" /></button>
-                                <button
-                                    class="w-full px-1.5 items-center justify-center flex h-12  hover:bg-gray-600"><font-awesome-icon
-                                        icon="fa-solid fa-chevron-right" /></button>
+                        <div class="grow w-full grid grid-rows-3 text-gray-50 h-full items-center">
+                            <!-- Up Button -->
+                            <div class="w-full flex items-center justify-center">
+                                <button @click="adjustY('up')"
+                                    class="w-max px-12 items-center justify-center flex h-12 hover:bg-gray-600 active:scale-95">
+                                    <font-awesome-icon icon="fa-solid fa-chevron-up" />
+                                </button>
                             </div>
 
-                            <div class="flex flex-row w-full items-center justify-center"><button
-                                    class="w-max px-12 items-center justify-center flex h-12  hover:bg-gray-600 "><font-awesome-icon
-                                        icon="fa-solid fa-chevron-down" /></button></div>
+                            <!-- Left/Right Buttons -->
+                            <div class="grid grid-cols-2 w-full items-center justify-center px-2">
+                                <button @click="adjustX('left')"
+                                    class="w-full px-1.5 items-center justify-center flex h-12 hover:bg-gray-600 active:scale-95">
+                                    <font-awesome-icon icon="fa-solid fa-chevron-left" />
+                                </button>
+                                <button @click="adjustX('right')"
+                                    class="w-full px-1.5 items-center justify-center flex h-12 hover:bg-gray-600 active:scale-95">
+                                    <font-awesome-icon icon="fa-solid fa-chevron-right" />
+                                </button>
+                            </div>
+
+                            <!-- Down Button -->
+                            <div class="flex flex-row w-full items-center justify-center">
+                                <button @click="adjustY('down')"
+                                    class="w-max px-12 items-center justify-center flex h-12 hover:bg-gray-600 active:scale-95">
+                                    <font-awesome-icon icon="fa-solid fa-chevron-down" />
+                                </button>
+                            </div>
                         </div>
 
-
-
-                        <div class="basis-[55%] flex flex-col text-gray-50 text-md">
-                            <p>x:</p>
-                            <p>y:</p>
+                        <!-- X and Y Input Fields -->
+                        <div class="basis-[55%] flex flex-col text-gray-50 text-md gap-2">
+                            <div class="flex flex-row items-center gap-2">
+                                <p>x:</p>
+                                <input type="number" v-model="x"
+                                    class="w-[5rem] py-1 rounded-sm border border-gray-400 text-gray-800 font-medium text-sm" />
+                            </div>
+                            <div class="flex flex-row items-center gap-2">
+                                <p>y:</p>
+                                <input type="number" v-model="y"
+                                    class="w-[5rem] py-1 rounded-sm border border-gray-400 text-gray-800 font-medium text-sm" />
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Save Button -->
                     <div class="mt-auto flex flex-row items-center px-2">
                         <div class="flex flex-col">
                             <p class="text-xs text-gray-50 font-mono">Click buttons to adjust margins.</p>
-                            <p class="text-xs text-gray-300 font-mono ">Adjustments only take effect when you print the
-                                document.
-                            </p>
+                            <p class="text-xs text-gray-300 font-mono">Adjustments only take effect when you print the
+                                document.</p>
                         </div>
                         <button
-                            class="hover:bg-blue-300 ml-auto font-medium text-xs p-2 rounded  flex items-center gap-1  w-fit bg-blue-500 text-white px-4">Save</button>
+                            class="hover:bg-blue-300 ml-auto font-medium text-xs p-2 rounded flex items-center gap-1 w-fit bg-blue-500 text-white px-4">
+                            Save
+                        </button>
                     </div>
                 </div>
 
-                <div v-if="show_input" ref="pop_up_div"
-                    class="fixed bottom-0 right-0 left-0 bg-yellow-100 h-20 z-[50] flex items-center justify-center transition-all">
-                    <div class="flex flex-col gap-1 ">
-                        <label for="" class="text-xs text-gray-800 font-medium "> Please enter groom date of birth <span
-                                class="italic text-xs">(mm/dd/yyyy)</span></label>
-                        <input type="text" ref="input_pop_up" v-model="input_pop_value"
-                            class=" w-[25rem] py-1 font-medium border border-gray-400 outline-none ring-0">
-                    </div>
-                </div>
 
                 <div class="h-full  w-full flex   justify-center relative">
                     <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  p-20">
@@ -236,18 +247,18 @@
                                     <div class="basis-[45%] flex flex-col  border-r border-gray-500 p-1">
 
                                         <div class="flex flex-row gap-2 items-center">
-                                            <p class="text-xs">(First)</p>
+                                            <p class="text-xs  basis-[15%]">(First)</p>
                                             <InputBottomBorderMarriage @change="handleInputChange"
                                                 v-model="formData.groom_first_name" isBold />
                                         </div>
 
                                         <div class="flex flex-row gap-2 items-center">
-                                            <p class="text-xs">(Middle)</p>
+                                            <p class="text-xs  basis-[15%]">(Middle)</p>
                                             <InputBottomBorderMarriage @change="handleInputChange"
                                                 v-model="formData.groom_middle_name" isBold />
                                         </div>
                                         <div class="flex flex-row gap-2 items-center">
-                                            <p class="text-xs">(Last)</p>
+                                            <p class="text-xs  basis-[15%]">(Last)</p>
                                             <InputBottomBorderMarriage @change="handleInputChange"
                                                 v-model="formData.groom_last_name" isBold />
                                         </div>
@@ -256,8 +267,10 @@
 
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">1. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Name of
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">1. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Name of
                                             Applicant
                                         </p>
                                     </div>
@@ -265,18 +278,18 @@
 
                                     <div class="basis-[45%] flex flex-col  border-l border-gray-500 p-1">
                                         <div class="flex flex-row gap-2 items-center">
-                                            <p class="text-xs">(First)</p>
+                                            <p class="text-xs  basis-[15%]">(First)</p>
                                             <InputBottomBorderMarriage @change="handleInputChange"
                                                 v-model="formData.bride_first_name" isBold />
                                         </div>
 
                                         <div class="flex flex-row gap-2 items-center">
-                                            <p class="text-xs">(Middle)</p>
+                                            <p class="text-xs  basis-[15%]">(Middle)</p>
                                             <InputBottomBorderMarriage @change="handleInputChange"
                                                 v-model="formData.bride_middle_name" isBold />
                                         </div>
                                         <div class="flex flex-row gap-2 items-center">
-                                            <p class="text-xs">(Last)</p>
+                                            <p class="text-xs  basis-[15%]">(Last)</p>
                                             <InputBottomBorderMarriage @change="handleInputChange"
                                                 v-model="formData.bride_last_name" isBold />
                                         </div>
@@ -284,35 +297,35 @@
                                 </div>
                                 <!-- 6 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
-                                    <div class="basis-[45%] flex flex-row  items-center border-r border-gray-500  ">
-                                        <div class="grow">
-                                            <div class="flex flex-row justify-around">
-                                                <label for=""
-                                                    class="text-[10px] font-medium  text-zinc-800">(Day)</label>
-                                                <label for=""
-                                                    class="text-[10px] font-medium  text-zinc-800">(Month)</label>
-                                                <label for=""
-                                                    class="text-[10px] font-medium  text-zinc-800">(Year)</label>
-                                            </div>
-                                            <button @click="showDateInput" @focus="showDateInput"
-                                                class="w-full bg-blue-50 h-4 ring-0 outline-none focus:bg-blue-100"
-                                                tabindex="1"></button>
-                                        </div>
-                                        <div class="border-l border-gray-500 h-full flex items-center basis-[25%]">
+                                    <div class="basis-[45%] grid grid-cols-4  items-center border-r border-gray-500  ">
+                                        <InputBottomBorderMarriage isBold label="Day" top_label middle
+                                            v-model="formData.groom_day" />
+                                        <InputBottomBorderMarriage isBold label="Month" top_label middle
+                                            v-model="formData.groom_month" />
+                                        <InputBottomBorderMarriage isBold label="Year" top_label middle
+                                            v-model="formData.groom_year" />
+                                        <div class="border-l border-gray-500 h-full flex items-center">
                                             <InputBottomBorderMarriage v-model="formData.groom_age" isBold label="Age"
                                                 @change="handleInputChange" middle top_label />
                                         </div>
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">2. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Date of Birth/
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">2. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Date of Birth/
                                             Age
                                         </p>
                                     </div>
 
                                     <div class="basis-[45%] grid grid-cols-4  items-center border-l border-gray-500  ">
-
+                                        <InputBottomBorderMarriage isBold label="Day" top_label middle
+                                            v-model="formData.bride_day" />
+                                        <InputBottomBorderMarriage isBold label="Month" top_label middle
+                                            v-model="formData.bride_month" />
+                                        <InputBottomBorderMarriage isBold label="Year" top_label middle
+                                            v-model="formData.bride_year" />
                                         <div class="border-l border-gray-500 h-full flex items-center">
                                             <InputBottomBorderMarriage v-model="formData.bride_age" isBold label="Age"
                                                 @change="handleInputChange" middle top_label />
@@ -334,8 +347,10 @@
 
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">3. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Place of Birth
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">3. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Place of Birth
                                         </p>
                                     </div>
 
@@ -355,8 +370,11 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div class="basis-[45%] flex flex-rowitems-center border-r border-gray-500  ">
                                         <div class="basis-[30%] border-r border-gray-500">
-                                            <InputBottomBorderMarriage v-model="formData.groom_sex" middle isBold
-                                                label="Male/Female" top_label />
+                                            <SelectBottomBorderMarriage v-model="formData.groom_sex" :options="[
+                                                { value: 'MALE', label: 'MALE' },
+                                                { value: 'FEMALE', label: 'FEMALE' },
+
+                                            ]" middle isBold label="Male/Female" top_label />
                                         </div>
                                         <div class="grow">
                                             <InputBottomBorderMarriage v-model="formData.groom_citizenship" middle
@@ -367,8 +385,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">4. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Sex/
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">4. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Sex/
                                             Citizenship
                                         </p>
                                     </div>
@@ -376,8 +396,12 @@
                                     <div
                                         class="basis-[45%] flex flex-row gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <div class="basis-[30%]">
-                                            <InputBottomBorderMarriage v-model="formData.bride_sex" middle isBold
-                                                label="Male/Female" top_label />
+                                            <SelectBottomBorderMarriage :options="[
+                                                { value: 'MALE', label: 'MALE' },
+                                                { value: 'FEMALE', label: 'FEMALE' },
+
+                                            ]" v-model="formData.bride_sex" middle isBold label="Male/Female"
+                                                top_label />
                                         </div>
                                         <div class="grow">
                                             <InputBottomBorderMarriage v-model="formData.bride_citizenship" middle
@@ -394,14 +418,16 @@
                                         <InputBottomBorderMarriage v-model="formData.groom_residence"
                                             @change="handleInputChange" middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
-
+                                            top_label /> 
+                                        <!-- <SuggestionInputBottomBorderMarriage /> -->
 
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">5. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Residence
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">5. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Residence
                                         </p>
                                     </div>
                                     <div
@@ -426,8 +452,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">6. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Religion/
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">6. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Religion/
                                             Religous Sect
                                         </p>
                                     </div>
@@ -442,18 +470,40 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_civil_status" isBold />
+                                        <SelectBottomBorderMarriage :options="[
+                                            { value: 'SINGLE', label: 'SINGLE' },
+                                            { value: 'ANNULLED', label: 'ANNULLED' },
+                                            { value: 'WIDOW', label: 'WIDOW' },
+                                            { value: 'WIDOWER', label: 'WIDOWER' },
+                                            { value: 'DIVORCED', label: 'DIVORCED' },
+                                            { value: 'MARRIED', label: 'MARRIED' },
+                                            { value: 'NOT STATED', label: 'NOT STATED' },
+                                            { value: 'NOT APPLICABLE', label: 'NOT APPLICABLE' },
+
+                                        ]" v-model="formData.groom_civil_status" isBold />
 
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">7. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Civil Status
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">7. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Civil Status
                                         </p>
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_civil_status" isBold />
+                                        <SelectBottomBorderMarriage :options="[
+                                            { value: 'SINGLE', label: 'SINGLE' },
+                                            { value: 'ANNULLED', label: 'ANNULLED' },
+                                            { value: 'WIDOW', label: 'WIDOW' },
+                                            { value: 'WIDOWER', label: 'WIDOWER' },
+                                            { value: 'DIVORCED', label: 'DIVORCED' },
+                                            { value: 'MARRIED', label: 'MARRIED' },
+                                            { value: 'NOT STATED', label: 'NOT STATED' },
+                                            { value: 'NOT APPLICABLE', label: 'NOT APPLICABLE' },
+
+                                        ]" v-model="formData.bride_civil_status" isBold />
 
                                     </div>
                                 </div>
@@ -462,11 +512,12 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
                                         <InputBottomBorderMarriage v-model="formData.groom_previously_married_dissolved"
-                                            isBold />
+                                            v-if="formData.groom_civil_status !== 'SINGLE'" isBold />
+                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">8. </p>
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">8. </p>
                                         <p class="text-[9px] w-[80%]  h-full flex items-center text-start">IF PREVIOUSLY
                                             MARRIED: How was
                                             it dissolved?
@@ -475,55 +526,72 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <InputBottomBorderMarriage v-model="formData.bride_previously_married_dissolved"
-                                            isBold />
+                                            v-if="formData.bride_civil_status !== 'SINGLE'" isBold />
+                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-3 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage isBold label="City/Municipality" top_label />
-                                        <InputBottomBorderMarriage isBold label="Province" top_label />
-                                        <InputBottomBorderMarriage isBold label="Country" top_label />
-
+                                        <InputBottomBorderMarriage isBold label="City/Municipality" top_label
+                                            v-if="formData.groom_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Province" top_label
+                                            v-if="formData.groom_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Country" top_label
+                                            v-if="formData.groom_civil_status !== 'SINGLE'" />
+                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">9. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Place where
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">9. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Place where
                                             dissolved
                                         </p>
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-3 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage isBold label="City/Municipality" top_label />
-                                        <InputBottomBorderMarriage isBold label="Province" top_label />
-                                        <InputBottomBorderMarriage isBold label="Country" top_label />
-
+                                        <InputBottomBorderMarriage isBold label="City/Municipality" top_label
+                                            v-if="formData.bride_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Province" top_label
+                                            v-if="formData.bride_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Country" top_label
+                                            v-if="formData.bride_civil_status !== 'SINGLE'" />
+                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-3 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage isBold label="Day" top_label />
-                                        <InputBottomBorderMarriage isBold label="Month" top_label />
-                                        <InputBottomBorderMarriage isBold label="Year" top_label />
-
+                                        <InputBottomBorderMarriage isBold label="Day" top_label
+                                            v-if="formData.groom_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Month" top_label
+                                            v-if="formData.groom_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Year" top_label
+                                            v-if="formData.groom_civil_status !== 'SINGLE'" />
+                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">10. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Date when
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">10. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Date when
                                             dissolved
                                         </p>
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-3 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage isBold label="Day" top_label />
-                                        <InputBottomBorderMarriage isBold label="Month" top_label />
-                                        <InputBottomBorderMarriage isBold label="Year" top_label />
-
+                                        <InputBottomBorderMarriage isBold label="Day" top_label
+                                            v-if="formData.bride_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Month" top_label
+                                            v-if="formData.bride_civil_status !== 'SINGLE'" />
+                                        <InputBottomBorderMarriage isBold label="Year" top_label
+                                            v-if="formData.bride_civil_status !== 'SINGLE'" />
+                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
 
                                     </div>
                                 </div>
@@ -536,7 +604,7 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">11. </p>
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">11. </p>
                                         <p class="text-[9px] w-[80%]  h-full flex items-center text-start">Degree of
                                             relationship of
                                             contractng parties
@@ -562,8 +630,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">12. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Name of Father
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">12. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Name of Father
                                         </p>
                                     </div>
                                     <div
@@ -586,8 +656,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">13. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Citizenship
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">13. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Citizenship
                                         </p>
                                     </div>
                                     <div
@@ -608,8 +680,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">14. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Residence
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">14. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Residence
                                         </p>
                                     </div>
                                     <div
@@ -634,8 +708,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">15. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Maiden Name of
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">15. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Maiden Name of
                                             Mother
                                         </p>
                                     </div>
@@ -658,8 +734,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">16. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Citizenship
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">16. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Citizenship
                                         </p>
                                     </div>
                                     <div
@@ -680,8 +758,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">17. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Residence
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">17. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Residence
                                         </p>
                                     </div>
                                     <div
@@ -704,8 +784,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">18. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Person who gave
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">18. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Person who gave
                                             consent or
                                             advise
                                         </p>
@@ -726,8 +808,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">19. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Relationship
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">19. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Relationship
                                         </p>
                                     </div>
                                     <div
@@ -747,8 +831,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">20. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Citizenship
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">20. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Citizenship
                                         </p>
                                     </div>
                                     <div
@@ -769,8 +855,10 @@
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
-                                        <p class="text-xs w-[20%] h-full flex items-center">21. </p>
-                                        <p class="text-xs w-[80%]  h-full flex items-center text-start">Residence
+                                        <p class="text-xs w-[20%] h-full flex items-center font-semi">21. </p>
+                                        <p
+                                            class="text-xs w-[80%]  h-full flex items-center text-start font-medium text-gray-800">
+                                            Residence
                                         </p>
                                     </div>
                                     <div
@@ -1102,20 +1190,42 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import Button from '../../components/essentials/buttons/Button.vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
 import InputBottomBorderMarriage from '../../components/Marriage/InputBottomBorderMarriage.vue';
 import { format } from 'date-fns';
 import Camera from '../../components/Camera.vue';
-import ModalCloseButton from '../../components/client/modal/ModalCloseButton.vue';
 import { onClickOutside } from '@vueuse/core'
+import SelectBottomBorderMarriage from '../../components/Marriage/SelectBottomBorderMarriage.vue';
+import SuggestionInputBottomBorderMarriage from '../../components/Marriage/SuggestionInputBottomBorderMarriage.vue';
+
 
 const adjustment_setting = ref(false)
 const open_adjustment = () => {
-    adjustment_setting.value = true
+    adjustment_setting.value = !adjustment_setting.value
+
 }
+const x = ref(0);
+const y = ref(0);
+
+function adjustX(direction) {
+    if (direction === 'left') {
+        x.value -= 1;
+    } else if (direction === 'right') {
+        x.value += 1;
+    }
+}
+
+function adjustY(direction) {
+    if (direction === 'up') {
+        y.value += 1;
+    } else if (direction === 'down') {
+        y.value -= 1;
+    }
+}
+
 
 
 
@@ -1132,23 +1242,10 @@ const change_page = (value) => {
     }
 }
 
-const pop_up_div = ref(null)
-const input_pop_up = ref()
-const input_pop_value = ref()
-const show_input = ref(false)
 
-onClickOutside(pop_up_div, event => show_input.value = false)
+const adjustment_div = ref(null)
+onClickOutside(adjustment_div, event => adjustment_setting.value = false)
 
-const showDateInput = async () => {
-    show_input.value = true
-    // Use nextTick to wait for DOM to update
-    await nextTick(() => {
-        // Focus input after it's rendered
-        if (input_pop_up.value) {
-            input_pop_up.value.focus();
-        }
-    });
-};
 
 const preview = ref(false)
 const pdf_content = ref()
@@ -1240,6 +1337,10 @@ const open_model = () => {
     formData.bride_ss_month = format(date, 'MMMM').toUpperCase()
     formData.bride_ss_year = format(date, 'yyyy')
     formData.bride_ss_at = 'BAYAMBANG, PANGASINAN'
+
+    formData.date_of_receipt = format(date, 'MMMM dd, yyyy').toUpperCase()
+    formData.registry_number = format(date, 'yyyy') + '-'
+    formData.date_issuance_marriage_license = format(date, 'MMMM dd, yyyy').toUpperCase()
 };
 
 const close_modal = () => {
@@ -1389,76 +1490,74 @@ const initialForm = {
 
 }
 
-
 const formData = reactive({ ...initialForm })
 
-
-// Centralized method to update all notice values
 const updateNotices = () => {
     // GROOM NOTICE
 
-    // formData.groom_father_last_name = formData.groom_last_name ? formData.groom_last_name : ''
-    // formData.groom_mother_last_name = formData.groom_middle_name ? formData.groom_middle_name : ''
+    formData.groom_father_last_name = formData.groom_last_name ? formData.groom_last_name : ''
+    formData.groom_mother_last_name = formData.groom_middle_name ? formData.groom_middle_name : ''
 
 
-    // formData.groom_contract_marriage_with = formData.bride_first_name || formData.bride_last_name ? formData.bride_first_name + ' ' + formData.bride_middle_name + ' ' + formData.bride_last_name : '';
-    // formData.bride_contract_marriage_with = formData.groom_first_name || formData.groom_last_name ? formData.groom_first_name + ' ' + formData.groom_middle_name + ' ' + formData.groom_last_name : '';
+    formData.groom_contract_marriage_with = formData.bride_first_name || formData.bride_last_name ? formData.bride_first_name + ' ' + formData.bride_middle_name + ' ' + formData.bride_last_name : '';
+    formData.bride_contract_marriage_with = formData.groom_first_name || formData.groom_last_name ? formData.groom_first_name + ' ' + formData.groom_middle_name + ' ' + formData.groom_last_name : '';
 
-    // const groomInitialMiddleName = formData.groom_middle_name ? formData.groom_middle_name.charAt(0) : '';
-    // const groomFatherInitialMiddleName = formData.groom_father_middle_name ? formData.groom_father_middle_name.charAt(0) : '';
-    // const groomMotherInitialMiddleName = formData.groom_mother_middle_name ? formData.groom_mother_middle_name.charAt(0) : '';
-    // const groomBirthPlace = formData.groom_municipality && formData.groom_province ? formData.groom_municipality + ', ' + formData.groom_province : ''
+    const groomInitialMiddleName = formData.groom_middle_name ? formData.groom_middle_name.charAt(0) : '';
+    const groomFatherInitialMiddleName = formData.groom_father_middle_name ? formData.groom_father_middle_name.charAt(0) : '';
+    const groomMotherInitialMiddleName = formData.groom_mother_middle_name ? formData.groom_mother_middle_name.charAt(0) : '';
+    const groomBirthPlace = formData.groom_municipality && formData.groom_province ? formData.groom_municipality + ', ' + formData.groom_province : ''
 
-    // formData.groom_notice_name = `${formData.groom_first_name} ${groomInitialMiddleName}. ${formData.groom_last_name}`;
-    // formData.groom_notice_age = formData.groom_age ? `${formData.groom_age} yrs. old` : '';
+    formData.groom_notice_name = `${formData.groom_first_name} ${groomInitialMiddleName}. ${formData.groom_last_name}`;
+    formData.groom_notice_age = formData.groom_age ? `${formData.groom_age} yrs. old` : '';
 
-    // formData.groom_notice_father = formData.groom_father_first_name
-    //     ? `${formData.groom_father_first_name} ${groomFatherInitialMiddleName}. ${formData.groom_father_last_name}`
-    //     : '';
+    formData.groom_notice_father = formData.groom_father_first_name
+        ? `${formData.groom_father_first_name} ${groomFatherInitialMiddleName}. ${formData.groom_father_last_name}`
+        : '';
 
-    // formData.groom_notice_mother = formData.groom_mother_first_name
-    //     ? `${formData.groom_mother_first_name} ${groomMotherInitialMiddleName}. ${formData.groom_mother_last_name}`
-    //     : '';
-    // formData.groom_notice_birthplace = formData.groom_municipality
-    //     ? capitalizeWords(groomBirthPlace)
-    //     : '';
-    // formData.groom_notice_residence = formData.groom_residence
-    //     ? capitalizeWords(formData.groom_residence).replace(', PHILIPPINES', '')
-    //     : '';
-
-
-    // // BRIDE NOTICE
-
-    // formData.bride_father_last_name = formData.bride_last_name ? formData.bride_last_name : ''
-    // formData.bride_mother_last_name = formData.bride_middle_name ? formData.bride_middle_name : ''
+    formData.groom_notice_mother = formData.groom_mother_first_name
+        ? `${formData.groom_mother_first_name} ${groomMotherInitialMiddleName}. ${formData.groom_mother_last_name}`
+        : '';
+    formData.groom_notice_birthplace = formData.groom_municipality
+        ? capitalizeWords(groomBirthPlace)
+        : '';
+    formData.groom_notice_residence = formData.groom_residence
+        ? capitalizeWords(formData.groom_residence).replace(', PHILIPPINES', '')
+        : '';
 
 
+    // BRIDE NOTICE
 
-    // const brideInitialMiddleName = formData.bride_middle_name ? formData.bride_middle_name.charAt(0) : '';
-    // const brideFatherInitialMiddleName = formData.bride_father_middle_name ? formData.bride_father_middle_name.charAt(0) : '';
-    // const brideMotherInitialMiddleName = formData.bride_mother_middle_name ? formData.bride_mother_middle_name.charAt(0) : '';
-    // const brideBirthPlace = formData.bride_municipality && formData.bride_province ? formData.bride_municipality + ', ' + formData.bride_province : ''
-
-    // formData.bride_notice_name = `${formData.bride_first_name} ${brideInitialMiddleName}. ${formData.bride_last_name}`;
-    // formData.bride_notice_age = formData.bride_age ? `${formData.bride_age} yrs. old` : '';
+    formData.bride_father_last_name = formData.bride_last_name ? formData.bride_last_name : ''
+    formData.bride_mother_last_name = formData.bride_middle_name ? formData.bride_middle_name : ''
 
 
 
-    // formData.bride_notice_father = formData.bride_father_first_name
-    //     ? `${formData.bride_father_first_name} ${brideFatherInitialMiddleName}. ${formData.bride_father_last_name}`
-    //     : '';
+    const brideInitialMiddleName = formData.bride_middle_name ? formData.bride_middle_name.charAt(0) : '';
+    const brideFatherInitialMiddleName = formData.bride_father_middle_name ? formData.bride_father_middle_name.charAt(0) : '';
+    const brideMotherInitialMiddleName = formData.bride_mother_middle_name ? formData.bride_mother_middle_name.charAt(0) : '';
+    const brideBirthPlace = formData.bride_municipality && formData.bride_province ? formData.bride_municipality + ', ' + formData.bride_province : ''
+
+    formData.bride_notice_name = `${formData.bride_first_name} ${brideInitialMiddleName}. ${formData.bride_last_name}`;
+    formData.bride_notice_age = formData.bride_age ? `${formData.bride_age} yrs. old` : '';
 
 
-    // formData.bride_notice_mother = formData.bride_mother_first_name
-    //     ? `${formData.bride_mother_first_name} ${brideMotherInitialMiddleName}. ${formData.bride_mother_last_name}`
-    //     : '';
-    // formData.bride_notice_birthplace = formData.bride_municipality
-    //     ? capitalizeWords(brideBirthPlace)
-    //     : '';
-    // formData.bride_notice_residence = formData.bride_residence
-    //     ? capitalizeWords(formData.bride_residence).replace(', PHILIPPINES', '')
-    //     : '';
+
+    formData.bride_notice_father = formData.bride_father_first_name
+        ? `${formData.bride_father_first_name} ${brideFatherInitialMiddleName}. ${formData.bride_father_last_name}`
+        : '';
+
+
+    formData.bride_notice_mother = formData.bride_mother_first_name
+        ? `${formData.bride_mother_first_name} ${brideMotherInitialMiddleName}. ${formData.bride_mother_last_name}`
+        : '';
+    formData.bride_notice_birthplace = formData.bride_municipality
+        ? capitalizeWords(brideBirthPlace)
+        : '';
+    formData.bride_notice_residence = formData.bride_residence
+        ? capitalizeWords(formData.bride_residence).replace(', PHILIPPINES', '')
+        : '';
 };
+
 
 const capitalizeWords = (sentence) => {
     return sentence
