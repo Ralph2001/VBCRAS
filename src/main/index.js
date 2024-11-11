@@ -956,10 +956,10 @@ ipcMain.handle('printMarriage', async (event, formData, params) => {
 });
 
 
-ipcMain.handle('previewNotice', async (event, formData) => {
+ipcMain.handle('previewNotice', async (event, formData, image) => {
     try {
         const generate_application_notice =
-            await generate_marriage_notice(formData)
+            await generate_marriage_notice(formData, image)
         return generate_application_notice
     } catch (error) {
         console.log(error)

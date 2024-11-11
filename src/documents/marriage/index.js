@@ -21,6 +21,12 @@ const MARRIAGE_TEMPLATE_PATHS = {
             __dirname,
             '../../resources/documents/Marriage License/Marriage License Print.pdf'
         )
+        .replace('app.asar', 'app.asar.unpacked'),
+    LEFT_ICON: path
+        .resolve(__dirname, '../../resources/images/left_icon.png')
+        .replace('app.asar', 'app.asar.unpacked'),
+    RIGHT_ICON: path
+        .resolve(__dirname, '../../resources/images/right_icon.png')
         .replace('app.asar', 'app.asar.unpacked')
 }
 
@@ -33,7 +39,37 @@ function checkFilesExist(paths) {
     return true
 }
 
-async function generate_marriage_notice(formData) {
+function base64ToUint8Array(base64) {
+    const base64Data = base64.replace(/^data:image\/png;base64,/, '') // Clean Base64 prefix
+    const binaryString = atob(base64Data) // Decode Base64 string into binary string
+    const uint8Array = new Uint8Array(binaryString.length) // Create a Uint8Array of the correct length
+
+    for (let i = 0; i < binaryString.length; i++) {
+        uint8Array[i] = binaryString.charCodeAt(i) // Fill the array with binary data
+    }
+
+    return uint8Array // Return the Uint8Array
+}
+
+const embedImageIfValid = async (pdfDoc, imageBase64) => {
+    // Check if the base64 string is valid (not null, undefined, or empty)
+    if (imageBase64 && imageBase64 !== 'null' && imageBase64 !== '') {
+        try {
+            // Convert the base64 string to Uint8Array
+            const imageUnit8 = base64ToUint8Array(imageBase64);
+            
+            // Embed the image into the PDF document
+            return await pdfDoc.embedPng(imageUnit8);
+        } catch (error) {
+            console.log('Error embedding image:', error);
+        }
+    }
+    // Return null if image data is invalid
+    return null;
+};
+
+
+async function generate_marriage_notice(formData, image) {
     try {
         // Ensure file exists before proceeding
         checkFilesExist([MARRIAGE_TEMPLATE_PATHS.NOTICE])
@@ -49,6 +85,7 @@ async function generate_marriage_notice(formData) {
          */
 
         const data = JSON.parse(formData)
+        const images = JSON.parse(image)
 
         // Retrieve form fields
         // const left_icon = form.getButton('left_icon')
@@ -66,8 +103,8 @@ async function generate_marriage_notice(formData) {
         const bride_name = form.getTextField('bride_name')
 
         // Picture fields
-        // const groom_picture = form.getButton('groom_picture')
-        // const bride_picture = form.getButton('bride_picture')
+        const groom_picture = form.getButton('groom_picture')
+        const bride_picture = form.getButton('bride_picture')
 
         // Other fields
         const groom_age = form.getTextField('groom_age')
@@ -90,8 +127,55 @@ async function generate_marriage_notice(formData) {
         const copy_furnished3 = form.getTextField('copy_furnished3')
 
         // Set field values
-        // left_icon.setImage('')
-        // right_icon.setImage('')
+
+        const left_icon_bytes = fs.readFileSync(
+            MARRIAGE_TEMPLATE_PATHS.LEFT_ICON
+        )
+        const right_icon_bytes = fs.readFileSync(
+            MARRIAGE_TEMPLATE_PATHS.RIGHT_ICON
+        )
+
+        const leftIcon = await pdfDoc.embedPng(left_icon_bytes)
+        const rightIcon = await pdfDoc.embedPng(right_icon_bytes)
+
+
+        const [bridePicture, groomPicture] = await Promise.all([
+            embedImageIfValid(pdfDoc, images[0]),
+            embedImageIfValid(pdfDoc, images[1])
+        ]);
+
+        // Define fixed size for icons (e.g., 100x100 points)
+        const iconWidth = 95 // Width of the icon in points
+        const iconHeight = 95 // Height of the icon in points
+
+        // Define some space above and below the logos
+        const topMargin = 35 // Space from the top of the page
+        const iconSpacing = 250 // Space between the two logos
+        const pageWidth = 612 // Page width (8.5 inches in points)
+        const centerX = pageWidth / 2 // Center of the page horizontally
+
+        // Calculate positions for the icons
+        const leftIconX = centerX - iconWidth - iconSpacing / 2 // Left position
+        const rightIconX = centerX + iconSpacing / 2 // Right position
+        const iconY = 936 - topMargin - iconHeight // Y position from the top margin
+
+        const page = pdfDoc.getPages()[0]
+
+        // Draw the left icon with rotation and fixed size
+        page.drawImage(leftIcon, {
+            x: leftIconX,
+            y: iconY,
+            width: iconWidth,
+            height: iconHeight
+        })
+
+        // Draw the right icon with rotation and fixed size
+        page.drawImage(rightIcon, {
+            x: rightIconX,
+            y: iconY,
+            width: iconWidth,
+            height: iconHeight
+        })
 
         office.setText('LOCAL CIVIL REGISTRY') //
         office.updateAppearances(font)
@@ -103,8 +187,21 @@ async function generate_marriage_notice(formData) {
         groom_name.setText(data.notice_groom_name)
         bride_name.setText(data.notice_bride_name)
 
-        // groom_picture.setImage('')
-        // bride_picture.setImage('')
+
+        if (bridePicture) {
+            bride_picture.setImage(bridePicture);
+        } else {
+            console.log('No valid bride picture to embed');
+        }
+
+        if (groomPicture) {
+            groom_picture.setImage(groomPicture);
+        } else {
+            console.log('No valid groom picture to embed');
+        }
+
+        
+     
 
         groom_age.setText(data.notice_groom_age)
         groom_birthplace.setText(data.notice_groom_birthplace)
@@ -126,7 +223,7 @@ async function generate_marriage_notice(formData) {
         copy_furnished2.setText(data.notice_copy_furnished2)
         copy_furnished3.setText(data.notice_copy_furnished3)
 
-        // form.flatten();
+        form.flatten();
 
         const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
         return { status: true, pdfbase64: pdfBytes }
@@ -281,17 +378,19 @@ async function generate_marriage_license(formData) {
 async function print_decided_license(formData, params) {
     try {
         // Check if the required template exists
-        checkFilesExist([MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE_PRINT]);
+        checkFilesExist([MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE_PRINT])
 
-        const content = fs.readFileSync(MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE_PRINT);
-        const pdfDoc = await PDFDocument.load(content);
-        const form = pdfDoc.getForm();
+        const content = fs.readFileSync(
+            MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE_PRINT
+        )
+        const pdfDoc = await PDFDocument.load(content)
+        const form = pdfDoc.getForm()
 
         // Embed Helvetica font
-        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
-        const data = JSON.parse(formData);
-        const adjustments = JSON.parse(params);
+        const data = JSON.parse(formData)
+        const adjustments = JSON.parse(params)
 
         // List of form fields to update
         const fields = [
@@ -385,64 +484,75 @@ async function print_decided_license(formData, params) {
             'bride_ctc_number',
             'bride_ctc_on',
             'bride_ctc_at'
-        ];
+        ]
 
         // Set values for each field
         fields.forEach((fieldName) => {
-            const field = form.getTextField(fieldName);
-            const fieldValue = data[fieldName] || '';
+            const field = form.getTextField(fieldName)
+            const fieldValue = data[fieldName] || ''
             // const fontSize = 9;
-            field.setText(fieldValue);
+            field.setText(fieldValue)
             // field.updateAppearances(helveticaFont);
-        });
+        })
 
-        form.flatten();
+        form.flatten()
 
         // Form to be copied
-        const pdfBytes = await pdfDoc.save();
+        const pdfBytes = await pdfDoc.save()
 
         // Create a new PDF document
-        const newPdfDoc = await PDFDocument.create();
+        const newPdfDoc = await PDFDocument.create()
 
         // Load the original PDF document (note: pdfBytes is in a buffer format here)
-        const originalPdfDoc = await PDFDocument.load(pdfBytes);
+        const originalPdfDoc = await PDFDocument.load(pdfBytes)
 
         // Ensure we're copying a valid page (copy the first page)
-        const pages = await originalPdfDoc.copyPages(originalPdfDoc, [0]);
+        const pages = await originalPdfDoc.copyPages(originalPdfDoc, [0])
 
         if (!pages || !pages[0]) {
-            throw new Error('Failed to copy the page correctly.');
+            throw new Error('Failed to copy the page correctly.')
         }
 
-        const firstDonorPage = pages[0];
+        const firstDonorPage = pages[0]
 
         // Get the original page size
-        const originalPageWidth = firstDonorPage.getWidth();
-        const originalPageHeight = firstDonorPage.getHeight();
+        const originalPageWidth = firstDonorPage.getWidth()
+        const originalPageHeight = firstDonorPage.getHeight()
 
         // Add a new page with the same size as the original
-        const newPage = newPdfDoc.addPage([originalPageWidth, originalPageHeight]);
+        const newPage = newPdfDoc.addPage([
+            originalPageWidth,
+            originalPageHeight
+        ])
 
         // Embed the copied page onto the new page
-        const embeddedPage = await newPdfDoc.embedPage(firstDonorPage);
+        const embeddedPage = await newPdfDoc.embedPage(firstDonorPage)
 
         // Optional: Adjust positioning with given x and y offsets
-        const x_axis_adjustments = !isNaN(Number(adjustments.x)) ? Number(adjustments.x) : 0;
-        const y_axis_adjustments = !isNaN(Number(adjustments.y)) ? Number(adjustments.y) : 0;
+        const x_axis_adjustments = !isNaN(Number(adjustments.x))
+            ? Number(adjustments.x)
+            : 0
+        const y_axis_adjustments = !isNaN(Number(adjustments.y))
+            ? Number(adjustments.y)
+            : 0
 
         newPage.drawPage(embeddedPage, {
             x: 12,
-            y: -27,
-        });
+            y: -27
+        })
 
         // Save the new PDF
-        const pdfBytesToBePrinted = await newPdfDoc.saveAsBase64();
+        const pdfBytesToBePrinted = await newPdfDoc.saveAsBase64()
 
-        return { status: true, pdfbase64: pdfBytesToBePrinted };
+        return { status: true, pdfbase64: pdfBytesToBePrinted }
     } catch (error) {
-        console.error('Error:', error);
-        return { status: false, message: error.message };
+        console.error('Error:', error)
+        return { status: false, message: error.message }
     }
 }
 
-export { generate_marriage_notice, generate_marriage_license, print_decided_license }
+export {
+    generate_marriage_notice,
+    generate_marriage_license,
+    print_decided_license
+}

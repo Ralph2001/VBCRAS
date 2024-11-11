@@ -10,15 +10,18 @@
                         {{ countdown }}
                     </div>
 
-                    <div class="absolute top-0 p-2 gap-1 flex w-full">
-                        <button @click="closeCamera" class="border p-2 bg-white text-xs rounded-sm font-medium">
+                    <div class="absolute top-0 p-2 gap-1 flex w-full items-end">
+                        <button @click="closeCamera"
+                            class=" p-2 bg-red-400 text-white hover:bg-red-500 outline-none text-xs rounded-sm font-medium">
                             Cancel Operation
                         </button>
                         <div class="w-14 flex ml-auto flex-col">
                             <p class="font-mono text-xs text-white">Timer:</p>
-                            <input v-model="timer" type="number" class="rounded-sm border border-gray-300 py-1">
+                            <input v-model="timer" type="number"
+                                class="rounded-sm border bg-gray-200 border-gray-300 py-1">
                         </div>
-                        <select class=" text-sm rounded-sm" v-model="selectedDeviceId" @change="startCamera">
+                        <select class=" text-sm rounded-sm  w-[12rem] h-[2.2rem] bg-gray-200 outline-none ring-0"
+                            v-model="selectedDeviceId" @change="startCamera">
                             <option v-for="device in videoDevices" :key="device.deviceId" :value="device.deviceId">
                                 {{ device.label || `Camera ${device.deviceId}` }}
                             </option>
@@ -29,12 +32,12 @@
                         <video class="h-full" ref="videoElement" autoplay playsinline></video>
                         <div class="overlay absolute inset-0 flex items-center justify-center pointer-events-none">
                             <!-- Transparent Guide (Centered Circle) -->
-                            <div class="border-2 border-white  h-64 w-64"></div>
+                            <div class="border border-gray-50 rounded-sm  h-64 w-64"></div>
                         </div>
                     </div>
 
                     <div v-if="capturedImage">
-                        <img :src="capturedImage" alt="Captured photo" />
+                        <img :src="capturedImage" alt="Captured photo" class=" max-w-full max-h-full rotate-180"  />
                     </div>
 
                     <div class="absolute bottom-0 p-10 w-full flex gap-2 justify-end">
@@ -49,10 +52,11 @@
             </div>
         </teleport>
 
-        <div class="h-[10rem] bg-gray-200 w-full flex items-center justify-center">
+        <div class="w-[170px] h-[166px] bg-gray-200  flex items-center justify-center">
             <button @click="openCamera">
-                <font-awesome-icon icon="fa-solid fa-camera" class="text-4xl text-gray-400 hover:text-gray-800" />
+                <font-awesome-icon icon="fa-solid fa-camera" class="text-2xl text-gray-400 hover:text-gray-800" />
             </button>
+            <!-- <p v-else class="text-xs text-gray-700 font-mono">No Camera Detected</p> -->
         </div>
     </div>
 </template>
@@ -73,6 +77,7 @@ let mediaStream = null;
 const isFullScreen = ref(false);
 const countdown = ref(0); // Countdown variable
 const timer = ref(3);
+const no_camera = ref(false)
 
 const save_image = () => {
     isFullScreen.value = false;
@@ -93,6 +98,7 @@ const openCamera = () => {
 // Start the camera using the selected device
 const startCamera = async () => {
     try {
+        no_camera.value = false
         if (mediaStream) {
             // Stop existing streams if switching devices
             mediaStream.getTracks().forEach(track => track.stop());
@@ -104,6 +110,7 @@ const startCamera = async () => {
 
         videoElement.value.srcObject = mediaStream;
     } catch (error) {
+        no_camera.value = true
         console.error('Error accessing the camera: ', error);
         // toast.error("No camera detected. Please connect a camera to continue.");
     }
@@ -124,7 +131,7 @@ const captureImage = () => {
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
         capturedImage.value = canvas.toDataURL('image/png');
-
+   
         if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop());
             mediaStream = null;
@@ -169,7 +176,7 @@ const getCameras = async () => {
             selectedDeviceId.value = videoDevices.value[0].deviceId; // Select first camera by default
         } else {
             // Show toast if no cameras are found
-            console.log('No Camera')    
+            console.log('No Camera')
             // toast.error("No camera devices detected.");
         }
     } catch (error) {

@@ -418,7 +418,7 @@
                                         <InputBottomBorderMarriage v-model="formData.groom_residence"
                                             @change="handleInputChange" middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label /> 
+                                            top_label />
                                         <!-- <SuggestionInputBottomBorderMarriage /> -->
 
                                     </div>
@@ -1014,8 +1014,8 @@
                                     </div>
                                 </div>
 
-                                <div class="justify-center flex  items-center flex-row gap-10 mb-4">
-                                    <div class="basis-[30%] h-[10rem]">
+                                <div class="justify-center flex  items-center flex-row gap-10 px-10 mb-4">
+                                    <div class=" h-[166px] w-[170px] ">
                                         <Camera @capture="handle_groom_image" v-if="!groom_picture" />
                                         <div v-if="groom_picture"
                                             class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
@@ -1067,10 +1067,10 @@
 
 
 
-                                <div class="justify-center flex  items-center flex-row gap-10 mt-5">
+                                <div class="justify-center flex  items-center flex-row gap-10 mt-5 px-10">
 
 
-                                    <div class="basis-[30%] h-[10rem]">
+                                    <div class="  h-[166px] w-[170px] ">
                                         <Camera @capture="handle_bride_image" v-if="!bride_picture" />
                                         <div v-if="bride_picture"
                                             class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
@@ -1119,12 +1119,7 @@
                                     </div>
 
                                 </div>
-                                <p class="indent-8 text-justify px-24 mt-3 mb-3">Any person having knowledge of any
-                                    legal
-                                    impediment to
-                                    such
-                                    marriage
-                                    will please report it to the undersigned within ten (10) days from this date.</p>
+
 
                                 <div class="flex flex-col  justify-center items-center mt-3">
                                     <div class="w-[30%]">
@@ -1156,15 +1151,7 @@
                                     </div>
                                 </div>
 
-                                <p class="text-justify font-sans px-24 mt-auto">
 
-                                    <span class="font-medium">Note:</span>
-                                    This notice shall be posted durign ten (10) consecutive days at the main door of the
-                                    building where
-                                    Local Civil Registrar has his office and once posted, it's location shall not be
-                                    changed. (Rep. Act
-                                    No. 386, Art. 63)
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -1231,7 +1218,7 @@ function adjustY(direction) {
 
 const page = ref(1)
 const paper_size = computed(() => {
-    return page.value === 1 ? 12 : 10
+    return page.value === 1 ? 12 : 8
 })
 const change_page = (value) => {
     if (page.value === value) { return }
@@ -1264,20 +1251,7 @@ const pdf_settings = reactive({
     y: 0,
 })
 
-const preview_document = async () => {
-    if (preview.value) {
-        const data = JSON.stringify({ ...formData })
 
-        if (page.value === 1) {
-            const previewData = await window.MarriageApi.previewMarriage(data);
-            pdf_content.value = previewData.pdfbase64;
-        }
-        else if (page.value === 2) {
-            const previewData = await window.MarriageApi.previewNotice(data);
-            notice_pdf_content.value = previewData.pdfbase64;
-        }
-    }
-}
 
 const print = async () => {
     if (page.value === 1) {
@@ -1580,6 +1554,32 @@ const handle_groom_image = (capturedImage) => {
 const bride_picture = ref(null)
 const handle_bride_image = (capturedImage) => {
     bride_picture.value = capturedImage
+}
+
+
+const preview_document = async () => {
+    if (preview.value) {
+        const data = JSON.stringify({ ...formData })
+
+        if (page.value === 1) {
+            const previewData = await window.MarriageApi.previewMarriage(data);
+            pdf_content.value = previewData.pdfbase64;
+        }
+        else if (page.value === 2) {
+
+            const bride = bride_picture.value
+            const groom = groom_picture.value
+
+            const images = [
+                bride, groom
+            ]
+
+            const image_data = JSON.stringify(images)
+
+            const previewData = await window.MarriageApi.previewNotice(data, image_data);
+            notice_pdf_content.value = previewData.pdfbase64;
+        }
+    }
 }
 
 </script>
