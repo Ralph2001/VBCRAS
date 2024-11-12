@@ -37,7 +37,7 @@
                     </div>
 
                     <div v-if="capturedImage">
-                        <img :src="capturedImage" alt="Captured photo" class=" max-w-full max-h-full rotate-180"  />
+                        <img :src="capturedImage" alt="Captured photo" class=" max-w-full max-h-full"  />
                     </div>
 
                     <div class="absolute bottom-0 p-10 w-full flex gap-2 justify-end">
@@ -87,6 +87,8 @@ const save_image = () => {
     }
 
     emit('capture', capturedImage.value);
+
+    capturedImage.value = null
 };
 
 // Open the camera and show full-screen mode

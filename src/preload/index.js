@@ -138,7 +138,11 @@ contextBridge.exposeInMainWorld('MarriageApi', {
     previewNotice: async (formData, image) => {
         const preview = await ipcRenderer.invoke('previewNotice', formData, image)
         return preview
-    }
+    },
+    printNotice: async (dataUri) => {
+        const print = await ipcRenderer.invoke('printNotice', dataUri)
+        return print
+    },
 })
 
 /**

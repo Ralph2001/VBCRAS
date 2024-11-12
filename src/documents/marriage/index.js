@@ -52,20 +52,23 @@ function base64ToUint8Array(base64) {
 }
 
 const embedImageIfValid = async (pdfDoc, imageBase64) => {
-    // Check if the base64 string is valid (not null, undefined, or empty)
+    // Check if the base64 string is valid
     if (imageBase64 && imageBase64 !== 'null' && imageBase64 !== '') {
         try {
-            // Convert the base64 string to Uint8Array
+            // Convert base64 to Uint8Array
             const imageUnit8 = base64ToUint8Array(imageBase64);
             
-            // Embed the image into the PDF document
-            return await pdfDoc.embedPng(imageUnit8);
+            // Embed the image into the PDF
+            const embeddedImage = await pdfDoc.embedPng(imageUnit8);
+            return embeddedImage;
         } catch (error) {
-            console.log('Error embedding image:', error);
+            console.error('Error embedding image:', error);
+            return null;
         }
+    } else {
+        console.error('Invalid image data');
+        return null;
     }
-    // Return null if image data is invalid
-    return null;
 };
 
 
@@ -143,6 +146,13 @@ async function generate_marriage_notice(formData, image) {
             embedImageIfValid(pdfDoc, images[0]),
             embedImageIfValid(pdfDoc, images[1])
         ]);
+        
+        if (!bridePicture) {
+            console.log('Error: Bride picture could not be embedded');
+        }
+        if (!groomPicture) {
+            console.log('Error: Groom picture could not be embedded');
+        }
 
         // Define fixed size for icons (e.g., 100x100 points)
         const iconWidth = 95 // Width of the icon in points
@@ -193,13 +203,13 @@ async function generate_marriage_notice(formData, image) {
         } else {
             console.log('No valid bride picture to embed');
         }
-
+        
         if (groomPicture) {
             groom_picture.setImage(groomPicture);
         } else {
             console.log('No valid groom picture to embed');
         }
-
+        
         
      
 

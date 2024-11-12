@@ -1024,7 +1024,7 @@
                                                 <font-awesome-icon icon="fa-solid fa-xmark" />
                                             </button>
                                             <img :src="groom_picture" alt="Captured photo"
-                                                class="object-cover w-full h-full" />
+                                                class="w-full h-full object-contain " />
                                         </div>
                                     </div>
 
@@ -1079,7 +1079,7 @@
                                                 <font-awesome-icon icon="fa-solid fa-xmark" />
                                             </button>
                                             <img :src="bride_picture" alt="Captured photo"
-                                                class="object-cover w-full h-full" />
+                                                class="w-full h-full object-contain " />
                                         </div>
                                     </div>
 
@@ -1253,14 +1253,6 @@ const pdf_settings = reactive({
 
 
 
-const print = async () => {
-    if (page.value === 1) {
-        const data = JSON.stringify({ ...formData })
-        const settings = JSON.stringify({ ...pdf_settings })
-        const previewData = await window.MarriageApi.printMarriage(data, settings);
-        console.log(previewData)
-    }
-}
 
 
 
@@ -1582,11 +1574,39 @@ const preview_document = async () => {
     }
 }
 
-</script>
+function removeBase64Prefix(base64String) {
 
-<style scoped>
-img {
-    transform: scaleX(-1);
-
+    return base64String.replace(/^data:application\/pdf;base64,/, '');
 }
-</style>
+
+const print = async () => {
+    const data = JSON.stringify({ ...formData })
+    if (page.value === 1) {
+        const settings = JSON.stringify({ ...pdf_settings })
+        const previewData = await window.MarriageApi.printMarriage(data, settings);
+        console.log(previewData)
+    }
+    if (page.value === 2) {
+
+        const bride = bride_picture.value
+        const groom = groom_picture.value
+
+        const images = [
+            bride, groom
+        ]
+
+        const image_data = JSON.stringify(images)
+
+        const previewData = await window.MarriageApi.previewNotice(data, image_data);
+
+        const dataUri = removeBase64Prefix(previewData.pdfbase64)
+
+    
+        if (previewData) {
+            const print_after_preview_without_gui = await window.MarriageApi.printNotice(dataUri);
+        }
+    }
+}
+
+
+</script>
