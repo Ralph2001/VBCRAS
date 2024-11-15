@@ -1,7 +1,10 @@
 import { exec } from 'child_process'
 import { PageSizes, PDFDocument, StandardFonts } from 'pdf-lib'
+import fontkit from '@pdf-lib/fontkit';
 const path = require('path')
 const fs = require('fs')
+
+
 
 const MARRIAGE_TEMPLATE_PATHS = {
     NOTICE: path
@@ -57,7 +60,7 @@ const embedImageIfValid = async (pdfDoc, imageBase64) => {
         try {
             // Convert base64 to Uint8Array
             const imageUnit8 = base64ToUint8Array(imageBase64);
-            
+
             // Embed the image into the PDF
             const embeddedImage = await pdfDoc.embedPng(imageUnit8);
             return embeddedImage;
@@ -74,12 +77,37 @@ const embedImageIfValid = async (pdfDoc, imageBase64) => {
 
 async function generate_marriage_notice(formData, image) {
     try {
+
+        const ArialFontBytes = fs.readFileSync(path
+            .resolve(
+                __dirname,
+                '../../resources/images/fonts/Arial.TTF'
+            )
+            .replace('app.asar', 'app.asar.unpacked'),)
+        const ArialItalicFontBytes = fs.readFileSync(path
+            .resolve(
+                __dirname,
+                '../../resources/images/fonts/Arial Italic.TTF'
+            )
+            .replace('app.asar', 'app.asar.unpacked'),)
+        const ArialBoldFontBytes = fs.readFileSync(path
+            .resolve(
+                __dirname,
+                '../../resources/images/fonts/Arial Bold.TTF'
+            )
+            .replace('app.asar', 'app.asar.unpacked'),)
+
         // Ensure file exists before proceeding
         checkFilesExist([MARRIAGE_TEMPLATE_PATHS.NOTICE])
 
         // Load PDF content without 'binary' encoding
         const content = fs.readFileSync(MARRIAGE_TEMPLATE_PATHS.NOTICE)
         const pdfDoc = await PDFDocument.load(content)
+        pdfDoc.registerFontkit(fontkit);
+
+        const ArialFont = await pdfDoc.embedFont(ArialFontBytes);
+        const ArialItalicFont = await pdfDoc.embedFont(ArialItalicFontBytes);
+        const ArialBoldFont = await pdfDoc.embedFont(ArialBoldFontBytes);
         const form = pdfDoc.getForm()
 
         /**
@@ -101,6 +129,7 @@ async function generate_marriage_notice(formData, image) {
             StandardFonts.TimesRomanBold
         )
         const office = form.getTextField('office')
+
 
         const groom_name = form.getTextField('groom_name')
         const bride_name = form.getTextField('bride_name')
@@ -146,7 +175,7 @@ async function generate_marriage_notice(formData, image) {
             embedImageIfValid(pdfDoc, images[0]),
             embedImageIfValid(pdfDoc, images[1])
         ]);
-        
+
         if (!bridePicture) {
             console.log('Error: Bride picture could not be embedded');
         }
@@ -155,8 +184,8 @@ async function generate_marriage_notice(formData, image) {
         }
 
         // Define fixed size for icons (e.g., 100x100 points)
-        const iconWidth = 95 // Width of the icon in points
-        const iconHeight = 95 // Height of the icon in points
+        const iconWidth = 100 // Width of the icon in points
+        const iconHeight = 100 // Height of the icon in points
 
         // Define some space above and below the logos
         const topMargin = 35 // Space from the top of the page
@@ -175,8 +204,8 @@ async function generate_marriage_notice(formData, image) {
         page.drawImage(leftIcon, {
             x: leftIconX,
             y: iconY,
-            width: iconWidth,
-            height: iconHeight
+            width: iconWidth + 10,
+            height: iconHeight + 10
         })
 
         // Draw the right icon with rotation and fixed size
@@ -203,35 +232,53 @@ async function generate_marriage_notice(formData, image) {
         } else {
             console.log('No valid bride picture to embed');
         }
-        
+
         if (groomPicture) {
             groom_picture.setImage(groomPicture);
         } else {
             console.log('No valid groom picture to embed');
         }
-        
-        
-     
+
+
+
 
         groom_age.setText(data.notice_groom_age)
+        groom_age.updateAppearances(ArialFont)
         groom_birthplace.setText(data.notice_groom_birthplace)
+        groom_birthplace.updateAppearances(ArialFont)
         groom_residence.setText(data.notice_groom_residence)
+        groom_residence.updateAppearances(ArialFont)
         groom_father.setText(data.notice_groom_father)
+        groom_father.updateAppearances(ArialFont)
         groom_mother.setText(data.notice_groom_mother)
+        groom_mother.updateAppearances(ArialFont)
 
         bride_age.setText(data.notice_bride_age)
+        bride_age.updateAppearances(ArialFont)
         bride_birthplace.setText(data.notice_bride_birthplace)
+        bride_birthplace.updateAppearances(ArialFont)
         bride_residence.setText(data.notice_bride_residence)
+        bride_residence.updateAppearances(ArialFont)
         bride_father.setText(data.notice_bride_father)
+        bride_father.updateAppearances(ArialFont)
         bride_mother.setText(data.notice_bride_mother)
+        bride_mother.updateAppearances(ArialFont)
 
         date_posting.setText(data.notice_date_posting)
+        date_posting.updateAppearances(ArialFont)
         civil_registrar.setText(data.civil_registrar)
+        civil_registrar.updateAppearances(ArialBoldFont)
+
         position.setText('Municipal Civil Registrar')
+        position.updateAppearances(ArialItalicFont)
+
 
         copy_furnished1.setText(data.notice_copy_furnished1)
+        copy_furnished1.updateAppearances(ArialFont)
         copy_furnished2.setText(data.notice_copy_furnished2)
+        copy_furnished2.updateAppearances(ArialFont)
         copy_furnished3.setText(data.notice_copy_furnished3)
+        copy_furnished3.updateAppearances(ArialFont)
 
         form.flatten();
 

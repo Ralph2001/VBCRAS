@@ -18,9 +18,15 @@ export default defineConfig({
         // base: '',
         plugins: [vue()],
         optimizeDeps: {
+            exclude: ['pdfjs-dist'],
             esbuildOptions: {
                 supported: { 'top-level-await': true },
             },
         },
+        build: {
+            rollupOptions: {
+                external: ['pdfjs-dist']  // This also prevents pdfjs-dist from being bundled
+            }
+        }
     },
 })

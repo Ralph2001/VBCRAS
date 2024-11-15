@@ -1156,18 +1156,19 @@
                         </div>
                     </div>
                     <div class="h-full w-full flex items-center justify-center  relative" v-if="preview">
-                        <div class="absolute w-full left-0 right-0 top-0 h-16 bg-[#525659]">
+                        <!-- <div class="absolute w-full left-0 right-0 top-0 h-16 bg-[#525659]">
                         </div>
-
                         <div class="absolute  right-0 top-0 w-5 h-full bg-[#525659]">
                         </div>
-
-
-
                         <iframe v-if="preview && page === 1" :src="pdf_content" frameborder="0"
                             class="h-full w-full"></iframe>
                         <iframe v-if="preview && page === 2" :src="notice_pdf_content" frameborder="0"
-                            class="h-full w-full"></iframe>
+                            class="h-full w-full"></iframe> -->
+
+
+
+                        <PDFViewerWorker :pdfBytes64="pdf_content"  v-if="preview && page === 1"/>
+                        <PDFViewerWorker :pdfBytes64="notice_pdf_content"  v-if="preview && page === 2"/>
 
                     </div>
                 </div>
@@ -1177,6 +1178,7 @@
 </template>
 
 <script setup>
+
 import { computed, onMounted, reactive, ref } from 'vue';
 import Button from '../../components/essentials/buttons/Button.vue';
 import Modal from '../../components/client/modal/Modal.vue';
@@ -1187,6 +1189,7 @@ import Camera from '../../components/Camera.vue';
 import { onClickOutside } from '@vueuse/core'
 import SelectBottomBorderMarriage from '../../components/Marriage/SelectBottomBorderMarriage.vue';
 import SuggestionInputBottomBorderMarriage from '../../components/Marriage/SuggestionInputBottomBorderMarriage.vue';
+import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
 
 
 const adjustment_setting = ref(false)
@@ -1325,7 +1328,7 @@ const initialForm = {
     groom_contract_marriage_with: '',
     bride_contract_marriage_with: '',
 
-    civil_registrar: '',
+    civil_registrar: 'ISMAEL D. MALICDEM, JR.',
 
     groom_first_name: '',
     groom_middle_name: '',
@@ -1570,6 +1573,7 @@ const preview_document = async () => {
 
             const previewData = await window.MarriageApi.previewNotice(data, image_data);
             notice_pdf_content.value = previewData.pdfbase64;
+            console.log(notice_pdf_content)
         }
     }
 }
@@ -1601,7 +1605,7 @@ const print = async () => {
 
         const dataUri = removeBase64Prefix(previewData.pdfbase64)
 
-    
+
         if (previewData) {
             const print_after_preview_without_gui = await window.MarriageApi.printNotice(dataUri);
         }
