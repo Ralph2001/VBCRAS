@@ -4,9 +4,9 @@
             <Button label="Create" isActive :class="`rounded`" @click="open_model" />
         </Header>
 
-        <div class="h-[calc(100vh-250px)] relative">
 
-            Soon :)
+        <div class="h-[calc(100vh-200px)]">
+            <TableGrid :data="apl.application_marriage_license" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
         <Modal large footerBG="bg-white border-t border-gray-300" v-if="modal" :footer="false">
@@ -22,14 +22,14 @@
                 <div class="fixed flex flex-row right-0 left-0 bg-blue-400 top-9 px-4 z-50">
                     <div class="flex flex-row items-center">
                         <button class="hover:bg-blue-300 font-medium text-sm p-2" @click="change_page(1)"
-                            :class="[page === 1 ? '' : 'text-gray-600']">Marriage
+                            :class="[page === 1 ? '' : 'text-gray-600']">Application for Marriage
                             License</button>
                         <div class="block border border-blue-600 h-6"></div>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2 " @click="change_page(2)"
                             :class="[page === 2 ? '' : 'text-gray-600']">Notice</button>
                     </div>
                     <div class="flex flex-row gap-3 ml-auto">
-                        <button class="hover:bg-blue-300 font-medium text-sm p-2 flex items-center gap-1">
+                        <button @click="submit()" class="hover:bg-blue-300 font-medium text-sm p-2 flex items-center gap-1">
                             <font-awesome-icon icon="fa-regular fa-floppy-disk" /> Save</button>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
                             @click="change_mode()">
@@ -1140,6 +1140,8 @@
                                                 v-model="formData.notice_copy_furnished2" />
                                             <InputBottomBorderMarriage page_2
                                                 v-model="formData.notice_copy_furnished3" />
+                                            <InputBottomBorderMarriage page_2
+                                                v-model="formData.notice_copy_furnished4" />
                                         </div>
                                     </div>
                                     <div class="flex flex-col items-center">
@@ -1167,8 +1169,8 @@
 
 
 
-                        <PDFViewerWorker :pdfBytes64="pdf_content"  v-if="preview && page === 1"/>
-                        <PDFViewerWorker :pdfBytes64="notice_pdf_content"  v-if="preview && page === 2"/>
+                        <PDFViewerWorker :pdfBytes64="pdf_content" v-if="preview && page === 1" />
+                        <PDFViewerWorker :pdfBytes64="notice_pdf_content" v-if="preview && page === 2" />
 
                     </div>
                 </div>
@@ -1190,6 +1192,10 @@ import { onClickOutside } from '@vueuse/core'
 import SelectBottomBorderMarriage from '../../components/Marriage/SelectBottomBorderMarriage.vue';
 import SuggestionInputBottomBorderMarriage from '../../components/Marriage/SuggestionInputBottomBorderMarriage.vue';
 import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
+import TableGrid from '../../components/TableGrid.vue';
+import { useApplicationMarriageLicense } from '../../stores/APL';
+
+
 
 
 const adjustment_setting = ref(false)
@@ -1286,8 +1292,11 @@ const paperStyle = computed(() => ({
     width: `${paperDimensions.value.width}px`,
 }));
 
+const apl = useApplicationMarriageLicense()
+
 onMounted(() => {
     calculatePPI();
+    apl.getApplicationMarriageLicense()
 });
 
 const modal = ref(false);
@@ -1439,23 +1448,28 @@ const initialForm = {
     notice_province: '',
     notice_municipality: '',
     notice_office: '',
+
     notice_groom_name: '',
     notice_bride_name: '',
+
     notice_groom_age: '',
     notice_groom_birthplace: '',
     notice_groom_residence: '',
     notice_groom_father: '',
     notice_groom_mother: '',
+
     notice_bride_age: '',
     notice_bride_birthplace: '',
     notice_bride_residence: '',
     notice_bride_father: '',
     notice_bride_mother: '',
+
     notice_date_posting: '',
     notice_position: '',
     notice_copy_furnished1: '',
     notice_copy_furnished2: '',
     notice_copy_furnished3: '',
+    notice_copy_furnished4: ''
 
 }
 
@@ -1476,20 +1490,20 @@ const updateNotices = () => {
     const groomMotherInitialMiddleName = formData.groom_mother_middle_name ? formData.groom_mother_middle_name.charAt(0) : '';
     const groomBirthPlace = formData.groom_municipality && formData.groom_province ? formData.groom_municipality + ', ' + formData.groom_province : ''
 
-    formData.groom_notice_name = `${formData.groom_first_name} ${groomInitialMiddleName}. ${formData.groom_last_name}`;
-    formData.groom_notice_age = formData.groom_age ? `${formData.groom_age} yrs. old` : '';
+    formData.notice_groom_name = `${formData.groom_first_name} ${groomInitialMiddleName}. ${formData.groom_last_name}`;
+    formData.notice_groom_age = formData.groom_age ? `${formData.groom_age} yrs. old` : '';
 
-    formData.groom_notice_father = formData.groom_father_first_name
+    formData.notice_groom_father = formData.groom_father_first_name
         ? `${formData.groom_father_first_name} ${groomFatherInitialMiddleName}. ${formData.groom_father_last_name}`
         : '';
 
-    formData.groom_notice_mother = formData.groom_mother_first_name
+    formData.notice_groom_mother = formData.groom_mother_first_name
         ? `${formData.groom_mother_first_name} ${groomMotherInitialMiddleName}. ${formData.groom_mother_last_name}`
         : '';
-    formData.groom_notice_birthplace = formData.groom_municipality
+    formData.notice_groom_birthplace = formData.groom_municipality
         ? capitalizeWords(groomBirthPlace)
         : '';
-    formData.groom_notice_residence = formData.groom_residence
+    formData.notice_groom_residence = formData.groom_residence
         ? capitalizeWords(formData.groom_residence).replace(', PHILIPPINES', '')
         : '';
 
@@ -1506,23 +1520,23 @@ const updateNotices = () => {
     const brideMotherInitialMiddleName = formData.bride_mother_middle_name ? formData.bride_mother_middle_name.charAt(0) : '';
     const brideBirthPlace = formData.bride_municipality && formData.bride_province ? formData.bride_municipality + ', ' + formData.bride_province : ''
 
-    formData.bride_notice_name = `${formData.bride_first_name} ${brideInitialMiddleName}. ${formData.bride_last_name}`;
-    formData.bride_notice_age = formData.bride_age ? `${formData.bride_age} yrs. old` : '';
+    formData.notice_bride_name = `${formData.bride_first_name} ${brideInitialMiddleName}. ${formData.bride_last_name}`;
+    formData.notice_bride_age = formData.bride_age ? `${formData.bride_age} yrs. old` : '';
 
 
 
-    formData.bride_notice_father = formData.bride_father_first_name
+    formData.notice_bride_father = formData.bride_father_first_name
         ? `${formData.bride_father_first_name} ${brideFatherInitialMiddleName}. ${formData.bride_father_last_name}`
         : '';
 
 
-    formData.bride_notice_mother = formData.bride_mother_first_name
+    formData.notice_bride_mother = formData.bride_mother_first_name
         ? `${formData.bride_mother_first_name} ${brideMotherInitialMiddleName}. ${formData.bride_mother_last_name}`
         : '';
-    formData.bride_notice_birthplace = formData.bride_municipality
+    formData.notice_bride_birthplace = formData.bride_municipality
         ? capitalizeWords(brideBirthPlace)
         : '';
-    formData.bride_notice_residence = formData.bride_residence
+    formData.notice_bride_residence = formData.bride_residence
         ? capitalizeWords(formData.bride_residence).replace(', PHILIPPINES', '')
         : '';
 };
@@ -1570,10 +1584,8 @@ const preview_document = async () => {
             ]
 
             const image_data = JSON.stringify(images)
-
             const previewData = await window.MarriageApi.previewNotice(data, image_data);
             notice_pdf_content.value = previewData.pdfbase64;
-            console.log(notice_pdf_content)
         }
     }
 }
@@ -1611,6 +1623,210 @@ const print = async () => {
         }
     }
 }
+
+
+const submit = async () => {
+
+    const data = {
+        header_province: formData.header_province,
+        header_municipality: formData.header_municipality,
+        registry_number: formData.registry_number,
+        received_by: formData.received_by,
+        date_of_receipt: formData.date_of_receipt,
+        marriage_license_number: formData.marriage_license_number,
+        date_issuance_marriage_license: formData.date_issuance_marriage_license,
+        groom_contract_marriage_with: formData.groom_contract_marriage_with,
+        bride_contract_marriage_with: formData.bride_contract_marriage_with,
+
+        civil_registrar: formData.civil_registrar,
+
+        groom_first_name: formData.groom_first_name,
+        groom_middle_name: formData.groom_middle_name,
+        groom_last_name: formData.groom_last_name,
+
+        groom_day: formData.groom_day,
+        groom_month: formData.groom_month,
+        groom_year: formData.groom_year,
+
+        groom_age: formData.groom_age,
+
+        groom_municipality: formData.groom_municipality,
+        groom_province: formData.groom_province,
+        groom_country: formData.groom_country,
+
+        groom_sex: formData.groom_sex,
+        groom_citizenship: formData.groom_citizenship,
+        groom_residence: formData.groom_residence,
+        groom_residence_country: formData.groom_residence_country,
+        groom_religion: formData.groom_religion,
+        groom_civil_status: formData.groom_civil_status,
+        groom_previously_married_dissolved: formData.groom_previously_married_dissolved,
+        groom_place_dissolved: formData.groom_place_dissolved,
+        groom_date_dissolved: formData.groom_date_dissolved,
+        groom_degree_relation: formData.groom_degree_relation,
+        groom_father_first_name: formData.groom_father_first_name,
+        groom_father_middle_name: formData.groom_father_middle_name,
+        groom_father_last_name: formData.groom_father_last_name,
+        groom_father_citizenship: formData.groom_father_citizenship,
+        groom_father_residence: formData.groom_father_residence,
+        groom_father_residence_country: formData.groom_father_residence_country,
+        groom_mother_first_name: formData.groom_mother_first_name,
+        groom_mother_middle_name: formData.groom_mother_middle_name,
+        groom_mother_last_name: formData.groom_mother_last_name,
+        groom_mother_citizenship: formData.groom_mother_citizenship,
+        groom_mother_residence: formData.groom_mother_residence,
+        groom_mother_residence_country: formData.groom_mother_residence_country,
+        groom_person_who_gave_consent: formData.groom_person_who_gave_consent,
+        groom_person_who_gave_consent_relation: formData.groom_person_who_gave_consent_relation,
+        groom_person_who_gave_consent_citizenship: formData.groom_person_who_gave_consent_citizenship,
+        groom_person_who_gave_consent_residence: formData.groom_person_who_gave_consent_residence,
+        groom_person_who_gave_consent_residence_country: formData.groom_person_who_gave_consent_residence_country,
+
+        groom_ss_day: formData.groom_ss_day,
+        groom_ss_month: formData.groom_ss_month,
+        groom_ss_year: formData.groom_ss_year,
+        groom_ss_at: formData.groom_ss_at,
+        groom_ctc_number: formData.groom_ctc_number,
+        groom_ctc_on: formData.groom_ctc_on,
+        groom_ctc_at: formData.groom_ctc_at,
+
+
+        bride_first_name: formData.bride_first_name,
+        bride_middle_name: formData.bride_middle_name,
+        bride_last_name: formData.bride_last_name,
+
+        bride_day: formData.bride_day,
+        bride_month: formData.bride_month,
+        bride_year: formData.bride_year,
+
+        bride_age: formData.bride_age,
+        bride_municipality: formData.bride_municipality,
+        bride_province: formData.bride_province,
+        bride_country: formData.bride_country,
+        bride_sex: formData.bride_sex,
+        bride_citizenship: formData.bride_citizenship,
+        bride_residence: formData.bride_residence,
+        bride_residence_country: formData.bride_residence_country,
+        bride_religion: formData.bride_religion,
+        bride_civil_status: formData.bride_civil_status,
+        bride_previously_married_dissolved: formData.bride_previously_married_dissolved,
+        bride_place_dissolved: formData.bride_place_dissolved,
+        bride_date_dissolved: formData.bride_date_dissolved,
+        bride_degree_relation: formData.bride_degree_relation,
+        bride_father_first_name: formData.bride_father_first_name,
+        bride_father_middle_name: formData.bride_father_middle_name,
+        bride_father_last_name: formData.bride_father_last_name,
+        bride_father_citizenship: formData.bride_father_citizenship,
+        bride_father_residence: formData.bride_father_residence,
+        bride_father_residence_country: formData.bride_father_residence_country,
+        bride_mother_first_name: formData.bride_mother_first_name,
+        bride_mother_middle_name: formData.bride_mother_middle_name,
+        bride_mother_last_name: formData.bride_mother_last_name,
+        bride_mother_citizenship: formData.bride_mother_citizenship,
+        bride_mother_residence: formData.bride_mother_residence,
+        bride_mother_residence_country: formData.bride_mother_residence_country,
+        bride_person_who_gave_consent: formData.bride_person_who_gave_consent,
+        bride_person_who_gave_consent_relation: formData.bride_person_who_gave_consent_relation,
+        bride_person_who_gave_consent_citizenship: formData.bride_person_who_gave_consent_citizenship,
+        bride_person_who_gave_consent_residence: formData.bride_person_who_gave_consent_residence,
+        bride_person_who_gave_consent_residence_country: formData.bride_person_who_gave_consent_residence_country,
+
+        bride_ss_day: formData.bride_ss_day,
+        bride_ss_month: formData.bride_ss_month,
+        bride_ss_year: formData.bride_ss_year,
+        bride_ss_at: formData.bride_ss_at,
+        bride_ctc_number: formData.bride_ctc_number,
+        bride_ctc_on: formData.bride_ctc_on,
+        bride_ctc_at: formData.bride_ctc_at,
+
+        notice_province: formData.notice_province,
+        notice_municipality: formData.notice_municipality,
+        notice_office: formData.notice_office,
+
+        notice_groom_name: formData.notice_groom_name,
+        notice_bride_name: formData.notice_bride_name,
+
+        notice_groom_age: formData.notice_groom_age,
+        notice_groom_birthplace: formData.notice_groom_birthplace,
+        notice_groom_residence: formData.notice_groom_residence,
+        notice_groom_father: formData.notice_groom_father,
+        notice_groom_mother: formData.notice_groom_mother,
+
+        notice_bride_age: formData.notice_bride_age,
+        notice_bride_birthplace: formData.notice_bride_birthplace,
+        notice_bride_residence: formData.notice_bride_residence,
+        notice_bride_father: formData.notice_bride_father,
+        notice_bride_mother: formData.notice_bride_mother,
+
+        notice_date_posting: formData.notice_date_posting,
+        notice_position: formData.notice_position,
+        notice_copy_furnished1: formData.notice_copy_furnished1,
+        notice_copy_furnished2: formData.notice_copy_furnished2,
+        notice_copy_furnished3: formData.notice_copy_furnished3,
+        notice_copy_furnished4: formData.notice_copy_furnished4,
+
+        file_path: '',
+        created_by: 1
+
+
+    
+    }
+
+    const submit = apl.addApplicationMarriageLicense(data)
+    console.log(submit)
+}
+
+const colDefs = ref([
+    {
+        field: "groom_first_name",
+        headerName: "Groom Name",
+        flex: 2,
+        filter: true,
+
+    },
+    {
+        field: "bride_first_name",
+        headerName: "Bride Name",
+        flex: 2,
+        filter: true,
+
+    },
+   
+    {
+        field: "date_of_receipt",
+        headerName: "Date Receipt",
+
+        filter: true,
+
+    },
+    {
+        field: "notice_date_posting",
+        headerName: "Date Posting",
+
+        filter: true,
+
+    },
+    {
+        field: "created_by",
+        headerName: "Prepared By",
+        flex: 2,
+        filter: true,
+
+    },
+    {
+  
+        headerName: "",
+        flex: 1,
+        pinned: "right",
+        lockPinned: true,
+        resizable: false,
+        cellStyle: { overflow: "visible", border: "none" },
+        sortable: false,
+
+    },
+
+]);
+
 
 
 </script>

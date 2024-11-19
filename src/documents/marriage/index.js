@@ -157,6 +157,7 @@ async function generate_marriage_notice(formData, image) {
         const copy_furnished1 = form.getTextField('copy_furnished1')
         const copy_furnished2 = form.getTextField('copy_furnished2')
         const copy_furnished3 = form.getTextField('copy_furnished3')
+        const copy_furnished4 = form.getTextField('copy_furnished4')
 
         // Set field values
 
@@ -184,8 +185,8 @@ async function generate_marriage_notice(formData, image) {
         }
 
         // Define fixed size for icons (e.g., 100x100 points)
-        const iconWidth = 100 // Width of the icon in points
-        const iconHeight = 100 // Height of the icon in points
+        const iconWidth = 95 // Width of the icon in points
+        const iconHeight = 95 // Height of the icon in points
 
         // Define some space above and below the logos
         const topMargin = 35 // Space from the top of the page
@@ -216,7 +217,7 @@ async function generate_marriage_notice(formData, image) {
             height: iconHeight
         })
 
-        office.setText('LOCAL CIVIL REGISTRY') //
+        office.setText('LOCAL CIVIL REGISTRY OFFICE') //
         office.updateAppearances(font)
 
         province.setText('Province of Pangasinan') //
@@ -279,6 +280,8 @@ async function generate_marriage_notice(formData, image) {
         copy_furnished2.updateAppearances(ArialFont)
         copy_furnished3.setText(data.notice_copy_furnished3)
         copy_furnished3.updateAppearances(ArialFont)
+        copy_furnished4.setText(data.notice_copy_furnished4)
+        copy_furnished4.updateAppearances(ArialFont)
 
         form.flatten();
 

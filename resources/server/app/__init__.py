@@ -8,6 +8,7 @@ from .routes.ausf import ausf
 from .routes.config_route import configuration
 from .routes.scanned import scans
 from .routes.petition import petitions
+from .routes.application_marriage_license import application_marriage_license
 
 def get_database_path():
   
@@ -41,6 +42,7 @@ def create_app():
     app.register_blueprint(configuration)
     app.register_blueprint(scans)
     app.register_blueprint(petitions)
+    app.register_blueprint(application_marriage_license)
     
     
     # Models
@@ -50,7 +52,7 @@ def create_app():
     from .models.ausf import Ausf
     from .models.system import SystemSettings
     from .models.civil_registry_corrections import Petitions
-    
+    from .models.application_marriage_license import ApplicationMarriageLicense
      
     with app.app_context():
         db.create_all()

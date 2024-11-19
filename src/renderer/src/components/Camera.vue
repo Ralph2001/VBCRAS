@@ -31,13 +31,21 @@
                     <div v-if="capturedImage === null" class="video h-[85%] relative">
                         <video class="h-full" ref="videoElement" autoplay playsinline></video>
                         <div class="overlay absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <!-- Transparent Guide (Centered Circle) -->
+                       
                             <div class="border border-gray-50 rounded-sm  h-64 w-64"></div>
                         </div>
                     </div>
 
-                    <div v-if="capturedImage">
-                        <img :src="capturedImage" alt="Captured photo" class=" max-w-full max-h-full"  />
+                    <div v-if="capturedImage" class="flex flex-col items-center">
+                        <img :src="capturedImage" alt="Captured photo" class="max-w-full max-h-full mb-4"
+                            ref="capturedImageElement" />
+                        <div class="flex gap-2 items-center">
+                            <label for="brightness" class="text-white text-sm">Brightness:</label>
+                            <input id="brightness" type="range" min="0" max="200" v-model="brightness" class="w-40">
+                            <button @click="applyBrightness" class="text-white p-2 bg-blue-400 text-sm rounded-sm">
+                                Apply Brightness
+                            </button>
+                        </div>
                     </div>
 
                     <div class="absolute bottom-0 p-10 w-full flex gap-2 justify-end">
@@ -69,6 +77,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 const emit = defineEmits(['capture']);
 
 
+
 const videoElement = ref(null);
 const capturedImage = ref(null);
 const videoDevices = ref([]);
@@ -78,6 +87,9 @@ const isFullScreen = ref(false);
 const countdown = ref(0); // Countdown variable
 const timer = ref(3);
 const no_camera = ref(false)
+
+
+
 
 const save_image = () => {
     isFullScreen.value = false;
@@ -119,6 +131,8 @@ const startCamera = async () => {
 };
 
 // Capture the image after a countdown
+const originalImage = ref(null); // Store the original captured image
+
 const captureImage = () => {
     startCountdown(timer.value, () => {
         const video = videoElement.value;
@@ -132,13 +146,41 @@ const captureImage = () => {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
-        capturedImage.value = canvas.toDataURL('image/png');
-   
+        const dataUrl = canvas.toDataURL('image/png', 1.0);
+        capturedImage.value = dataUrl;
+        originalImage.value = dataUrl; // Save the original image
+
         if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop());
             mediaStream = null;
         }
     });
+};
+
+const applyBrightness = () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    img.src = originalImage.value; // Always use the original image
+
+    img.onload = () => {
+        // Set canvas dimensions to match the image
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // Draw the image on the canvas
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        // Apply brightness filter
+        ctx.filter = `brightness(${brightness.value}%)`;
+
+        // Redraw the image with the filter
+        ctx.drawImage(img, 0, 0);
+
+        // Update the captured image with the new data
+        capturedImage.value = canvas.toDataURL('image/png');
+    };
 };
 
 // Start countdown and call callback when it ends
