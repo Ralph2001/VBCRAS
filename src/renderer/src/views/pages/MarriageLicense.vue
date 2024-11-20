@@ -29,7 +29,8 @@
                             :class="[page === 2 ? '' : 'text-gray-600']">Notice</button>
                     </div>
                     <div class="flex flex-row gap-3 ml-auto">
-                        <button @click="submit()" class="hover:bg-blue-300 font-medium text-sm p-2 flex items-center gap-1">
+                        <button @click="submit()"
+                            class="hover:bg-blue-300 font-medium text-sm p-2 flex items-center gap-1">
                             <font-awesome-icon icon="fa-regular fa-floppy-disk" /> Save</button>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2  flex items-center gap-1"
                             @click="change_mode()">
@@ -470,7 +471,7 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <SelectBottomBorderMarriage :options="[
+                                        <SelectBottomBorderMarriage @change="is_with_dissolved" :options="[
                                             { value: 'SINGLE', label: 'SINGLE' },
                                             { value: 'ANNULLED', label: 'ANNULLED' },
                                             { value: 'WIDOW', label: 'WIDOW' },
@@ -493,7 +494,7 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <SelectBottomBorderMarriage :options="[
+                                        <SelectBottomBorderMarriage @change="is_with_dissolved" :options="[
                                             { value: 'SINGLE', label: 'SINGLE' },
                                             { value: 'ANNULLED', label: 'ANNULLED' },
                                             { value: 'WIDOW', label: 'WIDOW' },
@@ -510,10 +511,11 @@
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
-                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
+                                        class="basis-[45%] grid grid-cols-1  gap-2 items-center border-r border-gray-500  py-0.5 ">
                                         <InputBottomBorderMarriage v-model="formData.groom_previously_married_dissolved"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" isBold />
-                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
+                                        <InputBottomBorderMarriage v-else
+                                            v-model="formData.groom_previously_married_dissolved" isBold />
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -527,21 +529,32 @@
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <InputBottomBorderMarriage v-model="formData.bride_previously_married_dissolved"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" isBold />
-                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
+                                        <InputBottomBorderMarriage v-else
+                                            v-model="formData.bride_previously_married_dissolved" isBold />
+
+
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
-                                    <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-r border-gray-500  py-0.5 ">
+                                    <div :class="[formData.groom_civil_status === 'SINGLE' ? 'grid grid-cols-1' : 'grid grid-cols-3']"
+                                        class="basis-[45%] w-full  gap-2 items-center border-r border-gray-500  py-0.5 ">
                                         <InputBottomBorderMarriage isBold label="City/Municipality" top_label
+                                            v-model="formData.groom_place_dissolved_municipality"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Province" top_label
+                                            v-model="formData.groom_place_dissolved_province"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Country" top_label
+                                            v-model="formData.groom_place_dissolved_country"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
-                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
+                                        <!-- <p v-else class="font-medium px-4 text-xs">N/A</p> -->
+
+                                        <InputBottomBorderMarriage v-else v-model="formData.groom_place_dissolved"
+                                            isBold />
+
                                     </div>
+
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
                                         <p class="text-xs w-[20%] h-full flex items-center font-semi">9. </p>
@@ -551,28 +564,37 @@
                                             dissolved
                                         </p>
                                     </div>
-                                    <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-l border-gray-500 py-0.5 ">
+                                    <div :class="[formData.bride_civil_status === 'SINGLE' ? 'grid grid-cols-1' : 'grid grid-cols-3']"
+                                        class="basis-[45%] gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <InputBottomBorderMarriage isBold label="City/Municipality" top_label
+                                            v-model="formData.bride_place_dissolved_municipality"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Province" top_label
+                                            v-model="formData.bride_place_dissolved_province"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Country" top_label
+                                            v-model="formData.bride_place_dissolved_country"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
-                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
+                                        <!-- <p v-else class="font-medium px-4 text-xs">N/A</p> -->
+                                        <InputBottomBorderMarriage v-else v-model="formData.bride_place_dissolved"
+                                            isBold />
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
-                                    <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-r border-gray-500  py-0.5 ">
+                                    <div :class="[formData.groom_civil_status === 'SINGLE' ? 'grid grid-cols-1' : 'grid grid-cols-3']"
+                                        class="basis-[45%]  gap-2 items-center border-r border-gray-500  py-0.5 ">
                                         <InputBottomBorderMarriage isBold label="Day" top_label
+                                            v-model="formData.groom_date_dissolved_day"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Month" top_label
+                                            v-model="formData.groom_date_dissolved_month"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Year" top_label
+                                            v-model="formData.groom_date_dissolved_year"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
-                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
+                                        <InputBottomBorderMarriage v-else v-model="formData.groom_date_dissolved"
+                                            isBold />
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -583,15 +605,19 @@
                                             dissolved
                                         </p>
                                     </div>
-                                    <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-l border-gray-500 py-0.5 ">
+                                    <div :class="[formData.bride_civil_status === 'SINGLE' ? 'grid grid-cols-1' : 'grid grid-cols-3']"
+                                        class="basis-[45%] gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <InputBottomBorderMarriage isBold label="Day" top_label
+                                            v-model="formData.bride_date_dissolved_day"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Month" top_label
+                                            v-model="formData.bride_date_dissolved_month"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
                                         <InputBottomBorderMarriage isBold label="Year" top_label
+                                            v-model="formData.bride_date_dissolved_year"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
-                                        <p v-else class="font-medium px-4 text-xs">N/A</p>
+                                        <InputBottomBorderMarriage v-else v-model="formData.bride_date_dissolved"
+                                            isBold />
 
                                     </div>
                                 </div>
@@ -848,6 +874,7 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
                                         <InputBottomBorderMarriage middle isBold
+                                            v-model="formData.groom_person_who_gave_consent_residence"
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
 
@@ -864,6 +891,7 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <InputBottomBorderMarriage middle isBold
+                                            v-model="formData.bride_person_who_gave_consent_residence"
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
                                             top_label />
 
@@ -1359,9 +1387,9 @@ const initialForm = {
     groom_residence_country: '', // 
     groom_religion: '',
     groom_civil_status: '',
-    groom_previously_married_dissolved: '',
-    groom_place_dissolved: '',
-    groom_date_dissolved: '',
+
+
+
     groom_degree_relation: '',
     groom_father_first_name: '',
     groom_father_middle_name: '',
@@ -1379,7 +1407,7 @@ const initialForm = {
     groom_person_who_gave_consent_relation: '',
     groom_person_who_gave_consent_citizenship: '',
     groom_person_who_gave_consent_residence: '',
-    groom_person_who_gave_consent_residence_country: '',
+
 
     groom_ss_day: '',
     groom_ss_month: '',
@@ -1408,9 +1436,9 @@ const initialForm = {
     bride_residence_country: '', //
     bride_religion: '',
     bride_civil_status: '',
-    bride_previously_married_dissolved: '',
-    bride_place_dissolved: '', //
-    bride_date_dissolved: '', //
+
+
+
     bride_degree_relation: '',
     bride_father_first_name: '',
     bride_father_middle_name: '',
@@ -1428,7 +1456,7 @@ const initialForm = {
     bride_person_who_gave_consent_relation: '',
     bride_person_who_gave_consent_citizenship: '',
     bride_person_who_gave_consent_residence: '', //
-    bride_person_who_gave_consent_residence_country: '', //
+
 
     bride_ss_day: '',
     bride_ss_month: '',
@@ -1469,11 +1497,84 @@ const initialForm = {
     notice_copy_furnished1: '',
     notice_copy_furnished2: '',
     notice_copy_furnished3: '',
-    notice_copy_furnished4: ''
+    notice_copy_furnished4: '',
+
+
+    //  FOR DISSOLVED N/A
+
+    groom_place_dissolved: '',
+    groom_date_dissolved: '',
+
+    bride_place_dissolved: '',
+    bride_date_dissolved: '',
+
+    //  FOR DISSOLVED WITH VALUE
+
+    groom_previously_married_dissolved: '',
+    bride_previously_married_dissolved: '',
+
+    groom_place_dissolved_municipality: '',
+    groom_place_dissolved_province: '',
+    groom_place_dissolved_country: '',
+
+    groom_date_dissolved_day: '',
+    groom_date_dissolved_month: '',
+    groom_date_dissolved_year: '',
+
+    bride_place_dissolved_municipality: '',
+    bride_place_dissolved_province: '',
+    bride_place_dissolved_country: '',
+
+    bride_date_dissolved_day: '',
+    bride_date_dissolved_month: '',
+    bride_date_dissolved_year: '',
 
 }
 
 const formData = reactive({ ...initialForm })
+
+const is_with_dissolved = computed(() => {
+    if (formData.groom_civil_status === 'SINGLE') {
+        formData.groom_place_dissolved = 'N/A'
+        formData.groom_date_dissolved = 'N/A'
+        formData.groom_previously_married_dissolved = 'N/A'
+
+        formData.groom_place_dissolved_municipality = ''
+        formData.groom_place_dissolved_province = ''
+        formData.groom_place_dissolved_country = ''
+
+        formData.groom_date_dissolved_day = ''
+        formData.groom_date_dissolved_month = ''
+        formData.groom_date_dissolved_year = ''
+
+    }
+    if (formData.bride_civil_status === 'SINGLE') {
+        formData.bride_place_dissolved = 'N/A'
+        formData.bride_date_dissolved = 'N/A'
+        formData.bride_previously_married_dissolved = 'N/A'
+
+       
+        formData.bride_place_dissolved_municipality = ''
+        formData.bride_place_dissolved_province = ''
+        formData.bride_place_dissolved_country = ''
+
+        formData.bride_date_dissolved_day = ''
+        formData.bride_date_dissolved_month = ''
+        formData.bride_date_dissolved_year = ''
+    }
+    if (formData.groom_civil_status !== 'SINGLE') {
+        formData.groom_place_dissolved = ''
+        formData.groom_date_dissolved = ''
+        formData.groom_previously_married_dissolved = ''
+    }
+    if (formData.bride_civil_status !== 'SINGLE') {
+        formData.bride_place_dissolved = ''
+        formData.bride_date_dissolved = ''
+        formData.bride_previously_married_dissolved = ''
+    }
+
+})
+
 
 const updateNotices = () => {
     // GROOM NOTICE
@@ -1680,7 +1781,7 @@ const submit = async () => {
         groom_person_who_gave_consent_relation: formData.groom_person_who_gave_consent_relation,
         groom_person_who_gave_consent_citizenship: formData.groom_person_who_gave_consent_citizenship,
         groom_person_who_gave_consent_residence: formData.groom_person_who_gave_consent_residence,
-        groom_person_who_gave_consent_residence_country: formData.groom_person_who_gave_consent_residence_country,
+
 
         groom_ss_day: formData.groom_ss_day,
         groom_ss_month: formData.groom_ss_month,
@@ -1729,7 +1830,7 @@ const submit = async () => {
         bride_person_who_gave_consent_relation: formData.bride_person_who_gave_consent_relation,
         bride_person_who_gave_consent_citizenship: formData.bride_person_who_gave_consent_citizenship,
         bride_person_who_gave_consent_residence: formData.bride_person_who_gave_consent_residence,
-        bride_person_who_gave_consent_residence_country: formData.bride_person_who_gave_consent_residence_country,
+
 
         bride_ss_day: formData.bride_ss_day,
         bride_ss_month: formData.bride_ss_month,
@@ -1769,7 +1870,11 @@ const submit = async () => {
         created_by: 1
 
 
-    
+
+        // FOR DISSOLVED
+
+
+
     }
 
     const submit = apl.addApplicationMarriageLicense(data)
@@ -1791,7 +1896,7 @@ const colDefs = ref([
         filter: true,
 
     },
-   
+
     {
         field: "date_of_receipt",
         headerName: "Date Receipt",
@@ -1814,7 +1919,7 @@ const colDefs = ref([
 
     },
     {
-  
+
         headerName: "",
         flex: 1,
         pinned: "right",
