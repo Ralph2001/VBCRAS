@@ -7,7 +7,7 @@
             <button @click="zoomOut" :disabled="isLoading"
                 class="bg-white text-gray-700 rounded border border-gray-300 px-2 text-xs font-medium hover:bg-gray-400 active:scale-95">Zoom
                 Out</button>
-            <p class="shadow-inner px-2 border border-gray-300 rounded"> {{ percent }}</p>
+            <p class="shadow-inner px-2 border border-gray-300 rounded bg-gray-300"> {{ percent }}</p>
         </div>
         <div v-if="isLoading" class="z-50 h-full items-center justify-center  w-full flex">Loading...</div>
 

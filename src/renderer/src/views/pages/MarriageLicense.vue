@@ -110,6 +110,19 @@
                     </div>
                 </div>
 
+                <div class="fixed bottom-0 z-50 left-0 right-0 bg-yellow-100  flex items-center justify-center w-full  py-2 px-4 "
+                    v-if="page === 1">
+
+                    <div class="flex flex-col w-[40rem] gap-2">
+                        <label for="" class="text-xs uppercase font-medium">Please enter
+                            {{ active_document_form }}:</label>
+                        <input type="text" v-model="input_form_value" ref="input_form_field"
+                            @keydown.enter="submit_input_data(active_input_field)"
+                            class="border font-medium uppercase rounded border-gray-300 py-1.5">
+                    </div>
+
+                </div>
+
 
                 <div class="h-full  w-full flex   justify-center relative">
                     <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  p-20">
@@ -143,11 +156,26 @@
                                     <div class="basis-[70%] flex flex-col  border-r border-gray-500 p-1">
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Province</p>
-                                            <InputBottomBorderMarriage isBold v-model="formData.header_province" />
+                                            <div class="relative w-full">
+                                                <button @click="open_form_input('Province', 'header_province')"
+                                                    class="w-full  bg-blue-100 p-0 outline-none  ring-0 hover:bg-blue-200 active:bg-blue-200 focus:bg-blue-200 h-[90%] py-0"
+                                                    tabindex="0"></button>
+                                                <p class="absolute top-0 font-medium text-sm bottom-0 left-2  ">{{
+                                                    formData.header_province }}</p>
+                                            </div>
+                                            <!-- <InputBottomBorderMarriage isBold v-model="formData.header_province" /> -->
                                         </div>
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">City/Municipality</p>
-                                            <InputBottomBorderMarriage isBold v-model="formData.header_municipality" />
+                                            <!-- <InputBottomBorderMarriage isBold v-model="formData.header_municipality" /> -->
+                                            <div class="relative w-full">
+                                                <button
+                                                    @click="open_form_input('City/Municipality', 'header_municipality')"
+                                                    class="w-full bg-blue-100 p-0 outline-none ring-0 hover:bg-blue-200 active:bg-blue-200 focus:bg-blue-200 h-[90%]  py-0"
+                                                    tabindex="0"></button>
+                                                <p class="absolute top-0 font-medium text-sm bottom-0 left-2  ">{{
+                                                    formData.header_municipality }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="relative p-1 flex flex-row">
@@ -1224,6 +1252,25 @@ import TableGrid from '../../components/TableGrid.vue';
 import { useApplicationMarriageLicense } from '../../stores/APL';
 
 
+const is_form_input_active = ref(false)
+const input_form_value = ref()
+const active_document_form = ref()
+const active_input_field = ref()
+const input_form_field = ref(null)
+
+const open_form_input = (name, field) => {
+    is_form_input_active.value = true
+    active_document_form.value = name
+    active_input_field.value = field
+    // input_form_field.value.focus()
+
+}
+
+const submit_input_data = (param) => {
+    const data = input_form_value.value
+    formData[param] = data.toUpperCase()
+    console.log(formData[param])
+}
 
 
 const adjustment_setting = ref(false)
@@ -1290,9 +1337,6 @@ const pdf_settings = reactive({
 
 
 
-
-
-
 const ppi = ref(0);
 
 const calculatePPI = () => {
@@ -1324,6 +1368,7 @@ const apl = useApplicationMarriageLicense()
 
 onMounted(() => {
     calculatePPI();
+    input_form_field.value.focus()
     apl.getApplicationMarriageLicense()
 });
 
@@ -1333,6 +1378,11 @@ const open_model = () => {
     modal.value = true;
 
     const date = new Date()
+
+    formData.civil_registrar = 'ISMAEL D. MALICDEM, JR.'
+    formData.received_by = 'ISMAEL D. MALICDEM, JR.'
+
+
 
     formData.groom_ss_day = format(date, 'do').toUpperCase()
     formData.groom_ss_month = format(date, 'MMMM').toUpperCase()
@@ -1365,7 +1415,7 @@ const initialForm = {
     groom_contract_marriage_with: '',
     bride_contract_marriage_with: '',
 
-    civil_registrar: 'ISMAEL D. MALICDEM, JR.',
+    civil_registrar: '',
 
     groom_first_name: '',
     groom_middle_name: '',
@@ -1553,7 +1603,7 @@ const is_with_dissolved = computed(() => {
         formData.bride_date_dissolved = 'N/A'
         formData.bride_previously_married_dissolved = 'N/A'
 
-       
+
         formData.bride_place_dissolved_municipality = ''
         formData.bride_place_dissolved_province = ''
         formData.bride_place_dissolved_country = ''

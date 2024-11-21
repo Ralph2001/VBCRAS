@@ -1,5 +1,5 @@
 import { exec } from 'child_process'
-import { PageSizes, PDFDocument, StandardFonts } from 'pdf-lib'
+import { PageSizes, PDFDocument, StandardFonts, TextAlignment } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit';
 const path = require('path')
 const fs = require('fs')
@@ -413,15 +413,28 @@ async function generate_marriage_license(formData) {
             'bride_ctc_at'
         ]
 
-        // Set values for each field
         fields.forEach((fieldName) => {
             const field = form.getTextField(fieldName)
             const fieldValue = data[fieldName] || ''
 
-            const fontSize = 9
-            field.setText(fieldValue)
-            field.updateAppearances(helveticaFont)
-            // field.setFontSize(fontSize); Update Font???
+
+            if (fieldName === 'groom_mother_residence' || fieldName === 'bride_mother_residence') {
+                if (fieldValue.length >= 40) {
+                    field.setText(fieldValue)
+                    field.updateAppearances(helveticaFont)
+                    field.setAlignment(TextAlignment.Left)
+                    field.setFontSize(7.8)
+                    field.enableMultiline()
+                } else {
+                    field.setText(fieldValue)
+                    field.updateAppearances(helveticaFont)
+                    field.setAlignment(TextAlignment.Center)
+                    field.setFontSize(9)
+                }
+            } else {
+                field.setText(fieldValue)
+                field.updateAppearances(helveticaFont)
+            }
         })
 
         form.flatten()
@@ -546,13 +559,28 @@ async function print_decided_license(formData, params) {
             'bride_ctc_at'
         ]
 
-        // Set values for each field
         fields.forEach((fieldName) => {
             const field = form.getTextField(fieldName)
             const fieldValue = data[fieldName] || ''
-            // const fontSize = 9;
-            field.setText(fieldValue)
-            // field.updateAppearances(helveticaFont);
+
+
+            if (fieldName === 'groom_mother_residence' || fieldName === 'bride_mother_residence') {
+                if (fieldValue.length >= 40) {
+                    field.setText(fieldValue)
+                    field.updateAppearances(helveticaFont)
+                    field.setAlignment(TextAlignment.Left)
+                    field.setFontSize(7.8)
+                    field.enableMultiline()
+                } else {
+                    field.setText(fieldValue)
+                    field.updateAppearances(helveticaFont)
+                    field.setAlignment(TextAlignment.Center)
+                    field.setFontSize(9)
+                }
+            } else {
+                field.setText(fieldValue)
+                field.updateAppearances(helveticaFont)
+            }
         })
 
         form.flatten()
@@ -597,8 +625,10 @@ async function print_decided_license(formData, params) {
             : 0
 
         newPage.drawPage(embeddedPage, {
-            x: 12,
-            y: -27
+            // x: 12,
+            // y: -27
+            x: 0,
+            y: 0
         })
 
         // Save the new PDF
