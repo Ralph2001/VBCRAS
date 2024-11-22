@@ -48,7 +48,7 @@
                 </div>
 
                 <div v-if="adjustment_setting" ref="adjustment_div"
-                    class="fixed top-20 right-4 w-[20rem] h-auto z-50 bg-gray-700 rounded flex flex-col p-2 shadow-md">
+                    class="fixed top-20 right-4 w-[20rem] h-auto  z-50 bg-gray-700 rounded flex flex-col p-2 shadow-md">
                     <div class="flex flex-row h-full pt-5">
 
                         <div class="grow w-full grid grid-rows-3 text-gray-50 h-full items-center">
@@ -111,21 +111,20 @@
                 </div>
 
                 <div class="fixed bottom-0 z-50 left-0 right-0 bg-yellow-100  flex items-center justify-center w-full  py-2 px-4 "
-                    v-if="page === 1">
-
+                    v-if="page === 1 && is_form_input_active && !preview">
                     <div class="flex flex-col w-[40rem] gap-2">
-                        <label for="" class="text-xs uppercase font-medium">Please enter
-                            {{ active_document_form }}:</label>
-                        <input type="text" v-model="input_form_value" ref="input_form_field"
-                            @keydown.enter="submit_input_data(active_input_field)"
-                            class="border font-medium uppercase rounded border-gray-300 py-1.5">
+                        <label for="" class="text-xs uppercase font-medium">Please enter {{ active_document_form
+                            }}:</label>
+                        <input type="text" v-model="input_form_value" ref="input_form_field" tabindex="-1"
+                            @keydown="handleTabNavigation"
+                            @keydown.enter="submit_input_data($event, active_input_field)"
+                            class="border font-medium uppercase rounded-sm border-gray-300 py-1 text-md">
                     </div>
-
                 </div>
 
 
                 <div class="h-full  w-full flex   justify-center relative">
-                    <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  p-20">
+                    <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  p-20 pb-48">
                         <div v-if="!preview" :style="paperStyle" class="flex bg-gray-50 shadow-md flex-col scale-110"
                             :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
                             <div v-if="page === 1" class="w-full h-full border-[3px] border-gray-700 flex flex-col">
@@ -156,32 +155,34 @@
                                     <div class="basis-[70%] flex flex-col  border-r border-gray-500 p-1">
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Province</p>
-                                            <div class="relative w-full">
-                                                <button @click="open_form_input('Province', 'header_province')"
-                                                    class="w-full  bg-blue-100 p-0 outline-none  ring-0 hover:bg-blue-200 active:bg-blue-200 focus:bg-blue-200 h-[90%] py-0"
-                                                    tabindex="0"></button>
-                                                <p class="absolute top-0 font-medium text-sm bottom-0 left-2  ">{{
-                                                    formData.header_province }}</p>
-                                            </div>
+
+                                            <FocusableButton :documentName="'Header Province'"
+                                                :field="'header_province'" :tabIndex="1" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
                                             <!-- <InputBottomBorderMarriage isBold v-model="formData.header_province" /> -->
                                         </div>
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">City/Municipality</p>
                                             <!-- <InputBottomBorderMarriage isBold v-model="formData.header_municipality" /> -->
-                                            <div class="relative w-full">
-                                                <button
-                                                    @click="open_form_input('City/Municipality', 'header_municipality')"
-                                                    class="w-full bg-blue-100 p-0 outline-none ring-0 hover:bg-blue-200 active:bg-blue-200 focus:bg-blue-200 h-[90%]  py-0"
-                                                    tabindex="0"></button>
-                                                <p class="absolute top-0 font-medium text-sm bottom-0 left-2  ">{{
-                                                    formData.header_municipality }}</p>
-                                            </div>
+
+                                            <FocusableButton :documentName="'City/Municipality'"
+                                                :field="'header_municipality'" :tabIndex="2" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
                                         </div>
                                     </div>
-                                    <div class="relative p-1 flex flex-row">
+                                    <div class="grow  p-1 flex flex-col ">
                                         <p class="text-sm text-nowrap"> Registry No.</p>
-                                        <div class="items-center flex  justify-center">
-                                            <InputBottomBorderMarriage isBold v-model="formData.registry_number" />
+                                        <div class="items-center flex  justify-center w-full ">
+                                         
+
+                                            <FocusableButton isCenter :documentName="'Registry No.'" :field="'registry_number'"
+                                                :tabIndex="3" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
                                     </div>
                                 </div>
@@ -190,24 +191,44 @@
                                     <div class="flex flex-col  border-r border-gray-500 p-1">
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Received by:</p>
-                                            <InputBottomBorderMarriage isBold v-model="formData.received_by" />
+                                            <!-- <InputBottomBorderMarriage isBold v-model="formData.received_by" /> -->
+                                            <FocusableButton :documentName="'Received By'" :field="'received_by'"
+                                                :tabIndex="4" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Date of Receipt:</p>
-                                            <InputBottomBorderMarriage isBold v-model="formData.date_of_receipt" />
+                                            <!-- <InputBottomBorderMarriage isBold v-model="formData.date_of_receipt" /> -->
+
+                                            <FocusableButton isDate :documentName="'Date of Receipt (dd/mm/yyyy)'"
+                                                :field="'date_of_receipt'" :tabIndex="5" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
 
                                     </div>
                                     <div class="flex flex-col  border-l border-gray-500 p-1">
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Marriage License No.:</p>
-                                            <InputBottomBorderMarriage isBold
-                                                v-model="formData.marriage_license_number" />
+                                            <!-- <InputBottomBorderMarriage isBold
+                                                v-model="formData.marriage_license_number" /> -->
+                                            <FocusableButton :documentName="'Marriage License No. '"
+                                                :field="'marriage_license_number'" :tabIndex="6" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
                                         </div>
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Date of Issuance of Marriage License:</p>
-                                            <InputBottomBorderMarriage isBold
-                                                v-model="formData.date_issuance_marriage_license" />
+                                            <!-- <InputBottomBorderMarriage isBold
+                                                v-model="formData.date_issuance_marriage_license" /> -->
+
+                                            <FocusableButton isDate
+                                                :documentName="'Date of Issuance of Marriage License (dd/mm/yyyy)'"
+                                                :field="'date_issuance_marriage_license'" :tabIndex="7"
+                                                :formData="formData" :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
                                     </div>
                                 </div>
@@ -277,19 +298,33 @@
 
                                         <div class="flex flex-row gap-2 items-center">
                                             <p class="text-xs  basis-[15%]">(First)</p>
-                                            <InputBottomBorderMarriage @change="handleInputChange"
-                                                v-model="formData.groom_first_name" isBold />
+                                            <!-- <InputBottomBorderMarriage @change="handleInputChange"
+                                                v-model="formData.groom_first_name" isBold /> -->
+
+                                            <FocusableButton :documentName="'Groom First Name'"
+                                                :field="'groom_first_name'" :tabIndex="8" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
                                         </div>
 
-                                        <div class="flex flex-row gap-2 items-center">
+                                        <div class="flex flex-row  gap-2 items-center">
                                             <p class="text-xs  basis-[15%]">(Middle)</p>
-                                            <InputBottomBorderMarriage @change="handleInputChange"
-                                                v-model="formData.groom_middle_name" isBold />
+                                            <!-- <InputBottomBorderMarriage @change="handleInputChange"
+                                                v-model="formData.groom_middle_name" isBold /> -->
+                                            <FocusableButton :documentName="'Groom Middle Name'"
+                                                :field="'groom_middle_name'" :tabIndex="9" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
-                                        <div class="flex flex-row gap-2 items-center">
+                                        <div class="flex flex-row  gap-2 items-center">
                                             <p class="text-xs  basis-[15%]">(Last)</p>
-                                            <InputBottomBorderMarriage @change="handleInputChange"
-                                                v-model="formData.groom_last_name" isBold />
+                                            <!-- <InputBottomBorderMarriage @change="handleInputChange"
+                                                v-model="formData.groom_last_name" isBold /> -->
+                                            <FocusableButton :documentName="'Groom Last Name'"
+                                                :field="'groom_last_name'" :tabIndex="10" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
 
                                     </div>
@@ -308,34 +343,61 @@
                                     <div class="basis-[45%] flex flex-col  border-l border-gray-500 p-1">
                                         <div class="flex flex-row gap-2 items-center">
                                             <p class="text-xs  basis-[15%]">(First)</p>
-                                            <InputBottomBorderMarriage @change="handleInputChange"
-                                                v-model="formData.bride_first_name" isBold />
+                                            <FocusableButton :documentName="'Bride First Name'"
+                                                :field="'bride_first_name'" :tabIndex="11" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
 
                                         <div class="flex flex-row gap-2 items-center">
                                             <p class="text-xs  basis-[15%]">(Middle)</p>
-                                            <InputBottomBorderMarriage @change="handleInputChange"
-                                                v-model="formData.bride_middle_name" isBold />
+                                            <FocusableButton :documentName="'Bride Middle Name'"
+                                                :field="'bride_middle_name'" :tabIndex="12" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
                                         <div class="flex flex-row gap-2 items-center">
                                             <p class="text-xs  basis-[15%]">(Last)</p>
-                                            <InputBottomBorderMarriage @change="handleInputChange"
-                                                v-model="formData.bride_last_name" isBold />
+                                            <FocusableButton :documentName="'Bride Last Name'"
+                                                :field="'bride_last_name'" :tabIndex="13" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
                                         </div>
                                     </div>
                                 </div>
                                 <!-- 6 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
-                                    <div class="basis-[45%] grid grid-cols-4  items-center border-r border-gray-500  ">
-                                        <InputBottomBorderMarriage isBold label="Day" top_label middle
-                                            v-model="formData.groom_day" />
-                                        <InputBottomBorderMarriage isBold label="Month" top_label middle
-                                            v-model="formData.groom_month" />
-                                        <InputBottomBorderMarriage isBold label="Year" top_label middle
-                                            v-model="formData.groom_year" />
-                                        <div class="border-l border-gray-500 h-full flex items-center">
-                                            <InputBottomBorderMarriage v-model="formData.groom_age" isBold label="Age"
-                                                @change="handleInputChange" middle top_label />
+                                    <div class="basis-[45%] flex flex-row items-center border-r border-gray-500  ">
+                                        <div class="flex flex-col justify-center items-center w-full h-full  pb-1.5">
+                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                <p>(Day)</p>
+                                                <p>(Month)</p>
+                                                <p>(Year)</p>
+                                            </div>
+                                            <div class="h-[40%] w-full">
+                                                <FocusableButton isDate isSeparated
+                                                    :documentName="'Groom Date of Birth'" :field="'groom_date_birth'"
+                                                    :tabIndex="14" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                            </div>
+                                        </div>
+
+                                        <div class="border-l border-gray-500 h-full w-[8rem] flex items-center">
+                                            <!-- <InputBottomBorderMarriage v-model="formData.groom_age" isBold label="Age"
+                                                @change="handleInputChange" middle top_label /> -->
+                                            <div class="w-full h-full flex flex-col pt-1">
+                                                <div
+                                                    class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                    <p>(Age)</p>
+                                                </div>
+                                                <div class="h-[40%] w-full">
+                                                    <FocusableButton isCenter :documentName="'Groom Age'"
+                                                        :field="'groom_age'" :tabIndex="15" :formData="formData"
+                                                        :activeInputField="active_input_field"
+                                                        :openFormInput="open_form_input" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div
@@ -348,29 +410,66 @@
                                         </p>
                                     </div>
 
-                                    <div class="basis-[45%] grid grid-cols-4  items-center border-l border-gray-500  ">
-                                        <InputBottomBorderMarriage isBold label="Day" top_label middle
-                                            v-model="formData.bride_day" />
-                                        <InputBottomBorderMarriage isBold label="Month" top_label middle
-                                            v-model="formData.bride_month" />
-                                        <InputBottomBorderMarriage isBold label="Year" top_label middle
-                                            v-model="formData.bride_year" />
-                                        <div class="border-l border-gray-500 h-full flex items-center">
-                                            <InputBottomBorderMarriage v-model="formData.bride_age" isBold label="Age"
-                                                @change="handleInputChange" middle top_label />
+                                    <div class="basis-[45%] flex flex-row items-center border-l border-gray-500  ">
+                                        <div class="flex flex-col justify-center items-center w-full h-full  pb-1.5">
+                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                <p>(Day)</p>
+                                                <p>(Month)</p>
+                                                <p>(Year)</p>
+                                            </div>
+                                            <div class="h-[40%] w-full">
+                                                <FocusableButton isDate isSeparated
+                                                    :documentName="'Bride Date of Birth'" :field="'bride_date_birth'"
+                                                    :tabIndex="16" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                            </div>
+                                        </div>
+
+                                        <div class="border-l border-gray-500 h-full w-[8rem] flex items-center">
+                                            <!-- <InputBottomBorderMarriage v-model="formData.bride_age" isBold label="Age"
+                                                @change="handleInputChange" middle top_label /> -->
+                                            <div class="w-full h-full flex flex-col pt-1">
+                                                <div
+                                                    class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                    <p>(Age)</p>
+                                                </div>
+                                                <div class="h-[40%] w-full">
+                                                    <FocusableButton isCenter :documentName="'Bride Age'"
+                                                        :field="'bride_age'" :tabIndex="17" :formData="formData"
+                                                        :activeInputField="active_input_field"
+                                                        :openFormInput="open_form_input" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_municipality" isBold
-                                            label="City/Municipality" top_label @change="handleInputChange" />
-                                        <InputBottomBorderMarriage v-model="formData.groom_province"
-                                            @change="handleInputChange" isBold label="Province" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.groom_country"
-                                            @change="handleInputChange" isBold label="Country" top_label />
+                                        class="basis-[45%] flex flex-col items-center border-r border-gray-500  py-0.5 ">
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(City/Municipality)</p>
+                                            <p>(Province)</p>
+                                            <p>(Country)</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Groom Place of Birth City/Municipality'"
+                                                :field="'groom_municipality'" :tabIndex="18" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Groom Place of Birth Province'"
+                                                :field="'groom_province'" :tabIndex="19" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Groom Place of Birth Country'"
+                                                :field="'groom_country'" :tabIndex="20" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
+                                        </div>
 
                                     </div>
 
@@ -385,29 +484,62 @@
 
 
                                     <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_municipality" isBold
-                                            @change="handleInputChange" label="City/Municipality" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.bride_province" isBold
-                                            label="Province" @change="handleInputChange" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.bride_country" isBold
-                                            label="Country" @change="handleInputChange" top_label />
+                                        class="basis-[45%] flex flex-col items-center border-l border-gray-500  py-0.5 ">
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(City/Municipality)</p>
+                                            <p>(Province)</p>
+                                            <p>(Country)</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Bride Place of Birth City/Municipality'"
+                                                :field="'bride_municipality'" :tabIndex="21" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Bride Place of Birth Province'"
+                                                :field="'bride_province'" :tabIndex="22" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Bride Place of Birth Country'"
+                                                :field="'bride_country'" :tabIndex="23" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
+                                        </div>
 
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div class="basis-[45%] flex flex-rowitems-center border-r border-gray-500  ">
-                                        <div class="basis-[30%] border-r border-gray-500">
-                                            <SelectBottomBorderMarriage v-model="formData.groom_sex" :options="[
-                                                { value: 'MALE', label: 'MALE' },
-                                                { value: 'FEMALE', label: 'FEMALE' },
+                                        <div class="basis-[30%] border-r flex flex-col border-gray-500">
+                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                <p>(Male/Female)</p>
+                                            </div>
 
-                                            ]" middle isBold label="Male/Female" top_label />
+                                            <div class="flex w-full">
+                                                <FocusableButton isCenter :documentName="'Groom Gender'"
+                                                    :field="'groom_sex'" :tabIndex="24" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                            </div>
+
                                         </div>
-                                        <div class="grow">
-                                            <InputBottomBorderMarriage v-model="formData.groom_citizenship" middle
-                                                isBold label="Citizenship" top_label />
+                                        <div class="grow flex flex-col">
+                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                <p>(Citizenship)</p>
+                                            </div>
+
+                                            <div class="flex w-full">
+                                                <FocusableButton isCenter :documentName="'Groom Citizenship'"
+                                                    :field="'groom_citizenship'" :tabIndex="25" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                            </div>
+
+                                            <!-- <InputBottomBorderMarriage v-model="formData.groom_citizenship" middle
+                                                isBold label="Citizenship" top_label /> -->
                                         </div>
 
 
@@ -423,18 +555,34 @@
                                     </div>
 
                                     <div
-                                        class="basis-[45%] flex flex-row gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <div class="basis-[30%]">
-                                            <SelectBottomBorderMarriage :options="[
-                                                { value: 'MALE', label: 'MALE' },
-                                                { value: 'FEMALE', label: 'FEMALE' },
+                                        class="basis-[45%] flex flex-row  items-center border-l border-gray-500 py-0.5 ">
+                                        <div class="basis-[30%] border-r  flex flex-col border-gray-500 w-full h-full">
+                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                <p>(Male/Female)</p>
+                                            </div>
 
-                                            ]" v-model="formData.bride_sex" middle isBold label="Male/Female"
-                                                top_label />
+                                            <div class="flex w-full">
+                                                <FocusableButton isCenter :documentName="'Bride Gender'"
+                                                    :field="'bride_sex'" :tabIndex="26" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                            </div>
+
                                         </div>
-                                        <div class="grow">
-                                            <InputBottomBorderMarriage v-model="formData.bride_citizenship" middle
-                                                isBold label="Citizenship" top_label />
+                                        <div class="grow flex flex-col h-full ">
+                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                <p>(Citizenship)</p>
+                                            </div>
+
+                                            <div class="flex w-full">
+                                                <FocusableButton isCenter :documentName="'Bride Citizenship'"
+                                                    :field="'bride_citizenship'" :tabIndex="27" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                            </div>
+
+                                            <!-- <InputBottomBorderMarriage v-model="formData.groom_citizenship" middle
+                                                isBold label="Citizenship" top_label /> -->
                                         </div>
 
 
@@ -443,11 +591,24 @@
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
-                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_residence"
+                                        class="basis-[45%] flex flex-col items-center border-r border-gray-500  py-0.5 ">
+                                        <!-- <InputBottomBorderMarriage v-model="formData.groom_residence"
                                             @change="handleInputChange" middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
+                                            top_label /> -->
+
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+                                        </div>
+
+                                        <div class="flex w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Groom Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
+                                                :field="'groom_residence'" :tabIndex="28" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
+
                                         <!-- <SuggestionInputBottomBorderMarriage /> -->
 
                                     </div>
@@ -460,11 +621,24 @@
                                         </p>
                                     </div>
                                     <div
-                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_residence"
+                                        class="basis-[45%] flex flex-col items-center border-l border-gray-500 py-0.5 ">
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+                                        </div>
+
+                                        <div class="flex w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Bride Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
+                                                :field="'bride_residence'" :tabIndex="29" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
+
+
+                                        <!-- <InputBottomBorderMarriage v-model="formData.bride_residence"
                                             @change="handleInputChange" middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
+                                            top_label /> -->
                                         <!-- <InputBottomBorderMarriage v-model="formData.bride_residence_country"
                                             @change="handleInputChange" middle isBold
                                             label="House No., St., Barangay, City/Municipality, Province, Country"
@@ -474,8 +648,10 @@
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
-                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_religion" isBold />
+                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center h-full justify-center border-r border-gray-500   ">
+                                        <FocusableButton :documentName="'Groom Religion'" :field="'groom_religion'"
+                                            :tabIndex="30" :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
 
 
                                     </div>
@@ -489,8 +665,10 @@
                                         </p>
                                     </div>
                                     <div
-                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_religion" isBold />
+                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500  ">
+                                        <FocusableButton :documentName="'Bride Religion'" :field="'bride_religion'"
+                                            :tabIndex="31" :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
 
 
                                     </div>
@@ -499,7 +677,7 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <SelectBottomBorderMarriage @change="is_with_dissolved" :options="[
+                                        <!-- <SelectBottomBorderMarriage @change="is_with_dissolved" :options="[
                                             { value: 'SINGLE', label: 'SINGLE' },
                                             { value: 'ANNULLED', label: 'ANNULLED' },
                                             { value: 'WIDOW', label: 'WIDOW' },
@@ -509,7 +687,12 @@
                                             { value: 'NOT STATED', label: 'NOT STATED' },
                                             { value: 'NOT APPLICABLE', label: 'NOT APPLICABLE' },
 
-                                        ]" v-model="formData.groom_civil_status" isBold />
+                                        ]" v-model="formData.groom_civil_status" isBold /> -->
+
+                                        <FocusableButton :documentName="'Groom Civil Status'"
+                                            :field="'groom_civil_status'" :tabIndex="32" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
+
 
                                     </div>
                                     <div
@@ -522,7 +705,7 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <SelectBottomBorderMarriage @change="is_with_dissolved" :options="[
+                                        <!-- <SelectBottomBorderMarriage @change="is_with_dissolved" :options="[
                                             { value: 'SINGLE', label: 'SINGLE' },
                                             { value: 'ANNULLED', label: 'ANNULLED' },
                                             { value: 'WIDOW', label: 'WIDOW' },
@@ -532,18 +715,29 @@
                                             { value: 'NOT STATED', label: 'NOT STATED' },
                                             { value: 'NOT APPLICABLE', label: 'NOT APPLICABLE' },
 
-                                        ]" v-model="formData.bride_civil_status" isBold />
+                                        ]" v-model="formData.bride_civil_status" isBold /> -->
+
+                                        <FocusableButton :documentName="'Bride Civil Status'"
+                                            :field="'bride_civil_status'" :tabIndex="33" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
+
 
                                     </div>
                                 </div>
-                                <!-- 7 -->
+                                <!-- 8 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1  gap-2 items-center border-r border-gray-500  py-0.5 ">
                                         <InputBottomBorderMarriage v-model="formData.groom_previously_married_dissolved"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" isBold />
-                                        <InputBottomBorderMarriage v-else
-                                            v-model="formData.groom_previously_married_dissolved" isBold />
+                                        <!-- <InputBottomBorderMarriage v-else
+                                            v-model="formData.groom_previously_married_dissolved" isBold /> -->
+                                        <FocusableButton
+                                            :documentName="'Groom if previously married: how was it dissolved?'" v-else
+                                            :field="'groom_previously_married_dissolved'" :tabIndex="34"
+                                            :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
+
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -557,13 +751,17 @@
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <InputBottomBorderMarriage v-model="formData.bride_previously_married_dissolved"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" isBold />
-                                        <InputBottomBorderMarriage v-else
-                                            v-model="formData.bride_previously_married_dissolved" isBold />
-
+                                        <!-- <InputBottomBorderMarriage v-else
+                                            v-model="formData.bride_previously_married_dissolved" isBold /> -->
+                                        <FocusableButton
+                                            :documentName="'Bride if previously married: how was it dissolved?'" v-else
+                                            :field="'bride_previously_married_dissolved'" :tabIndex="35"
+                                            :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
 
                                     </div>
                                 </div>
-                                <!-- 7 -->
+                                <!-- 9 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div :class="[formData.groom_civil_status === 'SINGLE' ? 'grid grid-cols-1' : 'grid grid-cols-3']"
                                         class="basis-[45%] w-full  gap-2 items-center border-r border-gray-500  py-0.5 ">
@@ -578,8 +776,12 @@
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
                                         <!-- <p v-else class="font-medium px-4 text-xs">N/A</p> -->
 
-                                        <InputBottomBorderMarriage v-else v-model="formData.groom_place_dissolved"
-                                            isBold />
+                                        <!-- <InputBottomBorderMarriage v-else v-model="formData.groom_place_dissolved"
+                                            isBold /> -->
+
+                                        <FocusableButton :documentName="'Groom Place where dissolved'" v-else
+                                            :field="'groom_place_dissolved'" :tabIndex="36" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
 
                                     </div>
 
@@ -604,11 +806,15 @@
                                             v-model="formData.bride_place_dissolved_country"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
                                         <!-- <p v-else class="font-medium px-4 text-xs">N/A</p> -->
-                                        <InputBottomBorderMarriage v-else v-model="formData.bride_place_dissolved"
-                                            isBold />
+                                        <!-- <InputBottomBorderMarriage v-else v-model="formData.bride_place_dissolved"
+                                            isBold /> -->
+
+                                        <FocusableButton :documentName="'Bride Place where dissolved'" v-else
+                                            :field="'bride_place_dissolved'" :tabIndex="37" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
                                 </div>
-                                <!-- 7 -->
+                                <!-- 10 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div :class="[formData.groom_civil_status === 'SINGLE' ? 'grid grid-cols-1' : 'grid grid-cols-3']"
                                         class="basis-[45%]  gap-2 items-center border-r border-gray-500  py-0.5 ">
@@ -621,8 +827,12 @@
                                         <InputBottomBorderMarriage isBold label="Year" top_label
                                             v-model="formData.groom_date_dissolved_year"
                                             v-if="formData.groom_civil_status !== 'SINGLE'" />
-                                        <InputBottomBorderMarriage v-else v-model="formData.groom_date_dissolved"
-                                            isBold />
+                                        <!-- <InputBottomBorderMarriage v-else v-model="formData.groom_date_dissolved"
+                                            isBold /> -->
+
+                                        <FocusableButton :documentName="'Groom  Date when dissolved'" v-else
+                                            :field="'groom_date_dissolved'" :tabIndex="38" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -644,8 +854,12 @@
                                         <InputBottomBorderMarriage isBold label="Year" top_label
                                             v-model="formData.bride_date_dissolved_year"
                                             v-if="formData.bride_civil_status !== 'SINGLE'" />
-                                        <InputBottomBorderMarriage v-else v-model="formData.bride_date_dissolved"
-                                            isBold />
+                                        <!-- <InputBottomBorderMarriage v-else v-model="formData.bride_date_dissolved"
+                                            isBold /> -->
+
+                                        <FocusableButton :documentName="'Bride Date when dissolved'" v-else
+                                            :field="'bride_date_dissolved'" :tabIndex="39" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
 
                                     </div>
                                 </div>
@@ -653,8 +867,11 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_degree_relation" isBold />
-
+                                        <!-- <InputBottomBorderMarriage v-model="formData.groom_degree_relation" isBold /> -->
+                                        <FocusableButton
+                                            :documentName="'Groom Degree of relationship of contractng parties'"
+                                            :field="'groom_degree_relation'" :tabIndex="40" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -666,20 +883,39 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_degree_relation" isBold />
-
+                                        <!-- <InputBottomBorderMarriage v-model="formData.bride_degree_relation" isBold /> -->
+                                        <FocusableButton
+                                            :documentName="'Bride  Degree of relationship of contractng parties'"
+                                            :field="'bride_degree_relation'" :tabIndex="41" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_father_first_name" isBold
-                                            @change="handleInputChange" label="First" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.groom_father_middle_name" isBold
-                                            @change="handleInputChange" label="Middle" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.groom_father_last_name" isBold
-                                            @change="handleInputChange" label="Last" top_label />
+                                        class="basis-[45%] flex flex-col items-center border-r border-gray-500  py-0.5 ">
+
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(First)</p>
+                                            <p>(Middle)</p>
+                                            <p>(Last)</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 w-full">
+                                            <FocusableButton isCenter :documentName="'Groom Father First Name'"
+                                                :field="'groom_father_first_name'" :tabIndex="42" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Groom Father Middle Name'"
+                                                :field="'groom_father_middle_name'" :tabIndex="43" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Groom Father Last Name'"
+                                                :field="'groom_father_last_name'" :tabIndex="44" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
+                                        </div>
 
                                     </div>
                                     <div
@@ -691,13 +927,29 @@
                                         </p>
                                     </div>
                                     <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_father_first_name" isBold
-                                            @change="handleInputChange" label="First" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.bride_father_middle_name" isBold
-                                            @change="handleInputChange" label="Middle" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.bride_father_last_name" isBold
-                                            @change="handleInputChange" label="Last" top_label />
+                                        class="basis-[45%] flex flex-col items-center border-l border-gray-500  py-0.5 ">
+
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(First)</p>
+                                            <p>(Middle)</p>
+                                            <p>(Last)</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 w-full">
+                                            <FocusableButton isCenter :documentName="'Bride Father First Name'"
+                                                :field="'bride_father_first_name'" :tabIndex="45" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Bride Father Middle Name'"
+                                                :field="'bride_father_middle_name'" :tabIndex="46" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Bride Father Last Name'"
+                                                :field="'bride_father_last_name'" :tabIndex="47" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
+                                        </div>
 
                                     </div>
                                 </div>
@@ -705,8 +957,10 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_father_citizenship" isBold />
-
+                                        <!-- <InputBottomBorderMarriage v-model="formData.groom_father_citizenship" isBold /> -->
+                                        <FocusableButton :documentName="'Groom Father Citizenship'"
+                                            :field="'groom_father_citizenship'" :tabIndex="48" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -718,19 +972,33 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_father_citizenship" isBold />
-
+                                        <!-- <InputBottomBorderMarriage v-model="formData.bride_father_citizenship" isBold /> -->
+                                        <FocusableButton :documentName="'Bride Father Citizenship'"
+                                            :field="'bride_father_citizenship'" :tabIndex="49" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
 
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
-                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_father_residence" isBold
-                                            middle
-                                            label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
+                                        class="basis-[45%] flex flex-col w-full items-center border-r border-gray-500  py-0.5 ">
+
+
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+
+                                        </div>
+
+                                        <div class="grid w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Groom Father Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
+                                                :field="'groom_father_residence'" :tabIndex="50" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
+
+                                        </div>
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -741,24 +1009,46 @@
                                         </p>
                                     </div>
                                     <div
-                                        class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_father_residence" isBold
-                                            middle
-                                            label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
+                                        class="basis-[45%] flex flex-col w-full items-center border-l border-gray-500  py-0.5 ">
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+
+                                        </div>
+
+                                        <div class="grid w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Bride Father Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
+                                                :field="'bride_father_residence'" :tabIndex="51" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_mother_first_name" isBold
-                                            @change="handleInputChange" label="First" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.groom_mother_middle_name" isBold
-                                            @change="handleInputChange" label="Middle" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.groom_mother_last_name" isBold
-                                            @change="handleInputChange" label="Last" top_label />
+                                        class="basis-[45%] flex flex-col justify-center items-center border-r border-gray-500  py-0.5 ">
 
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(First)</p>
+                                            <p>(Middle)</p>
+                                            <p>(Last)</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 w-full">
+                                            <FocusableButton isCenter :documentName="'Groom Mother First Name'"
+                                                :field="'groom_mother_first_name'" :tabIndex="52" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Groom Mother Middle Name'"
+                                                :field="'groom_mother_middle_name'" :tabIndex="53" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Groom Mother Last Name'"
+                                                :field="'groom_mother_last_name'" :tabIndex="54" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -770,13 +1060,28 @@
                                         </p>
                                     </div>
                                     <div
-                                        class="basis-[45%] grid grid-cols-3 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_mother_first_name" isBold
-                                            @change="handleInputChange" label="First" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.bride_mother_middle_name" isBold
-                                            @change="handleInputChange" label="Middle" top_label />
-                                        <InputBottomBorderMarriage v-model="formData.bride_mother_last_name" isBold
-                                            @change="handleInputChange" label="Last" top_label />
+                                        class="basis-[45%] flex justify-center flex-col items-center border-l border-gray-500 py-0.5 ">
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(First)</p>
+                                            <p>(Middle)</p>
+                                            <p>(Last)</p>
+                                        </div>
+
+                                        <div class="grid grid-cols-3 w-full">
+                                            <FocusableButton isCenter :documentName="'Bride Mother First Name'"
+                                                :field="'bride_mother_first_name'" :tabIndex="55" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Bride Mother Middle Name'"
+                                                :field="'bride_mother_middle_name'" :tabIndex="56" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                            <FocusableButton isCenter :documentName="'Bride Mother Last Name'"
+                                                :field="'bride_mother_last_name'" :tabIndex="57" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+
+                                        </div>
 
                                     </div>
                                 </div>
@@ -784,7 +1089,10 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_mother_citizenship" isBold />
+
+                                        <FocusableButton :documentName="'Groom Mother Citizenship'"
+                                            :field="'groom_mother_citizenship'" :tabIndex="58" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -796,19 +1104,29 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_mother_citizenship" isBold />
 
+                                        <FocusableButton :documentName="'Bride Mother Citizenship'"
+                                            :field="'bride_mother_citizenship'" :tabIndex="59" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_mother_residence" middle
-                                            isBold
-                                            label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
 
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+
+                                        </div>
+
+                                        <div class="grid w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Groom Mother Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
+                                                :field="'groom_mother_residence'" :tabIndex="60" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
                                     </div>
                                     <div
                                         class="basis-[13%] px-2  flex flex-row items-center justify-center w-full  text-center py-1.5">
@@ -820,10 +1138,18 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_mother_residence" middle
-                                            isBold
-                                            label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+
+                                        </div>
+
+                                        <div class="grid w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Bride Mother Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
+                                                :field="'bride_mother_residence'" :tabIndex="61" :formData="formData"
+                                                :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
 
                                     </div>
                                 </div>
@@ -831,8 +1157,14 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.groom_person_who_gave_consent"
-                                            isBold />
+
+
+                                        <div class="h-[2rem] w-full">
+                                            <FocusableButton :documentName="'Groom person who gave consent or advice'"
+                                                :field="'groom_person_who_gave_consent'" :tabIndex="62"
+                                                :formData="formData" :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
 
 
                                     </div>
@@ -848,16 +1180,27 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage v-model="formData.bride_person_who_gave_consent"
-                                            isBold />
+
+                                        <div class="h-[2rem] w-full">
+
+                                            <FocusableButton :documentName="'Bride person who gave consent or advice'"
+                                                :field="'bride_person_who_gave_consent'" :tabIndex="63"
+                                                :formData="formData" :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage
-                                            v-model="formData.groom_person_who_gave_consent_relation" isBold />
+                                        <!-- <InputBottomBorderMarriage
+                                            v-model="formData.groom_person_who_gave_consent_relation" isBold /> -->
+                                        <FocusableButton
+                                            :documentName="'Groom person who gave consent or advice Relationship'"
+                                            :field="'groom_person_who_gave_consent_relation'" :tabIndex="64"
+                                            :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
 
                                     </div>
                                     <div
@@ -870,8 +1213,13 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage
-                                            v-model="formData.bride_person_who_gave_consent_relation" isBold />
+                                        <!-- <InputBottomBorderMarriage
+                                            v-model="formData.bride_person_who_gave_consent_relation" isBold /> -->
+                                        <FocusableButton
+                                            :documentName="'Bride person who gave consent or advice Relationship'"
+                                            :field="'bride_person_who_gave_consent_relation'" :tabIndex="65"
+                                            :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
 
                                     </div>
                                 </div>
@@ -879,8 +1227,12 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage
-                                            v-model="formData.groom_person_who_gave_consent_citizenship" isBold />
+
+                                        <FocusableButton
+                                            :documentName="'Groom person who gave consent or advice Citizenship'"
+                                            :field="'groom_person_who_gave_consent_citizenship'" :tabIndex="66"
+                                            :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
 
                                     </div>
                                     <div
@@ -893,18 +1245,32 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage
-                                            v-model="formData.bride_person_who_gave_consent_citizenship" isBold />
+                                        <!-- <InputBottomBorderMarriage
+                                            v-model="formData.bride_person_who_gave_consent_citizenship" isBold /> -->
+                                        <FocusableButton
+                                            :documentName="'Bride person who gave consent or advice Citizenship'"
+                                            :field="'bride_person_who_gave_consent_citizenship'" :tabIndex="67"
+                                            :formData="formData" :activeInputField="active_input_field"
+                                            :openFormInput="open_form_input" />
                                     </div>
                                 </div>
                                 <!-- 7 -->
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
-                                        <InputBottomBorderMarriage middle isBold
-                                            v-model="formData.groom_person_who_gave_consent_residence"
-                                            label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
+
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+
+                                        </div>
+
+                                        <div class="grid w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Groom  person who gave consent or advicer Residence '"
+                                                :field="'groom_person_who_gave_consent_residence'" :tabIndex="68"
+                                                :formData="formData" :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
 
 
                                     </div>
@@ -918,10 +1284,20 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
-                                        <InputBottomBorderMarriage middle isBold
-                                            v-model="formData.bride_person_who_gave_consent_residence"
-                                            label="House No., St., Barangay, City/Municipality, Province, Country"
-                                            top_label />
+
+
+                                        <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <p>(House No., St., Barangay, City/Municipality, Province, Country)</p>
+
+                                        </div>
+
+                                        <div class="grid w-full">
+                                            <FocusableButton isCenter
+                                                :documentName="'Bride  person who gave consent or advicer Residence '"
+                                                :field="'bride_person_who_gave_consent_residence'" :tabIndex="69"
+                                                :formData="formData" :activeInputField="active_input_field"
+                                                :openFormInput="open_form_input" />
+                                        </div>
 
 
                                     </div>
@@ -942,18 +1318,39 @@
                                             </p>
                                             <div class="flex flex-row gap-1 ">
                                                 <div class="w-[48%] ">
-                                                    <InputBottomBorderMarriage v-model="formData.groom_ss_day" isBold />
+                                                    <!-- <InputBottomBorderMarriage v-model="formData.groom_ss_day" isBold /> -->
+
+                                                    <FocusableButton isCenter
+                                                        :documentName="'Groom  Subscribe and sworn day'"
+                                                        :field="'groom_ss_day'" :tabIndex="70" :formData="formData"
+                                                        :activeInputField="active_input_field"
+                                                        :openFormInput="open_form_input" />
                                                 </div>
                                                 <p class="font-serif  text-nowrap text-xs italic">day of</p>
-                                                <InputBottomBorderMarriage middle v-model="formData.groom_ss_month"
-                                                    isBold />
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.groom_ss_month"
+                                                    isBold /> -->
+                                                <FocusableButton isCenter
+                                                    :documentName="'Groom  Subscribe and sworn month'"
+                                                    :field="'groom_ss_month'" :tabIndex="71" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
-                                                <InputBottomBorderMarriage middle v-model="formData.groom_ss_year" />
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.groom_ss_year" /> -->
+                                                <FocusableButton isCenter
+                                                    :documentName="'Groom  Subscribe and sworn year'"
+                                                    :field="'groom_ss_year'" :tabIndex="72" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
                                                 <p class="font-serif  text-nowrap text-xs italic">, at</p>
                                             </div>
                                             <div class="flex flex-row gap-1 ">
-                                                <InputBottomBorderMarriage middle v-model="formData.groom_ss_at"
-                                                    isBold />
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.groom_ss_at"
+                                                    isBold /> -->
+                                                <FocusableButton isCenter
+                                                    :documentName="'Groom  Subscribe and sworn at'"
+                                                    :field="'groom_ss_at'" :tabIndex="76" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
                                                 <p class="font-serif  text-nowrap text-xs italic">, Philippines, affiant
                                                     who
                                                 </p>
@@ -962,28 +1359,60 @@
                                                 <p class="font-serif  text-nowrap text-xs italic">exhibited to me his
                                                     Community Tax
                                                     Cert.</p>
-                                                <InputBottomBorderMarriage e v-model="formData.groom_ctc_number"
-                                                    middle />
+                                                <!-- <InputBottomBorderMarriage e v-model="formData.groom_ctc_number"
+                                                    middle /> -->
+
+                                                <FocusableButton isCenter :documentName="'Groom CTC Number'"
+                                                    :field="'groom_ctc_number'" :tabIndex="78" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+
                                                 <p class="font-serif  text-nowrap text-xs italic">issued</p>
                                             </div>
                                             <div class="flex flex-row gap-1 ">
                                                 <p class="font-serif  text-nowrap text-xs italic">on</p>
-                                                <InputBottomBorderMarriage v-model="formData.groom_ctc_on" middle />
+                                                <!-- <InputBottomBorderMarriage v-model="formData.groom_ctc_on" middle /> -->
+
+                                                <FocusableButton isCenter :documentName="'Groom CTC Issued on'"
+                                                    :field="'groom_ctc_on'" :tabIndex="80" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+
+
+
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
                                                 <div class="w-[30%]">
-                                                    <InputBottomBorderMarriage middle />
+
+                                                    <FocusableButton isCenter :documentName="'Groom CTC Issued time'"
+                                                        :field="'groom_ctc_time'" :tabIndex="81" :formData="formData"
+                                                        :activeInputField="active_input_field"
+                                                        :openFormInput="open_form_input" />
                                                 </div>
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
                                             </div>
                                             <div class="flex flex-row gap-1">
                                                 <p class="font-serif  text-nowrap text-xs italic">at</p>
-                                                <InputBottomBorderMarriage v-model="formData.groom_ctc_at" middle />
+                                                <!-- <InputBottomBorderMarriage v-model="formData.groom_ctc_at" middle /> -->
+
+                                                <FocusableButton isCenter :documentName="'Groom CTC Issued At'"
+                                                    :field="'groom_ctc_at'" :tabIndex="84" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
                                             </div>
                                         </div>
-                                        <div class="mt-auto">
-                                            <InputBottomBorderMarriage isBold middle
-                                                label="Signature Over Printed Name of the Civil Registrar"
-                                                v-model="formData.civil_registrar" />
+                                        <div class="mt-auto w-full">
+                                            <div class="w-full h-full flex flex-col">
+                                                <FocusableButton isCenter
+                                                    :documentName="'Signature Over Printed Name of the Civil Registrar'"
+                                                    :field="'civil_registrar'" :tabIndex="87" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                                <div
+                                                    class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                    <p>(Signature Over printed name of the civil registrar)</p>
+
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -1000,18 +1429,39 @@
                                             </p>
                                             <div class="flex flex-row gap-1 ">
                                                 <div class="w-[48%] ">
-                                                    <InputBottomBorderMarriage v-model="formData.bride_ss_day" isBold />
+                                                    <!-- <InputBottomBorderMarriage v-model="formData.bride_ss_day" isBold /> -->
+                                                    <FocusableButton isCenter
+                                                        :documentName="'Bride  Subscribe and sworn day'"
+                                                        :field="'bride_ss_day'" :tabIndex="73" :formData="formData"
+                                                        :activeInputField="active_input_field"
+                                                        :openFormInput="open_form_input" />
                                                 </div>
                                                 <p class="font-serif  text-nowrap text-xs italic">day of</p>
-                                                <InputBottomBorderMarriage middle v-model="formData.bride_ss_month"
-                                                    isBold />
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.bride_ss_month"
+                                                    isBold /> -->
+                                                <FocusableButton isCenter
+                                                    :documentName="'Bride  Subscribe and sworn month'"
+                                                    :field="'bride_ss_month'" :tabIndex="74" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
-                                                <InputBottomBorderMarriage middle v-model="formData.bride_ss_year" />
-                                                <p class="font-serif  text-nowrap text-xs italic">, at</p>
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.bride_ss_year" />  -->
+                                                <FocusableButton isCenter
+                                                    :documentName="'Bride  Subscribe and sworn year'"
+                                                    :field="'bride_ss_year'" :tabIndex="75" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                                <p class="font-serif  text-nowrap text-xs italic">at</p>
                                             </div>
                                             <div class="flex flex-row gap-1 ">
-                                                <InputBottomBorderMarriage middle v-model="formData.bride_ss_at"
-                                                    isBold />
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.bride_ss_at"
+                                                    isBold /> -->
+
+                                                <FocusableButton isCenter
+                                                    :documentName="'Bride  Subscribe and sworn at'"
+                                                    :field="'bride_ss_at'" :tabIndex="77" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
                                                 <p class="font-serif  text-nowrap text-xs italic">, Philippines, affiant
                                                     who
                                                 </p>
@@ -1020,27 +1470,55 @@
                                                 <p class="font-serif  text-nowrap text-xs italic">exhibited to me his
                                                     Community Tax
                                                     Cert.</p>
-                                                <InputBottomBorderMarriage middle v-model="formData.bride_ctc_number" />
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.bride_ctc_number" /> -->
+
+                                                <FocusableButton isCenter :documentName="'Bride CTC Number'"
+                                                    :field="'bride_ctc_number'" :tabIndex="79" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+
                                                 <p class="font-serif  text-nowrap text-xs italic">issued</p>
                                             </div>
                                             <div class="flex flex-row gap-1 ">
                                                 <p class="font-serif  text-nowrap text-xs italic">on</p>
-                                                <InputBottomBorderMarriage middle v-model="formData.bride_ctc_on" />
+                                                <!-- <InputBottomBorderMarriage middle v-model="formData.bride_ctc_on" /> -->
+
+                                                <FocusableButton isCenter :documentName="'Bride CTC Issued on'"
+                                                    :field="'bride_ctc_on'" :tabIndex="82" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
                                                 <div class="w-[30%]">
-                                                    <InputBottomBorderMarriage middle />
+                                                    <FocusableButton isCenter :documentName="'Bride CTC Issued Time'"
+                                                        :field="'bride_ctc_time'" :tabIndex="83" :formData="formData"
+                                                        :activeInputField="active_input_field"
+                                                        :openFormInput="open_form_input" />
+
                                                 </div>
                                                 <p class="font-serif  text-nowrap text-xs italic">,</p>
                                             </div>
                                             <div class="flex flex-row gap-1">
                                                 <p class="font-serif  text-nowrap text-xs italic">at</p>
-                                                <InputBottomBorderMarriage v-model="formData.bride_ctc_at" middle />
+                                                <FocusableButton isCenter :documentName="'Bride CTC Issued At'"
+                                                    :field="'bride_ctc_at'" :tabIndex="85" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
                                             </div>
                                         </div>
-                                        <div class="mt-auto">
-                                            <InputBottomBorderMarriage isBold
-                                                label="Signature Over Printed Name of the Civil Registrar" middle
-                                                v-model="formData.civil_registrar" />
+                                        <div class="mt-auto w-full">
+                                            <div class="w-full h-full flex flex-col">
+                                                <FocusableButton isCenter
+                                                    :documentName="'Signature Over Printed Name of the Civil Registrar'"
+                                                    :field="'civil_registrar'" :tabIndex="87" :formData="formData"
+                                                    :activeInputField="active_input_field"
+                                                    :openFormInput="open_form_input" />
+                                                <div
+                                                    class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                                    <p>(Signature Over printed name of the civil registrar)</p>
+
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1237,12 +1715,12 @@
 
 <script setup>
 
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, nextTick } from 'vue';
 import Button from '../../components/essentials/buttons/Button.vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
 import InputBottomBorderMarriage from '../../components/Marriage/InputBottomBorderMarriage.vue';
-import { format } from 'date-fns';
+
 import Camera from '../../components/Camera.vue';
 import { onClickOutside } from '@vueuse/core'
 import SelectBottomBorderMarriage from '../../components/Marriage/SelectBottomBorderMarriage.vue';
@@ -1250,6 +1728,8 @@ import SuggestionInputBottomBorderMarriage from '../../components/Marriage/Sugge
 import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
 import TableGrid from '../../components/TableGrid.vue';
 import { useApplicationMarriageLicense } from '../../stores/APL';
+import FocusableButton from '../../components/Marriage/FocusableButton.vue';
+import { parse, isValid, format } from 'date-fns';
 
 
 const is_form_input_active = ref(false)
@@ -1257,20 +1737,143 @@ const input_form_value = ref()
 const active_document_form = ref()
 const active_input_field = ref()
 const input_form_field = ref(null)
+const current_tab = ref(0)
+const is_current_tab_date = ref(false)
 
-const open_form_input = (name, field) => {
+
+const open_form_input = (name, field, tabIndex, isDate) => {
+
+    is_current_tab_date.value = isDate
+    if (field !== active_input_field.value && !formData[field]) {
+        input_form_value.value = '';
+    } else {
+        input_form_value.value = formData[field];
+    }
+
     is_form_input_active.value = true
-    active_document_form.value = name
-    active_input_field.value = field
-    // input_form_field.value.focus()
+    active_document_form.value = name;
+    active_input_field.value = field;
+    current_tab.value = tabIndex;
 
-}
+    setTimeout(() => {
+        input_form_field.value.focus();
 
-const submit_input_data = (param) => {
-    const data = input_form_value.value
-    formData[param] = data.toUpperCase()
-    console.log(formData[param])
-}
+        if (input_form_field.value && input_form_value.value.length > 0) {
+            input_form_field.value.select();  // Select all text if the input has a value
+        }
+
+        console.log(
+            input_form_field.value.scrollIntoView( {behavior: 'smooth'})
+        )
+
+    }, 100);
+
+};
+
+const focusNextInput = (event) => {
+    event.preventDefault();
+
+    if (current_tab.value === 87) {
+        current_tab.value = 1
+        const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+            .filter(button => button.tabIndex === current_tab.value);
+
+        if (buttons.length > 0) {
+            buttons[0].focus();
+        }
+        return
+    }
+    // Increment the current_tab value
+    current_tab.value += 1;
+
+    const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+        .filter(button => button.tabIndex === current_tab.value);
+
+    if (buttons.length > 0) {
+        buttons[0].focus();
+    }
+};
+
+const focusPreviousInput = (event) => {
+    event.preventDefault();
+
+    // Decrement the current_tab value but ensure it doesn't go below 0
+    if (current_tab.value > 0) {
+        current_tab.value -= 1;
+    }
+
+    const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+        .filter(button => button.tabIndex === current_tab.value);
+
+    if (buttons.length > 0) {
+        buttons[0].focus();
+    }
+};
+
+;
+
+const submit_input_data = (event, field) => {
+    const data = input_form_value.value;
+
+    // Define possible date formats
+    const dateFormats = [
+        'MM/dd/yyyy',  // Format: 11/20/2024
+        'MM-dd-yyyy',  // Format: 11-20-2024
+        'MM/dd/yy',    // Format: 11/20/24
+        'MM-dd-yy',    // Format: 11-20-24
+        'MM.dd.yyyy',
+        'MMMM dd, yyyy',
+
+    ];
+
+    // Check if the current tab is a date field and data is provided
+    if (is_current_tab_date.value && data) {
+        let parsedDate = null;
+
+        // Try each date format
+        for (let formatString of dateFormats) {
+            parsedDate = parse(data, formatString, new Date());
+
+            // If the date is valid, format it and break the loop
+            if (isValid(parsedDate)) {
+                const date = format(parsedDate, 'MMMM dd, yyyy').toUpperCase(); // Format to 'NOVEMBER 20, 2024'
+                formData[field] = date; // Save the formatted date
+                break; // Exit the loop once a valid date is found
+            }
+        }
+
+        // If no valid date was found, leave it blank 
+        if (!isValid(parsedDate)) {
+            formData[field] = ''
+            input_form_value.value = ''
+            return
+        }
+    } else {
+        // If it's not a date field, just save the data in uppercase
+        formData[field] = data ? data.toUpperCase() : data;
+    }
+
+    // After saving the data, focus on the next input field
+    focusNextInput(event);
+};
+
+
+
+const handleTabNavigation = (event) => {
+    if (event.shiftKey && event.key === 'Tab') {
+
+        focusPreviousInput(event);
+    } else if (!event.shiftKey && event.key === 'Tab') {
+        focusNextInput(event);
+    }
+    else if (event.key === 'ArrowDown') {
+        focusNextInput(event);
+    }
+    else if (event.key === 'ArrowUp') {
+        focusPreviousInput(event);
+    }
+};
+
 
 
 const adjustment_setting = ref(false)
@@ -1302,7 +1905,7 @@ function adjustY(direction) {
 
 const page = ref(1)
 const paper_size = computed(() => {
-    return page.value === 1 ? 12 : 8
+    return page.value === 1 ? 13 : 8
 })
 const change_page = (value) => {
     if (page.value === value) { return }
@@ -1368,7 +1971,7 @@ const apl = useApplicationMarriageLicense()
 
 onMounted(() => {
     calculatePPI();
-    input_form_field.value.focus()
+    // input_form_field.value?.focus()
     apl.getApplicationMarriageLicense()
 });
 
@@ -1421,9 +2024,11 @@ const initialForm = {
     groom_middle_name: '',
     groom_last_name: '',
 
-    groom_day: '',
-    groom_month: '',
-    groom_year: '',
+    // groom_day: '',
+    // groom_month: '',
+    // groom_year: '',
+
+    groom_date_birth: '',
 
     groom_age: '',
 
@@ -1436,7 +2041,7 @@ const initialForm = {
     groom_residence: '',
     groom_residence_country: '', // 
     groom_religion: '',
-    groom_civil_status: '',
+    groom_civil_status: 'SINGLE',
 
 
 
@@ -1472,9 +2077,10 @@ const initialForm = {
     bride_middle_name: '',
     bride_last_name: '',
 
-    bride_day: '',
-    bride_month: '',
-    bride_year: '',
+    // bride_day: '',
+    // bride_month: '',
+    // bride_year: '',
+    bride_date_birth: '',
 
     bride_age: '',
     bride_municipality: '',
@@ -1485,7 +2091,7 @@ const initialForm = {
     bride_residence: '',
     bride_residence_country: '', //
     bride_religion: '',
-    bride_civil_status: '',
+    bride_civil_status: 'SINGLE',
 
 
 
