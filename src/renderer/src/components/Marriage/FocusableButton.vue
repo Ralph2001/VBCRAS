@@ -4,19 +4,19 @@
             class="w-full p-0 outline-none ring-0 bg-blue-100 hover:bg-blue-200 active:bg-blue-200 focus:bg-blue-200 h-[90%] py-0"></button>
 
         <!-- Display Full Date when isSeparated is false -->
-        <p @focus="onFocus" @click="onClick"
-        :class="[isCenter?'justify-center' : 'pl-2']"
-            class="font-medium text-xs flex items-center absolute top-0 bottom-0  right-0 left-0 w-full overflow-x-hidden "
+        <p @focus="onFocus" @click="onClick" :class="[isCenter ? 'justify-center' : 'pl-2']"
+            class="font-semibold text-xs flex items-center text-gray-900 absolute top-0 bottom-0  right-0 left-0 w-full overflow-x-hidden "
             v-if="!props.isSeparated">
             {{ formData[field] }}
         </p>
 
         <!-- Display Separated Date when isSeparated is true -->
-        <div @focus="onFocus" @click="onClick" class="flex flex-row absolute w-full justify-around top-0 bottom-0 overflow-x-hidden"
+        <div @focus="onFocus" @click="onClick"
+            class="flex flex-row absolute w-full justify-around text-gray-900 top-0 bottom-0 overflow-x-hidden"
             v-if="props.isSeparated">
-            <p class="font-medium text-xs flex items-center" v-if="separatedDate.month">{{ separatedDate.month }}</p>
-            <p class="font-medium text-xs flex items-center" v-if="separatedDate.day">{{ separatedDate.day }}</p>
-            <p class="font-medium text-xs flex items-center" v-if="separatedDate.year">{{ separatedDate.year }}</p>
+            <p class="font-semibold text-xs flex items-center" v-if="separatedDate.month">{{ separatedDate.month }}</p>
+            <p class="font-semibold text-xs flex items-center" v-if="separatedDate.day">{{ separatedDate.day }}</p>
+            <p class="font-semibold text-xs flex items-center" v-if="separatedDate.year">{{ separatedDate.year }}</p>
         </div>
     </div>
 </template>

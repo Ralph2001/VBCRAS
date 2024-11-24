@@ -110,21 +110,23 @@
                     </div>
                 </div>
 
-                <div class="fixed bottom-0 z-50 left-0 right-0 bg-yellow-100  flex items-center justify-center w-full  py-2 px-4 "
+                <div class="fixed bottom-0 z-50 left-0  right-0 bg-yellow-200  flex items-center justify-center w-full  py-2 px-4 "
                     v-if="page === 1 && is_form_input_active && !preview">
-                    <div class="flex flex-col w-[40rem] gap-2">
+                    <div class="flex flex-col w-[30rem] gap-2 h-full justify-center">
                         <label for="" class="text-xs uppercase font-medium">Please enter {{ active_document_form
                             }}:</label>
                         <input type="text" v-model="input_form_value" ref="input_form_field" tabindex="-1"
                             @keydown="handleTabNavigation"
                             @keydown.enter="submit_input_data($event, active_input_field)"
-                            class="border font-medium uppercase rounded-sm border-gray-300 py-1 text-md">
+                            class="border font-medium uppercase rounded-sm w-full border-gray-300 py-1 text-md">
+
                     </div>
+                    <!-- <InputSuggestionMarriage /> -->
                 </div>
 
 
-                <div class="h-full  w-full flex   justify-center relative">
-                    <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  p-20 pb-48">
+                <div class="h-full  w-full flex   justify-center relative ">
+                    <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  border   p-20 pt-24 pb-44">
                         <div v-if="!preview" :style="paperStyle" class="flex bg-gray-50 shadow-md flex-col scale-110"
                             :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
                             <div v-if="page === 1" class="w-full h-full border-[3px] border-gray-700 flex flex-col">
@@ -177,10 +179,10 @@
                                     <div class="grow  p-1 flex flex-col ">
                                         <p class="text-sm text-nowrap"> Registry No.</p>
                                         <div class="items-center flex  justify-center w-full ">
-                                         
 
-                                            <FocusableButton isCenter :documentName="'Registry No.'" :field="'registry_number'"
-                                                :tabIndex="3" :formData="formData"
+
+                                            <FocusableButton isCenter :documentName="'Registry No.'"
+                                                :field="'registry_number'" :tabIndex="3" :formData="formData"
                                                 :activeInputField="active_input_field"
                                                 :openFormInput="open_form_input" />
                                         </div>
@@ -376,7 +378,7 @@
                                             </div>
                                             <div class="h-[40%] w-full">
                                                 <FocusableButton isDate isSeparated
-                                                    :documentName="'Groom Date of Birth'" :field="'groom_date_birth'"
+                                                    :documentName="'Groom Date of Birth (mm/dd/yyyy)'" :field="'groom_date_birth'"
                                                     :tabIndex="14" :formData="formData"
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
@@ -419,7 +421,7 @@
                                             </div>
                                             <div class="h-[40%] w-full">
                                                 <FocusableButton isDate isSeparated
-                                                    :documentName="'Bride Date of Birth'" :field="'bride_date_birth'"
+                                                    :documentName="'Bride Date of Birth (mm/dd/yyyy)'" :field="'bride_date_birth'"
                                                     :tabIndex="16" :formData="formData"
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
@@ -1730,6 +1732,12 @@ import TableGrid from '../../components/TableGrid.vue';
 import { useApplicationMarriageLicense } from '../../stores/APL';
 import FocusableButton from '../../components/Marriage/FocusableButton.vue';
 import { parse, isValid, format } from 'date-fns';
+import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMarriage.vue';
+
+
+
+
+
 
 
 const is_form_input_active = ref(false)
@@ -1763,7 +1771,7 @@ const open_form_input = (name, field, tabIndex, isDate) => {
         }
 
         console.log(
-            input_form_field.value.scrollIntoView( {behavior: 'smooth'})
+            input_form_field.value.scrollIntoView({ behavior: 'smooth' })
         )
 
     }, 100);
@@ -1834,14 +1842,20 @@ const submit_input_data = (event, field) => {
         for (let formatString of dateFormats) {
             parsedDate = parse(data, formatString, new Date());
 
-            // If the date is valid, format it and break the loop
             if (isValid(parsedDate)) {
-                const date = format(parsedDate, 'MMMM dd, yyyy').toUpperCase(); // Format to 'NOVEMBER 20, 2024'
-                formData[field] = date; // Save the formatted date
-                break; // Exit the loop once a valid date is found
+                const formattedDate = format(parsedDate, 'MMMM dd, yyyy').toUpperCase();
+
+                const groom_age = field === 'groom_date_birth' ?
+                    [add_age(parsedDate, 'groom_age'),
+                    focusNextInput(event)] : ''
+                const bride_age = field === 'bride_date_birth' ?
+                    [add_age(parsedDate, 'bride_age'),
+                    focusNextInput(event)] : ''
+
+                formData[field] = formattedDate;
+                break;
             }
         }
-
         // If no valid date was found, leave it blank 
         if (!isValid(parsedDate)) {
             formData[field] = ''
@@ -1857,7 +1871,25 @@ const submit_input_data = (event, field) => {
     focusNextInput(event);
 };
 
+const add_age = (birth_date, field) => {
 
+    if (!(birth_date instanceof Date) || isNaN(birth_date)) {
+        console.error("Invalid birth date");
+        return;
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - birth_date.getFullYear();
+
+    const monthDiff = today.getMonth() - birth_date.getMonth();
+    const dayDiff = today.getDate() - birth_date.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+    }
+
+    formData[field] = age.toString(); // Save the calculated age
+};
 
 const handleTabNavigation = (event) => {
     if (event.shiftKey && event.key === 'Tab') {
@@ -2024,9 +2056,9 @@ const initialForm = {
     groom_middle_name: '',
     groom_last_name: '',
 
-    // groom_day: '',
-    // groom_month: '',
-    // groom_year: '',
+    groom_day: '',
+    groom_month: '',
+    groom_year: '',
 
     groom_date_birth: '',
 
