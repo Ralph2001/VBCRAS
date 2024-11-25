@@ -14,8 +14,8 @@
         <div @focus="onFocus" @click="onClick"
             class="flex flex-row absolute w-full justify-around text-gray-900 top-0 bottom-0 overflow-x-hidden"
             v-if="props.isSeparated">
-            <p class="font-semibold text-xs flex items-center" v-if="separatedDate.month">{{ separatedDate.month }}</p>
             <p class="font-semibold text-xs flex items-center" v-if="separatedDate.day">{{ separatedDate.day }}</p>
+            <p class="font-semibold text-xs flex items-center" v-if="separatedDate.month">{{ separatedDate.month }}</p>
             <p class="font-semibold text-xs flex items-center" v-if="separatedDate.year">{{ separatedDate.year }}</p>
         </div>
     </div>
@@ -36,6 +36,7 @@ const props = defineProps({
     isDate: { type: Boolean, default: false },
     isSeparated: { type: Boolean, default: false }, // new prop to control separation of date
     isCenter: { type: Boolean, default: false }, // new prop to control separation of date
+    isAddress: { type: Boolean, default: false }, // new prop to control separation of date
 });
 
 // Emits
@@ -53,7 +54,7 @@ const separateDate = () => {
     const date = props.formData[props.field];
 
     if (date && props.isSeparated) {
-        const parsedDate = parse(date, 'MMMM dd, yyyy', new Date());
+        const parsedDate = parse(date, 'dd MMMM, yyyy', new Date());
 
         if (isValid(parsedDate)) {
             separatedDate.value.month = format(parsedDate, 'MMMM').toUpperCase(); // Get Month
@@ -71,18 +72,18 @@ watch(() => props.formData[props.field], separateDate, { immediate: true });
 
 // Methods
 const onFocus = () => {
-    props.openFormInput(props.documentName, props.field, props.tabIndex, props.isDate);
+    props.openFormInput(props.documentName, props.field, props.tabIndex, props.isDate, props.isAddress);
 };
 
 const onClick = () => {
-    props.openFormInput(props.documentName, props.field, props.tabIndex, props.isDate);
+    props.openFormInput(props.documentName, props.field, props.tabIndex, props.isDate, props.isAddress);
 };
 
 // Computed class for button
 const buttonClass = computed(() => {
     return [
         props.activeInputField === props.field
-            ? 'bg-blue-300'
+            ? 'bg-blue-400'
             : props.formData[props.field] !== ''
                 ? 'bg-yellow-50'
                 : 'bg-blue-100',

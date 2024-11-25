@@ -147,3 +147,31 @@ export function all_address() {
             ).join(', ')
         );
 }
+
+export function municipalityProvinceAddress() {
+    let address = [];
+    
+    // Collect municipality and province names without unnecessary transformations
+    philippines.forEach(regions => {
+        Object.values(regions).forEach(region => {
+            Object.entries(region.province_list).forEach(([provinceName, province]) => {
+                Object.entries(province.municipality_list).forEach(([municipalityName]) => {
+                    // Push formatted data without unnecessary transformations
+                    address.push(`${municipalityName}|${provinceName}|PHILIPPINES`);
+                });
+            });
+        });
+    });
+
+    // Sort the list alphabetically
+    address.sort((a, b) => a.localeCompare(b)); 
+
+    // Capitalize and clean up the names
+    return address.map(addr => {
+        return addr.split('|').map(part => {
+            // Capitalize each part of the string and join them
+            return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+        }).join(' | ');
+    });
+}
+

@@ -110,6 +110,15 @@
                     </div>
                 </div>
 
+                <div v-if="is_input_with_address_suggestions && filteredData.length && is_form_input_active"
+                    class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem] border border-gray-400 shadow-md p-2 z-50 w-[30rem] bg-white text-gray-800 ">
+                    <ul class="h-auto w-full" v-for="suggestion in filteredData" :key="suggestion">
+                        <li @click='address_spreader($event, suggestion)'
+                            class="uppercase hover:bg-gray-200 px-2 active:scale-[99%] transition-all  font-medium text-gray-800 text-md">
+                            {{ suggestion }}</li>
+                    </ul>
+                </div>
+
                 <div class="fixed bottom-0 z-50 left-0  right-0 bg-yellow-200  flex items-center justify-center w-full  py-2 px-4 "
                     v-if="page === 1 && is_form_input_active && !preview">
                     <div class="flex flex-col w-[30rem] gap-2 h-full justify-center">
@@ -126,7 +135,8 @@
 
 
                 <div class="h-full  w-full flex   justify-center relative ">
-                    <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  border   p-20 pt-24 pb-44">
+                    <div v-if="!preview"
+                        class="h-full w-full flex  overflow-scroll justify-center  border   p-20 pt-24 pb-44">
                         <div v-if="!preview" :style="paperStyle" class="flex bg-gray-50 shadow-md flex-col scale-110"
                             :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
                             <div v-if="page === 1" class="w-full h-full border-[3px] border-gray-700 flex flex-col">
@@ -371,16 +381,16 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div class="basis-[45%] flex flex-row items-center border-r border-gray-500  ">
                                         <div class="flex flex-col justify-center items-center w-full h-full  pb-1.5">
-                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium">
+                                            <div class="flex flex-row justify-around w-full text-[10px] font-medium  ">
                                                 <p>(Day)</p>
                                                 <p>(Month)</p>
                                                 <p>(Year)</p>
                                             </div>
                                             <div class="h-[40%] w-full">
                                                 <FocusableButton isDate isSeparated
-                                                    :documentName="'Groom Date of Birth (mm/dd/yyyy)'" :field="'groom_date_birth'"
-                                                    :tabIndex="14" :formData="formData"
-                                                    :activeInputField="active_input_field"
+                                                    :documentName="'Groom Date of Birth (mm/dd/yyyy)'"
+                                                    :field="'groom_date_birth'" :tabIndex="14"
+                                                    :formData="temporary_form" :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
                                             </div>
                                         </div>
@@ -421,9 +431,9 @@
                                             </div>
                                             <div class="h-[40%] w-full">
                                                 <FocusableButton isDate isSeparated
-                                                    :documentName="'Bride Date of Birth (mm/dd/yyyy)'" :field="'bride_date_birth'"
-                                                    :tabIndex="16" :formData="formData"
-                                                    :activeInputField="active_input_field"
+                                                    :documentName="'Bride Date of Birth (mm/dd/yyyy)'"
+                                                    :field="'bride_date_birth'" :tabIndex="16"
+                                                    :formData="temporary_form" :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
                                             </div>
                                         </div>
@@ -457,7 +467,7 @@
                                         </div>
 
                                         <div class="grid grid-cols-3 w-full">
-                                            <FocusableButton isCenter
+                                            <FocusableButton isCenter isAddress
                                                 :documentName="'Groom Place of Birth City/Municipality'"
                                                 :field="'groom_municipality'" :tabIndex="18" :formData="formData"
                                                 :activeInputField="active_input_field"
@@ -494,7 +504,7 @@
                                         </div>
 
                                         <div class="grid grid-cols-3 w-full">
-                                            <FocusableButton isCenter
+                                            <FocusableButton isCenter isAddress
                                                 :documentName="'Bride Place of Birth City/Municipality'"
                                                 :field="'bride_municipality'" :tabIndex="21" :formData="formData"
                                                 :activeInputField="active_input_field"
@@ -1733,11 +1743,14 @@ import { useApplicationMarriageLicense } from '../../stores/APL';
 import FocusableButton from '../../components/Marriage/FocusableButton.vue';
 import { parse, isValid, format } from 'date-fns';
 import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMarriage.vue';
+import { complete_municipality_with_province, municipalityProvinceAddress } from '../../utils/address';
 
 
 
-
-
+const temporary_form = reactive({
+    groom_date_birth: '',
+    bride_date_birth: '',
+})
 
 
 const is_form_input_active = ref(false)
@@ -1747,10 +1760,46 @@ const active_input_field = ref()
 const input_form_field = ref(null)
 const current_tab = ref(0)
 const is_current_tab_date = ref(false)
+const is_input_with_address_suggestions = ref(false)
 
 
-const open_form_input = (name, field, tabIndex, isDate) => {
+const municipality_with_province = ref(municipalityProvinceAddress())
 
+const filteredData = computed(() => {
+    if (!is_input_with_address_suggestions.value) {
+        return
+    }
+
+    if (!input_form_value.value) {
+        return []
+    }
+
+    return municipality_with_province.value.filter((suggestion) => {
+        return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
+    });
+});
+
+const address_spreader = (event, value) => {
+    // Split the value based on '|'
+    const active = active_input_field.value.includes('groom') ? 'groom' : active_input_field.value.includes('bride') ? 'bride' : ''
+    const [municipality, province, country] = value.split('|').map(part => part.trim());
+
+    // Assign each part to the respective formData fields with uppercase
+    formData[`${active}_municipality`] = municipality ? municipality.toUpperCase() : '';
+    formData[`${active}_province`] = province ? province.toUpperCase() : '';
+    formData[`${active}_country`] = country ? country.toUpperCase() : '';
+
+    focusNextInput(event)
+    focusNextInput(event)
+    focusNextInput(event)
+}
+
+
+
+
+const open_form_input = (name, field, tabIndex, isDate, is_address) => {
+
+    is_input_with_address_suggestions.value = is_address
     is_current_tab_date.value = isDate
     if (field !== active_input_field.value && !formData[field]) {
         input_form_value.value = '';
@@ -1769,11 +1818,6 @@ const open_form_input = (name, field, tabIndex, isDate) => {
         if (input_form_field.value && input_form_value.value.length > 0) {
             input_form_field.value.select();  // Select all text if the input has a value
         }
-
-        console.log(
-            input_form_field.value.scrollIntoView({ behavior: 'smooth' })
-        )
-
     }, 100);
 
 };
@@ -1843,14 +1887,24 @@ const submit_input_data = (event, field) => {
             parsedDate = parse(data, formatString, new Date());
 
             if (isValid(parsedDate)) {
-                const formattedDate = format(parsedDate, 'MMMM dd, yyyy').toUpperCase();
+                const formattedDate = format(parsedDate, 'dd MMMM, yyyy').toUpperCase();
 
-                const groom_age = field === 'groom_date_birth' ?
-                    [add_age(parsedDate, 'groom_age'),
-                    focusNextInput(event)] : ''
-                const bride_age = field === 'bride_date_birth' ?
-                    [add_age(parsedDate, 'bride_age'),
-                    focusNextInput(event)] : ''
+                if (field === 'groom_date_birth') {
+                    formData.notice_groom_age = add_age(parsedDate, 'groom_age') + ' yrs. old'; // This will add age to application for marriage and notice
+                    temporary_form[field] = formattedDate
+                    date_birth_spreader(parsedDate, 'groom') // Spread the date from temporary formData
+
+                    focusNextInput(event);
+                    break;
+                }
+
+                if (field === 'bride_date_birth') {
+                    formData.notice_bride_age = add_age(parsedDate, 'bride_age') + ' yrs. old'; // This will add age to application for marriage and notice
+                    temporary_form[field] = formattedDate
+                    date_birth_spreader(parsedDate, 'bride') // Spread the date from temporary formData
+                    focusNextInput(event);
+                    break;
+                }
 
                 formData[field] = formattedDate;
                 break;
@@ -1868,6 +1922,8 @@ const submit_input_data = (event, field) => {
     }
 
     // After saving the data, focus on the next input field
+    const groom = field.includes('groom') ? add_details_to_notice('groom') : null
+    const bride = field.includes('bride') ? add_details_to_notice('bride') : null
     focusNextInput(event);
 };
 
@@ -1888,8 +1944,58 @@ const add_age = (birth_date, field) => {
         age--;
     }
 
-    formData[field] = age.toString(); // Save the calculated age
+    formData[field] = age.toString();
+    return age.toString(); // Save the calculated age
 };
+
+const date_birth_spreader = (date, field) => {
+
+    const year = date.getFullYear().toString();
+    const month = date.toLocaleString('en-US', { month: 'long' }).toUpperCase();  // Get full month name in uppercase
+    const day = date.getDate().toString();
+
+
+    formData[`${field}_year`] = year;
+    formData[`${field}_month`] = month;
+    formData[`${field}_day`] = day;
+}
+const add_details_to_notice = (field) => {
+
+    const capitalizeName = (name) => {
+        if (!name) return '';
+        return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    };
+
+    const formatFullName = (firstName, middleName, lastName) => {
+        if (firstName && lastName) {
+            let fullName = capitalizeName(firstName);
+            if (middleName) {
+                fullName += ' ' + capitalizeName(middleName.charAt(0)) + '.';
+            }
+            fullName += ' ' + capitalizeName(lastName);
+            return fullName;
+        }
+        return '';
+    };
+
+    formData[`notice_${field}_name`] = formatFullName(formData[`${field}_first_name`], formData[`${field}_middle_name`], formData[`${field}_last_name`]);
+
+    formData[`notice_${field}_age`] = formData[`${field}_age`];
+
+    formData[`notice_${field}_birthplace`] = formData[`${field}_municipality`] && formData[`${field}_province`] && formData[`${field}_country`]
+        ? capitalizeName(formData[`${field}_municipality`]) + ', ' + capitalizeName(formData[`${field}_province`])
+        : '';
+
+    formData[`notice_${field}_residence`] = formData[`${field}_groom_residence`];
+
+    formData[`notice_${field}_father`] = formatFullName(formData[`${field}_father_first_name`], formData[`${field}_father_middle_name`], formData[`${field}_father_last_name`]);
+    formData[`notice_${field}_mother`] = formatFullName(formData[`${field}_mother_first_name`], formData[`${field}_mother_middle_name`], formData[`${field}_mother_last_name`]);
+
+
+    formData[`${field}_father_last_name`] = formData[`${field}_last_name`] ? formData[`${field}_last_name`] : ''
+    formData[`${field}_mother_last_name`] = formData[`${field}_middle_name`] ? formData[`${field}_middle_name`] : ''
+};
+
 
 const handleTabNavigation = (event) => {
     if (event.shiftKey && event.key === 'Tab') {
@@ -1902,6 +2008,7 @@ const handleTabNavigation = (event) => {
         focusNextInput(event);
     }
     else if (event.key === 'ArrowUp') {
+        if (is_input_with_address_suggestions.value) { return }
         focusPreviousInput(event);
     }
 };
@@ -2060,7 +2167,7 @@ const initialForm = {
     groom_month: '',
     groom_year: '',
 
-    groom_date_birth: '',
+
 
     groom_age: '',
 
@@ -2109,10 +2216,10 @@ const initialForm = {
     bride_middle_name: '',
     bride_last_name: '',
 
-    // bride_day: '',
-    // bride_month: '',
-    // bride_year: '',
-    bride_date_birth: '',
+    bride_day: '',
+    bride_month: '',
+    bride_year: '',
+
 
     bride_age: '',
     bride_municipality: '',
@@ -2220,130 +2327,6 @@ const initialForm = {
 }
 
 const formData = reactive({ ...initialForm })
-
-const is_with_dissolved = computed(() => {
-    if (formData.groom_civil_status === 'SINGLE') {
-        formData.groom_place_dissolved = 'N/A'
-        formData.groom_date_dissolved = 'N/A'
-        formData.groom_previously_married_dissolved = 'N/A'
-
-        formData.groom_place_dissolved_municipality = ''
-        formData.groom_place_dissolved_province = ''
-        formData.groom_place_dissolved_country = ''
-
-        formData.groom_date_dissolved_day = ''
-        formData.groom_date_dissolved_month = ''
-        formData.groom_date_dissolved_year = ''
-
-    }
-    if (formData.bride_civil_status === 'SINGLE') {
-        formData.bride_place_dissolved = 'N/A'
-        formData.bride_date_dissolved = 'N/A'
-        formData.bride_previously_married_dissolved = 'N/A'
-
-
-        formData.bride_place_dissolved_municipality = ''
-        formData.bride_place_dissolved_province = ''
-        formData.bride_place_dissolved_country = ''
-
-        formData.bride_date_dissolved_day = ''
-        formData.bride_date_dissolved_month = ''
-        formData.bride_date_dissolved_year = ''
-    }
-    if (formData.groom_civil_status !== 'SINGLE') {
-        formData.groom_place_dissolved = ''
-        formData.groom_date_dissolved = ''
-        formData.groom_previously_married_dissolved = ''
-    }
-    if (formData.bride_civil_status !== 'SINGLE') {
-        formData.bride_place_dissolved = ''
-        formData.bride_date_dissolved = ''
-        formData.bride_previously_married_dissolved = ''
-    }
-
-})
-
-
-const updateNotices = () => {
-    // GROOM NOTICE
-
-    formData.groom_father_last_name = formData.groom_last_name ? formData.groom_last_name : ''
-    formData.groom_mother_last_name = formData.groom_middle_name ? formData.groom_middle_name : ''
-
-
-    formData.groom_contract_marriage_with = formData.bride_first_name || formData.bride_last_name ? formData.bride_first_name + ' ' + formData.bride_middle_name + ' ' + formData.bride_last_name : '';
-    formData.bride_contract_marriage_with = formData.groom_first_name || formData.groom_last_name ? formData.groom_first_name + ' ' + formData.groom_middle_name + ' ' + formData.groom_last_name : '';
-
-    const groomInitialMiddleName = formData.groom_middle_name ? formData.groom_middle_name.charAt(0) : '';
-    const groomFatherInitialMiddleName = formData.groom_father_middle_name ? formData.groom_father_middle_name.charAt(0) : '';
-    const groomMotherInitialMiddleName = formData.groom_mother_middle_name ? formData.groom_mother_middle_name.charAt(0) : '';
-    const groomBirthPlace = formData.groom_municipality && formData.groom_province ? formData.groom_municipality + ', ' + formData.groom_province : ''
-
-    formData.notice_groom_name = `${formData.groom_first_name} ${groomInitialMiddleName}. ${formData.groom_last_name}`;
-    formData.notice_groom_age = formData.groom_age ? `${formData.groom_age} yrs. old` : '';
-
-    formData.notice_groom_father = formData.groom_father_first_name
-        ? `${formData.groom_father_first_name} ${groomFatherInitialMiddleName}. ${formData.groom_father_last_name}`
-        : '';
-
-    formData.notice_groom_mother = formData.groom_mother_first_name
-        ? `${formData.groom_mother_first_name} ${groomMotherInitialMiddleName}. ${formData.groom_mother_last_name}`
-        : '';
-    formData.notice_groom_birthplace = formData.groom_municipality
-        ? capitalizeWords(groomBirthPlace)
-        : '';
-    formData.notice_groom_residence = formData.groom_residence
-        ? capitalizeWords(formData.groom_residence).replace(', PHILIPPINES', '')
-        : '';
-
-
-    // BRIDE NOTICE
-
-    formData.bride_father_last_name = formData.bride_last_name ? formData.bride_last_name : ''
-    formData.bride_mother_last_name = formData.bride_middle_name ? formData.bride_middle_name : ''
-
-
-
-    const brideInitialMiddleName = formData.bride_middle_name ? formData.bride_middle_name.charAt(0) : '';
-    const brideFatherInitialMiddleName = formData.bride_father_middle_name ? formData.bride_father_middle_name.charAt(0) : '';
-    const brideMotherInitialMiddleName = formData.bride_mother_middle_name ? formData.bride_mother_middle_name.charAt(0) : '';
-    const brideBirthPlace = formData.bride_municipality && formData.bride_province ? formData.bride_municipality + ', ' + formData.bride_province : ''
-
-    formData.notice_bride_name = `${formData.bride_first_name} ${brideInitialMiddleName}. ${formData.bride_last_name}`;
-    formData.notice_bride_age = formData.bride_age ? `${formData.bride_age} yrs. old` : '';
-
-
-
-    formData.notice_bride_father = formData.bride_father_first_name
-        ? `${formData.bride_father_first_name} ${brideFatherInitialMiddleName}. ${formData.bride_father_last_name}`
-        : '';
-
-
-    formData.notice_bride_mother = formData.bride_mother_first_name
-        ? `${formData.bride_mother_first_name} ${brideMotherInitialMiddleName}. ${formData.bride_mother_last_name}`
-        : '';
-    formData.notice_bride_birthplace = formData.bride_municipality
-        ? capitalizeWords(brideBirthPlace)
-        : '';
-    formData.notice_bride_residence = formData.bride_residence
-        ? capitalizeWords(formData.bride_residence).replace(', PHILIPPINES', '')
-        : '';
-};
-
-
-const capitalizeWords = (sentence) => {
-    return sentence
-        .split(' ')
-        .map(word => {
-            if (!word) return word;
-            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-        })
-        .join(' ');
-};
-
-const handleInputChange = () => {
-    updateNotices();
-};
 
 const groom_picture = ref(null)
 const handle_groom_image = (capturedImage) => {
