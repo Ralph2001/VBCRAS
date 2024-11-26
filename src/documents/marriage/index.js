@@ -292,160 +292,154 @@ async function generate_marriage_notice(formData, image) {
     }
 }
 
+
+
 async function generate_marriage_license(formData) {
     try {
-        checkFilesExist([MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE])
+        // Check if the necessary files exist
+        checkFilesExist([MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE]);
 
-        const content = fs.readFileSync(
-            MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE
-        )
-        const pdfDoc = await PDFDocument.load(content)
-        const form = pdfDoc.getForm()
+        // Load the PDF template
+        const content = fs.readFileSync(MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE);
+        const pdfDoc = await PDFDocument.load(content);
+        const form = pdfDoc.getForm();
 
-        // Embed Helvetica font
-        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+        // Embed the Helvetica font
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-        /**
-         *  Data
-         * @data
-         */
+        // Parse the form data
+        const data = JSON.parse(formData);
 
-        const data = JSON.parse(formData)
-
+        // Define the fields in the form
         const fields = [
-            'header_province',
-            'header_municipality',
-            'registry_number',
-            'received_by',
-            'date_of_receipt',
-            'marriage_license_number',
-            'date_issuance_marriage_license',
-            'groom_contract_marriage_with',
-            'bride_contract_marriage_with',
-            'civil_registrar',
-            'groom_first_name',
-            'groom_middle_name',
-            'groom_last_name',
-            'groom_day',
-            'groom_month',
-            'groom_year',
-            'groom_age',
+            'header_province', 'header_municipality', 'registry_number', 'received_by',
+            'date_of_receipt', 'marriage_license_number', 'date_issuance_marriage_license',
+            'groom_contract_marriage_with', 'bride_contract_marriage_with', 'civil_registrar',
+            'groom_first_name', 'groom_middle_name', 'groom_last_name', 'groom_day', 'groom_month',
+            'groom_year', 'groom_age', 'groom_municipality', 'groom_province', 'groom_country',
+            'groom_sex', 'groom_citizenship', 'groom_residence', 'groom_religion', 'groom_civil_status',
+            'groom_previously_married_dissolved', 'groom_place_dissolved', 'groom_date_dissolved',
+            'groom_degree_relation', 'groom_father_first_name', 'groom_father_middle_name',
+            'groom_father_last_name', 'groom_father_citizenship', 'groom_father_residence',
+            'groom_mother_first_name', 'groom_mother_middle_name', 'groom_mother_last_name',
+            'groom_mother_citizenship', 'groom_mother_residence', 'groom_person_who_gave_consent',
+            'groom_person_who_gave_consent_relation', 'groom_person_who_gave_consent_citizenship',
+            'groom_person_who_gave_consent_residence', 'groom_ss_day', 'groom_ss_month', 'groom_ss_year',
+            'groom_ss_at', 'groom_ctc_number', 'groom_ctc_on', 'groom_ctc_at', 'bride_first_name',
+            'bride_middle_name', 'bride_last_name', 'bride_day', 'bride_month', 'bride_year', 'bride_age',
+            'bride_municipality', 'bride_province', 'bride_country', 'bride_sex', 'bride_citizenship',
+            'bride_residence', 'bride_religion', 'bride_civil_status', 'bride_previously_married_dissolved',
+            'bride_place_dissolved', 'bride_date_dissolved', 'bride_degree_relation', 'bride_father_first_name',
+            'bride_father_middle_name', 'bride_father_last_name', 'bride_father_citizenship', 'bride_father_residence',
+            'bride_mother_first_name', 'bride_mother_middle_name', 'bride_mother_last_name', 'bride_mother_citizenship',
+            'bride_mother_residence', 'bride_person_who_gave_consent', 'bride_person_who_gave_consent_relation',
+            'bride_person_who_gave_consent_citizenship', 'bride_person_who_gave_consent_residence', 'bride_ss_day',
+            'bride_ss_month', 'bride_ss_year', 'bride_ss_at', 'bride_ctc_number', 'bride_ctc_on', 'bride_ctc_at'
+        ];
+
+
+        const fields_to_avoid = [
             'groom_municipality',
             'groom_province',
             'groom_country',
-            'groom_sex',
-            'groom_citizenship',
             'groom_residence',
-
-            'groom_religion',
-            'groom_civil_status',
-            'groom_previously_married_dissolved',
-            'groom_place_dissolved',
-            'groom_date_dissolved',
-            'groom_degree_relation',
-            'groom_father_first_name',
-            'groom_father_middle_name',
-            'groom_father_last_name',
-            'groom_father_citizenship',
             'groom_father_residence',
-
-            'groom_mother_first_name',
-            'groom_mother_middle_name',
-            'groom_mother_last_name',
-            'groom_mother_citizenship',
             'groom_mother_residence',
-
-            'groom_person_who_gave_consent',
-            'groom_person_who_gave_consent_relation',
-            'groom_person_who_gave_consent_citizenship',
             'groom_person_who_gave_consent_residence',
 
-            'groom_ss_day',
-            'groom_ss_month',
-            'groom_ss_year',
-            'groom_ss_at',
-            'groom_ctc_number',
-            'groom_ctc_on',
-            'groom_ctc_at',
-            'bride_first_name',
-            'bride_middle_name',
-            'bride_last_name',
-            'bride_day',
-            'bride_month',
-            'bride_year',
-            'bride_age',
             'bride_municipality',
             'bride_province',
             'bride_country',
-            'bride_sex',
-            'bride_citizenship',
             'bride_residence',
-
-            'bride_religion',
-            'bride_civil_status',
-            'bride_previously_married_dissolved',
-            'bride_place_dissolved',
-            'bride_date_dissolved',
-            'bride_degree_relation',
-            'bride_father_first_name',
-            'bride_father_middle_name',
-            'bride_father_last_name',
-            'bride_father_citizenship',
-            'bride_father_residence',
-
-            'bride_mother_first_name',
-            'bride_mother_middle_name',
-            'bride_mother_last_name',
-            'bride_mother_citizenship',
+            'groom_father_residence',
             'bride_mother_residence',
-
-            'bride_person_who_gave_consent',
-            'bride_person_who_gave_consent_relation',
-            'bride_person_who_gave_consent_citizenship',
-            'bride_person_who_gave_consent_residence',
-
-            'bride_ss_day',
-            'bride_ss_month',
-            'bride_ss_year',
-            'bride_ss_at',
-            'bride_ctc_number',
-            'bride_ctc_on',
-            'bride_ctc_at'
+            'bride_person_who_gave_consent_residence'
         ]
 
+
+        // Iterate over each field and adjust its size and fit
         fields.forEach((fieldName) => {
-            const field = form.getTextField(fieldName)
-            const fieldValue = data[fieldName] || ''
+            const field = form.getTextField(fieldName);
+            const fieldValue = data[fieldName] || ''; // Fallback to empty string if no value provided
 
+            if (fields_to_avoid.includes(fieldName)) {
 
-            if (fieldName === 'groom_mother_residence' || fieldName === 'bride_mother_residence') {
-                if (fieldValue.length >= 40) {
-                    field.setText(fieldValue)
-                    field.updateAppearances(helveticaFont)
-                    field.setAlignment(TextAlignment.Left)
-                    field.setFontSize(7.8)
-                    field.enableMultiline()
-                } else {
-                    field.setText(fieldValue)
-                    field.updateAppearances(helveticaFont)
-                    field.setAlignment(TextAlignment.Center)
-                    field.setFontSize(9)
-                }
-            } else {
-                field.setText(fieldValue)
-                field.updateAppearances(helveticaFont)
+                adjustTextFieldSizeAndFit(pdfDoc, field, fieldValue, helveticaFont);
             }
-        })
+            else {
+                field.setText(fieldValue);
+                field.updateAppearances(helveticaFont);
+            }
 
-        form.flatten()
+        });
 
-        const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
+        // Flatten the form (turn fields into static text)
+        form.flatten();
 
-        return { status: true, pdfbase64: pdfBytes }
+        // Save the PDF as base64
+        const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true });
+
+        return { status: true, pdfbase64: pdfBytes };
     } catch (error) {
-        console.log(error)
+        console.error(error);
     }
 }
+
+async function adjustTextFieldSizeAndFit(pdfDoc, field, fieldValue, helveticaFont) {
+    try {
+
+
+        const acroField = field.acroField;
+
+        const widgets = acroField.getWidgets();
+
+        // Ensure the field has widgets
+        if (widgets.length === 0) {
+            console.warn(`Field "${field.getName()}" does not have widgets. Skipping.`);
+            return;
+        }
+
+
+        // Get the dimensions of the field
+        const { width, height } = widgets[0].getRectangle();
+
+        let fontSize = 9;
+        let minFontSize = 6;
+
+        // Measure the width of the text
+        const measureTextWidth = (text, fontSize) => helveticaFont.widthOfTextAtSize(text, fontSize);
+
+        // Check if the text fits within the width and height
+        const doesTextFit = (text, fontSize, maxWidth, maxHeight) => {
+            const textWidth = measureTextWidth(text, fontSize);
+            const lines = Math.ceil(textWidth / maxWidth); // Calculate the number of lines based on width
+            const textHeight = fontSize * lines; // Estimate the height required
+            return textWidth <= maxWidth && textHeight <= maxHeight;
+        };
+
+        // Decrease the font size until the text fits
+        while (!doesTextFit(fieldValue, fontSize, width, height) && fontSize > minFontSize) {
+            fontSize -= 0.5;
+        }
+
+        // Set the adjusted text, font size, and appearance
+        field.setText(fieldValue);
+        field.updateAppearances(helveticaFont);
+        field.setFontSize(fontSize);
+        field.enableMultiline();
+
+        // Adjust alignment based on text length (optional)
+        if (fieldValue.length > 40) {
+            field.setAlignment(TextAlignment.Left);
+        } else {
+            field.setAlignment(TextAlignment.Center);
+        }
+    } catch (error) {
+        console.error(`Error adjusting text field size for "${field.getName()}":`, error);
+    }
+}
+
+
 
 // print_decided_license
 async function print_decided_license(formData, params) {

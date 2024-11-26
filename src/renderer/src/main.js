@@ -93,6 +93,7 @@ import {
     faChevronRight,
     faChevronUp,
     faChevronDown,
+    faCircleExclamation
     
 
 
@@ -172,6 +173,7 @@ library.add(
     faChevronRight,
     faChevronUp,
     faChevronDown,
+    faCircleExclamation
 
 )
 

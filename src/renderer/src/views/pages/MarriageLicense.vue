@@ -110,14 +110,17 @@
                     </div>
                 </div>
 
-                <div v-if="is_input_with_address_suggestions && filteredData.length && is_form_input_active"
+                <div v-if="is_input_with_address_suggestions && filteredData.length && is_form_input_active && !preview && page === 1"
                     class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem] border border-gray-400 shadow-md p-2 z-50 w-[30rem] bg-white text-gray-800 ">
-                    <ul class="h-auto w-full" v-for="suggestion in filteredData" :key="suggestion">
-                        <li @click='address_spreader($event, suggestion)'
-                            class="uppercase hover:bg-gray-200 px-2 active:scale-[99%] transition-all  font-medium text-gray-800 text-md">
-                            {{ suggestion }}</li>
+                    <ul class="h-auto w-full" v-for="(suggestion, index) in filteredData" :key="suggestion">
+                        <li :tabindex="1000 + index" @click='address_spreader($event, suggestion, 1000 + index)' class="uppercase hover:bg-gray-200 px-2 active:scale-[99%] transition-all font-medium
+                            text-gray-800
+                            text-md">
+                            {{ suggestion }}
+                        </li>
                     </ul>
                 </div>
+
 
                 <div class="fixed bottom-0 z-50 left-0  right-0 bg-yellow-200  flex items-center justify-center w-full  py-2 px-4 "
                     v-if="page === 1 && is_form_input_active && !preview">
@@ -1727,7 +1730,7 @@
 
 <script setup>
 
-import { computed, onMounted, reactive, ref, nextTick } from 'vue';
+import { computed, onMounted, reactive, ref, nextTick, watch } from 'vue';
 import Button from '../../components/essentials/buttons/Button.vue';
 import Modal from '../../components/client/modal/Modal.vue';
 import Header from '../../components/essentials/header.vue';
@@ -1744,8 +1747,6 @@ import FocusableButton from '../../components/Marriage/FocusableButton.vue';
 import { parse, isValid, format } from 'date-fns';
 import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMarriage.vue';
 import { complete_municipality_with_province, municipalityProvinceAddress } from '../../utils/address';
-
-
 
 const temporary_form = reactive({
     groom_date_birth: '',
@@ -1796,31 +1797,40 @@ const address_spreader = (event, value) => {
 
 
 
-
 const open_form_input = (name, field, tabIndex, isDate, is_address) => {
 
-    is_input_with_address_suggestions.value = is_address
-    is_current_tab_date.value = isDate
-    if (field !== active_input_field.value && !formData[field]) {
-        input_form_value.value = '';
-    } else {
-        input_form_value.value = formData[field];
-    }
+    is_input_with_address_suggestions.value = is_address;
+    is_current_tab_date.value = isDate;
 
-    is_form_input_active.value = true
+    input_form_value.value = (field !== active_input_field.value || formData[field]) ? formData[field] : '';
+
+
+    is_form_input_active.value = true;
     active_document_form.value = name;
     active_input_field.value = field;
     current_tab.value = tabIndex;
 
+    const fieldMappings = {
+        'groom_father_last_name': 'groom_last_name',
+        'groom_mother_last_name': 'groom_middle_name',
+        'bride_father_last_name': 'bride_last_name',
+        'bride_mother_last_name': 'bride_middle_name'
+    };
+
+    if (fieldMappings[field] && formData[fieldMappings[field]]) {
+        input_form_value.value = formData[fieldMappings[field]];
+    }
+
     setTimeout(() => {
         input_form_field.value.focus();
 
-        if (input_form_field.value && input_form_value.value.length > 0) {
-            input_form_field.value.select();  // Select all text if the input has a value
+
+        if (input_form_value.value?.length) {
+            input_form_field.value.select();
         }
     }, 100);
-
 };
+
 
 const focusNextInput = (event) => {
     event.preventDefault();
@@ -1927,6 +1937,8 @@ const submit_input_data = (event, field) => {
     focusNextInput(event);
 };
 
+
+
 const add_age = (birth_date, field) => {
 
     if (!(birth_date instanceof Date) || isNaN(birth_date)) {
@@ -1959,6 +1971,7 @@ const date_birth_spreader = (date, field) => {
     formData[`${field}_month`] = month;
     formData[`${field}_day`] = day;
 }
+
 const add_details_to_notice = (field) => {
 
     const capitalizeName = (name) => {
@@ -1991,20 +2004,19 @@ const add_details_to_notice = (field) => {
     formData[`notice_${field}_father`] = formatFullName(formData[`${field}_father_first_name`], formData[`${field}_father_middle_name`], formData[`${field}_father_last_name`]);
     formData[`notice_${field}_mother`] = formatFullName(formData[`${field}_mother_first_name`], formData[`${field}_mother_middle_name`], formData[`${field}_mother_last_name`]);
 
-
-    formData[`${field}_father_last_name`] = formData[`${field}_last_name`] ? formData[`${field}_last_name`] : ''
-    formData[`${field}_mother_last_name`] = formData[`${field}_middle_name`] ? formData[`${field}_middle_name`] : ''
 };
 
 
 const handleTabNavigation = (event) => {
     if (event.shiftKey && event.key === 'Tab') {
-
+        if (is_input_with_address_suggestions.value) { return }
         focusPreviousInput(event);
     } else if (!event.shiftKey && event.key === 'Tab') {
+        if (is_input_with_address_suggestions.value) { return }
         focusNextInput(event);
     }
     else if (event.key === 'ArrowDown') {
+        if (is_input_with_address_suggestions.value) { return }
         focusNextInput(event);
     }
     else if (event.key === 'ArrowUp') {
@@ -2328,6 +2340,48 @@ const initialForm = {
 
 const formData = reactive({ ...initialForm })
 
+watch(formData, (newValue, oldValue) => {
+
+    const groomFullName = formData.groom_first_name || formData.groom_middle_name && formData.groom_last_name
+        ? `${formData.groom_first_name} ${formData.groom_middle_name} ${formData.groom_last_name}`
+        : '';
+
+    const brideFullName = formData.bride_first_name || formData.bride_middle_name && formData.bride_last_name
+        ? `${formData.bride_first_name} ${formData.bride_middle_name} ${formData.bride_last_name}`
+        : '';
+
+    if (groomFullName) {
+        formData.bride_contract_marriage_with = groomFullName;
+    }
+
+    if (brideFullName) {
+        formData.groom_contract_marriage_with = brideFullName;
+    }
+
+
+    if (formData.groom_civil_status === 'SINGLE') {
+        formData.groom_place_dissolved = 'N/A'
+        formData.groom_date_dissolved = 'N/A'
+        formData.groom_previously_married_dissolved = 'N/A'
+
+    } else {
+        formData.groom_place_dissolved = ''
+        formData.groom_date_dissolved = ''
+        formData.groom_previously_married_dissolved = ''
+    }
+    if (formData.bride_civil_status === 'SINGLE') {
+        formData.bride_place_dissolved = 'N/A'
+        formData.bride_date_dissolved = 'N/A'
+        formData.bride_previously_married_dissolved = 'N/A'
+    } else {
+        formData.bride_place_dissolved = ''
+        formData.bride_date_dissolved = ''
+        formData.bride_previously_married_dissolved = ''
+    }
+});
+
+
+
 const groom_picture = ref(null)
 const handle_groom_image = (capturedImage) => {
     groom_picture.value = capturedImage
@@ -2397,7 +2451,13 @@ const print = async () => {
 }
 
 
+
+
+
+
 const submit = async () => {
+
+
 
     const data = {
         header_province: formData.header_province,
