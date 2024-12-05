@@ -1,6 +1,6 @@
 <template>
-    <div class="h-full w-full flex flex-col items-center">
-        <div class="controls py-4 ">
+    <div class="h-full w-full flex flex-col items-center relative">
+        <div class="controls py-4 fixed  w-full items-center justify-center bg-gray-300">
             <button @click="zoomIn" :disabled="isLoading"
                 class="bg-white text-gray-700 rounded border border-gray-300 px-2 text-xs font-medium hover:bg-gray-400 active:scale-95">Zoom
                 In</button>
@@ -11,7 +11,7 @@
         </div>
         <div v-if="isLoading" class="z-50 h-full items-center justify-center  w-full flex">Loading...</div>
 
-        <div v-else class="h-auto overflow-y-scroll">
+        <div v-else class="h-fit  mt-20 ">
             <canvas ref="pdfCanvas" class="h-auto w-auto"></canvas>
         </div>
     </div>

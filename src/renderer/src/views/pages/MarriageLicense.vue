@@ -18,7 +18,7 @@
                 </button>
             </template>
 
-            <div class="flex h-full border borer-red-700 justify-center items-center w-full pt-8">
+            <div class="flex h-full  borer-red-700 justify-center items-center w-full pt-8">
                 <div class="fixed flex flex-row right-0 left-0 bg-blue-400 top-9 px-4 z-50">
                     <div class="flex flex-row items-center">
                         <button class="hover:bg-blue-300 font-medium text-sm p-2" @click="change_page(1)"
@@ -216,7 +216,7 @@
                                             <p class="text-sm text-nowrap ">Date of Receipt:</p>
                                             <!-- <InputBottomBorderMarriage isBold v-model="formData.date_of_receipt" /> -->
 
-                                            <FocusableButton isDate :documentName="'Date of Receipt (dd/mm/yyyy)'"
+                                            <FocusableButton isDate :documentName="'Date of Receipt (mm/dd/yyyy)'"
                                                 :field="'date_of_receipt'" :tabIndex="5" :formData="formData"
                                                 :activeInputField="active_input_field"
                                                 :openFormInput="open_form_input" />
@@ -240,7 +240,7 @@
                                                 v-model="formData.date_issuance_marriage_license" /> -->
 
                                             <FocusableButton isDate
-                                                :documentName="'Date of Issuance of Marriage License (dd/mm/yyyy)'"
+                                                :documentName="'Date of Issuance of Marriage License (mm/dd/yyyy)'"
                                                 :field="'date_issuance_marriage_license'" :tabIndex="7"
                                                 :formData="formData" :activeInputField="active_input_field"
                                                 :openFormInput="open_form_input" />
@@ -1747,6 +1747,7 @@ import FocusableButton from '../../components/Marriage/FocusableButton.vue';
 import { parse, isValid, format } from 'date-fns';
 import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMarriage.vue';
 import { complete_municipality_with_province, municipalityProvinceAddress } from '../../utils/address';
+import ActionBtn from '../../components/Marriage/ActionBtn.vue';
 
 const temporary_form = reactive({
     groom_date_birth: '',
@@ -2650,15 +2651,15 @@ const colDefs = ref([
 
     },
     {
-
-        headerName: "",
-        flex: 1,
+     
+        cellStyle: { border: "none" },
         pinned: "right",
+        width: 100,
         lockPinned: true,
-        resizable: false,
-        cellStyle: { overflow: "visible", border: "none" },
+        resizable: true,
         sortable: false,
-
+        cellStyle: { overflow: "visible", border: "none" },
+        cellRenderer: ActionBtn,
     },
 
 ]);
