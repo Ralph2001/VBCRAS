@@ -21,12 +21,12 @@
             <div class="flex h-full  borer-red-700 justify-center items-center w-full pt-8">
                 <div class="fixed flex flex-row right-0 left-0 bg-blue-400 top-9 px-4 z-50">
                     <div class="flex flex-row items-center">
-                        <button class="hover:bg-blue-300 font-medium text-sm p-2" @click="change_page(1)"
-                            :class="[page === 1 ? '' : 'text-gray-600']">Application for Marriage
+                        <button class="hover:bg-blue-300 font-medium text-sm p-2 transition" @click="change_page(1)"
+                            :class="[page === 1 ? 'bg-blue-200' : 'text-gray-900']">Application for Marriage
                             License</button>
                         <div class="block border border-blue-600 h-6"></div>
-                        <button class="hover:bg-blue-300 font-medium text-sm p-2 " @click="change_page(2)"
-                            :class="[page === 2 ? '' : 'text-gray-600']">Notice</button>
+                        <button class="hover:bg-blue-300 font-medium text-sm p-2 transition " @click="change_page(2)"
+                            :class="[page === 2 ? 'bg-blue-200' : 'text-gray-900']">Notice</button>
                     </div>
                     <div class="flex flex-row gap-3 ml-auto">
                         <button @click="submit()"
@@ -113,11 +113,12 @@
                 <div v-if="is_input_with_address_suggestions && filteredData.length && is_form_input_active && !preview && page === 1"
                     class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem] border border-gray-400 shadow-md p-2 z-50 w-[30rem] bg-white text-gray-800 ">
                     <ul class="h-auto w-full" v-for="(suggestion, index) in filteredData" :key="suggestion">
-                        <li :tabindex="1000 + index" @click='address_spreader($event, suggestion, 1000 + index)' class="uppercase hover:bg-gray-200 px-2 active:scale-[99%] transition-all font-medium
+                        <button @keydown="handleTabNavigation" :tabindex="1000 + index"
+                            @click='address_spreader($event, suggestion, 1000 + index)' class="uppercase hover:bg-gray-200 w-full text-start active:bg-gray-200 px-2 active:scale-[99%] transition-all font-medium
                             text-gray-800
                             text-md">
                             {{ suggestion }}
-                        </li>
+                        </button>
                     </ul>
                 </div>
 
@@ -166,12 +167,13 @@
 
                                 </div> -->
                                 <!-- Second -->
+
                                 <div class="border-b border-gray-500 flex flex-row relative  w-full">
                                     <div class="basis-[70%] flex flex-col  border-r border-gray-500 p-1">
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Province</p>
 
-                                            <FocusableButton :documentName="'Header Province'"
+                                            <FocusableButton isAddress :documentName="'Header Province'"
                                                 :field="'header_province'" :tabIndex="1" :formData="formData"
                                                 :activeInputField="active_input_field"
                                                 :openFormInput="open_form_input" />
@@ -182,7 +184,7 @@
                                             <p class="text-sm text-nowrap ">City/Municipality</p>
                                             <!-- <InputBottomBorderMarriage isBold v-model="formData.header_municipality" /> -->
 
-                                            <FocusableButton :documentName="'City/Municipality'"
+                                            <FocusableButton isAddress :documentName="'City/Municipality'"
                                                 :field="'header_municipality'" :tabIndex="2" :formData="formData"
                                                 :activeInputField="active_input_field"
                                                 :openFormInput="open_form_input" />
@@ -1746,7 +1748,7 @@ import { useApplicationMarriageLicense } from '../../stores/APL';
 import FocusableButton from '../../components/Marriage/FocusableButton.vue';
 import { parse, isValid, format } from 'date-fns';
 import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMarriage.vue';
-import { complete_municipality_with_province, municipalityProvinceAddress } from '../../utils/address';
+import { complete_municipality_with_province, municipalityProvinceAddress, complete_province, complete_municipality } from '../../utils/address';
 import ActionBtn from '../../components/Marriage/ActionBtn.vue';
 
 const temporary_form = reactive({
@@ -1766,14 +1768,30 @@ const is_input_with_address_suggestions = ref(false)
 
 
 const municipality_with_province = ref(municipalityProvinceAddress())
+const _allProvince = ref(complete_province())
+
+const header_municipality_suggestions = computed(() => {
+    return complete_municipality(formData.header_province)
+})
 
 const filteredData = computed(() => {
     if (!is_input_with_address_suggestions.value) {
-        return
+        return [];
     }
 
     if (!input_form_value.value) {
-        return []
+        return [];
+    }
+
+    if (active_input_field.value === 'header_province') {
+        return _allProvince.value.filter((suggestion) => {
+            return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
+        });
+    }
+    if (active_input_field.value === 'header_municipality') {
+        return header_municipality_suggestions.value.filter((suggestion) => {
+            return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
+        });
     }
 
     return municipality_with_province.value.filter((suggestion) => {
@@ -1781,7 +1799,15 @@ const filteredData = computed(() => {
     });
 });
 
-const address_spreader = (event, value) => {
+const address_spreader = (event, value, index) => {
+    // console.log(index)
+
+    if (active_input_field.value === 'header_province' || active_input_field.value === 'header_municipality') {
+        const active = active_input_field.value
+        formData[active] = value.toUpperCase()
+        focusNextInput(event)
+        return
+    }
     // Split the value based on '|'
     const active = active_input_field.value.includes('groom') ? 'groom' : active_input_field.value.includes('bride') ? 'bride' : ''
     const [municipality, province, country] = value.split('|').map(part => part.trim());
@@ -1800,9 +1826,13 @@ const address_spreader = (event, value) => {
 
 const open_form_input = (name, field, tabIndex, isDate, is_address) => {
 
+    if (is_address && current_tab.value < 1000) {
+        current_tab.value = 1000
+    }
+
+    console.log(current_tab.value)
     is_input_with_address_suggestions.value = is_address;
     is_current_tab_date.value = isDate;
-
     input_form_value.value = (field !== active_input_field.value || formData[field]) ? formData[field] : '';
 
 
@@ -1873,7 +1903,7 @@ const focusPreviousInput = (event) => {
     }
 };
 
-;
+
 
 const submit_input_data = (event, field) => {
     const data = input_form_value.value;
@@ -1898,6 +1928,12 @@ const submit_input_data = (event, field) => {
             parsedDate = parse(data, formatString, new Date());
 
             if (isValid(parsedDate)) {
+
+                if (field === 'date_of_receipt' || field === 'date_issuance_marriage_license') {
+                    const formattedDate = format(parsedDate, 'MMMM dd, yyyy').toUpperCase();
+                    formData[field] = formattedDate;
+                    break
+                }
                 const formattedDate = format(parsedDate, 'dd MMMM, yyyy').toUpperCase();
 
                 if (field === 'groom_date_birth') {
@@ -2009,23 +2045,39 @@ const add_details_to_notice = (field) => {
 
 
 const handleTabNavigation = (event) => {
+    // Check for Shift + Tab (to navigate backwards)
     if (event.shiftKey && event.key === 'Tab') {
-        if (is_input_with_address_suggestions.value) { return }
+        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
+        //     event.preventDefault();  // Prevent focus change when there are suggestions
+        //     return;
+        // }
         focusPreviousInput(event);
-    } else if (!event.shiftKey && event.key === 'Tab') {
-        if (is_input_with_address_suggestions.value) { return }
+    }
+    // Check for Tab (to navigate forwards)
+    else if (!event.shiftKey && event.key === 'Tab') {
+        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
+        //     event.preventDefault();  // Prevent focus change when there are suggestions
+        //     return;
+        // }
         focusNextInput(event);
     }
+    // Check for ArrowDown (down arrow key)
     else if (event.key === 'ArrowDown') {
-        if (is_input_with_address_suggestions.value) { return }
+        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
+        //     event.preventDefault();  // Prevent focus change when there are suggestions
+        //     return;
+        // }
         focusNextInput(event);
     }
+    // Check for ArrowUp (up arrow key)
     else if (event.key === 'ArrowUp') {
-        if (is_input_with_address_suggestions.value) { return }
+        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
+        //     event.preventDefault();  // Prevent focus change when there are suggestions
+        //     return;
+        // }
         focusPreviousInput(event);
     }
 };
-
 
 
 const adjustment_setting = ref(false)
@@ -2651,7 +2703,7 @@ const colDefs = ref([
 
     },
     {
-     
+
         cellStyle: { border: "none" },
         pinned: "right",
         width: 100,

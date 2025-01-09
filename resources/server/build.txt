@@ -1,1 +1,5 @@
-python -m PyInstaller --noconsole --onefile --add-data="app;app" main.py  
+Run Build
+
+> py -3 -m venv .venv
+> .venv\Scripts\activate
+> python -m PyInstaller --noconsole --onefile --add-data="app;app" main.py  

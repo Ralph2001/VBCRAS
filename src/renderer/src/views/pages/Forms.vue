@@ -459,37 +459,8 @@
 
             </div>
 
-            <div class="flex flex-row h-full bg-white w-full border" v-if="isPreview">
-                <div
-                    class="grow -top-16 left-0 right-0 bottom-0 absolute flex items-center justify-center  sm:overflow-x-scroll md:lg:overflow-x-hidden  ">
-
-
-                    <div class="absolute right-0 block  h-full bg-[#525659] text-[#525659] "></div>
-                    <iframe v-if="isPreview" class="h-full w-full " :src="previewUrl" frameborder="1"
-                        allowfullscreen=""></iframe>
-
-                </div>
-                <div v-if="vue" class=" flex p-4 flex-col h-full grow bg-white items-center">
-                    <p class="text-md text-gray-800 font-medium mb-10">Adjust Positions</p>
-
-                    <RangeInput label="title_x" v-model="preferences.civil_x" :max="8.5" @change="change_preferences" />
-                    <RangeInput label="title_y" v-model="preferences.civil_y" :max="13" @change="change_preferences" />
-
-                    <RangeInput label="client_info_x" v-model="preferences.info_x" :max="8.5"
-                        @change="change_preferences" />
-                    <RangeInput label="client_info_y" v-model="preferences.info_y" :max="13"
-                        @change="change_preferences" />
-
-                    <RangeInput label="certificate_x" v-model="preferences.certificate_x" :max="8.5"
-                        @change="change_preferences" />
-                    <RangeInput label="certificate_y" v-model="preferences.certificate_y" :max="13"
-                        @change="change_preferences" />
-
-                    <RangeInput label="authenticate_y" v-if="formData.isWithAuthenticatedForm"
-                        v-model="preferences.authenticate_position_y" :max="13" @change="change_preferences" />
-
-
-                </div>
+            <div class="flex overflow-y-scroll h-full bg-gray-100 w-full " v-if="isPreview">
+                <PDFViewerWorker :pdfBytes64="previewUrl" v-if="isPreview" />=
             </div>
 
             <template v-slot:footer>
@@ -498,9 +469,18 @@
                         class="bg-white px-2.5 py-1 ml-auto border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
                         @click="submit()">Print</button> -->
 
-                    <button type="button"
-                        class="bg-white ml-auto px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
-                        @click="submit()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" />Submit</button>
+                    <div class="flex flex-row gap-2 ml-auto">
+                        <button type="button"
+                            class="bg-white  px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
+                            @click="submit()">Submit</button>
+                        <button type="button"
+                            class="bg-white  px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
+                            @click="submit()">Submit &
+                            Print</button>
+                        <button type="button"
+                            class="bg-white  px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
+                            @click="submit()"> Print</button>
+                    </div>
                 </div>
             </template>
         </Modal>
@@ -532,6 +512,7 @@ import { all_address, complete_municipality, complete_municipality_with_province
 import SelectforForm from '../../components/Form/SelectforForm.vue';
 import FormAutoComplete from '../../components/Form/FormAutoComplete.vue';
 import Try from '../../components/try.vue';
+import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
 
 
 const all_ = ref(all_address())
@@ -928,7 +909,7 @@ const previewcontent = async () => {
 
         const open = await window.FormApi.createPdfForm(dataToSubmit)
         console.log(open)
-        previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + open.dataurl
+        previewUrl.value = open.dataurl
 
     }
     else {
@@ -945,7 +926,7 @@ const change_preferences = async () => {
         };
 
         const open = await window.FormApi.createPdfForm(dataToSubmit)
-        previewUrl.value = 'data:application/pdf;filename=generated.pdf;base64,' + open.dataurl
+        previewUrl.value = open.dataurl
     }
 }
 

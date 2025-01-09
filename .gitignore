@@ -1,9 +1,9 @@
 node_modules
 dist
 out
-resources/App/
 resources/server/env
 resources/server/dist
+resources/server/build/
 resources/server/app/__pycache__/
 *.pyc
 *.log*
