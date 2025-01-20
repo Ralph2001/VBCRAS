@@ -9,6 +9,26 @@
             <TableGrid :data="apl.application_marriage_license" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
+        <!-- <div v-if="no_image_attaced"
+            class="fixed top-0 left-0 right-0 bottom-0 z-[999999999999999999] flex items-center justify-center backdrop-blur-sm backdrop-brightness-75">
+            <div class="w-full max-w-screen-md bg-white h-[20rem] border rounded-2xl flex  p-4 flex-col">
+                <div class="flex flex-col gap-4 items-center justify-center">
+                    <p class="font-semibold text-2xl">Warning! No Image Attached</p>
+                    <p class="text-gray-700 text-justify text-lg">An image for either the bride or groom has not been
+                        attached. You may continue without including
+                        the
+                        image at this time. However, please note that you will have the option to edit the details later
+                        and
+                        upload the image if needed.
+                    </p>
+                </div>
+                <div class="mt-auto flex flex-row gap-2 ml-auto">
+                    <button class="border px-2 py-1.5 font-medium rounded-md">Cancel</button>
+                    <button class="border px-2 py-1.5 font-medium rounded-md">Proceed, Add it later.</button>
+                </div>
+            </div>
+        </div> -->
+
         <Modal large footerBG="bg-white border-t border-gray-300" v-if="modal" :footer="false">
             <template v-slot:header>
                 <button
@@ -1756,6 +1776,7 @@ const temporary_form = reactive({
     bride_date_birth: '',
 })
 
+const no_image_attaced = ref(false)
 
 const is_form_input_active = ref(false)
 const input_form_value = ref()
@@ -2030,13 +2051,13 @@ const add_details_to_notice = (field) => {
 
     formData[`notice_${field}_name`] = formatFullName(formData[`${field}_first_name`], formData[`${field}_middle_name`], formData[`${field}_last_name`]);
 
-    formData[`notice_${field}_age`] = formData[`${field}_age`];
+    formData[`notice_${field}_age`] = formData[`${field}_age`] + ' yrs. old';
 
     formData[`notice_${field}_birthplace`] = formData[`${field}_municipality`] && formData[`${field}_province`] && formData[`${field}_country`]
         ? capitalizeName(formData[`${field}_municipality`]) + ', ' + capitalizeName(formData[`${field}_province`])
         : '';
 
-    formData[`notice_${field}_residence`] = formData[`${field}_groom_residence`];
+    formData[`notice_${field}_residence`] = formData[`${field}_residence`];
 
     formData[`notice_${field}_father`] = formatFullName(formData[`${field}_father_first_name`], formData[`${field}_father_middle_name`], formData[`${field}_father_last_name`]);
     formData[`notice_${field}_mother`] = formatFullName(formData[`${field}_mother_first_name`], formData[`${field}_mother_middle_name`], formData[`${field}_mother_last_name`]);
@@ -2505,13 +2526,117 @@ const print = async () => {
 
 
 
+// const rules = computed(() => ({
+
+//     header_province: { required },
+//     header_municipality: { required },
+//     registry_number: { required },
+//     received_by: { required },
+//     date_of_receipt: { required },
+//     marriage_license_number: { required },
+//     date_issuance_marriage_license: { required },
+//     groom_contract_marriage_with: { required },
+//     bride_contract_marriage_with: { required },
+//     civil_registrar: { required },
+//     groom_first_name: { required },
+//     groom_middle_name: { required },
+//     groom_last_name: { required },
+//     groom_day: { required },
+//     groom_month: { required },
+//     groom_year: { required },
+//     groom_age: { required },
+//     groom_municipality: { required },
+//     groom_province: { required },
+//     groom_country: { required },
+//     groom_sex: { required },
+//     groom_citizenship: { required },
+//     groom_residence: { required },
+//     groom_residence_country: { required },
+//     groom_religion: { required },
+//     groom_civil_status: { required },
+//     groom_previously_married_dissolved: { required },
+//     groom_place_dissolved: { required },
+//     groom_date_dissolved: { required },
+//     groom_degree_relation: { required },
+//     groom_father_first_name: { required },
+//     groom_father_middle_name: { required },
+//     groom_father_last_name: { required },
+//     groom_father_citizenship: { required },
+//     groom_father_residence: { required },
+//     groom_father_residence_country: { required },
+//     groom_mother_first_name: { required },
+//     groom_mother_middle_name: { required },
+//     groom_mother_last_name: { required },
+//     groom_mother_citizenship: { required },
+//     groom_mother_residence: { required },
+//     groom_mother_residence_country: { required },
+//     groom_person_who_gave_consent: { required },
+//     groom_person_who_gave_consent_relation: { required },
+//     groom_person_who_gave_consent_citizenship: { required },
+//     groom_person_who_gave_consent_residence: { required },
+//     groom_ss_day: { required },
+//     groom_ss_month: { required },
+//     groom_ss_year: { required },
+//     groom_ss_at: { required },
+//     groom_ctc_number: { required },
+//     groom_ctc_on: { required },
+//     groom_ctc_at: { required },
+//     bride_first_name: { required },
+//     bride_middle_name: { required },
+//     bride_last_name: { required },
+//     bride_day: { required },
+//     bride_month: { required },
+//     bride_year: { required },
+//     bride_age: { required },
+//     bride_municipality: { required },
+//     bride_province: { required },
+//     bride_country: { required },
+//     bride_sex: { required },
+//     bride_citizenship: { required },
+//     bride_residence: { required },
+//     bride_residence_country: { required },
+//     bride_religion: { required },
+//     bride_civil_status: { required },
+//     bride_previously_married_dissolved: { required },
+//     bride_place_dissolved: { required },
+//     bride_date_dissolved: { required },
+//     bride_degree_relation: { required },
+//     bride_father_first_name: { required },
+//     bride_father_middle_name: { required },
+//     bride_father_last_name: { required },
+//     bride_father_citizenship: { required },
+//     bride_father_residence: { required },
+//     bride_father_residence_country: { required },
+//     bride_mother_first_name: { required },
+//     bride_mother_middle_name: { required },
+//     bride_mother_last_name: { required },
+//     bride_mother_citizenship: { required },
+//     bride_mother_residence: { required },
+//     bride_mother_residence_country: { required },
+//     bride_person_who_gave_consent: { required },
+//     bride_person_who_gave_consent_relation: { required },
+//     bride_person_who_gave_consent_citizenship: { required },
+//     bride_person_who_gave_consent_residence: { required },
+//     bride_ss_day: { required },
+//     bride_ss_month: { required },
+//     bride_ss_year: { required },
+//     bride_ss_at: { required },
+//     bride_ctc_number: { required },
+//     bride_ctc_on: { required },
+//     bride_ctc_at: { required },
+// }))
 
 
+// const v$ = useVuelidate(rules, formData);
 
 const submit = async () => {
 
+    // v$.value.$touch();
 
-
+    // if (v$.value.$error) {
+    //     console.log(v$.value);
+    //     return;
+    // }
     const data = {
         header_province: formData.header_province,
         header_municipality: formData.header_municipality,
@@ -2661,7 +2786,21 @@ const submit = async () => {
 
     }
 
-    const submit = apl.addApplicationMarriageLicense(data)
+    const bride = bride_picture.value
+    const groom = groom_picture.value
+
+    const images = [
+        bride, groom
+    ]
+
+    const image_data = JSON.stringify(images)
+
+    const save_date = JSON.stringify({ ...formData })
+
+    const save =  await window.MarriageApi.saveMarriageApplicationEntry(save_date, image_data)
+    console.log(save)
+
+    // const submit = apl.addApplicationMarriageLicense(data)
     console.log(submit)
 }
 

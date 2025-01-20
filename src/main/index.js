@@ -22,7 +22,8 @@ import { certificate_filing } from '../documents/clerical/certificate_filing'
 import {
     generate_marriage_notice,
     generate_marriage_license,
-    print_decided_license
+    print_decided_license,
+    save_marriage_license_and_notice
 } from '../documents/marriage'
 
 const log = require('electron-log')
@@ -86,59 +87,57 @@ function generateRandomString(length) {
  */
 async function printPDF(base64Data, sumatraPath, paperSize = 'none') {
     try {
-        const randomFileName = `temp_${generateRandomString(20)}.pdf`;
+        const randomFileName = `temp_${generateRandomString(20)}.pdf`
         const pdfPath = join(
             __dirname,
             '../../resources/temp/',
             randomFileName
-        ).replace('app.asar', 'app.asar.unpacked');
+        ).replace('app.asar', 'app.asar.unpacked')
         const fileDirectory = join(__dirname, '../../resources/temp/').replace(
             'app.asar',
             'app.asar.unpacked'
-        );
+        )
 
         // Write the base64 PDF data to a temporary file
-        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'));
+        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'))
 
         // Build the SumatraPDF arguments
-        const args = ['-print-dialog', '-exit-when-done'];
+        const args = ['-print-dialog', '-exit-when-done']
         if (paperSize !== 'none') {
-            args.push('-print-settings', `paper=${paperSize}`);
+            args.push('-print-settings', `paper=${paperSize}`)
         }
-        args.push(pdfPath);
+        args.push(pdfPath)
 
         // Spawn the SumatraPDF process to print the PDF
-        const printProcess = spawn(sumatraPath, args);
+        const printProcess = spawn(sumatraPath, args)
 
         printProcess.on('error', (error) => {
-            console.error('Failed to start SumatraPDF process:', error);
-        });
+            console.error('Failed to start SumatraPDF process:', error)
+        })
 
         printProcess.on('close', (code) => {
             if (code === 0) {
-                console.log('Printed successfully');
+                console.log('Printed successfully')
             } else {
-                console.error(`SumatraPDF process exited with code ${code}`);
+                console.error(`SumatraPDF process exited with code ${code}`)
             }
 
             // Clean up: delete the temporary PDF file
             fs.unlink(pdfPath, (err) => {
                 if (err) {
-                    console.error('Failed to delete temp PDF file', err);
+                    console.error('Failed to delete temp PDF file', err)
                 } else {
-                    console.log('Temp PDF file deleted successfully');
+                    console.log('Temp PDF file deleted successfully')
                 }
-            });
+            })
 
             // Empty the temp directory
-            fse.emptyDirSync(fileDirectory);
-        });
+            fse.emptyDirSync(fileDirectory)
+        })
     } catch (error) {
-        console.error('Error printing PDF:', error);
+        console.error('Error printing PDF:', error)
     }
 }
-
-
 
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     await printPDF(base64Data, sumatraPath)
@@ -949,6 +948,15 @@ ipcMain.handle('get-user', async (event) => {
  *  @MARRIAGE_NOTICE
  */
 
+ipcMain.handle('saveApplicationMarriage', async (event, formData, image) => {
+    try {
+        const save = save_marriage_license_and_notice(formData, image)
+        return save
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 ipcMain.handle('previewMarriage', async (event, formData) => {
     try {
         const generate_application_for_marriage_license =
@@ -976,7 +984,6 @@ ipcMain.handle('printMarriage', async (event, formData, params) => {
                 sumatraPath,
                 'Legal'
             )
-
 
             return { status: true }
         } else {

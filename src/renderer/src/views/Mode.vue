@@ -44,11 +44,11 @@
         <Transition mode="out-in">
             <div v-if="more_option" ref="start_server_ref"
                 class="absolute flex  flex-col gap-2 top-10 right-4 items-center justify-center border shadow-md  rounded bg-white h-[10rem] w-[20rem]">
-                <button @click="createOwnServer()" class="rounded-full border w-20 h-20 text-xs font-mono bg-white
+                <button @click="[connect_modal = true, more_option = false]"
+                    class="rounded-full border w-20 h-20 text-xs font-mono bg-white
                     font-bold shadow-sm
-                     border-[#1cbfff] hover:bg-blue-500 hover:text-white active:scale-95 transition-all">{{ server_stat
-                    }}</button>
-                <p class="font-mono font-medium mt-3">Start your own local server.</p>
+                     border-[#1cbfff] hover:bg-blue-500 hover:text-white active:scale-95 transition-all">Connect</button>
+                <p class="font-mono font-medium mt-3">Connect to local server.</p>
             </div>
         </Transition>
         <Wave />
@@ -58,7 +58,7 @@
             <!-- <ButtonMode title="Server" @click="serverMode()" /> -->
             <div>
                 <!-- <ButtonMode title="Connect" @click="clientMode()" /> -->
-                <ButtonMode title="Connect" @click="connect_modal = true" />
+                <ButtonMode :title="server_stat" @click="createOwnServer()" />
             </div>
         </div>
     </div>

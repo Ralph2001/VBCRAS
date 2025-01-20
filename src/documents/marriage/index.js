@@ -1,10 +1,8 @@
 import { exec } from 'child_process'
 import { PageSizes, PDFDocument, StandardFonts, TextAlignment } from 'pdf-lib'
-import fontkit from '@pdf-lib/fontkit';
+import fontkit from '@pdf-lib/fontkit'
 const path = require('path')
 const fs = require('fs')
-
-
 
 const MARRIAGE_TEMPLATE_PATHS = {
     NOTICE: path
@@ -59,43 +57,44 @@ const embedImageIfValid = async (pdfDoc, imageBase64) => {
     if (imageBase64 && imageBase64 !== 'null' && imageBase64 !== '') {
         try {
             // Convert base64 to Uint8Array
-            const imageUnit8 = base64ToUint8Array(imageBase64);
+            const imageUnit8 = base64ToUint8Array(imageBase64)
 
             // Embed the image into the PDF
-            const embeddedImage = await pdfDoc.embedPng(imageUnit8);
-            return embeddedImage;
+            const embeddedImage = await pdfDoc.embedPng(imageUnit8)
+            return embeddedImage
         } catch (error) {
-            console.error('Error embedding image:', error);
-            return null;
+            console.error('Error embedding image:', error)
+            return null
         }
     } else {
-        console.error('Invalid image data');
-        return null;
+        console.error('Invalid image data')
+        return null
     }
-};
-
+}
 
 async function generate_marriage_notice(formData, image) {
     try {
-
-        const ArialFontBytes = fs.readFileSync(path
-            .resolve(
-                __dirname,
-                '../../resources/images/fonts/Arial.TTF'
-            )
-            .replace('app.asar', 'app.asar.unpacked'),)
-        const ArialItalicFontBytes = fs.readFileSync(path
-            .resolve(
-                __dirname,
-                '../../resources/images/fonts/Arial Italic.TTF'
-            )
-            .replace('app.asar', 'app.asar.unpacked'),)
-        const ArialBoldFontBytes = fs.readFileSync(path
-            .resolve(
-                __dirname,
-                '../../resources/images/fonts/Arial Bold.TTF'
-            )
-            .replace('app.asar', 'app.asar.unpacked'),)
+        const ArialFontBytes = fs.readFileSync(
+            path
+                .resolve(__dirname, '../../resources/images/fonts/Arial.TTF')
+                .replace('app.asar', 'app.asar.unpacked')
+        )
+        const ArialItalicFontBytes = fs.readFileSync(
+            path
+                .resolve(
+                    __dirname,
+                    '../../resources/images/fonts/Arial Italic.TTF'
+                )
+                .replace('app.asar', 'app.asar.unpacked')
+        )
+        const ArialBoldFontBytes = fs.readFileSync(
+            path
+                .resolve(
+                    __dirname,
+                    '../../resources/images/fonts/Arial Bold.TTF'
+                )
+                .replace('app.asar', 'app.asar.unpacked')
+        )
 
         // Ensure file exists before proceeding
         checkFilesExist([MARRIAGE_TEMPLATE_PATHS.NOTICE])
@@ -103,11 +102,11 @@ async function generate_marriage_notice(formData, image) {
         // Load PDF content without 'binary' encoding
         const content = fs.readFileSync(MARRIAGE_TEMPLATE_PATHS.NOTICE)
         const pdfDoc = await PDFDocument.load(content)
-        pdfDoc.registerFontkit(fontkit);
+        pdfDoc.registerFontkit(fontkit)
 
-        const ArialFont = await pdfDoc.embedFont(ArialFontBytes);
-        const ArialItalicFont = await pdfDoc.embedFont(ArialItalicFontBytes);
-        const ArialBoldFont = await pdfDoc.embedFont(ArialBoldFontBytes);
+        const ArialFont = await pdfDoc.embedFont(ArialFontBytes)
+        const ArialItalicFont = await pdfDoc.embedFont(ArialItalicFontBytes)
+        const ArialBoldFont = await pdfDoc.embedFont(ArialBoldFontBytes)
         const form = pdfDoc.getForm()
 
         /**
@@ -129,7 +128,6 @@ async function generate_marriage_notice(formData, image) {
             StandardFonts.TimesRomanBold
         )
         const office = form.getTextField('office')
-
 
         const groom_name = form.getTextField('groom_name')
         const bride_name = form.getTextField('bride_name')
@@ -171,17 +169,16 @@ async function generate_marriage_notice(formData, image) {
         const leftIcon = await pdfDoc.embedPng(left_icon_bytes)
         const rightIcon = await pdfDoc.embedPng(right_icon_bytes)
 
-
         const [bridePicture, groomPicture] = await Promise.all([
             embedImageIfValid(pdfDoc, images[0]),
             embedImageIfValid(pdfDoc, images[1])
-        ]);
+        ])
 
         if (!bridePicture) {
-            console.log('Error: Bride picture could not be embedded');
+            console.log('Error: Bride picture could not be embedded')
         }
         if (!groomPicture) {
-            console.log('Error: Groom picture could not be embedded');
+            console.log('Error: Groom picture could not be embedded')
         }
 
         // Define fixed size for icons (e.g., 100x100 points)
@@ -227,21 +224,17 @@ async function generate_marriage_notice(formData, image) {
         groom_name.setText(data.notice_groom_name)
         bride_name.setText(data.notice_bride_name)
 
-
         if (bridePicture) {
-            bride_picture.setImage(bridePicture);
+            bride_picture.setImage(bridePicture)
         } else {
-            console.log('No valid bride picture to embed');
+            console.log('No valid bride picture to embed')
         }
 
         if (groomPicture) {
-            groom_picture.setImage(groomPicture);
+            groom_picture.setImage(groomPicture)
         } else {
-            console.log('No valid groom picture to embed');
+            console.log('No valid groom picture to embed')
         }
-
-
-
 
         groom_age.setText(data.notice_groom_age)
         groom_age.updateAppearances(ArialFont)
@@ -273,7 +266,6 @@ async function generate_marriage_notice(formData, image) {
         position.setText('Municipal Civil Registrar')
         position.updateAppearances(ArialItalicFont)
 
-
         copy_furnished1.setText(data.notice_copy_furnished1)
         copy_furnished1.updateAppearances(ArialFont)
         copy_furnished2.setText(data.notice_copy_furnished2)
@@ -283,7 +275,7 @@ async function generate_marriage_notice(formData, image) {
         copy_furnished4.setText(data.notice_copy_furnished4)
         copy_furnished4.updateAppearances(ArialFont)
 
-        form.flatten();
+        form.flatten()
 
         const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
         return { status: true, pdfbase64: pdfBytes }
@@ -292,51 +284,117 @@ async function generate_marriage_notice(formData, image) {
     }
 }
 
-
-
 async function generate_marriage_license(formData) {
     try {
         // Check if the necessary files exist
-        checkFilesExist([MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE]);
+        checkFilesExist([MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE])
 
         // Load the PDF template
-        const content = fs.readFileSync(MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE);
-        const pdfDoc = await PDFDocument.load(content);
-        const form = pdfDoc.getForm();
+        const content = fs.readFileSync(
+            MARRIAGE_TEMPLATE_PATHS.MARRIAGE_LICENSE
+        )
+        const pdfDoc = await PDFDocument.load(content)
+        const form = pdfDoc.getForm()
 
         // Embed the Helvetica font
-        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
         // Parse the form data
-        const data = JSON.parse(formData);
+        const data = JSON.parse(formData)
 
         // Define the fields in the form
         const fields = [
-            'header_province', 'header_municipality', 'registry_number', 'received_by',
-            'date_of_receipt', 'marriage_license_number', 'date_issuance_marriage_license',
-            'groom_contract_marriage_with', 'bride_contract_marriage_with', 'civil_registrar',
-            'groom_first_name', 'groom_middle_name', 'groom_last_name', 'groom_day', 'groom_month',
-            'groom_year', 'groom_age', 'groom_municipality', 'groom_province', 'groom_country',
-            'groom_sex', 'groom_citizenship', 'groom_residence', 'groom_religion', 'groom_civil_status',
-            'groom_previously_married_dissolved', 'groom_place_dissolved', 'groom_date_dissolved',
-            'groom_degree_relation', 'groom_father_first_name', 'groom_father_middle_name',
-            'groom_father_last_name', 'groom_father_citizenship', 'groom_father_residence',
-            'groom_mother_first_name', 'groom_mother_middle_name', 'groom_mother_last_name',
-            'groom_mother_citizenship', 'groom_mother_residence', 'groom_person_who_gave_consent',
-            'groom_person_who_gave_consent_relation', 'groom_person_who_gave_consent_citizenship',
-            'groom_person_who_gave_consent_residence', 'groom_ss_day', 'groom_ss_month', 'groom_ss_year',
-            'groom_ss_at', 'groom_ctc_number', 'groom_ctc_on', 'groom_ctc_at', 'bride_first_name',
-            'bride_middle_name', 'bride_last_name', 'bride_day', 'bride_month', 'bride_year', 'bride_age',
-            'bride_municipality', 'bride_province', 'bride_country', 'bride_sex', 'bride_citizenship',
-            'bride_residence', 'bride_religion', 'bride_civil_status', 'bride_previously_married_dissolved',
-            'bride_place_dissolved', 'bride_date_dissolved', 'bride_degree_relation', 'bride_father_first_name',
-            'bride_father_middle_name', 'bride_father_last_name', 'bride_father_citizenship', 'bride_father_residence',
-            'bride_mother_first_name', 'bride_mother_middle_name', 'bride_mother_last_name', 'bride_mother_citizenship',
-            'bride_mother_residence', 'bride_person_who_gave_consent', 'bride_person_who_gave_consent_relation',
-            'bride_person_who_gave_consent_citizenship', 'bride_person_who_gave_consent_residence', 'bride_ss_day',
-            'bride_ss_month', 'bride_ss_year', 'bride_ss_at', 'bride_ctc_number', 'bride_ctc_on', 'bride_ctc_at'
-        ];
-
+            'header_province',
+            'header_municipality',
+            'registry_number',
+            'received_by',
+            'date_of_receipt',
+            'marriage_license_number',
+            'date_issuance_marriage_license',
+            'groom_contract_marriage_with',
+            'bride_contract_marriage_with',
+            'civil_registrar',
+            'groom_first_name',
+            'groom_middle_name',
+            'groom_last_name',
+            'groom_day',
+            'groom_month',
+            'groom_year',
+            'groom_age',
+            'groom_municipality',
+            'groom_province',
+            'groom_country',
+            'groom_sex',
+            'groom_citizenship',
+            'groom_residence',
+            'groom_religion',
+            'groom_civil_status',
+            'groom_previously_married_dissolved',
+            'groom_place_dissolved',
+            'groom_date_dissolved',
+            'groom_degree_relation',
+            'groom_father_first_name',
+            'groom_father_middle_name',
+            'groom_father_last_name',
+            'groom_father_citizenship',
+            'groom_father_residence',
+            'groom_mother_first_name',
+            'groom_mother_middle_name',
+            'groom_mother_last_name',
+            'groom_mother_citizenship',
+            'groom_mother_residence',
+            'groom_person_who_gave_consent',
+            'groom_person_who_gave_consent_relation',
+            'groom_person_who_gave_consent_citizenship',
+            'groom_person_who_gave_consent_residence',
+            'groom_ss_day',
+            'groom_ss_month',
+            'groom_ss_year',
+            'groom_ss_at',
+            'groom_ctc_number',
+            'groom_ctc_on',
+            'groom_ctc_at',
+            'bride_first_name',
+            'bride_middle_name',
+            'bride_last_name',
+            'bride_day',
+            'bride_month',
+            'bride_year',
+            'bride_age',
+            'bride_municipality',
+            'bride_province',
+            'bride_country',
+            'bride_sex',
+            'bride_citizenship',
+            'bride_residence',
+            'bride_religion',
+            'bride_civil_status',
+            'bride_previously_married_dissolved',
+            'bride_place_dissolved',
+            'bride_date_dissolved',
+            'bride_degree_relation',
+            'bride_father_first_name',
+            'bride_father_middle_name',
+            'bride_father_last_name',
+            'bride_father_citizenship',
+            'bride_father_residence',
+            'bride_mother_first_name',
+            'bride_mother_middle_name',
+            'bride_mother_last_name',
+            'bride_mother_citizenship',
+            'bride_mother_residence',
+            'bride_person_who_gave_consent',
+            'bride_person_who_gave_consent_relation',
+            'bride_person_who_gave_consent_citizenship',
+            'bride_person_who_gave_consent_residence',
+            'bride_ss_day',
+            'bride_ss_month',
+            'bride_ss_year',
+            'bride_ss_at',
+            'bride_ctc_number',
+            'bride_ctc_on',
+            'bride_ctc_at'
+        ]
 
         const fields_to_avoid = [
             'groom_municipality',
@@ -356,90 +414,100 @@ async function generate_marriage_license(formData) {
             'bride_person_who_gave_consent_residence'
         ]
 
-
         // Iterate over each field and adjust its size and fit
         fields.forEach((fieldName) => {
-            const field = form.getTextField(fieldName);
-            const fieldValue = data[fieldName] || ''; // Fallback to empty string if no value provided
+            const field = form.getTextField(fieldName)
+            const fieldValue = data[fieldName] || '' // Fallback to empty string if no value provided
 
             if (fields_to_avoid.includes(fieldName)) {
-
-                adjustTextFieldSizeAndFit(pdfDoc, field, fieldValue, helveticaFont);
+                adjustTextFieldSizeAndFit(
+                    pdfDoc,
+                    field,
+                    fieldValue,
+                    helveticaFont
+                )
+            } else {
+                field.setText(fieldValue)
+                field.updateAppearances(helveticaFont)
             }
-            else {
-                field.setText(fieldValue);
-                field.updateAppearances(helveticaFont);
-            }
-
-        });
+        })
 
         // Flatten the form (turn fields into static text)
-        form.flatten();
+        form.flatten()
 
         // Save the PDF as base64
-        const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true });
+        const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
 
-        return { status: true, pdfbase64: pdfBytes };
+        return { status: true, pdfbase64: pdfBytes }
     } catch (error) {
-        console.error(error);
+        console.error(error)
     }
 }
 
-async function adjustTextFieldSizeAndFit(pdfDoc, field, fieldValue, helveticaFont) {
+async function adjustTextFieldSizeAndFit(
+    pdfDoc,
+    field,
+    fieldValue,
+    helveticaFont
+) {
     try {
+        const acroField = field.acroField
 
-
-        const acroField = field.acroField;
-
-        const widgets = acroField.getWidgets();
+        const widgets = acroField.getWidgets()
 
         // Ensure the field has widgets
         if (widgets.length === 0) {
-            console.warn(`Field "${field.getName()}" does not have widgets. Skipping.`);
-            return;
+            console.warn(
+                `Field "${field.getName()}" does not have widgets. Skipping.`
+            )
+            return
         }
 
-
         // Get the dimensions of the field
-        const { width, height } = widgets[0].getRectangle();
+        const { width, height } = widgets[0].getRectangle()
 
-        let fontSize = 9;
-        let minFontSize = 6;
+        let fontSize = 9
+        let minFontSize = 6
 
         // Measure the width of the text
-        const measureTextWidth = (text, fontSize) => helveticaFont.widthOfTextAtSize(text, fontSize);
+        const measureTextWidth = (text, fontSize) =>
+            helveticaFont.widthOfTextAtSize(text, fontSize)
 
         // Check if the text fits within the width and height
         const doesTextFit = (text, fontSize, maxWidth, maxHeight) => {
-            const textWidth = measureTextWidth(text, fontSize);
-            const lines = Math.ceil(textWidth / maxWidth); // Calculate the number of lines based on width
-            const textHeight = fontSize * lines; // Estimate the height required
-            return textWidth <= maxWidth && textHeight <= maxHeight;
-        };
+            const textWidth = measureTextWidth(text, fontSize)
+            const lines = Math.ceil(textWidth / maxWidth) // Calculate the number of lines based on width
+            const textHeight = fontSize * lines // Estimate the height required
+            return textWidth <= maxWidth && textHeight <= maxHeight
+        }
 
         // Decrease the font size until the text fits
-        while (!doesTextFit(fieldValue, fontSize, width, height) && fontSize > minFontSize) {
-            fontSize -= 0.5;
+        while (
+            !doesTextFit(fieldValue, fontSize, width, height) &&
+            fontSize > minFontSize
+        ) {
+            fontSize -= 0.5
         }
 
         // Set the adjusted text, font size, and appearance
-        field.setText(fieldValue);
-        field.updateAppearances(helveticaFont);
-        field.setFontSize(fontSize);
-        field.enableMultiline();
+        field.setText(fieldValue)
+        field.updateAppearances(helveticaFont)
+        field.setFontSize(fontSize)
+        field.enableMultiline()
 
         // Adjust alignment based on text length (optional)
         if (fieldValue.length > 40) {
-            field.setAlignment(TextAlignment.Left);
+            field.setAlignment(TextAlignment.Left)
         } else {
-            field.setAlignment(TextAlignment.Center);
+            field.setAlignment(TextAlignment.Center)
         }
     } catch (error) {
-        console.error(`Error adjusting text field size for "${field.getName()}":`, error);
+        console.error(
+            `Error adjusting text field size for "${field.getName()}":`,
+            error
+        )
     }
 }
-
-
 
 // print_decided_license
 async function print_decided_license(formData, params) {
@@ -557,8 +625,10 @@ async function print_decided_license(formData, params) {
             const field = form.getTextField(fieldName)
             const fieldValue = data[fieldName] || ''
 
-
-            if (fieldName === 'groom_mother_residence' || fieldName === 'bride_mother_residence') {
+            if (
+                fieldName === 'groom_mother_residence' ||
+                fieldName === 'bride_mother_residence'
+            ) {
                 if (fieldValue.length >= 40) {
                     field.setText(fieldValue)
                     field.updateAppearances(helveticaFont)
@@ -635,8 +705,89 @@ async function print_decided_license(formData, params) {
     }
 }
 
+async function save_marriage_license_and_notice(formData, image) {
+    try {
+        // Parse the form data and image paths
+        const data = JSON.parse(formData)
+        const images = JSON.parse(image) // Assumes image is a JSON array of paths
+
+        // Generate the marriage license and notice
+        const marriageLicense = await generate_marriage_license(formData)
+        const marriageNotice = await generate_marriage_notice(formData, image)
+
+        if (
+            marriageLicense &&
+            marriageLicense.pdfbase64 &&
+            marriageNotice &&
+            marriageNotice.pdfbase64
+        ) {
+            // Decode base64 strings to binary
+            const marriageLicenseBuffer = Buffer.from(
+                marriageLicense.pdfbase64.split(',')[1],
+                'base64'
+            )
+            const marriageNoticeBuffer = Buffer.from(
+                marriageNotice.pdfbase64.split(',')[1],
+                'base64'
+            )
+
+            // Define folder paths
+            const folderName = `${data.groom_first_name} ${data.groom_last_name} & ${data.bride_first_name} ${data.bride_last_name}`
+            const outputDir = path
+                .resolve(__dirname, `../../output/${folderName}`)
+                .replace('app.asar', 'app.asar.unpacked')
+            const picturesDir = path.resolve(
+                process.env.HOME || process.env.USERPROFILE, // Home directory
+                `Pictures/Application Marriage Photos/${folderName}`
+            )
+
+            // Ensure the folders exist
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true })
+            }
+            if (!fs.existsSync(picturesDir)) {
+                fs.mkdirSync(picturesDir, { recursive: true })
+            }
+
+            // Define file paths
+            const marriageLicensePath = path.join(
+                outputDir,
+                'Application for Marriage License.pdf'
+            )
+            const marriageNoticePath = path.join(outputDir, 'Notice.pdf')
+
+            // Write PDF files to the folder
+            fs.writeFileSync(marriageLicensePath, marriageLicenseBuffer)
+            fs.writeFileSync(marriageNoticePath, marriageNoticeBuffer)
+
+            console.log(
+                `Marriage license saved at ${marriageLicensePath} and marriage notice saved at ${marriageNoticePath}`
+            )
+
+            // Save images to Pictures/Application Marriage Photos folder
+            // if (images.length > 0 || images !== '') {
+            //     images.forEach((imagePath, index) => {
+            //         const imageFileName = `Photo-${index + 1}${path.extname(imagePath)}`
+            //         const destPath = path.join(picturesDir, imageFileName)
+
+            //         // Copy the image to the new location
+            //         fs.copyFileSync(imagePath, destPath)
+            //         console.log(`Saved image to ${destPath}`)
+            //     })
+            // }
+        } else {
+            throw new Error('Failed to generate one or both documents.')
+        }
+    } catch (error) {
+        console.error(
+            'Error saving marriage license, notice, or images:',
+            error
+        )
+    }
+}
 export {
     generate_marriage_notice,
     generate_marriage_license,
-    print_decided_license
+    print_decided_license,
+    save_marriage_license_and_notice
 }

@@ -127,22 +127,38 @@ contextBridge.exposeInMainWorld('AusfApi', {
  */
 
 contextBridge.exposeInMainWorld('MarriageApi', {
+    saveMarriageApplicationEntry: async (formData, image) => {
+        const save = await ipcRenderer.invoke(
+            'saveApplicationMarriage',
+            formData,
+            image
+        )
+        return save
+    },
     previewMarriage: async (formData) => {
         const preview = await ipcRenderer.invoke('previewMarriage', formData)
         return preview
     },
     printMarriage: async (formData, params) => {
-        const preview = await ipcRenderer.invoke('printMarriage', formData, params)
+        const preview = await ipcRenderer.invoke(
+            'printMarriage',
+            formData,
+            params
+        )
         return preview
     },
     previewNotice: async (formData, image) => {
-        const preview = await ipcRenderer.invoke('previewNotice', formData, image)
+        const preview = await ipcRenderer.invoke(
+            'previewNotice',
+            formData,
+            image
+        )
         return preview
     },
     printNotice: async (dataUri) => {
         const print = await ipcRenderer.invoke('printNotice', dataUri)
         return print
-    },
+    }
 })
 
 /**
