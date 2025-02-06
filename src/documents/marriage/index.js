@@ -705,86 +705,115 @@ async function print_decided_license(formData, params) {
     }
 }
 
+// Save Application of Marriage License and Notice of Posting to Fixed Folder Path
+/* 
+  Folder Path Structure
+
+  ### /Groom Fist Name + Groom Last Name + & + Bride First Name + Bride Last Name/ Application for Marriage License.pdf
+  ### /Groom Fist Name + Groom Last Name + & + Bride First Name + Bride Last Name/ Notice.pdf
+
+*/
 async function save_marriage_license_and_notice(formData, image) {
     try {
         // Parse the form data and image paths
-        const data = JSON.parse(formData)
-        const images = JSON.parse(image) // Assumes image is a JSON array of paths
+        const data = JSON.parse(formData);
+        const images = JSON.parse(image);
+
+        if (!data || !images) {
+            throw new Error('Invalid formData or image data.');
+        }
+
+        if (!data.groom_first_name || !data.bride_first_name) {
+            throw new Error('Both Groom and Bride names are required');
+        }
 
         // Generate the marriage license and notice
-        const marriageLicense = await generate_marriage_license(formData)
-        const marriageNotice = await generate_marriage_notice(formData, image)
+        const marriageLicense = await generate_marriage_license(formData);
+        const marriageNotice = await generate_marriage_notice(formData, image);
 
-        if (
-            marriageLicense &&
-            marriageLicense.pdfbase64 &&
-            marriageNotice &&
-            marriageNotice.pdfbase64
-        ) {
-            // Decode base64 strings to binary
-            const marriageLicenseBuffer = Buffer.from(
-                marriageLicense.pdfbase64.split(',')[1],
-                'base64'
-            )
-            const marriageNoticeBuffer = Buffer.from(
-                marriageNotice.pdfbase64.split(',')[1],
-                'base64'
-            )
-
-            // Define folder paths
-            const folderName = `${data.groom_first_name} ${data.groom_last_name} & ${data.bride_first_name} ${data.bride_last_name}`
-            const outputDir = path
-                .resolve(__dirname, `../../output/${folderName}`)
-                .replace('app.asar', 'app.asar.unpacked')
-            const picturesDir = path.resolve(
-                process.env.HOME || process.env.USERPROFILE, // Home directory
-                `Pictures/Application Marriage Photos/${folderName}`
-            )
-
-            // Ensure the folders exist
-            if (!fs.existsSync(outputDir)) {
-                fs.mkdirSync(outputDir, { recursive: true })
-            }
-            if (!fs.existsSync(picturesDir)) {
-                fs.mkdirSync(picturesDir, { recursive: true })
-            }
-
-            // Define file paths
-            const marriageLicensePath = path.join(
-                outputDir,
-                'Application for Marriage License.pdf'
-            )
-            const marriageNoticePath = path.join(outputDir, 'Notice.pdf')
-
-            // Write PDF files to the folder
-            fs.writeFileSync(marriageLicensePath, marriageLicenseBuffer)
-            fs.writeFileSync(marriageNoticePath, marriageNoticeBuffer)
-
-            console.log(
-                `Marriage license saved at ${marriageLicensePath} and marriage notice saved at ${marriageNoticePath}`
-            )
-
-            // Save images to Pictures/Application Marriage Photos folder
-            // if (images.length > 0 || images !== '') {
-            //     images.forEach((imagePath, index) => {
-            //         const imageFileName = `Photo-${index + 1}${path.extname(imagePath)}`
-            //         const destPath = path.join(picturesDir, imageFileName)
-
-            //         // Copy the image to the new location
-            //         fs.copyFileSync(imagePath, destPath)
-            //         console.log(`Saved image to ${destPath}`)
-            //     })
-            // }
-        } else {
-            throw new Error('Failed to generate one or both documents.')
+        if (!marriageLicense?.pdfbase64 || !marriageNotice?.pdfbase64) {
+            throw new Error('Failed to generate one or both documents.');
         }
+
+        // Decode base64 strings to binary
+        const marriageLicenseBuffer = Buffer.from(marriageLicense.pdfbase64.split(',')[1], 'base64');
+        const marriageNoticeBuffer = Buffer.from(marriageNotice.pdfbase64.split(',')[1], 'base64');
+
+        const groomLastName = data.groom_last_name ? data.groom_last_name : '(nolastname)';
+        const brideLastName = data.bride_last_name ? data.bride_last_name : '(nolastname)';
+
+        // Define folder paths
+        const folderName = `${data.groom_first_name} ${groomLastName} & ${data.bride_first_name} ${brideLastName}`;
+
+
+        // Get current year and month for dynamic folder creation
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+
+        // Array of month names (index 0 = January, index 1 = February, ...)
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        const month = monthNames[currentDate.getMonth()];
+
+        const outputDir = path.resolve(__dirname, `../../output/${folderName}`).replace('app.asar', 'app.asar.unpacked');
+
+        const userPicturesDir = path.resolve(
+            process.env.USERPROFILE || process.env.HOME,
+            'Pictures', 'Marriage Pictures', year.toString(), month, folderName
+        );
+
+
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
+        if (!fs.existsSync(userPicturesDir)) {
+            fs.mkdirSync(userPicturesDir, { recursive: true });
+        }
+
+        // Define file paths for PDF files
+        const marriageLicensePath = path.join(outputDir, 'Application for Marriage License.pdf');
+        const marriageNoticePath = path.join(outputDir, 'Notice.pdf');
+
+        // Write PDF files to the folder
+        fs.writeFileSync(marriageLicensePath, marriageLicenseBuffer);
+        fs.writeFileSync(marriageNoticePath, marriageNoticeBuffer);
+
+        if (images && images.length > 0) {
+            images.forEach((imagePath, index) => {
+                let imageFileName;
+
+                // If the image is base64-encoded, use a fixed extension (e.g., .jpg)
+                if (imagePath.startsWith('data:image')) {
+                    imageFileName = `Photo-${index + 1}.jpg`; // Save as .jpg
+                    const base64Data = imagePath.split(',')[1]; // Remove the "data:image/jpeg;base64," part
+                    const imageBuffer = Buffer.from(base64Data, 'base64');
+                    const destPath = path.join(userPicturesDir, imageFileName);
+                    fs.writeFileSync(destPath, imageBuffer);
+                    console.log(`Saved base64 image to ${destPath}`);
+                } else {
+                    // If the image is a file path, use its original extension
+                    imageFileName = `Photo-${index + 1}${path.extname(imagePath)}`; // Use original extension from path
+                    const destPath = path.join(userPicturesDir, imageFileName);
+                    fs.copyFileSync(imagePath, destPath);
+                    console.log(`Copied image from ${imagePath} to ${destPath}`);
+                }
+            });
+        } else {
+            console.log('No images provided, skipping image saving.');
+        }
+
+        console.log('Marriage license, notice, and images (if provided) saved successfully.');
+
     } catch (error) {
-        console.error(
-            'Error saving marriage license, notice, or images:',
-            error
-        )
+        console.error('Error saving marriage license, notice, or images:', error.message);
     }
 }
+
+
+
 export {
     generate_marriage_notice,
     generate_marriage_license,

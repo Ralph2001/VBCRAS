@@ -132,14 +132,14 @@
 
                 <div v-if="is_input_with_address_suggestions && filteredData.length && is_form_input_active && !preview && page === 1"
                     class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem] border border-gray-400 shadow-md p-2 z-50 w-[30rem] bg-white text-gray-800 ">
-                    <ul class="h-auto w-full" v-for="(suggestion, index) in filteredData" :key="suggestion">
+                    <div class="h-auto w-full" v-for="(suggestion, index) in filteredData" :key="suggestion">
                         <button @keydown="handleTabNavigation" :tabindex="1000 + index"
-                            @click='address_spreader($event, suggestion, 1000 + index)' class="uppercase hover:bg-gray-200 w-full text-start active:bg-gray-200 px-2 active:scale-[99%] transition-all font-medium
+                            @click='address_spreader($event, suggestion, 1000 + index)' class="uppercase hover:bg-gray-200 w-full text-start active:bg-blue-200 focus:bg-blue-200 px-2 active:scale-[99%] transition-all font-medium
                             text-gray-800
                             text-md">
                             {{ suggestion }}
                         </button>
-                    </ul>
+                    </div>
                 </div>
 
 
@@ -154,7 +154,6 @@
                             class="border font-medium uppercase rounded-sm w-full border-gray-300 py-1 text-md">
 
                     </div>
-                    <!-- <InputSuggestionMarriage /> -->
                 </div>
 
 
@@ -1770,6 +1769,9 @@ import { parse, isValid, format } from 'date-fns';
 import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMarriage.vue';
 import { complete_municipality_with_province, municipalityProvinceAddress, complete_province, complete_municipality } from '../../utils/address';
 import ActionBtn from '../../components/Marriage/ActionBtn.vue';
+import { AuthStore } from "../../stores/Authentication.js";
+
+const auth = AuthStore()
 
 const temporary_form = reactive({
     groom_date_birth: '',
@@ -1822,6 +1824,18 @@ const filteredData = computed(() => {
 
 const address_spreader = (event, value, index) => {
     // console.log(index)
+    if (active_input_field.value === 'header_province') {
+        current_tab.value = 1
+    }
+    if (active_input_field.value === 'header_municipality') {
+        current_tab.value = 2
+    }
+    if (active_input_field.value === 'groom_municipality') {
+        current_tab.value = 18
+    }
+    if (active_input_field.value === 'bride_municipality') {
+        current_tab.value = 21
+    }
 
     if (active_input_field.value === 'header_province' || active_input_field.value === 'header_municipality') {
         const active = active_input_field.value
@@ -1846,12 +1860,12 @@ const address_spreader = (event, value, index) => {
 
 
 const open_form_input = (name, field, tabIndex, isDate, is_address) => {
-
-    if (is_address && current_tab.value < 1000) {
-        current_tab.value = 1000
+    if (is_address) {
+        if (current_tab.value >= 999) {
+            return
+        }
+        current_tab.value = 999;
     }
-
-    console.log(current_tab.value)
     is_input_with_address_suggestions.value = is_address;
     is_current_tab_date.value = isDate;
     input_form_value.value = (field !== active_input_field.value || formData[field]) ? formData[field] : '';
@@ -1860,7 +1874,9 @@ const open_form_input = (name, field, tabIndex, isDate, is_address) => {
     is_form_input_active.value = true;
     active_document_form.value = name;
     active_input_field.value = field;
-    current_tab.value = tabIndex;
+    if (!is_address) {
+        current_tab.value = tabIndex;
+    }
 
     const fieldMappings = {
         'groom_father_last_name': 'groom_last_name',
@@ -1886,19 +1902,13 @@ const open_form_input = (name, field, tabIndex, isDate, is_address) => {
 
 const focusNextInput = (event) => {
     event.preventDefault();
+    const maxSuggestionIndex = 1000 + filteredData.value.length - 1;
 
-    if (current_tab.value === 87) {
-        current_tab.value = 1
-        const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
-            .filter(button => button.tabIndex === current_tab.value);
-
-        if (buttons.length > 0) {
-            buttons[0].focus();
-        }
+    if (current_tab.value === maxSuggestionIndex) {
         return
     }
-    // Increment the current_tab value
     current_tab.value += 1;
+    console.log(current_tab.value)
 
     const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
         .filter(button => button.tabIndex === current_tab.value);
@@ -1906,13 +1916,37 @@ const focusNextInput = (event) => {
     if (buttons.length > 0) {
         buttons[0].focus();
     }
+    // if (current_tab.value === 87) {
+    //     current_tab.value = 1
+    //     const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+    //         .filter(button => button.tabIndex === current_tab.value);
+
+    //     if (buttons.length > 0) {
+    //         buttons[0].focus();
+    //     }
+    //     return
+    // }
+    // // Increment the current_tab value
+    // current_tab.value += 1;
+
+    // const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+    //     .filter(button => button.tabIndex === current_tab.value);
+
+    // if (buttons.length > 0) {
+    //     buttons[0].focus();
+    // }
 };
 
 const focusPreviousInput = (event) => {
     event.preventDefault();
 
-    // Decrement the current_tab value but ensure it doesn't go below 0
+    const maxSuggestionIndex = 1000 + filteredData.value.length - 1;
+    
+
     if (current_tab.value > 0) {
+        if (current_tab.value <= maxSuggestionIndex) {
+        return
+    }
         current_tab.value -= 1;
     }
 
@@ -1927,6 +1961,19 @@ const focusPreviousInput = (event) => {
 
 
 const submit_input_data = (event, field) => {
+    if (active_input_field.value === 'header_province') {
+        current_tab.value = 1
+    }
+    if (active_input_field.value === 'header_municipality') {
+        current_tab.value = 2
+    }
+    if (active_input_field.value === 'groom_municipality') {
+        current_tab.value = 18
+    }
+    if (active_input_field.value === 'bride_municipality') {
+        current_tab.value = 21
+    }
+
     const data = input_form_value.value;
 
     // Define possible date formats
@@ -2068,34 +2115,22 @@ const add_details_to_notice = (field) => {
 const handleTabNavigation = (event) => {
     // Check for Shift + Tab (to navigate backwards)
     if (event.shiftKey && event.key === 'Tab') {
-        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
-        //     event.preventDefault();  // Prevent focus change when there are suggestions
-        //     return;
-        // }
+
         focusPreviousInput(event);
     }
     // Check for Tab (to navigate forwards)
     else if (!event.shiftKey && event.key === 'Tab') {
-        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
-        //     event.preventDefault();  // Prevent focus change when there are suggestions
-        //     return;
-        // }
+
         focusNextInput(event);
     }
     // Check for ArrowDown (down arrow key)
     else if (event.key === 'ArrowDown') {
-        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
-        //     event.preventDefault();  // Prevent focus change when there are suggestions
-        //     return;
-        // }
+
         focusNextInput(event);
     }
     // Check for ArrowUp (up arrow key)
     else if (event.key === 'ArrowUp') {
-        // if (is_input_with_address_suggestions.value && filteredData.value.length > 0) {
-        //     event.preventDefault();  // Prevent focus change when there are suggestions
-        //     return;
-        // }
+
         focusPreviousInput(event);
     }
 };
@@ -2197,6 +2232,7 @@ const apl = useApplicationMarriageLicense()
 onMounted(() => {
     calculatePPI();
     // input_form_field.value?.focus()
+    auth.isAuthenticated()
     apl.getApplicationMarriageLicense()
 });
 
@@ -2209,9 +2245,10 @@ const open_model = () => {
 
     formData.civil_registrar = 'ISMAEL D. MALICDEM, JR.'
     formData.received_by = 'ISMAEL D. MALICDEM, JR.'
-
-
-
+    formData.groom_sex = "MALE"
+    formData.bride_sex = "FEMALE"
+    formData.header_province = "PANGASINAN"
+    formData.header_municipality = "BAYAMBANG"
     formData.groom_ss_day = format(date, 'do').toUpperCase()
     formData.groom_ss_month = format(date, 'MMMM').toUpperCase()
     formData.groom_ss_year = format(date, 'yyyy')
@@ -2224,12 +2261,9 @@ const open_model = () => {
 
     formData.date_of_receipt = format(date, 'MMMM dd, yyyy').toUpperCase()
     formData.registry_number = format(date, 'yyyy') + '-'
-    formData.date_issuance_marriage_license = format(date, 'MMMM dd, yyyy').toUpperCase()
+    // formData.date_issuance_marriage_license = format(date, 'MMMM dd, yyyy').toUpperCase()
 };
 
-const close_modal = () => {
-    modal.value = false;
-};
 
 
 const initialForm = {
@@ -2464,6 +2498,14 @@ const bride_picture = ref(null)
 const handle_bride_image = (capturedImage) => {
     bride_picture.value = capturedImage
 }
+
+const close_modal = () => {
+    Object.assign(formData, { ...initialForm });
+    groom_picture.value = null;
+    bride_picture.value = null;
+    modal.value = false;
+    page.value = 1
+};
 
 
 const preview_document = async () => {
@@ -2776,14 +2818,9 @@ const submit = async () => {
         notice_copy_furnished4: formData.notice_copy_furnished4,
 
         file_path: '',
-        created_by: 1
-
-
+        created_by: auth.user_id
 
         // FOR DISSOLVED
-
-
-
     }
 
     const bride = bride_picture.value
@@ -2793,21 +2830,24 @@ const submit = async () => {
         bride, groom
     ]
 
+    // Save Local Copy of Application of Marriage and Notice *.pdf
+    // Save Data to Database
+    // Save Images to Desktop/Pictures
+
     const image_data = JSON.stringify(images)
+    const main_data = JSON.stringify({ ...formData })
 
-    const save_date = JSON.stringify({ ...formData })
+    const save_local = await window.MarriageApi.saveMarriageApplicationEntry(main_data, image_data)
+    const save_to_database = await apl.addApplicationMarriageLicense(data)
 
-    const save =  await window.MarriageApi.saveMarriageApplicationEntry(save_date, image_data)
-    console.log(save)
-
-    // const submit = apl.addApplicationMarriageLicense(data)
-    console.log(submit)
+    close_modal()
 }
 
 const colDefs = ref([
     {
         field: "groom_first_name",
         headerName: "Groom Name",
+        cellClass: 'font-medium',
         flex: 2,
         filter: true,
 
@@ -2815,6 +2855,7 @@ const colDefs = ref([
     {
         field: "bride_first_name",
         headerName: "Bride Name",
+        cellClass: 'font-medium',
         flex: 2,
         filter: true,
 
@@ -2824,23 +2865,24 @@ const colDefs = ref([
         field: "date_of_receipt",
         headerName: "Date Receipt",
 
+        flex: 2,
         filter: true,
 
     },
     {
         field: "notice_date_posting",
         headerName: "Date Posting",
-
-        filter: true,
-
-    },
-    {
-        field: "created_by",
-        headerName: "Prepared By",
         flex: 2,
         filter: true,
 
     },
+    // {
+    //     field: "created_by",
+    //     headerName: "Prepared By",
+    //     flex: 2,
+    //     filter: true,
+
+    // },
     {
 
         cellStyle: { border: "none" },

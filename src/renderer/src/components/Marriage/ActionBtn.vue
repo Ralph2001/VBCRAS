@@ -7,16 +7,16 @@
         </button>
 
 
-        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-[10rem]"
+        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-fit"
             v-if="dropdown">
             <button type="button"
-                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">View
+                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">View Form No. 90 (Form No.2)
             </button>
             <button type="button"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Edit</button>
 
             <button type="button"
-                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Print
+                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Open Folder
             </button>
             <button type="button"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete

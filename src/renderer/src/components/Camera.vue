@@ -31,7 +31,7 @@
                     <div v-if="capturedImage === null" class="video h-[85%] relative">
                         <video class="h-full" ref="videoElement" autoplay playsinline></video>
                         <div class="overlay absolute inset-0 flex items-center justify-center pointer-events-none">
-                       
+
                             <div class="border border-gray-50 rounded-sm  h-64 w-64"></div>
                         </div>
                     </div>
@@ -41,9 +41,10 @@
                             ref="capturedImageElement" />
                         <div class="flex gap-2 items-center">
                             <label for="brightness" class="text-white text-sm">Brightness:</label>
-                            <input id="brightness" type="range" min="0" max="200" v-model="brightness" class="w-40">
-                            <button @click="applyBrightness" class="text-white p-2 bg-blue-400 text-sm rounded-sm">
-                                Apply Brightness
+                            <input id="brightness" type="range" min="0" max="200" @change="applyBrightness()"
+                                v-model="brightness" class="w-40">
+                            <button @click="resetBrightness" class="text-white p-2 bg-red-400 text-sm rounded-sm">
+                                Reset Brightness
                             </button>
                         </div>
                     </div>
@@ -87,6 +88,7 @@ const isFullScreen = ref(false);
 const countdown = ref(0); // Countdown variable
 const timer = ref(3);
 const no_camera = ref(false)
+const brightness = ref(100)
 
 
 
@@ -156,6 +158,12 @@ const captureImage = () => {
         }
     });
 };
+
+const resetBrightness = () => {
+    brightness.value = 100
+    capturedImage.value  = originalImage.value;
+   
+}
 
 const applyBrightness = () => {
     const canvas = document.createElement('canvas');
