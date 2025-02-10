@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full w-full flex flex-col items-center relative">
+    <div class="h-full w-full flex flex-col items-center relative ">
         <div class="controls py-4 fixed  w-full items-center justify-center bg-gray-300">
             <button @click="zoomIn" :disabled="isLoading"
                 class="bg-white text-gray-700 rounded border border-gray-300 px-2 text-xs font-medium hover:bg-gray-400 active:scale-95">Zoom

@@ -935,6 +935,14 @@ ipcMain.handle('open-file-folder', async (event, path) => {
     }
 })
 
+ipcMain.handle('openSpecifiedFolder', async (event, path) => {
+    try {
+        const folderpath = shell.openPath(path)
+    } catch (error) {
+        return false
+    }
+})
+
 ipcMain.handle('get-user', async (event) => {
     /**
      *  Return user name directory
@@ -950,7 +958,7 @@ ipcMain.handle('get-user', async (event) => {
 
 ipcMain.handle('saveApplicationMarriage', async (event, formData, image) => {
     try {
-        const save = save_marriage_license_and_notice(formData, image)
+        const save = await save_marriage_license_and_notice(formData, image)
         return save
     } catch (error) {
         console.log(error)

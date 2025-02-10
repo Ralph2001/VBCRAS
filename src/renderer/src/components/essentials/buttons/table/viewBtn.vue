@@ -26,7 +26,8 @@
             <button type="button" @click="opendocuments(props.params.data)"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">View
                 Document</button>
-            <button v-if="user.user_role === 1 || user.user_id === props.params.data.created_by" type="button" @click="removeItem()"
+            <button v-if="user.user_role === 1 || user.user_id === props.params.data.created_by" type="button"
+                @click="removeItem()"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete</button>
 
         </div>

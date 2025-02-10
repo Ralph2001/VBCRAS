@@ -160,9 +160,15 @@
                 <div class="h-full  w-full flex   justify-center relative ">
                     <div v-if="!preview"
                         class="h-full w-full flex  overflow-scroll justify-center  border   p-20 pt-24 pb-44">
-                        <div v-if="!preview" :style="paperStyle" class="flex bg-gray-50 shadow-md flex-col scale-110"
+                        <div v-if="!preview" :style="paperStyle"
+                            class="flex bg-gray-50 shadow-md flex-col scale-110 relative"
                             :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
-                            <div v-if="page === 1" class="w-full h-full border-[3px] border-gray-700 flex flex-col">
+                            <button
+                                class="absolute top-0 -right-14  rounded-full py-3.5 text-sm hover:bg-gray-100 px-2 font-medium"
+                                @click="blank()">Blank</button>
+                            <div v-if="page === 1"
+                                class="w-full h-full border-[3px] border-gray-700 flex flex-col relative">
+
 
                                 <!-- First -->
                                 <!-- <div class="border-b border-gray-500 flex flex-col relative p-1 w-full">
@@ -1358,8 +1364,8 @@
 
                                                     <FocusableButton isCenter
                                                         :documentName="'Groom  Subscribe and sworn day'"
-                                                        :field="'groom_ss_day'" :tabIndex="70" :formData="formData"
-                                                        :activeInputField="active_input_field"
+                                                        :field="'groom_ss_day'" :tabIndex="70" isDate
+                                                        :formData="formData" :activeInputField="active_input_field"
                                                         :openFormInput="open_form_input" />
                                                 </div>
                                                 <p class="font-serif  text-nowrap text-xs italic">day of</p>
@@ -1385,7 +1391,7 @@
                                                 <FocusableButton isCenter
                                                     :documentName="'Groom  Subscribe and sworn at'"
                                                     :field="'groom_ss_at'" :tabIndex="76" :formData="formData"
-                                                    :activeInputField="active_input_field"
+                                                    :activeInputField="active_input_field" isAddress
                                                     :openFormInput="open_form_input" />
                                                 <p class="font-serif  text-nowrap text-xs italic">, Philippines, affiant
                                                     who
@@ -1431,8 +1437,8 @@
                                                 <!-- <InputBottomBorderMarriage v-model="formData.groom_ctc_at" middle /> -->
 
                                                 <FocusableButton isCenter :documentName="'Groom CTC Issued At'"
-                                                    :field="'groom_ctc_at'" :tabIndex="84" :formData="formData"
-                                                    :activeInputField="active_input_field"
+                                                    :field="'groom_ctc_at'" isAddress :tabIndex="84"
+                                                    :formData="formData" :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
                                             </div>
                                         </div>
@@ -1467,7 +1473,7 @@
                                                 <div class="w-[48%] ">
                                                     <!-- <InputBottomBorderMarriage v-model="formData.bride_ss_day" isBold /> -->
                                                     <FocusableButton isCenter
-                                                        :documentName="'Bride  Subscribe and sworn day'"
+                                                        :documentName="'Bride  Subscribe and sworn day'" isDate
                                                         :field="'bride_ss_day'" :tabIndex="73" :formData="formData"
                                                         :activeInputField="active_input_field"
                                                         :openFormInput="open_form_input" />
@@ -1495,7 +1501,7 @@
 
                                                 <FocusableButton isCenter
                                                     :documentName="'Bride  Subscribe and sworn at'"
-                                                    :field="'bride_ss_at'" :tabIndex="77" :formData="formData"
+                                                    :field="'bride_ss_at'" :tabIndex="77" :formData="formData" isAddress
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
                                                 <p class="font-serif  text-nowrap text-xs italic">, Philippines, affiant
@@ -1536,8 +1542,9 @@
                                             </div>
                                             <div class="flex flex-row gap-1">
                                                 <p class="font-serif  text-nowrap text-xs italic">at</p>
-                                                <FocusableButton isCenter :documentName="'Bride CTC Issued At'"
-                                                    :field="'bride_ctc_at'" :tabIndex="85" :formData="formData"
+                                                <FocusableButton isAddress isCenter
+                                                    :documentName="'Bride CTC Issued At'" :field="'bride_ctc_at'"
+                                                    :tabIndex="85" :formData="formData"
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
                                             </div>
@@ -1767,7 +1774,7 @@ import { useApplicationMarriageLicense } from '../../stores/APL';
 import FocusableButton from '../../components/Marriage/FocusableButton.vue';
 import { parse, isValid, format } from 'date-fns';
 import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMarriage.vue';
-import { complete_municipality_with_province, municipalityProvinceAddress, complete_province, complete_municipality } from '../../utils/address';
+import { complete_municipality_with_province, mun_prov, municipalityProvinceAddress, complete_province, complete_municipality } from '../../utils/address';
 import ActionBtn from '../../components/Marriage/ActionBtn.vue';
 import { AuthStore } from "../../stores/Authentication.js";
 
@@ -1789,7 +1796,7 @@ const current_tab = ref(0)
 const is_current_tab_date = ref(false)
 const is_input_with_address_suggestions = ref(false)
 
-
+const mun_province = ref(mun_prov())
 const municipality_with_province = ref(municipalityProvinceAddress())
 const _allProvince = ref(complete_province())
 
@@ -1804,6 +1811,13 @@ const filteredData = computed(() => {
 
     if (!input_form_value.value) {
         return [];
+    }
+
+    if (active_input_field.value === 'groom_ss_at' || active_input_field.value === 'groom_ctc_at' || active_input_field.value === 'bride_ss_at' || active_input_field.value === 'bride_ctc_at'
+    ) {
+        return mun_province.value.filter((suggestion) => {
+            return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
+        });
     }
 
     if (active_input_field.value === 'header_province') {
@@ -1823,6 +1837,16 @@ const filteredData = computed(() => {
 });
 
 const address_spreader = (event, value, index) => {
+    if (active_input_field.value === 'groom_ss_at' || active_input_field.value === 'groom_ctc_at' || active_input_field.value === 'bride_ss_at' || active_input_field.value === 'bride_ctc_at'
+
+    ) {
+
+        const address = value.replace(' ', '').replace('|', ', ')
+        formData[active_input_field.value] = address.toUpperCase()
+        focusNextInput(event)
+        return
+    }
+
     // console.log(index)
     if (active_input_field.value === 'header_province') {
         current_tab.value = 1
@@ -1941,12 +1965,12 @@ const focusPreviousInput = (event) => {
     event.preventDefault();
 
     const maxSuggestionIndex = 1000 + filteredData.value.length - 1;
-    
+
 
     if (current_tab.value > 0) {
         if (current_tab.value <= maxSuggestionIndex) {
-        return
-    }
+            return
+        }
         current_tab.value -= 1;
     }
 
@@ -1974,6 +1998,9 @@ const submit_input_data = (event, field) => {
         current_tab.value = 21
     }
 
+    if (active_input_field.value === 'groom_ss_at') {
+        current_tab.value = 76  
+    }
     const data = input_form_value.value;
 
     // Define possible date formats
@@ -2000,6 +2027,26 @@ const submit_input_data = (event, field) => {
                 if (field === 'date_of_receipt' || field === 'date_issuance_marriage_license') {
                     const formattedDate = format(parsedDate, 'MMMM dd, yyyy').toUpperCase();
                     formData[field] = formattedDate;
+                    break
+                }
+                if (field === 'groom_ss_day') {
+
+                    formData.groom_ss_day = format(parsedDate, 'do').toUpperCase();
+                    formData.groom_ss_month = format(parsedDate, 'MMMM').toUpperCase();
+                    formData.groom_ss_year = format(parsedDate, 'yyyy').toUpperCase();
+                    focusNextInput(event);
+                    focusNextInput(event);
+
+                    break
+                }
+                if (field === 'bride_ss_day') {
+
+                    formData.bride_ss_day = format(parsedDate, 'do').toUpperCase();
+                    formData.bride_ss_month = format(parsedDate, 'MMMM').toUpperCase();
+                    formData.bride_ss_year = format(parsedDate, 'yyyy').toUpperCase();
+                    focusNextInput(event);
+                    focusNextInput(event);
+
                     break
                 }
                 const formattedDate = format(parsedDate, 'dd MMMM, yyyy').toUpperCase();
@@ -2243,21 +2290,25 @@ const open_model = () => {
 
     const date = new Date()
 
+    formData.groom_civil_status = 'SINGLE'
+    formData.bride_civil_status = 'SINGLE'
+
     formData.civil_registrar = 'ISMAEL D. MALICDEM, JR.'
     formData.received_by = 'ISMAEL D. MALICDEM, JR.'
     formData.groom_sex = "MALE"
     formData.bride_sex = "FEMALE"
     formData.header_province = "PANGASINAN"
     formData.header_municipality = "BAYAMBANG"
-    formData.groom_ss_day = format(date, 'do').toUpperCase()
-    formData.groom_ss_month = format(date, 'MMMM').toUpperCase()
-    formData.groom_ss_year = format(date, 'yyyy')
-    formData.groom_ss_at = 'BAYAMBANG, PANGASINAN'
 
-    formData.bride_ss_day = format(date, 'do').toUpperCase()
-    formData.bride_ss_month = format(date, 'MMMM').toUpperCase()
-    formData.bride_ss_year = format(date, 'yyyy')
-    formData.bride_ss_at = 'BAYAMBANG, PANGASINAN'
+    // formData.groom_ss_day = format(date, 'do').toUpperCase()
+    // formData.groom_ss_month = format(date, 'MMMM').toUpperCase()
+    // formData.groom_ss_year = format(date, 'yyyy')
+    // formData.groom_ss_at = 'BAYAMBANG, PANGASINAN'
+
+    // formData.bride_ss_day = format(date, 'do').toUpperCase()
+    // formData.bride_ss_month = format(date, 'MMMM').toUpperCase()
+    // formData.bride_ss_year = format(date, 'yyyy')
+    // formData.bride_ss_at = 'BAYAMBANG, PANGASINAN'
 
     formData.date_of_receipt = format(date, 'MMMM dd, yyyy').toUpperCase()
     formData.registry_number = format(date, 'yyyy') + '-'
@@ -2300,7 +2351,7 @@ const initialForm = {
     groom_residence: '',
     groom_residence_country: '', // 
     groom_religion: '',
-    groom_civil_status: 'SINGLE',
+    groom_civil_status: '',
 
 
 
@@ -2350,7 +2401,7 @@ const initialForm = {
     bride_residence: '',
     bride_residence_country: '', //
     bride_religion: '',
-    bride_civil_status: 'SINGLE',
+    bride_civil_status: '',
 
 
 
@@ -2498,13 +2549,16 @@ const bride_picture = ref(null)
 const handle_bride_image = (capturedImage) => {
     bride_picture.value = capturedImage
 }
-
+const blank = () => {
+    Object.assign(formData, { ...initialForm });
+}
 const close_modal = () => {
     Object.assign(formData, { ...initialForm });
     groom_picture.value = null;
     bride_picture.value = null;
     modal.value = false;
     page.value = 1
+    preview.value = false
 };
 
 
@@ -2679,150 +2733,11 @@ const submit = async () => {
     //     console.log(v$.value);
     //     return;
     // }
-    const data = {
-        header_province: formData.header_province,
-        header_municipality: formData.header_municipality,
-        registry_number: formData.registry_number,
-        received_by: formData.received_by,
-        date_of_receipt: formData.date_of_receipt,
-        marriage_license_number: formData.marriage_license_number,
-        date_issuance_marriage_license: formData.date_issuance_marriage_license,
-        groom_contract_marriage_with: formData.groom_contract_marriage_with,
-        bride_contract_marriage_with: formData.bride_contract_marriage_with,
-
-        civil_registrar: formData.civil_registrar,
-
-        groom_first_name: formData.groom_first_name,
-        groom_middle_name: formData.groom_middle_name,
-        groom_last_name: formData.groom_last_name,
-
-        groom_day: formData.groom_day,
-        groom_month: formData.groom_month,
-        groom_year: formData.groom_year,
-
-        groom_age: formData.groom_age,
-
-        groom_municipality: formData.groom_municipality,
-        groom_province: formData.groom_province,
-        groom_country: formData.groom_country,
-
-        groom_sex: formData.groom_sex,
-        groom_citizenship: formData.groom_citizenship,
-        groom_residence: formData.groom_residence,
-        groom_residence_country: formData.groom_residence_country,
-        groom_religion: formData.groom_religion,
-        groom_civil_status: formData.groom_civil_status,
-        groom_previously_married_dissolved: formData.groom_previously_married_dissolved,
-        groom_place_dissolved: formData.groom_place_dissolved,
-        groom_date_dissolved: formData.groom_date_dissolved,
-        groom_degree_relation: formData.groom_degree_relation,
-        groom_father_first_name: formData.groom_father_first_name,
-        groom_father_middle_name: formData.groom_father_middle_name,
-        groom_father_last_name: formData.groom_father_last_name,
-        groom_father_citizenship: formData.groom_father_citizenship,
-        groom_father_residence: formData.groom_father_residence,
-        groom_father_residence_country: formData.groom_father_residence_country,
-        groom_mother_first_name: formData.groom_mother_first_name,
-        groom_mother_middle_name: formData.groom_mother_middle_name,
-        groom_mother_last_name: formData.groom_mother_last_name,
-        groom_mother_citizenship: formData.groom_mother_citizenship,
-        groom_mother_residence: formData.groom_mother_residence,
-        groom_mother_residence_country: formData.groom_mother_residence_country,
-        groom_person_who_gave_consent: formData.groom_person_who_gave_consent,
-        groom_person_who_gave_consent_relation: formData.groom_person_who_gave_consent_relation,
-        groom_person_who_gave_consent_citizenship: formData.groom_person_who_gave_consent_citizenship,
-        groom_person_who_gave_consent_residence: formData.groom_person_who_gave_consent_residence,
 
 
-        groom_ss_day: formData.groom_ss_day,
-        groom_ss_month: formData.groom_ss_month,
-        groom_ss_year: formData.groom_ss_year,
-        groom_ss_at: formData.groom_ss_at,
-        groom_ctc_number: formData.groom_ctc_number,
-        groom_ctc_on: formData.groom_ctc_on,
-        groom_ctc_at: formData.groom_ctc_at,
-
-
-        bride_first_name: formData.bride_first_name,
-        bride_middle_name: formData.bride_middle_name,
-        bride_last_name: formData.bride_last_name,
-
-        bride_day: formData.bride_day,
-        bride_month: formData.bride_month,
-        bride_year: formData.bride_year,
-
-        bride_age: formData.bride_age,
-        bride_municipality: formData.bride_municipality,
-        bride_province: formData.bride_province,
-        bride_country: formData.bride_country,
-        bride_sex: formData.bride_sex,
-        bride_citizenship: formData.bride_citizenship,
-        bride_residence: formData.bride_residence,
-        bride_residence_country: formData.bride_residence_country,
-        bride_religion: formData.bride_religion,
-        bride_civil_status: formData.bride_civil_status,
-        bride_previously_married_dissolved: formData.bride_previously_married_dissolved,
-        bride_place_dissolved: formData.bride_place_dissolved,
-        bride_date_dissolved: formData.bride_date_dissolved,
-        bride_degree_relation: formData.bride_degree_relation,
-        bride_father_first_name: formData.bride_father_first_name,
-        bride_father_middle_name: formData.bride_father_middle_name,
-        bride_father_last_name: formData.bride_father_last_name,
-        bride_father_citizenship: formData.bride_father_citizenship,
-        bride_father_residence: formData.bride_father_residence,
-        bride_father_residence_country: formData.bride_father_residence_country,
-        bride_mother_first_name: formData.bride_mother_first_name,
-        bride_mother_middle_name: formData.bride_mother_middle_name,
-        bride_mother_last_name: formData.bride_mother_last_name,
-        bride_mother_citizenship: formData.bride_mother_citizenship,
-        bride_mother_residence: formData.bride_mother_residence,
-        bride_mother_residence_country: formData.bride_mother_residence_country,
-        bride_person_who_gave_consent: formData.bride_person_who_gave_consent,
-        bride_person_who_gave_consent_relation: formData.bride_person_who_gave_consent_relation,
-        bride_person_who_gave_consent_citizenship: formData.bride_person_who_gave_consent_citizenship,
-        bride_person_who_gave_consent_residence: formData.bride_person_who_gave_consent_residence,
-
-
-        bride_ss_day: formData.bride_ss_day,
-        bride_ss_month: formData.bride_ss_month,
-        bride_ss_year: formData.bride_ss_year,
-        bride_ss_at: formData.bride_ss_at,
-        bride_ctc_number: formData.bride_ctc_number,
-        bride_ctc_on: formData.bride_ctc_on,
-        bride_ctc_at: formData.bride_ctc_at,
-
-        notice_province: formData.notice_province,
-        notice_municipality: formData.notice_municipality,
-        notice_office: formData.notice_office,
-
-        notice_groom_name: formData.notice_groom_name,
-        notice_bride_name: formData.notice_bride_name,
-
-        notice_groom_age: formData.notice_groom_age,
-        notice_groom_birthplace: formData.notice_groom_birthplace,
-        notice_groom_residence: formData.notice_groom_residence,
-        notice_groom_father: formData.notice_groom_father,
-        notice_groom_mother: formData.notice_groom_mother,
-
-        notice_bride_age: formData.notice_bride_age,
-        notice_bride_birthplace: formData.notice_bride_birthplace,
-        notice_bride_residence: formData.notice_bride_residence,
-        notice_bride_father: formData.notice_bride_father,
-        notice_bride_mother: formData.notice_bride_mother,
-
-        notice_date_posting: formData.notice_date_posting,
-        notice_position: formData.notice_position,
-        notice_copy_furnished1: formData.notice_copy_furnished1,
-        notice_copy_furnished2: formData.notice_copy_furnished2,
-        notice_copy_furnished3: formData.notice_copy_furnished3,
-        notice_copy_furnished4: formData.notice_copy_furnished4,
-
-        file_path: '',
-        created_by: auth.user_id
-
-        // FOR DISSOLVED
-    }
-
+    // Save Local Copy of Application of Marriage and Notice *.pdf
+    // Save Data to Database
+    // Save Images to Desktop/Pictures
     const bride = bride_picture.value
     const groom = groom_picture.value
 
@@ -2830,34 +2745,196 @@ const submit = async () => {
         bride, groom
     ]
 
-    // Save Local Copy of Application of Marriage and Notice *.pdf
-    // Save Data to Database
-    // Save Images to Desktop/Pictures
-
     const image_data = JSON.stringify(images)
     const main_data = JSON.stringify({ ...formData })
 
     const save_local = await window.MarriageApi.saveMarriageApplicationEntry(main_data, image_data)
-    const save_to_database = await apl.addApplicationMarriageLicense(data)
 
-    close_modal()
+    if (save_local.status === true) {
+        const data = {
+            header_province: formData.header_province,
+            header_municipality: formData.header_municipality,
+            registry_number: formData.registry_number,
+            received_by: formData.received_by,
+            date_of_receipt: formData.date_of_receipt,
+            marriage_license_number: formData.marriage_license_number,
+            date_issuance_marriage_license: formData.date_issuance_marriage_license,
+            groom_contract_marriage_with: formData.groom_contract_marriage_with,
+            bride_contract_marriage_with: formData.bride_contract_marriage_with,
+
+            civil_registrar: formData.civil_registrar,
+
+            groom_first_name: formData.groom_first_name,
+            groom_middle_name: formData.groom_middle_name,
+            groom_last_name: formData.groom_last_name,
+
+            groom_day: formData.groom_day,
+            groom_month: formData.groom_month,
+            groom_year: formData.groom_year,
+
+            groom_age: formData.groom_age,
+
+            groom_municipality: formData.groom_municipality,
+            groom_province: formData.groom_province,
+            groom_country: formData.groom_country,
+
+            groom_sex: formData.groom_sex,
+            groom_citizenship: formData.groom_citizenship,
+            groom_residence: formData.groom_residence,
+            groom_residence_country: formData.groom_residence_country,
+            groom_religion: formData.groom_religion,
+            groom_civil_status: formData.groom_civil_status,
+            groom_previously_married_dissolved: formData.groom_previously_married_dissolved,
+            groom_place_dissolved: formData.groom_place_dissolved,
+            groom_date_dissolved: formData.groom_date_dissolved,
+            groom_degree_relation: formData.groom_degree_relation,
+            groom_father_first_name: formData.groom_father_first_name,
+            groom_father_middle_name: formData.groom_father_middle_name,
+            groom_father_last_name: formData.groom_father_last_name,
+            groom_father_citizenship: formData.groom_father_citizenship,
+            groom_father_residence: formData.groom_father_residence,
+            groom_father_residence_country: formData.groom_father_residence_country,
+            groom_mother_first_name: formData.groom_mother_first_name,
+            groom_mother_middle_name: formData.groom_mother_middle_name,
+            groom_mother_last_name: formData.groom_mother_last_name,
+            groom_mother_citizenship: formData.groom_mother_citizenship,
+            groom_mother_residence: formData.groom_mother_residence,
+            groom_mother_residence_country: formData.groom_mother_residence_country,
+            groom_person_who_gave_consent: formData.groom_person_who_gave_consent,
+            groom_person_who_gave_consent_relation: formData.groom_person_who_gave_consent_relation,
+            groom_person_who_gave_consent_citizenship: formData.groom_person_who_gave_consent_citizenship,
+            groom_person_who_gave_consent_residence: formData.groom_person_who_gave_consent_residence,
+
+
+            groom_ss_day: formData.groom_ss_day,
+            groom_ss_month: formData.groom_ss_month,
+            groom_ss_year: formData.groom_ss_year,
+            groom_ss_at: formData.groom_ss_at,
+            groom_ctc_number: formData.groom_ctc_number,
+            groom_ctc_on: formData.groom_ctc_on,
+            groom_ctc_at: formData.groom_ctc_at,
+
+
+            bride_first_name: formData.bride_first_name,
+            bride_middle_name: formData.bride_middle_name,
+            bride_last_name: formData.bride_last_name,
+
+            bride_day: formData.bride_day,
+            bride_month: formData.bride_month,
+            bride_year: formData.bride_year,
+
+            bride_age: formData.bride_age,
+            bride_municipality: formData.bride_municipality,
+            bride_province: formData.bride_province,
+            bride_country: formData.bride_country,
+            bride_sex: formData.bride_sex,
+            bride_citizenship: formData.bride_citizenship,
+            bride_residence: formData.bride_residence,
+            bride_residence_country: formData.bride_residence_country,
+            bride_religion: formData.bride_religion,
+            bride_civil_status: formData.bride_civil_status,
+            bride_previously_married_dissolved: formData.bride_previously_married_dissolved,
+            bride_place_dissolved: formData.bride_place_dissolved,
+            bride_date_dissolved: formData.bride_date_dissolved,
+            bride_degree_relation: formData.bride_degree_relation,
+            bride_father_first_name: formData.bride_father_first_name,
+            bride_father_middle_name: formData.bride_father_middle_name,
+            bride_father_last_name: formData.bride_father_last_name,
+            bride_father_citizenship: formData.bride_father_citizenship,
+            bride_father_residence: formData.bride_father_residence,
+            bride_father_residence_country: formData.bride_father_residence_country,
+            bride_mother_first_name: formData.bride_mother_first_name,
+            bride_mother_middle_name: formData.bride_mother_middle_name,
+            bride_mother_last_name: formData.bride_mother_last_name,
+            bride_mother_citizenship: formData.bride_mother_citizenship,
+            bride_mother_residence: formData.bride_mother_residence,
+            bride_mother_residence_country: formData.bride_mother_residence_country,
+            bride_person_who_gave_consent: formData.bride_person_who_gave_consent,
+            bride_person_who_gave_consent_relation: formData.bride_person_who_gave_consent_relation,
+            bride_person_who_gave_consent_citizenship: formData.bride_person_who_gave_consent_citizenship,
+            bride_person_who_gave_consent_residence: formData.bride_person_who_gave_consent_residence,
+
+
+            bride_ss_day: formData.bride_ss_day,
+            bride_ss_month: formData.bride_ss_month,
+            bride_ss_year: formData.bride_ss_year,
+            bride_ss_at: formData.bride_ss_at,
+            bride_ctc_number: formData.bride_ctc_number,
+            bride_ctc_on: formData.bride_ctc_on,
+            bride_ctc_at: formData.bride_ctc_at,
+
+            notice_province: formData.notice_province,
+            notice_municipality: formData.notice_municipality,
+            notice_office: formData.notice_office,
+
+            notice_groom_name: formData.notice_groom_name,
+            notice_bride_name: formData.notice_bride_name,
+
+            notice_groom_age: formData.notice_groom_age,
+            notice_groom_birthplace: formData.notice_groom_birthplace,
+            notice_groom_residence: formData.notice_groom_residence,
+            notice_groom_father: formData.notice_groom_father,
+            notice_groom_mother: formData.notice_groom_mother,
+
+            notice_bride_age: formData.notice_bride_age,
+            notice_bride_birthplace: formData.notice_bride_birthplace,
+            notice_bride_residence: formData.notice_bride_residence,
+            notice_bride_father: formData.notice_bride_father,
+            notice_bride_mother: formData.notice_bride_mother,
+
+            notice_date_posting: formData.notice_date_posting,
+            notice_position: formData.notice_position,
+            notice_copy_furnished1: formData.notice_copy_furnished1,
+            notice_copy_furnished2: formData.notice_copy_furnished2,
+            notice_copy_furnished3: formData.notice_copy_furnished3,
+            notice_copy_furnished4: formData.notice_copy_furnished4,
+
+            file_path: save_local.filepath,
+            created_by: auth.user_id
+
+            // FOR DISSOLVED
+        }
+
+
+        const save_to_database = await apl.addApplicationMarriageLicense(data)
+
+        close_modal()
+    }
+
 }
 
 const colDefs = ref([
     {
-        field: "groom_first_name",
+
         headerName: "Groom Name",
         cellClass: 'font-medium',
         flex: 2,
         filter: true,
 
+        valueGetter: (params) => {
+            // Combine first, middle, and last names
+            const firstName = params.data.groom_first_name || '';
+            const middleName = params.data.groom_middle_name || '';
+            const lastName = params.data.groom_last_name || '';
+
+            // You can adjust the formatting here (e.g., adding a space between names)
+            return `${firstName} ${middleName} ${lastName}`.trim();
+        }
     },
     {
-        field: "bride_first_name",
+
         headerName: "Bride Name",
         cellClass: 'font-medium',
         flex: 2,
-        filter: true,
+        valueGetter: (params) => {
+            // Combine first, middle, and last names
+            const firstName = params.data.bride_first_name || '';
+            const middleName = params.data.bride_middle_name || '';
+            const lastName = params.data.bride_last_name || '';
+
+            // You can adjust the formatting here (e.g., adding a space between names)
+            return `${firstName} ${middleName} ${lastName}`.trim();
+        }
 
     },
 

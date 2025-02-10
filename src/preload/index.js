@@ -133,6 +133,7 @@ contextBridge.exposeInMainWorld('MarriageApi', {
             formData,
             image
         )
+
         return save
     },
     previewMarriage: async (formData) => {
@@ -222,6 +223,12 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     },
     openFilePath: async (source) => {
         const result = await ipcRenderer.invoke('open-file-folder', source)
+        if (result) {
+            return true
+        }
+    },
+    openSpecifiedFolder: async (source) => {
+        const result = await ipcRenderer.invoke('openSpecifiedFolder', source)
         if (result) {
             return true
         }

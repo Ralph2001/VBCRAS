@@ -397,6 +397,8 @@ async function generate_marriage_license(formData) {
         ]
 
         const fields_to_avoid = [
+            'groom_contract_marriage_with',
+            'bride_contract_marriage_with',
             'groom_municipality',
             'groom_province',
             'groom_country',
@@ -783,6 +785,11 @@ async function save_marriage_license_and_notice(formData, image) {
 
         if (images && images.length > 0) {
             images.forEach((imagePath, index) => {
+                if (!imagePath) {
+                    console.log(`Skipping invalid image path at index ${index}`);
+                    return; // Skip this iteration if imagePath is null or undefined
+                }
+
                 let imageFileName;
 
                 // If the image is base64-encoded, use a fixed extension (e.g., .jpg)
@@ -805,7 +812,9 @@ async function save_marriage_license_and_notice(formData, image) {
             console.log('No images provided, skipping image saving.');
         }
 
+
         console.log('Marriage license, notice, and images (if provided) saved successfully.');
+        return { status: true, filepath: outputDir }
 
     } catch (error) {
         console.error('Error saving marriage license, notice, or images:', error.message);
