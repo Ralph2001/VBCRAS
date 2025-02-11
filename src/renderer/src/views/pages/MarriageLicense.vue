@@ -131,7 +131,7 @@
                 </div>
 
                 <div v-if="is_input_with_address_suggestions && filteredData.length && is_form_input_active && !preview && page === 1"
-                    class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem] border border-gray-400 shadow-md p-2 z-50 w-[30rem] bg-white text-gray-800 ">
+                    class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem] border border-gray-400 shadow-md p-2 z-50 w-auto min-w-[30rem] max-w-2xl bg-white text-gray-800 ">
                     <div class="h-auto w-full" v-for="(suggestion, index) in filteredData" :key="suggestion">
                         <button @keydown="handleTabNavigation" :tabindex="1000 + index"
                             @click='address_spreader($event, suggestion, 1000 + index)' class="uppercase hover:bg-gray-200 w-full text-start active:bg-blue-200 focus:bg-blue-200 px-2 active:scale-[99%] transition-all font-medium
@@ -146,8 +146,9 @@
                 <div class="fixed bottom-0 z-50 left-0  right-0 bg-yellow-200  flex items-center justify-center w-full  py-2 px-4 "
                     v-if="page === 1 && is_form_input_active && !preview">
                     <div class="flex flex-col w-[30rem] gap-2 h-full justify-center">
-                        <label for="" class="text-xs uppercase font-medium">Please enter {{ active_document_form
-                            }}:</label>
+                        <label for="" class="text-xs uppercase font-medium text-nowrap">Please enter {{
+                            active_document_form
+                        }}:</label>
                         <input type="text" v-model="input_form_value" ref="input_form_field" tabindex="-1"
                             @keydown="handleTabNavigation"
                             @keydown.enter="submit_input_data($event, active_input_field)"
@@ -164,7 +165,7 @@
                             class="flex bg-gray-50 shadow-md flex-col scale-110 relative"
                             :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
                             <button
-                                class="absolute top-0 -right-14  rounded-full py-3.5 text-sm hover:bg-gray-100 px-2 font-medium"
+                                class="absolute top-0 -right-14  rounded-full py-3.5 text-gray-500 text-sm hover:bg-gray-100 px-2 font-medium"
                                 @click="blank()">Blank</button>
                             <div v-if="page === 1"
                                 class="w-full h-full border-[3px] border-gray-700 flex flex-col relative">
@@ -574,7 +575,7 @@
                                             </div>
 
                                             <div class="flex w-full">
-                                                <FocusableButton isCenter :documentName="'Groom Citizenship'"
+                                                <FocusableButton isCenter isAddress :documentName="'Groom Citizenship'"
                                                     :field="'groom_citizenship'" :tabIndex="25" :formData="formData"
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
@@ -617,7 +618,7 @@
                                             </div>
 
                                             <div class="flex w-full">
-                                                <FocusableButton isCenter :documentName="'Bride Citizenship'"
+                                                <FocusableButton isCenter isAddress :documentName="'Bride Citizenship'"
                                                     :field="'bride_citizenship'" :tabIndex="27" :formData="formData"
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
@@ -644,7 +645,7 @@
                                         </div>
 
                                         <div class="flex w-full">
-                                            <FocusableButton isCenter
+                                            <FocusableButton isCenter isAddress
                                                 :documentName="'Groom Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
                                                 :field="'groom_residence'" :tabIndex="28" :formData="formData"
                                                 :activeInputField="active_input_field"
@@ -669,7 +670,7 @@
                                         </div>
 
                                         <div class="flex w-full">
-                                            <FocusableButton isCenter
+                                            <FocusableButton isCenter isAddress
                                                 :documentName="'Bride Residence (House No., St., Barangay, City/Municipality, Province, Country)'"
                                                 :field="'bride_residence'" :tabIndex="29" :formData="formData"
                                                 :activeInputField="active_input_field"
@@ -691,9 +692,9 @@
                                 <div class="flex flex-row border-b border-gray-500 w-full">
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center h-full justify-center border-r border-gray-500   ">
-                                        <FocusableButton :documentName="'Groom Religion'" :field="'groom_religion'"
-                                            :tabIndex="30" :formData="formData" :activeInputField="active_input_field"
-                                            :openFormInput="open_form_input" />
+                                        <FocusableButton isAddress :documentName="'Groom Religion'"
+                                            :field="'groom_religion'" :tabIndex="30" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
 
 
                                     </div>
@@ -708,9 +709,9 @@
                                     </div>
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500  ">
-                                        <FocusableButton :documentName="'Bride Religion'" :field="'bride_religion'"
-                                            :tabIndex="31" :formData="formData" :activeInputField="active_input_field"
-                                            :openFormInput="open_form_input" />
+                                        <FocusableButton isAddress :documentName="'Bride Religion'"
+                                            :field="'bride_religion'" :tabIndex="31" :formData="formData"
+                                            :activeInputField="active_input_field" :openFormInput="open_form_input" />
 
 
                                     </div>
@@ -1000,7 +1001,7 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
                                         <!-- <InputBottomBorderMarriage v-model="formData.groom_father_citizenship" isBold /> -->
-                                        <FocusableButton :documentName="'Groom Father Citizenship'"
+                                        <FocusableButton isAddress :documentName="'Groom Father Citizenship'"
                                             :field="'groom_father_citizenship'" :tabIndex="48" :formData="formData"
                                             :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
@@ -1015,7 +1016,7 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <!-- <InputBottomBorderMarriage v-model="formData.bride_father_citizenship" isBold /> -->
-                                        <FocusableButton :documentName="'Bride Father Citizenship'"
+                                        <FocusableButton isAddress :documentName="'Bride Father Citizenship'"
                                             :field="'bride_father_citizenship'" :tabIndex="49" :formData="formData"
                                             :activeInputField="active_input_field" :openFormInput="open_form_input" />
 
@@ -1132,7 +1133,7 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
 
-                                        <FocusableButton :documentName="'Groom Mother Citizenship'"
+                                        <FocusableButton isAddress :documentName="'Groom Mother Citizenship'"
                                             :field="'groom_mother_citizenship'" :tabIndex="58" :formData="formData"
                                             :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
@@ -1147,7 +1148,7 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
 
-                                        <FocusableButton :documentName="'Bride Mother Citizenship'"
+                                        <FocusableButton isAddress :documentName="'Bride Mother Citizenship'"
                                             :field="'bride_mother_citizenship'" :tabIndex="59" :formData="formData"
                                             :activeInputField="active_input_field" :openFormInput="open_form_input" />
                                     </div>
@@ -1270,7 +1271,7 @@
                                     <div
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-r border-gray-500  py-0.5 ">
 
-                                        <FocusableButton
+                                        <FocusableButton isAddress
                                             :documentName="'Groom person who gave consent or advice Citizenship'"
                                             :field="'groom_person_who_gave_consent_citizenship'" :tabIndex="66"
                                             :formData="formData" :activeInputField="active_input_field"
@@ -1289,7 +1290,7 @@
                                         class="basis-[45%] grid grid-cols-1 gap-2 items-center border-l border-gray-500 py-0.5 ">
                                         <!-- <InputBottomBorderMarriage
                                             v-model="formData.bride_person_who_gave_consent_citizenship" isBold /> -->
-                                        <FocusableButton
+                                        <FocusableButton isAddress
                                             :documentName="'Bride person who gave consent or advice Citizenship'"
                                             :field="'bride_person_who_gave_consent_citizenship'" :tabIndex="67"
                                             :formData="formData" :activeInputField="active_input_field"
@@ -1416,7 +1417,7 @@
                                                 <!-- <InputBottomBorderMarriage v-model="formData.groom_ctc_on" middle /> -->
 
                                                 <FocusableButton isCenter :documentName="'Groom CTC Issued on'"
-                                                    :field="'groom_ctc_on'" :tabIndex="80" :formData="formData"
+                                                    :field="'groom_ctc_on'" :tabIndex="80" :formData="formData" isDate
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
 
@@ -1526,7 +1527,7 @@
                                                 <!-- <InputBottomBorderMarriage middle v-model="formData.bride_ctc_on" /> -->
 
                                                 <FocusableButton isCenter :documentName="'Bride CTC Issued on'"
-                                                    :field="'bride_ctc_on'" :tabIndex="82" :formData="formData"
+                                                    :field="'bride_ctc_on'" :tabIndex="82" :formData="formData" isDate
                                                     :activeInputField="active_input_field"
                                                     :openFormInput="open_form_input" />
 
@@ -1777,6 +1778,8 @@ import InputSuggestionMarriage from '../../components/Marriage/InputSuggestionMa
 import { complete_municipality_with_province, mun_prov, municipalityProvinceAddress, complete_province, complete_municipality } from '../../utils/address';
 import ActionBtn from '../../components/Marriage/ActionBtn.vue';
 import { AuthStore } from "../../stores/Authentication.js";
+import { citizenshipOptions } from '../../utils/nationality.js';
+import { religionOptions } from '../../utils/religion.js';
 
 const auth = AuthStore()
 
@@ -1805,83 +1808,181 @@ const header_municipality_suggestions = computed(() => {
 })
 
 const filteredData = computed(() => {
-    if (!is_input_with_address_suggestions.value) {
+
+    if (!is_input_with_address_suggestions.value || !input_form_value.value) {
         return [];
     }
 
-    if (!input_form_value.value) {
-        return [];
+    const field = active_input_field.value;
+    const searchTerm = input_form_value.value.trim();
+    if (!searchTerm) return [];
+    const searchTermLower = searchTerm.toLowerCase();
+
+
+    if (field === 'groom_residence' || field === 'bride_residence') {
+
+        const inputParts = searchTerm.split(/,\s*/).map(part => part.trim().toUpperCase());
+        const mergedSuggestions = new Set();
+
+        municipality_with_province.value.forEach(entry => {
+            const entryParts = entry.split('|').map(part => part.trim());
+            const entryPartsUpper = entryParts.map(part => part.toUpperCase());
+
+            let matchedIndex = -1;
+            let matchedInputIndex = -1;
+
+            for (let i = 0; i < inputParts.length; i++) {
+                const index = entryPartsUpper.indexOf(inputParts[i]);
+                if (index !== -1) {
+                    matchedIndex = index;
+                    matchedInputIndex = i;
+                    break;
+                }
+            }
+
+            if (matchedIndex === -1) return;
+
+
+            const mergedParts = [
+                ...inputParts.slice(0, matchedInputIndex + 1),
+                ...entryParts.slice(matchedIndex + 1)
+            ];
+            mergedSuggestions.add(mergedParts.join(' | '));
+        });
+
+        return Array.from(mergedSuggestions);
     }
 
-    if (active_input_field.value === 'groom_ss_at' || active_input_field.value === 'groom_ctc_at' || active_input_field.value === 'bride_ss_at' || active_input_field.value === 'bride_ctc_at'
-    ) {
-        return mun_province.value.filter((suggestion) => {
-            return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
-        });
+    if (field === 'groom_religion' || field === 'bride_religion') {
+        return religionOptions.filter(suggestion =>
+            suggestion.toLowerCase().includes(searchTermLower)
+        );
     }
 
-    if (active_input_field.value === 'header_province') {
-        return _allProvince.value.filter((suggestion) => {
-            return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
-        });
-    }
-    if (active_input_field.value === 'header_municipality') {
-        return header_municipality_suggestions.value.filter((suggestion) => {
-            return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
-        });
+    const citizenshipFields = new Set([
+        'groom_citizenship',
+        'bride_citizenship',
+        'groom_father_citizenship',
+        'groom_mother_citizenship',
+        'groom_person_who_gave_consent_citizenship',
+        'bride_father_citizenship',
+        'bride_mother_citizenship',
+        'bride_person_who_gave_consent_citizenship'
+    ]);
+
+    if (citizenshipFields.has(field)) {
+        return citizenshipOptions.filter(suggestion =>
+            suggestion.toLowerCase().includes(searchTermLower)
+        );
     }
 
-    return municipality_with_province.value.filter((suggestion) => {
-        return suggestion.toLowerCase().includes(input_form_value.value.toLowerCase());
-    });
+    const munProvinceFields = [
+        'groom_ss_at',
+        'groom_ctc_at',
+        'bride_ss_at',
+        'bride_ctc_at'
+    ];
+    if (munProvinceFields.includes(field)) {
+        return mun_province.value.filter(suggestion =>
+            suggestion.toLowerCase().includes(searchTermLower)
+        );
+    }
+
+    if (field === 'header_province') {
+        return _allProvince.value.filter(suggestion =>
+            suggestion.toLowerCase().includes(searchTermLower)
+        );
+    }
+
+    if (field === 'header_municipality') {
+        return header_municipality_suggestions.value.filter(suggestion =>
+            suggestion.toLowerCase().includes(searchTermLower)
+        );
+    }
+
+    return municipality_with_province.value.filter(suggestion =>
+        suggestion.toLowerCase().includes(searchTermLower)
+    );
 });
 
 const address_spreader = (event, value, index) => {
-    if (active_input_field.value === 'groom_ss_at' || active_input_field.value === 'groom_ctc_at' || active_input_field.value === 'bride_ss_at' || active_input_field.value === 'bride_ctc_at'
+    const fieldValue = active_input_field.value;
+    let targetTab;
 
-    ) {
+    const addressMappings = {
 
-        const address = value.replace(' ', '').replace('|', ', ')
-        formData[active_input_field.value] = address.toUpperCase()
-        focusNextInput(event)
-        return
+        'groom_religion': 30,
+        'bride_religion': 31,
+
+        'groom_citizenship': 25,
+        'bride_citizenship': 27,
+        'groom_father_citizenship': 48,
+        'groom_mother_citizenship': 58,
+        'groom_person_who_gave_consent_citizenship': 66,
+        'bride_father_citizenship': 49,
+        'bride_mother_citizenship': 59,
+        'bride_person_who_gave_consent_citizenship': 67,
+
+
+        'groom_residence': 28,
+        'bride_residence': 29,
+        'groom_ss_at': 76,
+        'groom_ctc_at': 84,
+        'bride_ss_at': 77,
+        'bride_ctc_at': 86,
+        'header_province': 1,
+        'header_municipality': 2,
+        'groom_municipality': 18,
+        'bride_municipality': 21
+    };
+
+    if (addressMappings[fieldValue]) {
+        targetTab = addressMappings[fieldValue];
+        current_tab.value = targetTab;
     }
 
-    // console.log(index)
-    if (active_input_field.value === 'header_province') {
-        current_tab.value = 1
-    }
-    if (active_input_field.value === 'header_municipality') {
-        current_tab.value = 2
-    }
-    if (active_input_field.value === 'groom_municipality') {
-        current_tab.value = 18
-    }
-    if (active_input_field.value === 'bride_municipality') {
-        current_tab.value = 21
+    if (['groom_religion',
+        'bride_religion', 'groom_citizenship',
+        'bride_citizenship',
+        'groom_father_citizenship',
+        'groom_mother_citizenship',
+        'groom_person_who_gave_consent_citizenship',
+        'bride_father_citizenship',
+        'bride_mother_citizenship',
+        'bride_person_who_gave_consent_citizenship',].includes(fieldValue)) {
+
+        formData[fieldValue] = value.toUpperCase();
+        focusNextInput(event);
+        return;
     }
 
-    if (active_input_field.value === 'header_province' || active_input_field.value === 'header_municipality') {
-        const active = active_input_field.value
-        formData[active] = value.toUpperCase()
-        focusNextInput(event)
-        return
+
+    if (['groom_ss_at', 'groom_ctc_at', 'bride_ss_at', 'bride_ctc_at', 'groom_residence', 'bride_residence'].includes(fieldValue)) {
+        const address = value.replace(/\s*\|\s*/g, ', ').trim();
+        formData[fieldValue] = address.toUpperCase();
+        focusNextInput(event);
+        return;
     }
-    // Split the value based on '|'
-    const active = active_input_field.value.includes('groom') ? 'groom' : active_input_field.value.includes('bride') ? 'bride' : ''
+
+    if (['header_province', 'header_municipality'].includes(fieldValue)) {
+        formData[fieldValue] = value.toUpperCase();
+        focusNextInput(event);
+        return;
+    }
+
+    const activePrefix = fieldValue.includes('groom') ? 'groom' : fieldValue.includes('bride') ? 'bride' : '';
     const [municipality, province, country] = value.split('|').map(part => part.trim());
 
-    // Assign each part to the respective formData fields with uppercase
-    formData[`${active}_municipality`] = municipality ? municipality.toUpperCase() : '';
-    formData[`${active}_province`] = province ? province.toUpperCase() : '';
-    formData[`${active}_country`] = country ? country.toUpperCase() : '';
+    if (activePrefix) {
+        formData[`${activePrefix}_municipality`] = municipality ? municipality.toUpperCase() : '';
+        formData[`${activePrefix}_province`] = province ? province.toUpperCase() : '';
+        formData[`${activePrefix}_country`] = country ? country.toUpperCase() : '';
+    }
 
-    focusNextInput(event)
-    focusNextInput(event)
-    focusNextInput(event)
-}
-
-
+    focusNextInput(event);
+    focusNextInput(event);
+    focusNextInput(event);
+};
 
 const open_form_input = (name, field, tabIndex, isDate, is_address) => {
     if (is_address) {
@@ -1923,84 +2024,73 @@ const open_form_input = (name, field, tabIndex, isDate, is_address) => {
     }, 100);
 };
 
-
 const focusNextInput = (event) => {
     event.preventDefault();
     const maxSuggestionIndex = 1000 + filteredData.value.length - 1;
-
     if (current_tab.value === maxSuggestionIndex) {
-        return
+        return;
     }
     current_tab.value += 1;
-    console.log(current_tab.value)
 
-    const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
-        .filter(button => button.tabIndex === current_tab.value);
+    const nextButton = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+        .find(button => button.tabIndex === current_tab.value);
 
-    if (buttons.length > 0) {
-        buttons[0].focus();
+    if (nextButton) {
+        nextButton.focus();
     }
-    // if (current_tab.value === 87) {
-    //     current_tab.value = 1
-    //     const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
-    //         .filter(button => button.tabIndex === current_tab.value);
-
-    //     if (buttons.length > 0) {
-    //         buttons[0].focus();
-    //     }
-    //     return
-    // }
-    // // Increment the current_tab value
-    // current_tab.value += 1;
-
-    // const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
-    //     .filter(button => button.tabIndex === current_tab.value);
-
-    // if (buttons.length > 0) {
-    //     buttons[0].focus();
-    // }
 };
 
 const focusPreviousInput = (event) => {
     event.preventDefault();
-
     const maxSuggestionIndex = 1000 + filteredData.value.length - 1;
 
-
     if (current_tab.value > 0) {
-        if (current_tab.value <= maxSuggestionIndex) {
-            return
-        }
         current_tab.value -= 1;
     }
 
-    const buttons = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
-        .filter(button => button.tabIndex === current_tab.value);
+    if (current_tab.value > maxSuggestionIndex) {
+        current_tab.value = maxSuggestionIndex;
+    }
+    const previousButton = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+        .find(button => button.tabIndex === current_tab.value);
 
-    if (buttons.length > 0) {
-        buttons[0].focus();
+    if (previousButton) {
+        previousButton.focus();
     }
 };
 
-
-
 const submit_input_data = (event, field) => {
-    if (active_input_field.value === 'header_province') {
-        current_tab.value = 1
-    }
-    if (active_input_field.value === 'header_municipality') {
-        current_tab.value = 2
-    }
-    if (active_input_field.value === 'groom_municipality') {
-        current_tab.value = 18
-    }
-    if (active_input_field.value === 'bride_municipality') {
-        current_tab.value = 21
+    // After saving the data, focus on the next input field
+    const groom = field.includes('groom') ? add_details_to_notice('groom') : null
+    const bride = field.includes('bride') ? add_details_to_notice('bride') : null
+
+    const fieldToTabMapping = {
+        'groom_religion': 30,
+        'bride_religion': 31,
+
+        'groom_citizenship': 25,
+        'bride_citizenship': 27,
+        'groom_father_citizenship': 48,
+        'groom_mother_citizenship': 58,
+        'groom_person_who_gave_consent_citizenship': 66,
+        'bride_father_citizenship': 49,
+        'bride_mother_citizenship': 59,
+        'bride_person_who_gave_consent_citizenship': 67,
+        'groom_residence': 28,
+        'bride_residence': 29,
+        'header_province': 1,
+        'header_municipality': 2,
+        'groom_municipality': 18,
+        'bride_municipality': 21,
+        'groom_ss_at': 76,
+
     }
 
-    if (active_input_field.value === 'groom_ss_at') {
-        current_tab.value = 76  
+    const fields = active_input_field.value;
+    if (fields in fieldToTabMapping) {
+        current_tab.value = fieldToTabMapping[field];
     }
+
     const data = input_form_value.value;
 
     // Define possible date formats
@@ -2018,13 +2108,12 @@ const submit_input_data = (event, field) => {
     if (is_current_tab_date.value && data) {
         let parsedDate = null;
 
-        // Try each date format
         for (let formatString of dateFormats) {
             parsedDate = parse(data, formatString, new Date());
 
             if (isValid(parsedDate)) {
 
-                if (field === 'date_of_receipt' || field === 'date_issuance_marriage_license') {
+                if (field === 'date_of_receipt' || field === 'date_issuance_marriage_license' || field === 'groom_ctc_on' || field === 'bride_ctc_on') {
                     const formattedDate = format(parsedDate, 'MMMM dd, yyyy').toUpperCase();
                     formData[field] = formattedDate;
                     break
@@ -2082,14 +2171,9 @@ const submit_input_data = (event, field) => {
         // If it's not a date field, just save the data in uppercase
         formData[field] = data ? data.toUpperCase() : data;
     }
-
-    // After saving the data, focus on the next input field
-    const groom = field.includes('groom') ? add_details_to_notice('groom') : null
-    const bride = field.includes('bride') ? add_details_to_notice('bride') : null
     focusNextInput(event);
+
 };
-
-
 
 const add_age = (birth_date, field) => {
 
@@ -2109,7 +2193,7 @@ const add_age = (birth_date, field) => {
     }
 
     formData[field] = age.toString();
-    return age.toString(); // Save the calculated age
+    return age.toString();
 };
 
 const date_birth_spreader = (date, field) => {
@@ -2151,31 +2235,40 @@ const add_details_to_notice = (field) => {
         ? capitalizeName(formData[`${field}_municipality`]) + ', ' + capitalizeName(formData[`${field}_province`])
         : '';
 
-    formData[`notice_${field}_residence`] = formData[`${field}_residence`];
+    const capitalizeFirstLetter = (str) => {
+        return str
+            .split(' ') // Split into words
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize first letter
+            .join(' '); // Join back into a single string
+    };
+
+    formData[`notice_${field}_residence`] = formData[`${field}_residence`]
+        .split(',') // Split into parts by comma
+        .map(part => part.trim()) // Trim whitespace
+        .filter(part => !part.toUpperCase().includes('PHILIPPINES')) // Remove "PHILIPPINES"
+        .map(part => capitalizeFirstLetter(part)) // Capitalize first letter of each word
+        .join(', '); // Join back into a single string with commas
+
+    // formData[`notice_${field}_residence`] = formData[`${field}_residence`];
 
     formData[`notice_${field}_father`] = formatFullName(formData[`${field}_father_first_name`], formData[`${field}_father_middle_name`], formData[`${field}_father_last_name`]);
     formData[`notice_${field}_mother`] = formatFullName(formData[`${field}_mother_first_name`], formData[`${field}_mother_middle_name`], formData[`${field}_mother_last_name`]);
 
 };
 
-
 const handleTabNavigation = (event) => {
-    // Check for Shift + Tab (to navigate backwards)
     if (event.shiftKey && event.key === 'Tab') {
 
         focusPreviousInput(event);
     }
-    // Check for Tab (to navigate forwards)
     else if (!event.shiftKey && event.key === 'Tab') {
 
         focusNextInput(event);
     }
-    // Check for ArrowDown (down arrow key)
     else if (event.key === 'ArrowDown') {
 
         focusNextInput(event);
     }
-    // Check for ArrowUp (up arrow key)
     else if (event.key === 'ArrowUp') {
 
         focusPreviousInput(event);
@@ -2206,7 +2299,6 @@ function adjustY(direction) {
         y.value -= 1;
     }
 }
-
 
 
 
@@ -2278,7 +2370,6 @@ const apl = useApplicationMarriageLicense()
 
 onMounted(() => {
     calculatePPI();
-    // input_form_field.value?.focus()
     auth.isAuthenticated()
     apl.getApplicationMarriageLicense()
 });
@@ -2300,19 +2391,9 @@ const open_model = () => {
     formData.header_province = "PANGASINAN"
     formData.header_municipality = "BAYAMBANG"
 
-    // formData.groom_ss_day = format(date, 'do').toUpperCase()
-    // formData.groom_ss_month = format(date, 'MMMM').toUpperCase()
-    // formData.groom_ss_year = format(date, 'yyyy')
-    // formData.groom_ss_at = 'BAYAMBANG, PANGASINAN'
-
-    // formData.bride_ss_day = format(date, 'do').toUpperCase()
-    // formData.bride_ss_month = format(date, 'MMMM').toUpperCase()
-    // formData.bride_ss_year = format(date, 'yyyy')
-    // formData.bride_ss_at = 'BAYAMBANG, PANGASINAN'
-
     formData.date_of_receipt = format(date, 'MMMM dd, yyyy').toUpperCase()
     formData.registry_number = format(date, 'yyyy') + '-'
-    // formData.date_issuance_marriage_license = format(date, 'MMMM dd, yyyy').toUpperCase()
+
 };
 
 
@@ -2338,8 +2419,6 @@ const initialForm = {
     groom_month: '',
     groom_year: '',
 
-
-
     groom_age: '',
 
     groom_municipality: '',
@@ -2352,8 +2431,6 @@ const initialForm = {
     groom_residence_country: '', // 
     groom_religion: '',
     groom_civil_status: '',
-
-
 
     groom_degree_relation: '',
     groom_father_first_name: '',
@@ -2622,118 +2699,7 @@ const print = async () => {
 
 
 
-// const rules = computed(() => ({
-
-//     header_province: { required },
-//     header_municipality: { required },
-//     registry_number: { required },
-//     received_by: { required },
-//     date_of_receipt: { required },
-//     marriage_license_number: { required },
-//     date_issuance_marriage_license: { required },
-//     groom_contract_marriage_with: { required },
-//     bride_contract_marriage_with: { required },
-//     civil_registrar: { required },
-//     groom_first_name: { required },
-//     groom_middle_name: { required },
-//     groom_last_name: { required },
-//     groom_day: { required },
-//     groom_month: { required },
-//     groom_year: { required },
-//     groom_age: { required },
-//     groom_municipality: { required },
-//     groom_province: { required },
-//     groom_country: { required },
-//     groom_sex: { required },
-//     groom_citizenship: { required },
-//     groom_residence: { required },
-//     groom_residence_country: { required },
-//     groom_religion: { required },
-//     groom_civil_status: { required },
-//     groom_previously_married_dissolved: { required },
-//     groom_place_dissolved: { required },
-//     groom_date_dissolved: { required },
-//     groom_degree_relation: { required },
-//     groom_father_first_name: { required },
-//     groom_father_middle_name: { required },
-//     groom_father_last_name: { required },
-//     groom_father_citizenship: { required },
-//     groom_father_residence: { required },
-//     groom_father_residence_country: { required },
-//     groom_mother_first_name: { required },
-//     groom_mother_middle_name: { required },
-//     groom_mother_last_name: { required },
-//     groom_mother_citizenship: { required },
-//     groom_mother_residence: { required },
-//     groom_mother_residence_country: { required },
-//     groom_person_who_gave_consent: { required },
-//     groom_person_who_gave_consent_relation: { required },
-//     groom_person_who_gave_consent_citizenship: { required },
-//     groom_person_who_gave_consent_residence: { required },
-//     groom_ss_day: { required },
-//     groom_ss_month: { required },
-//     groom_ss_year: { required },
-//     groom_ss_at: { required },
-//     groom_ctc_number: { required },
-//     groom_ctc_on: { required },
-//     groom_ctc_at: { required },
-//     bride_first_name: { required },
-//     bride_middle_name: { required },
-//     bride_last_name: { required },
-//     bride_day: { required },
-//     bride_month: { required },
-//     bride_year: { required },
-//     bride_age: { required },
-//     bride_municipality: { required },
-//     bride_province: { required },
-//     bride_country: { required },
-//     bride_sex: { required },
-//     bride_citizenship: { required },
-//     bride_residence: { required },
-//     bride_residence_country: { required },
-//     bride_religion: { required },
-//     bride_civil_status: { required },
-//     bride_previously_married_dissolved: { required },
-//     bride_place_dissolved: { required },
-//     bride_date_dissolved: { required },
-//     bride_degree_relation: { required },
-//     bride_father_first_name: { required },
-//     bride_father_middle_name: { required },
-//     bride_father_last_name: { required },
-//     bride_father_citizenship: { required },
-//     bride_father_residence: { required },
-//     bride_father_residence_country: { required },
-//     bride_mother_first_name: { required },
-//     bride_mother_middle_name: { required },
-//     bride_mother_last_name: { required },
-//     bride_mother_citizenship: { required },
-//     bride_mother_residence: { required },
-//     bride_mother_residence_country: { required },
-//     bride_person_who_gave_consent: { required },
-//     bride_person_who_gave_consent_relation: { required },
-//     bride_person_who_gave_consent_citizenship: { required },
-//     bride_person_who_gave_consent_residence: { required },
-//     bride_ss_day: { required },
-//     bride_ss_month: { required },
-//     bride_ss_year: { required },
-//     bride_ss_at: { required },
-//     bride_ctc_number: { required },
-//     bride_ctc_on: { required },
-//     bride_ctc_at: { required },
-// }))
-
-
-// const v$ = useVuelidate(rules, formData);
-
 const submit = async () => {
-
-    // v$.value.$touch();
-
-    // if (v$.value.$error) {
-    //     console.log(v$.value);
-    //     return;
-    // }
-
 
     // Save Local Copy of Application of Marriage and Notice *.pdf
     // Save Data to Database
@@ -2953,13 +2919,6 @@ const colDefs = ref([
         filter: true,
 
     },
-    // {
-    //     field: "created_by",
-    //     headerName: "Prepared By",
-    //     flex: 2,
-    //     filter: true,
-
-    // },
     {
 
         cellStyle: { border: "none" },
@@ -2973,7 +2932,4 @@ const colDefs = ref([
     },
 
 ]);
-
-
-
 </script>

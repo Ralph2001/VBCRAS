@@ -413,7 +413,7 @@ async function generate_marriage_license(formData) {
             'bride_residence',
             'groom_father_residence',
             'bride_mother_residence',
-            'bride_person_who_gave_consent_residence'
+            'bride_person_who_gave_consent_residence',
         ]
 
         // Iterate over each field and adjust its size and fit
@@ -497,6 +497,13 @@ async function adjustTextFieldSizeAndFit(
         field.setFontSize(fontSize)
         field.enableMultiline()
 
+        console.log(field.getName() + 'Does it Printe? ' + field.setText(fieldValue))
+
+        if (field.getName() === 'groom_contract_marriage_with' || field.getName() === 'bride_contract_marriage_with'
+        ) {
+            field.setAlignment(TextAlignment.Right)
+            return
+        }
         // Adjust alignment based on text length (optional)
         if (fieldValue.length > 40) {
             field.setAlignment(TextAlignment.Left)
