@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed top-0 bottom-0 left-0 right-0 z-50 bg-black bg-opacity-50 flex items-center justify-center"
+    <div class="fixed top-0 bottom-0 left-0 right-0 z-50 bg-black bg-opacity-50 flex items-center p-4 min-w-md justify-center"
         role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
 
         <div class="h-auto py-6 w-[50rem] rounded bg-white flex flex-col p-4">
@@ -15,7 +15,11 @@
                     props.data.event_type }}</span></p>
             </div>
 
-            <p class="mt-6 text-md font-sans px-6 text-justify">
+            <p class="mt-4 text-md font-sans px-6 text-justify">
+                You can use this option if the previously generated files contain **errors** or some files were **not
+                generated correctly**.
+            </p>
+            <p class="mt-4 text-md font-sans px-6 text-justify">
                 Regenerating the document will <span class="font-medium text-red-500">permanently overwrite</span> the
                 existing file. This action **cannot be undone**.
                 Please ensure that <span class="font-medium">all open Word documents are closed</span> before proceeding
@@ -29,10 +33,7 @@
                 before regenerating the document.
             </p>
 
-            <p class="mt-4 text-md font-sans px-6 text-justify">
-                You can use this option if the previously generated files contain **errors** or some files were **not
-                generated correctly**.
-            </p>
+       
 
             <p class="mt-4 text-md font-sans px-6 text-justify text-red-500 font-medium">
                 ⚠️ **Double-check all details before proceeding!**

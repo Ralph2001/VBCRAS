@@ -86,12 +86,12 @@
       <!-- Input Fields -->
       <div
         class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center bg-gray-300 ">
-        <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10   ">
+        <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10 gap-2  ">
 
           <!-- 1st  Document Selector-->
           <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-2 items-start w-full justify-center p-2"
             ref="isFormVisible">
-            <Box title="Document" width="w-full ">
+            <Box title="Document Type" width="w-full ">
               <div class="grid grid-cols-2 flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
                 tabindex="-1">
                 <Select :error="v$.republic_act_number.$error" skip :options="republic_act"
@@ -109,7 +109,7 @@
               </div>
             </Box>
             <!-- {{ petitioner_number }} -->
-            <Box title="Header" width="w-full">
+            <Box title="Document Header" width="w-full">
               <div class="flex flex-col gap-2 w-full">
 
                 <InputAutoComplete label="Province" @change="formData.header_municipality = ''"
@@ -117,20 +117,17 @@
                 <InputAutoComplete label="City/Municipality" :error="v$.header_municipality.$error" cap
                   v-model="formData.header_municipality" :suggestion_data="municipality_of" />
 
-
-
-
               </div>
             </Box>
           </div>
           <!-- 2nd Header-->
-          <div class="flex flex-col gap-5 overflow-y-scroll py-3 mt-5 px-10">
+          <div class="flex flex-col gap-2 overflow-y-scroll py-3 mt-5 px-10">
             <HeaderCCE :petition_type="formData.petition_type" :type_label="document_type_label" />
           </div>
           <!-- 3rd Petition Details and Address-->
-          <div class="grid grid-cols-1 gap-4">
+          <div class="grid grid-cols-1 gap-2">
             <Box title="Petition Details" width="w-full">
-              <div class="grid grid-cols-1 w-full gap-3">
+              <div class="grid grid-cols-1 w-full gap-2">
                 <div class="w-full flex flex-col">
                   <label class="basis-[100%] block mb-2 text-sm font-medium text-gray-900 dark:text-white">Petition
                     Number</label>
@@ -155,7 +152,7 @@
             </Box>
           </div>
           <!-- 5th  Seeking and Document Owner and Relation-->
-          <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-4 items-stretch">
+          <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-2 items-stretch">
             <div class="basis-[35%]" v-if="
               formData.event_type === 'Birth' ||
               formData.event_type === 'Marriage' ||
@@ -222,7 +219,7 @@
             </div>
           </div>
           <!-- 6th Event Date and Place-->
-          <div class="flex sm:flex-col md:lg:flex-row gap-5">
+          <div class="flex sm:flex-col md:lg:flex-row gap-2">
             <div class="basis-[30%]">
               <Box :title="IHeSheLabel" width="w-full">
                 <div class="grid grid-cols-1 w-full gap-2">
@@ -260,7 +257,7 @@
             </div>
           </div>
           <!-- 7th Clerical Errors And Facts and Reasons-->
-          <div class="flex flex-row flex-wrap gap-5">
+          <div class="flex flex-row flex-wrap gap-2">
             <!-- Subpart 1: Shows when Petition Type is CCE -->
             <div class="grow" v-if="formData.petition_type === 'CCE'">
               <Box title="The clerical error(s) to be corrected is (are): " width="w-full">
@@ -349,7 +346,7 @@
               formData.republic_act_number === '9048'
             ">
               <Box title="The grounds for filing this petition are the following  " width="w-full">
-                <div class="flex flex-col gap-5 text-md font-base justify-center">
+                <div class="flex flex-col gap-6 text-md font-base justify-center">
                   <div class="flex flex-row gap-2 items-center">
                     <p class="basis-[2%] font-serif">a)</p>
                     <CheckBox v-model="formData.ground_a" />
@@ -439,7 +436,7 @@
           <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-2">
             <div class="grow">
               <Box title=" documents to support this petition: " width="w-auto">
-                <div class="flex flex-col w-full gap-3 mt-5 relative">
+                <div class="flex flex-col w-full gap-2 mt-5 relative">
                   <div class="absolute w-auto -top-9 right-4">
                     <p class="text-xs italic text-gray-400 font-normal">
                       <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1 text-blue-600" />
@@ -495,7 +492,7 @@
             </p>
           </div>
           <!-- 10th Verification, Administering and CTC-->
-          <div class="flex flex-wrap sm:flex-col md:lg:flex-row gap-4">
+          <div class="flex flex-wrap sm:flex-col md:lg:flex-row gap-2">
             <div class="basis-[50%]">
               <Box title="VERIFICATION" width="w-auto">
                 <div class="grid grid-cols-1 w-full gap-2">
@@ -541,7 +538,7 @@
                 <div class="grid grid-cols-1 w-full gap-2">
                   <!-- Subpart 1: Shows when republic act is 9048 -->
                   <div v-if="formData.republic_act_number === '9048'" class="flex flex-col">
-                    <div class="flex flex-row justify-evenly gap-4">
+                    <div class="flex flex-row justify-evenly gap-2">
                       <Selector :options="action_options" v-model="formData.petition_actions[0].action_decision" />
 
                       <!-- <Radio :options="action_options" :name="'action_' + 0"
@@ -615,7 +612,7 @@
             <div class="grow">
               <Box title="DATES" width="w-auto">
                 <div class="flex flex-col w-full gap-2 items-start">
-                  <div class="grid grid-cols-2 w-full gap-4">
+                  <div class="grid grid-cols-2 w-full gap-2">
                     <Input skip label="Date Filled" type="date" v-model="formData.date_filed"
                       :error="v$.date_filed.$error" />
                     <Input skip label="Notice of Posting" type="date" v-model="formData.notice_posting"
@@ -1978,7 +1975,7 @@ const handleEdit = (data) => {
   petition_modal.value = true;
 };
 const regen_data = ref()
-const openRegenerate= (data) => {
+const openRegenerate = (data) => {
   is_regen.value = true;
   regen_data.value = data;
 };
@@ -2046,7 +2043,7 @@ const colDefs = ref([
   },
   {
     headerName: "Document Status",
-    flex: 1,
+    flex: 2,
     pinned: "right",
     lockPinned: true,
     resizable: false,
