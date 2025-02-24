@@ -16,9 +16,15 @@ export function factReason(data) {
         'uncle',
         'nephew',
         'grandfather',
-        'grandson'
-    ]
-
+        'grandson',
+        'stepfather',
+        'stepson',
+        'godfather',
+        'godson',
+        'father-in-law',
+        'son-in-law'
+    ];
+    
     const female = [
         'girlfriend',
         'wife',
@@ -29,8 +35,14 @@ export function factReason(data) {
         'aunt',
         'niece',
         'grandmother',
-        'granddaughter'
-    ]
+        'granddaughter',
+        'stepmother',
+        'stepdaughter',
+        'godmother',
+        'goddaughter',
+        'mother-in-law',
+        'daughter-in-law'
+    ];
 
     if (error_in !== "" && petition_type === "CCE" && event_type === "Birth" || event_type === "Marriage") {
         const name = relation_owner

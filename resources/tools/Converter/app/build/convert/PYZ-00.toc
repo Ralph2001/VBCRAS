@@ -1,5 +1,5 @@
 ('D:\\Main '
- 'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\build\\convert\\PYZ-00.pyz',
+ 'Projects\\VBCRAS\\resources\\tools\\Converter\\app\\build\\convert\\PYZ-00.pyz',
  [('__future__',
    'C:\\Users\\LCR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\__future__.py',
    'PYMODULE'),
@@ -50,7 +50,7 @@
    'PYMODULE'),
   ('commctrl',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32\\lib\\commctrl.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32\\lib\\commctrl.py',
    'PYMODULE'),
   ('contextlib',
    'C:\\Users\\LCR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\contextlib.py',
@@ -272,49 +272,48 @@
    'C:\\Users\\LCR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\py_compile.py',
    'PYMODULE'),
   ('pythoncom',
-   'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\pythoncom.py',
+   'D:\\Main Projects\\VBCRAS\\.venv\\Lib\\site-packages\\pythoncom.py',
    'PYMODULE'),
   ('pywin',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\__init__.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\__init__.py',
    'PYMODULE'),
   ('pywin.dialogs',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\__init__.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\__init__.py',
    'PYMODULE'),
   ('pywin.dialogs.list',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\list.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\list.py',
    'PYMODULE'),
   ('pywin.dialogs.status',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\status.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\dialogs\\status.py',
    'PYMODULE'),
   ('pywin.mfc',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\__init__.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\__init__.py',
    'PYMODULE'),
   ('pywin.mfc.dialog',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\dialog.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\dialog.py',
    'PYMODULE'),
   ('pywin.mfc.object',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\object.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\object.py',
    'PYMODULE'),
   ('pywin.mfc.thread',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\thread.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\thread.py',
    'PYMODULE'),
   ('pywin.mfc.window',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\window.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\Pythonwin\\pywin\\mfc\\window.py',
    'PYMODULE'),
   ('pywin32_system32', '-', 'PYMODULE'),
   ('pywintypes',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32\\lib\\pywintypes.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32\\lib\\pywintypes.py',
    'PYMODULE'),
   ('quopri',
    'C:\\Users\\LCR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\quopri.py',
@@ -378,83 +377,82 @@
    'PYMODULE'),
   ('win32com',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\__init__.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\__init__.py',
    'PYMODULE'),
   ('win32com.client',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\__init__.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\__init__.py',
    'PYMODULE'),
   ('win32com.client.CLSIDToClass',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\CLSIDToClass.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\CLSIDToClass.py',
    'PYMODULE'),
   ('win32com.client.build',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\build.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\build.py',
    'PYMODULE'),
   ('win32com.client.dynamic',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\dynamic.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\dynamic.py',
    'PYMODULE'),
   ('win32com.client.gencache',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\gencache.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\gencache.py',
    'PYMODULE'),
   ('win32com.client.genpy',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\genpy.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\genpy.py',
    'PYMODULE'),
   ('win32com.client.makepy',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\makepy.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\makepy.py',
    'PYMODULE'),
   ('win32com.client.selecttlb',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\selecttlb.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\selecttlb.py',
    'PYMODULE'),
   ('win32com.client.util',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\client\\util.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\client\\util.py',
    'PYMODULE'),
   ('win32com.server',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\server\\__init__.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\server\\__init__.py',
    'PYMODULE'),
   ('win32com.server.dispatcher',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\server\\dispatcher.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\server\\dispatcher.py',
    'PYMODULE'),
   ('win32com.server.exception',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\server\\exception.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\server\\exception.py',
    'PYMODULE'),
   ('win32com.server.policy',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\server\\policy.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\server\\policy.py',
    'PYMODULE'),
   ('win32com.server.util',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\server\\util.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\server\\util.py',
    'PYMODULE'),
   ('win32com.universal',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\universal.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\universal.py',
    'PYMODULE'),
   ('win32com.util',
-   'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32com\\util.py',
+   'D:\\Main Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32com\\util.py',
    'PYMODULE'),
   ('win32con',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32\\lib\\win32con.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32\\lib\\win32con.py',
    'PYMODULE'),
   ('win32traceutil',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32\\lib\\win32traceutil.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32\\lib\\win32traceutil.py',
    'PYMODULE'),
   ('winerror',
    'D:\\Main '
-   'Projects\\LCRO\\LCRO\\resources\\tools\\Converter\\app\\.venv\\Lib\\site-packages\\win32\\lib\\winerror.py',
+   'Projects\\VBCRAS\\.venv\\Lib\\site-packages\\win32\\lib\\winerror.py',
    'PYMODULE'),
   ('zipfile',
    'C:\\Users\\LCR\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\zipfile\\__init__.py',

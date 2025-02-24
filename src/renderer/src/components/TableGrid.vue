@@ -1,5 +1,5 @@
 <template>
-    <ag-grid-vue :rowData="props.data" :columnDefs="props.dataColumns" class="ag-theme-quartz h-full" :pagination="true"
+    <ag-grid-vue :rowData="props.data"   :columnDefs="props.dataColumns" class="ag-theme-quartz h-full" :pagination="true"
         :paginationPageSize="20" :paginationPageSizeSelector="true">
     </ag-grid-vue>
 </template>

@@ -1,6 +1,5 @@
 <template>
     <div class="w-full flex flex-col items-center justify-center h-full relative ">
-
         <Teleport to="body">
             <PathWarning :path="missing_path" v-if="path_missing" @cancel="path_missing = false" />
         </Teleport>
@@ -17,19 +16,24 @@
             :class="{ 'bg-gray-600 text-white hover:bg-gray-700': dropdown, 'text-gray-900 bg-white hover:bg-gray-100': !dropdown }"
             class="px-3 py-1 text-sm tracking-wide hover:border-gray-400 active:scale-95  font-medium text-center  rounded-sm  border transition-all focus:outline-none">
             Manage
-
-
         </button>
 
         <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-[10rem]"
             v-if="dropdown">
+            <button type="button" @click="approve_petition()" v-if="props.params.data.status === 'PENDING'"
+                class=" disabled:bg-gray-100 bg-yellow-200 hover:bg-yellow-300 items-center justify-center flex-row gap-2 disabled:hover:cursor-not-allowed flex  text-md font-medium  px-5 w-full">
+                <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+                Create
+                Finality</button>
             <button type="button" @click="opendocuments(props.params.data)"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">View
                 Document</button>
+            <button type="button" @click="props.params.onClick(props.params.data)"
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Edit
+                Document</button>
             <button v-if="user.user_role === 1 || user.user_id === props.params.data.created_by" type="button"
                 @click="removeItem()"
-                class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Delete</button>
-
+                class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-red-500 hover:text-white px-5 w-full">Delete</button>
         </div>
     </div>
 </template>
@@ -43,15 +47,18 @@ import PathWarning from '../../../client/modal/PathWarning.vue';
 import { AuthStore } from '../../../../stores/Authentication';
 import Dialog from '../../../Dialog.vue';
 import { format } from 'date-fns';
+import { useRouter } from 'vue-router';
 
-
-
+const router = useRouter()
 const user = AuthStore()
 
 onMounted(() => {
     user.isAuthenticated()
 })
 
+const approve_petition = () => {
+    router.push('/pages/cce_approval/' + props.params.data.id)
+};
 
 const isDialogVisible = ref(false)
 
@@ -63,15 +70,12 @@ const cancel_removal = () => {
     isDialogVisible.value = false
 }
 const proceed_removal = async () => {
-    // console.log(props.params.data)
     const id = Number(props.params.data.id)
     const remove_data = await petitions.remove_petition(id)
 }
 
-
 const path_missing = ref(false)
 const missing_path = ref()
-
 
 const petitions = usePetitions()
 
@@ -98,7 +102,6 @@ const data_information = ref([
     { label: 'Prepared by:', value: props.params.data.created_by_user.username }
 ])
 
-
 const opendocuments = async (param) => {
     try {
         const check = await window.ClericalApi.OpenClericalFiles(param.file_path);
@@ -116,20 +119,11 @@ const opendocuments = async (param) => {
     }
 }
 
-// const openfolder = async (param) => {
-//     try {
-//         const open = await window.ClericalApi.OpenClerical(param.file_path)
-//     } catch (error) {
-//         console.log(error)
-//         path_missing.value = true
-//         missing_path.value = param.file_path
-//     }
-// }
-
 const delete_cmd = async (data) => {
     const id = Number(data.id)
     const remove_data = await petitions.remove_petition(id)
 }
+
 
 </script>
 

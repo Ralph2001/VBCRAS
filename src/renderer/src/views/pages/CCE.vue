@@ -32,6 +32,8 @@
       <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
       <TableGrid :data="filteredRowData" :dataColumns="colDefs" :suppressRowTransform="true" />
 
+
+
     </div>
 
     <!-- v-if="is_creating" -->
@@ -81,7 +83,7 @@
 
       <!-- Input Fields -->
       <div
-        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center bg-gray-200 ">
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center bg-gray-300 ">
         <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10   ">
 
           <!-- 1st  Document Selector-->
@@ -181,11 +183,13 @@
                       <CheckBox v-model="is_same_as_petitioner_name" @change="changes_document_owner" />
                       <p class="text-xs font-medium">Same as Petitioner Name</p>
                     </div>
-
-                    <Input v-if="formData.petitioner_error_in" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth' || formData.event_type === 'Marriage'
-                      && is_same_as_petitioner_name ? true
-                      : false || formData.petitioner_error_in === ''
-                      " :error="v$.document_owner.$error" label="Document Owner" v-model="formData.document_owner"
+                    <!-- 
+                    {{ formData.petitioner_error_in }}
+                    {{ formData.event_type }}
+                    {{ is_same_as_petitioner_name }} -->
+                    <Input v-if="formData.petitioner_error_in"
+                      :readonly="(formData.petitioner_error_in === 'my' && formData.event_type === 'Birth' || formData.event_type === 'Marriage') && is_same_as_petitioner_name ? true : false"
+                      :error="v$.document_owner.$error" label="Document Owner" v-model="formData.document_owner"
                       @input="formData.document_owner = $event.target.value.toUpperCase()" />
                     <p v-else class="text-sm italic text-gray-700">Please choose an option. </p>
 
@@ -203,9 +207,7 @@
                     (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'the')
                   ">
                     <InputAutoComplete v-if="formData.petitioner_error_in === 'the'" :error="v$.relation_owner.$error"
-                      @change_value="generate_fact_reason_text()"
-                      :suggestion_data="petitions.relation_to_document_owner" label="Relation"
-                      v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
+                      label="Relation" v-model="formData.relation_owner" :readonly="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
                         ? true
                         : false || formData.petitioner_error_in === ''
                         " :skip="formData.petitioner_error_in === 'my' && formData.event_type === 'Birth'
@@ -683,6 +685,9 @@
 
 <script setup>
 
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+import { AgGridVue } from "ag-grid-vue3";
 /**
  * 
  * 
@@ -693,7 +698,7 @@
 
 import { usePetitions } from "../../stores/Petition/petitions.js";
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
-import { ref, onMounted, reactive, computed, defineAsyncComponent } from "vue";
+import { ref, onMounted, reactive, computed, defineAsyncComponent, watch } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import Header from "../../components/essentials/header.vue";
 import Modal from "../../components/client/modal/Modal.vue";
@@ -742,6 +747,8 @@ import PetitionNumberRenderer from "../../components/PetitionNumberRenderer.vue"
 
 import { AuthStore } from "../../stores/Authentication.js";
 import Selector from "../../components/Selector.vue";
+import DocumentStatus from "../../components/essentials/buttons/table/DocumentStatus.vue";
+import EditForm from "../../components/Correction/EditForm.vue";
 
 
 
@@ -978,10 +985,6 @@ const fact_reason_data = computed(() => {
   const fact_reason = factReason(data)
   return fact_reason
 })
-
-function generate_fact_reason_text() {
-  formData.reasons[0].reason = fact_reason_data.value.message
-}
 
 
 // Petitiner Number Values
@@ -1223,7 +1226,7 @@ function change_document_owner_relation() {
     formData.document_owner = ''
     formData.relation_owner = ''
   }
-  generate_fact_reason_text()
+
 
 }
 
@@ -1535,6 +1538,25 @@ const rules = computed(() => {
 
 const formData = reactive({ ...initialForm })
 
+watch(
+  () => [formData.petitioner_error_in, formData.petition_type, formData.event_type, formData.relation_owner],
+  () => {
+    formData.reasons[0].reason = fact_reason_data.value.message;
+  }
+);
+watch(
+  () => formData.petition_date_granted,
+  (newValue) => {
+    formData.action_taken_date = newValue;
+  }
+);
+
+watch(
+  () => formData.action_taken_date,
+  (newValue) => {
+    formData.petition_date_granted = newValue;
+  }
+);
 const resetForm = () => {
   Object.assign(formData, { ...initialForm });
   v$.value.$reset();
@@ -1881,7 +1903,76 @@ const filteredRowData = computed(() => {
   );
 });
 
+const mapDataToForm = (data) => {
+  formData.status = data.status;
+  formData.created_by = data.created_by;
+  formData.header_province = data.header_province;
+  formData.header_municipality = data.header_municipality;
+  formData.is_migrant = data.is_migrant;
+  formData.date_filed = data.date_filed;
+  formData.republic_act_number = data.republic_act_number;
+  formData.petition_type = data.petition_type;
+  formData.event_type = data.event_type;
+  formData.petition_number = data.petition_number;
+  formData.petitioner_name = data.petitioner_name;
+  formData.nationality = data.nationality;
+  formData.petitioner_address = data.petitioner_address;
+  formData.petitioner_error_in = data.petitioner_error_in;
+  formData.document_owner = data.document_owner;
+  formData.spouse_name = data.spouse_name;
+  formData.relation_owner = data.relation_owner;
+  formData.event_date = data.event_date;
+  formData.event_country = data.event_country;
+  formData.event_province = data.event_province;
+  formData.event_municipality = data.event_municipality;
+  formData.registry_number = data.registry_number;
+  formData.filing_city_municipality = data.filing_city_municipality;
+  formData.filing_province = data.filing_province;
+  formData.administering_officer_name = data.administering_officer_name;
+  formData.administering_officer_position = data.administering_officer_position;
+  formData.subscribe_sworn_date = data.subscribe_sworn_date;
+  formData.subscribe_sworn_city_municipality = data.subscribe_sworn_city_municipality;
+  formData.exhibiting_his_her = data.exhibiting_his_her;
+  formData.exhibiting_number = data.exhibiting_number;
+  formData.issued_at = data.issued_at;
+  formData.issued_on = data.issued_on;
+  formData.action_taken_date = data.action_taken_date;
+  formData.municipal_civil_registrar = data.municipal_civil_registrar;
+  formData.o_r_number = data.o_r_number;
+  formData.amount_paid = data.amount_paid;
+  formData.date_paid = data.date_paid;
+  formData.first_name_from = data.first_name_from;
+  formData.first_name_to = data.first_name_to;
+  formData.ground_a = data.ground_a;
+  formData.ground_b = data.ground_b;
+  formData.ground_c = data.ground_c;
+  formData.ground_d = data.ground_d;
+  formData.ground_e = data.ground_e;
+  formData.ground_f = data.ground_f;
+  formData.ground_b_data = data.ground_b_data;
+  formData.ground_f_data = data.ground_f_data;
+  formData.notice_posting = data.notice_posting;
+  formData.certificate_posting_start = data.certificate_posting_start;
+  formData.certificate_posting_end = data.certificate_posting_end;
+  formData.petition_date_issued = data.petition_date_issued;
+  formData.petition_date_granted = data.petition_date_granted;
+  formData.publication_start = data.publication_start;
+  formData.publication_end = data.publication_end;
+  formData.publication_newspaper = data.publication_newspaper;
+  formData.publication_place = data.publication_place;
+  formData.petition_actions = data.petition_actions;
+  formData.supporting_documents = data.supporting_documents;
+  formData.clerical_errors = data.clerical_errors;
+  formData.reasons = data.reasons;
+  formData.is_indigent = data.is_indigent;
+};
 
+
+const handleEdit = (data) => {
+  console.log(data)
+  mapDataToForm(data);
+  petition_modal.value = true;
+};
 
 
 const colDefs = ref([
@@ -1951,7 +2042,7 @@ const colDefs = ref([
     pinned: "right",
     lockPinned: true,
     resizable: false,
-    cellRenderer: MultiButton,
+    cellRenderer: DocumentStatus,
     cellClass: "text-center",
     cellStyle: { overflow: "visible", border: "none" },
     sortable: false,
@@ -1966,9 +2057,13 @@ const colDefs = ref([
     sortable: false,
     cellStyle: { overflow: "visible", border: "none" },
     cellRenderer: ViewBTn,
+    cellRendererParams: {
+      onClick: handleEdit,
+    },
   },
 
 ]);
+
 
 
 

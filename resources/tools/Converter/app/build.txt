@@ -1,0 +1,5 @@
+Run Build
+
+> py -3 -m venv .venv
+> .venv\Scripts\activate
+> python -m PyInstaller --noconsole --onefile  convert.py

@@ -9,7 +9,7 @@ export const AuthStore = defineStore('auth', {
         user_details: [],
         user_id: '',
         user_role: '',
-        error: '',
+        error: ''
     }),
     getters: {},
     actions: {
@@ -22,8 +22,8 @@ export const AuthStore = defineStore('auth', {
                     { username, password },
                     {
                         headers: {
-                            'Content-Type': 'application/json',
-                        },
+                            'Content-Type': 'application/json'
+                        }
                     }
                 )
                 this.token = response.data.access_token
@@ -42,8 +42,8 @@ export const AuthStore = defineStore('auth', {
                     { username, password },
                     {
                         headers: {
-                            'Content-Type': 'application/json',
-                        },
+                            'Content-Type': 'application/json'
+                        }
                     }
                 )
                 this.router.push('/login')
@@ -61,9 +61,10 @@ export const AuthStore = defineStore('auth', {
                     const user = await axios.get(
                         'http://' + hostAddress + ':1216/user',
                         {
-                            headers: { Authorization: `Bearer ${tokenStr}` },
+                            headers: { Authorization: `Bearer ${tokenStr}` }
                         }
                     )
+                    console.log(user)
 
                     this.user = user.data.username
                     this.user_id = user.data.id
@@ -71,6 +72,7 @@ export const AuthStore = defineStore('auth', {
 
                     return true
                 } catch (error) {
+                    console.log(error)
                     localStorage.removeItem('token')
                     return false
                 }
@@ -83,6 +85,6 @@ export const AuthStore = defineStore('auth', {
             this.token = null
             localStorage.removeItem('token')
             this.router.push('/login')
-        },
-    },
+        }
+    }
 })
