@@ -21,7 +21,7 @@
         </div>
 
         <div
-            class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col px-4 py-6 gap-2 basis-[80%] shadow-md ">
+            class="w-full h-full  bg-white border-s border-gray-200 flex flex-col px-4 py-6 gap-2 basis-[80%] shadow-md ">
             <p class="font-medium  text-2xl">Petition</p>
             <div v-if="loading" class="flex items-center justify-center h-full">
                 <p class="text-sm text-gray-500">Getting petition info...</p>
@@ -157,7 +157,7 @@
 
         </div>
 
-        <div class="w-full h-full  bg-gray-100 border-s border-gray-200 flex flex-col p-10 gap-2 ">
+        <div class="w-full h-full  bg-white border-s border-gray-200 flex flex-col p-10 gap-2 ">
 
             <p class="font-bold text-2xl mt-5">Attachments</p>
             <div class="flex items-center p-2">
@@ -209,7 +209,7 @@
             </div>
 
 
-            <div class="border bg-white  shadow-sm flex px-4 py-3 h-[calc(100vh-310px)] w-full flex-col gap-2"
+            <div class="border bg-gray-100 shadow-sm flex px-4 py-3 h-[calc(100vh-310px)] w-full flex-col gap-2"
                 v-if="selectfromscanned">
                 <div class="grid sm:grid-flow-row md:lg:grid-cols-2  items-center justify-between w-full ">
                     <p class=" font-medium text-gray-700 tracking-wide text-lg"> Scanned Documents</p>
@@ -259,7 +259,7 @@
                     class="border w-[10rem] rounded-sm bg-white text-sm py-2 hover:bg-red-400 text-gray-800 font-medium shadow-sm transition-all active:scale-95 hover:text-white">Cancel</button>
 
                 <button type="button" @click="create_finality" :disabled="!annotation"
-                    class="bg-blue-600 disabled:bg-blue-400 disabled:hover:cursor-not-allowed hover:bg-blue-500 hover:cursor-pointer py-2 px-10 font-medium rounded-sm text-white ">Approve</button>
+                    class="bg-green-600 disabled:bg-green-400 disabled:hover:cursor-not-allowed hover:bg-green-500 hover:cursor-pointer py-2 px-10 font-medium rounded-sm text-white ">Approve</button>
 
             </div>
         </div>

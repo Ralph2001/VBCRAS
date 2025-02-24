@@ -31,6 +31,8 @@
             <button type="button" @click="props.params.onClick(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Edit
                 Document</button>
+            <button type="button" @click="props.params.onRegenerate(props.params.data)"
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Re-Generate</button>
             <button v-if="user.user_role === 1 || user.user_id === props.params.data.created_by" type="button"
                 @click="removeItem()"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-red-500 hover:text-white px-5 w-full">Delete</button>

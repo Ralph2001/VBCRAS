@@ -57,6 +57,8 @@
       </div>
     </div>
 
+    <RegenerateMessage v-if="is_regen" @proceed="handleRegenerate" @cancel="is_regen = false" :data="regen_data" />
+
 
     <Modal large footerBG="bg-white  border-t  border-gray-300" v-if="petition_modal">
       <template v-slot:header>
@@ -749,11 +751,13 @@ import { AuthStore } from "../../stores/Authentication.js";
 import Selector from "../../components/Selector.vue";
 import DocumentStatus from "../../components/essentials/buttons/table/DocumentStatus.vue";
 import EditForm from "../../components/Correction/EditForm.vue";
+import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue";
 
 
 
 const tutorial = ref(false)
 
+const is_regen = ref(false)
 
 const alertmodal = ref(false)
 const alertmodal_title = ref()
@@ -1973,7 +1977,11 @@ const handleEdit = (data) => {
   mapDataToForm(data);
   petition_modal.value = true;
 };
-
+const regen_data = ref()
+const openRegenerate= (data) => {
+  is_regen.value = true;
+  regen_data.value = data;
+};
 
 const colDefs = ref([
   {
@@ -2059,6 +2067,7 @@ const colDefs = ref([
     cellRenderer: ViewBTn,
     cellRendererParams: {
       onClick: handleEdit,
+      onRegenerate: openRegenerate,
     },
   },
 
