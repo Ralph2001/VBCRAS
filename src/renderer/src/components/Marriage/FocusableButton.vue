@@ -97,7 +97,7 @@ const buttonClass = computed(() => {
         props.activeInputField === props.field
             ? 'bg-blue-400'
             : props.formData[props.field] !== ''
-                ? 'bg-yellow-50'
+                ? 'bg-yellow-100'
                 : 'bg-blue-100',
     ];
 });

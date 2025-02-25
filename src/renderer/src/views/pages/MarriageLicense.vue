@@ -38,7 +38,7 @@
                 </button>
             </template>
 
-            <div class="flex h-full  borer-red-700 justify-center items-center w-full pt-8">
+            <div class="flex h-full   justify-center items-center w-full pt-8">
                 <div class="fixed flex flex-row right-0 left-0 bg-blue-400 top-9 px-4 z-50">
                     <div class="flex flex-row items-center">
                         <button class="hover:bg-blue-300 font-medium text-sm p-2 transition" @click="change_page(1)"
@@ -131,7 +131,7 @@
                 </div>
 
                 <div v-if="is_input_with_address_suggestions && filteredData.length && is_form_input_active && !preview && page === 1"
-                    class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem] border border-gray-400 shadow-md p-2 z-50 w-auto min-w-[30rem] max-w-2xl bg-white text-gray-800 ">
+                    class="h-auto max-h-[50%] overflow-y-scroll fixed bottom-[4.5rem]  shadow-md p-2 z-50 w-auto min-w-[30rem] max-w-2xl bg-white text-gray-800 ">
                     <div class="h-auto w-full" v-for="(suggestion, index) in filteredData" :key="suggestion">
                         <button @keydown="handleTabNavigation" :tabindex="1000 + index"
                             @click='address_spreader($event, suggestion, 1000 + index)' class="uppercase hover:bg-gray-200 w-full text-start active:bg-blue-200 focus:bg-blue-200 px-2 active:scale-[99%] transition-all font-medium
@@ -160,13 +160,13 @@
 
                 <div class="h-full  w-full flex   justify-center relative ">
                     <div v-if="!preview"
-                        class="h-full w-full flex  overflow-scroll justify-center  border   p-20 pt-24 pb-44">
+                        class="h-full w-full flex  overflow-scroll justify-center  p-20 pt-24 pb-44">
                         <div v-if="!preview" :style="paperStyle"
                             class="flex bg-gray-50 shadow-md flex-col scale-110 relative"
                             :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
                             <button
-                                class="absolute top-0 -right-14  rounded-full py-3.5 text-gray-500 text-sm hover:bg-gray-100 px-2 font-medium"
-                                @click="blank()">Blank</button>
+                                class="absolute top-0 -right-24 hover:text-green-400 hover:underline py-3.5 text-gray-800 text-sm px-2 "
+                                @click="blank()">BLANK</button>
                             <div v-if="page === 1"
                                 class="w-full h-full border-[3px] border-gray-700 flex flex-col relative">
 

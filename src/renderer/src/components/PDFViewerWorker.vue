@@ -1,6 +1,6 @@
 <template>
-    <div class="h-full w-full flex flex-col items-center relative ">
-        <div class="controls py-4 fixed  w-full items-center justify-center bg-gray-300">
+    <div class="h-full w-full flex flex-col items-center relative bg-gray-600 overflow-y-scroll py-20  ">
+        <!-- <div class="controls py-4 fixed  w-full items-center justify-center bg-gray-300">
             <button @click="zoomIn" :disabled="isLoading"
                 class="bg-white text-gray-700 rounded border border-gray-300 px-2 text-xs font-medium hover:bg-gray-400 active:scale-95">Zoom
                 In</button>
@@ -8,16 +8,21 @@
                 class="bg-white text-gray-700 rounded border border-gray-300 px-2 text-xs font-medium hover:bg-gray-400 active:scale-95">Zoom
                 Out</button>
             <p class="shadow-inner px-2 border border-gray-300 rounded bg-gray-300"> {{ percent }}</p>
-        </div>
+        </div> -->
         <div v-if="isLoading" class="z-50 h-full items-center justify-center  w-full flex">Loading...</div>
 
-        <div v-else class="h-fit mt-20">
+        <div v-else class="h-fit ">
             <div v-for="(page, index) in pages" :key="index" class="mb-4">
-                <canvas :ref="el => pdfCanvas[index] = el" class="h-auto w-auto"></canvas>
+                <canvas :ref="el => pdfCanvas[index] = el" class="h-auto w-auto "></canvas>
             </div>
         </div>
     </div>
 </template>
+<style scoped>
+canvas {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+</style>
 
 <script setup>
 import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';

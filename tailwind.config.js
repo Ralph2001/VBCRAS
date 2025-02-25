@@ -41,6 +41,7 @@ module.exports = {
                 'surface-950': 'rgb(var(--surface-950))',
             },
             boxShadow: {
+                'page': 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
                 'custom-inset':
                     'rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset',
             },

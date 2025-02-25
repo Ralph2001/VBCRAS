@@ -8,28 +8,29 @@
 
         </div>
 
-        <Modal footerBG="bg-white" v-if="isFormOpen">
+        <Modal footerBG="bg-white" v-if="isFormOpen" :footer="false">
             <template v-slot:header>
+             
                 <button
                     class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
                     @click="closeModal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
 
-                <button
-                    class="rounded px-2.5 ml-auto bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
-                    @click="previewcontent">
-                    {{ isPreview ? 'Return to form editor' : 'Preview' }}
-                </button>
+                <div class="flex ml-auto items-center flex-col justify-center">
+                    <button
+                        class="rounded px-2.5 ml-auto bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
+                        @click="previewcontent">
+                        {{ isPreview ? 'Edit' : 'Preview' }}
+                    </button>
+                </div>
+             
 
             </template>
 
-            <div class="fixed top-16 right-8  z-50 ">
-
-            </div>
-            <div class="flex flex-row w-full items-center  justify-center  h-max bg-gray-100 py-10  gap-4 relative font-medium"
+            <div class="flex flex-row py-20 w-full items-center shadow-page  justify-center  h-max bg-gray-600   gap-4 relative font-medium"
                 v-if="!isPreview">
 
                 <div ref="scalableDiv" :style="[scalableDivStyle, paperStyle]"
-                    class="flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white border rounded shadow border-gray-200 ">
+                    class="flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white  shadow  ">
 
                     <div
                         class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
@@ -405,8 +406,8 @@
 
             </div>
 
-            <div class="flex overflow-y-scroll h-full bg-gray-100 w-full " v-if="isPreview">
-                <PDFViewerWorker :pdfBytes64="previewUrl" v-if="isPreview" />=
+            <div class=" bg-gray-100 w-full " v-if="isPreview">
+                <PDFViewerWorker :pdfBytes64="previewUrl" v-if="isPreview" />
             </div>
 
             <!-- <template v-slot:footer>
@@ -527,22 +528,22 @@ const scalingStep = 0.1;
 
 // Function to handle scaling and save to cookie
 const handleWheel = (event) => {
-    if (event.ctrlKey) {
-        event.preventDefault();
-        if (event.deltaY < 0) {
-            // Zoom in
-            if (scale.value < maxScale) {
-                scale.value = Math.min(maxScale, scale.value + scalingStep);
-            }
-        } else {
-            // Zoom out
-            if (scale.value > minScale) {
-                scale.value = Math.max(minScale, scale.value - scalingStep);
-            }
-        }
-        // Save the current scale to a cookie
-        Cookies.set('scale', scale.value, { expires: 7 }); // Cookie expires in 7 days
-    }
+    // if (event.ctrlKey) {
+    //     event.preventDefault();
+    //     if (event.deltaY < 0) {
+    //         // Zoom in
+    //         if (scale.value < maxScale) {
+    //             scale.value = Math.min(maxScale, scale.value + scalingStep);
+    //         }
+    //     } else {
+    //         // Zoom out
+    //         if (scale.value > minScale) {
+    //             scale.value = Math.max(minScale, scale.value - scalingStep);
+    //         }
+    //     }
+    //     // Save the current scale to a cookie
+    //     Cookies.set('scale', scale.value, { expires: 7 }); // Cookie expires in 7 days
+    // }
 };
 
 const scalableDivStyle = computed(() => {
