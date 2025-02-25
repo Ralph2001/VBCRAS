@@ -584,8 +584,8 @@ function handleUpdates(mainWindow) {
 
     autoUpdater.on('update-downloaded', (info) => {
         showNotification(
-            'Update Available',
-            'An update is starting to download. Please keep the app open to complete the download. Restart the app when done to apply the update.'
+            'Update Downloaded',
+            'The update has been downloaded. Please restart the app to apply the update.'
         )
         mainWindow.webContents.send('update-downloaded', info)
         // Do Not Quit
@@ -597,7 +597,6 @@ function handleUpdates(mainWindow) {
         mainWindow.webContents.send('update-error', err.message)
     })
 }
-
 // // Function to check if the executable is already whitelisted
 // function isWhitelisted() {
 //     const whitelistFilePath = join(__dirname, '../../resources/app/whitelist.txt').replace('app.asar', 'app.asar.unpacked');

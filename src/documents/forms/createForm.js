@@ -1,11 +1,11 @@
 import { degrees, PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib'
+import { format } from 'date-fns';
 const fs = require('fs')
-
 const path = require('path')
 
 
 export async function generate_form(formData) {
- 
+
 
     const pdfDoc = await PDFDocument.create()
     const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
@@ -254,6 +254,12 @@ export async function generate_form(formData) {
         billing_info_gap += 16
     }
 
+
+    if (formData.isWithAuthenticatedForm) {
+        await createAuthenticationForm(pdfDoc, formData);
+    }
+
+
     // Do i really need to make it 
     const note = [
         { title: 'Note:', isBold: true },
@@ -276,6 +282,134 @@ export async function generate_form(formData) {
     return { status: true, pdfbase64: pdfBytes }
 }
 
+async function createAuthenticationForm(pdfDoc, formData) {
+    const page = pdfDoc.addPage([612, 936]); // 8.5 x 13 inches in points
+    const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+    const timesRomanFontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+    const timesRomanItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic);
+
+    const fontSize = 12;
+    const height = page.getHeight();
+
+    function setCenter(text, font) {
+        const textWidth = font.widthOfTextAtSize(text, fontSize);
+        return (page.getWidth() - textWidth) / 2;
+    }
+
+    let position_of_all = 350; // Adjust this value as needed
+
+    const headerTexts = [
+        'Republic of the Philippines',
+        'Province of Pangasinan',
+        'MUNICIPALITY OF BAYAMBANG',
+    ];
+
+    headerTexts.forEach((text, index) => {
+        const font = index === 3 ? timesRomanFontBold : timesRomanFont;
+        page.drawText(text, {
+            x: setCenter(text, font),
+            y: height - position_of_all - (index * 15),
+            size: fontSize,
+            font: font,
+            color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+        });
+    });
+
+    page.drawText('LOCAL CIVIL REGISTRY OFFICE', {
+        x: setCenter('LOCAL CIVIL REGISTRY OFFICE', timesRomanFontBold),
+        y: height - position_of_all - 60,
+        size: fontSize,
+        font: timesRomanFontBold,
+        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+    })
+
+    const bodyTexts = [
+        'THIS IS TO CERTIFY THAT THIS DOCUMENT WAS ISSUED BY A LOCAL CIVIL',
+        'REGISTRY PERSONNEL WHO IS AUTHORIZED TO ISSUE THE SAME AND WHOSE ',
+        'AUTHORITY WAS CONFIRMED BY THE CIVIL REGISTRAR GENERAL AND THE',
+        'SIGNATURE OF THE LOCAL CIVIL REGISTRY PERSONNEL, WHICH APPEARS ON ',
+        'THIS DOCUMENT, IS SIMILAR TO THE SIGNATURE SPECIMEN',
+        'OFFICIALLY SUBMITTED TO AND FILED WITH THIS OFFICE.'
+    ];
+
+    bodyTexts.forEach((text, index) => {
+        page.drawText(text, {
+            x: setCenter(text, timesRomanFont),
+            y: height - position_of_all - 95 - (index * 15),
+            size: fontSize,
+            font: timesRomanFont,
+            color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+        });
+    });
+
+    const dateVerifiedText = `DATE VERIFIED: ${format(new Date(formData.date_filed), 'MM/dd/yyyy')}`;
+    const dateVerifiedX = setCenter(dateVerifiedText, timesRomanFont);
+    const dateVerifiedY = height - position_of_all - 190;
+    
+    page.drawText(dateVerifiedText, {
+        x: dateVerifiedX,
+        y: dateVerifiedY,
+        size: fontSize,
+        font: timesRomanFont,
+        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+    });
+    
+    // Draw underline for date_filed value
+    const dateFiledValue = format(new Date(formData.date_filed), 'MM/dd/yyyy');
+    const dateFiledValueWidth = timesRomanFont.widthOfTextAtSize(dateFiledValue, fontSize);
+    const dateFiledValueX = dateVerifiedX + timesRomanFont.widthOfTextAtSize('DATE VERIFIED: ', fontSize);
+    
+    page.drawLine({
+        start: { x: dateFiledValueX + 1, y: dateVerifiedY - 2 },
+        end: { x: dateFiledValueX + dateFiledValueWidth + 1, y: dateVerifiedY - 2 },
+        thickness: 1,
+        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+    });
+    
+    const verifiedByText = `VERIFIED BY: ${formData.verified_by}`;
+    const verifiedByX = setCenter(verifiedByText, timesRomanFont);
+    const verifiedByY = height - position_of_all - 202;
+    
+    page.drawText(verifiedByText, {
+        x: verifiedByX,
+        y: verifiedByY,
+        size: fontSize,
+        font: timesRomanFont,
+        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+    });
+    
+    // Draw underline for verified_by value
+    const verifiedByValue = formData.verified_by;
+    const verifiedByValueWidth = timesRomanFont.widthOfTextAtSize(verifiedByValue, fontSize);
+    const verifiedByValueX = verifiedByX + timesRomanFont.widthOfTextAtSize('VERIFIED BY: ', fontSize);
+    
+    page.drawLine({
+        start: { x: verifiedByValueX + 1, y: verifiedByY - 2 },
+        end: { x: verifiedByValueX + verifiedByValueWidth + 1, y: verifiedByY - 2 },
+        thickness: 1,
+        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+    });
+
+    const mcrText = formData.mcr;
+    page.drawText(mcrText, {
+        x: setCenter(mcrText, timesRomanFontBold),
+        y: height - position_of_all - 250,
+        size: fontSize,
+        font: timesRomanFontBold,
+        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+    });
+
+    const mcrPositionText = 'MUNICIPAL CIVIL REGISTRAR';
+    page.drawText(mcrPositionText, {
+        x: setCenter(mcrPositionText, timesRomanFont),
+        y: height - position_of_all - 262,
+        size: fontSize,
+        font: timesRomanFont,
+        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
+    });
+
+    console.log('Authentication Form created');
+}
 
 // We Clerify that .... only in forms A
 function create_we_clerify(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
@@ -335,16 +469,16 @@ function create_info_list(formData, page, height, fontSize, timesRomanFont, time
     ]
 
     const table_for_2 = [
-        { title: "Registry number", data: 'DATA' },
-        { title: "Date of registration", data: 'DATA' },
-        { title: "Name of deceased", data: 'RALPH ADVINCULA VILLANUEVA' },
-        { title: "Sex", data: 'DATA' },
-        { title: "Age", data: 'DATA' },
-        { title: "Civil Status", data: 'DATA' },
-        { title: "Citizenship", data: 'DATA' },
-        { title: "Date of Death", data: 'DATA' },
-        { title: "Place of Death", data: 'DATA' },
-        { title: "Cause of Death", data: 'DATA' },
+        { title: "Registry number", data: '' },
+        { title: "Date of registration", data: '' },
+        { title: "Name of deceased", data: '' },
+        { title: "Sex", data: '' },
+        { title: "Age", data: '' },
+        { title: "Civil Status", data: '' },
+        { title: "Citizenship", data: '' },
+        { title: "Date of Death", data: '' },
+        { title: "Place of Death", data: '' },
+        { title: "Cause of Death", data: '' },
     ]
 
     const table_for_3 = [
@@ -494,12 +628,6 @@ function create_paragraph_format(formData, page, height, fontSize, timesRomanFon
     }
 
 }
-
-
-
-
-
-
 
 
 

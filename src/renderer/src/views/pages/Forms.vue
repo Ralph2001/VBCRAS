@@ -14,14 +14,16 @@
                     class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
                     @click="closeModal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
 
+                <button
+                    class="rounded px-2.5 ml-auto bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
+                    @click="previewcontent">
+                    {{ isPreview ? 'Return to form editor' : 'Preview' }}
+                </button>
 
             </template>
 
             <div class="fixed top-16 right-8  z-50 ">
-                <button :class="[!isPreview ? 'text-gray-800' : 'text-gray-100']"
-                    class="rounded-full flex items-center text-sm  font-medium" @click="previewcontent">
-                    {{ isPreview ? 'Return to form editor' : 'Preview' }}
-                </button>
+
             </div>
             <div class="flex flex-row w-full items-center  justify-center  h-max bg-gray-100 py-10  gap-4 relative font-medium"
                 v-if="!isPreview">
@@ -42,13 +44,8 @@
                         <div class="w-[15rem]">
                             <InputforForm middle width="full" bold v-model="formData.date_filed"
                                 :error="v$.date_filed.$error" />
-                            <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
-                                format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_filed" :teleport="true"
-                                :model-value="date_filed" @update:model-value="handleDateFiled"
-                                @cleared="formData.date_filed = ''">
-                            </VueDatePicker> -->
                         </div>
-                        <!-- <InputforForm middle v-model="formData.date_filed" :error="v$.date_filed.$error" /> -->
+
                     </div>
 
                     <p class="px-9 italic font-semibold font-serif">TO WHOM IT MAY CONCERN:</p>
@@ -78,14 +75,7 @@
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'"
                                 label="Date of Registration">
                                 :
-                                <!-- <InputforForm width="100%" v-model="formData.date_registration"
-                                    :error="v$.date_registration.$error" /> -->
-                                <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
-                                    format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_registration"
-                                    :teleport="true" :model-value="date_registration"
-                                    @update:model-value="handleDateRegistration"
-                                    @cleared="formData.date_registration = ''">
-                                </VueDatePicker> -->
+
                                 <InputforForm width="100%" bold v-model="formData.date_registration"
                                     :error="v$.date_registration.$error" />
                             </InputLabel>
@@ -105,27 +95,16 @@
 
                             <InputLabel v-if="selectedType === '1A'" label="Date of Birth">
                                 :
-                                <!-- <InputforForm width="100%" v-model="formData.date_of" :error="v$.date_of.$error" /> -->
-                                <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
-                                    format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_of" :teleport="true"
-                                    :model-value="date_of" @update:model-value="handleDateOf"
-                                    @cleared="formData.date_of = ''">
-                                </VueDatePicker> -->
+
                                 <InputforForm width="100%" bold v-model="formData.date_of" :error="v$.date_of.$error" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Birth">
                                 :
-                                <!-- <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" /> -->
+
                                 <FormAutoComplete width="100%" v-model="formData.place_of" :error="v$.place_of.$error"
                                     :suggestion_data="all_" :wait="true" />
-                                <!-- <AutoCompleteAddress width="100%" v-model="formData.place_of"
-                                    :error="v$.place_of.$error" nolabel /> -->
 
-                                <!-- <SuggestionInputforForm width="100%" v-model="formData.place_of"
-                                    :error="v$.place_of.$error" :suggestion_data="municipality_province" nolabel /> -->
-                                <!-- <InputforForm  width="100%" bold v-model="formData.place_of"
-                                    :error="v$.place_of.$error" /> -->
 
                             </InputLabel>
 
@@ -158,28 +137,7 @@
 
                                 <InputforForm width="100%" v-model="formData.date_marriage"
                                     :error="v$.date_marriage.$error" />
-                                <!-- <div class="flex flex-row w-full relative">
-                                    <InputforForm width="100%" v-model="formData.date_marriage"
-                                        :error="v$.date_marriage.$error" v-if="nodateforparentsmarriage" isReadOnly />
 
-                                    <VueDatePicker v-else :transitions="false" :class="`rounded-sm `" text-input
-                                        auto-apply format="MMMM dd, yyyy" autocomplete="on"
-                                        v-model="formData.date_marriage" :teleport="true" :model-value="date_marriage"
-                                        @update:model-value="handleDateMarriage" @cleared="formData.date_marriage = ''">
-                                    </VueDatePicker>
-                                    <button @click="date_marriage_option = !date_marriage_option" tabindex="-1"
-                                        class="p-1 px-2 text-gray-500 items-center justify-center text-sm hover:bg-gray-100 "><font-awesome-icon
-                                            icon="fa-solid fa-chevron-down" /></button>
-                                    <div v-if="date_marriage_option"
-                                        class="absolute flex  p-2 z-50 justify-center h-auto border right-0 top-10 bg-white w-[10rem]">
-                                        <ul class="w-full">
-                                            <li v-for="option in date_marriage_parents_options" :key="option"
-                                                @click="parentsdatemarriage_opt(option)"
-                                                class="hover:bg-gray-200 p-2 text-gray-700 hover:cursor-pointer">
-                                                {{ option }}</li>
-                                        </ul>
-                                    </div>
-                                </div> -->
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Marriage of Parents">
@@ -188,12 +146,7 @@
 
                                 <FormAutoComplete width="100%" v-model="formData.place_of_marriage_parents"
                                     :error="v$.place_of_marriage_parents.$error" :suggestion_data="all_" :wait="true" />
-                                <!-- 
-                                <AutoCompleteAddress width="100%" v-model="formData.place_of_marriage_parents"
-                                    :error="v$.place_of_marriage_parents.$error" nolabel /> -->
 
-                                <!-- <SuggestionInputforForm v-model="formData.place_of_marriage_parents"
-                                    :error="v$.place_of_marriage_parents.$error" nolabel /> -->
 
                             </InputLabel>
 
@@ -389,9 +342,10 @@
 
                     <div class="flex  flex-col  px-14 py-2 w-full gap-2" v-if="is_with_remarks">
 
-                        <p class="font-bold font-serif">REMARKS: <span
+                        <div class="h-24 block"></div>
+                        <!-- <p class="font-bold font-serif">REMARKS: <span
                                 class="text-xs font-sans italic font-normal text-gray-600">(Leave it blank if no
-                                remarks)</span></p>
+                                remarks)</span></p> -->
                         <!-- As Remarks  v-if="formData.form_type.includes('A')"-->
                         <div class="w-full flex flex-col gap-1">
                             <!-- <QuillEditor theme="snow" :toolbar="['bold', 'italic']" v-model:content="formData.remarks" /> -->
@@ -401,15 +355,15 @@
 
                     <div
                         class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-10     relative text-nowrap gap-2  px-2   ">
-                        <div class="absolute -right-[15rem]">
+                        <!-- <div class="absolute -right-[15rem]">
                             <button class="text-xs text-blue-500 border rounded-sm p-2 hover:bg-white">
                                 <p>
                                     ADD <span class="italic">"For and in the
                                         absence:"</span>
                                 </p>
                             </button>
-                        </div>
-                        <div class="flex flex-col items-start sm:gap-2 md:lg:gap-10">
+                        </div> -->
+                        <div class="flex flex-col items-start sm:gap-2 mb-4 md:lg:gap-10">
                             <p class="italic">Verified by:</p>
                             <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
                                 <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
@@ -420,36 +374,28 @@
                             </div>
                         </div>
                         <div class="flex flex-col items-center">
-                            <p class="italic font-medium text-sm">For and in the absence of:</p>
+                            <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
                             <InputforForm skip middle width="20rem" bold v-model="formData.mcr"
                                 @input="formData.mcr = $event.target.value.toUpperCase()" :error="v$.mcr.$error" />
                             <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
-
-                            <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
+                            <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
                                 <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
                                     :error="v$.verified_by.$error"
                                     @input="formData.verified_by = $event.target.value.toUpperCase()" />
                                 <InputforForm skip width="20rem" middle italic unbordered isTransparent
                                     v-model="formData.position" :error="v$.position.$error" />
-                            </div>
+                            </div> -->
                         </div>
                     </div>
-
+                    <!--     Required for all forms      -->
                     <div class="flex  flex-col px-2 gap-2 w-[25rem] mt-auto">
                         <InputLabel label="Amount Paid">
                             <InputforForm width="100%" v-model="formData.amount_paid" />
-                            <!-- <InputforForm width="100%" v-model="formData.amount_paid" /> -->
                         </InputLabel>
                         <InputLabel label="O.R. Number">
                             <InputforForm width="100%" v-model="formData.or_number" />
                         </InputLabel>
                         <InputLabel label="Date Paid">
-                            <!-- <InputforForm width="100%" v-model="formData.date_paid" /> -->
-                            <!-- <VueDatePicker :transitions="false" :class="`rounded-sm `" text-input auto-apply
-                                format="MMMM dd, yyyy" autocomplete="on" v-model="formData.date_paid" :teleport="true"
-                                :model-value="date_paid" @update:model-value="handleDatePaid"
-                                @cleared="formData.date_paid = ''">
-                            </VueDatePicker> -->
                             <InputforForm width="100%" bold v-model="formData.date_paid" />
                         </InputLabel>
                     </div>
@@ -463,12 +409,8 @@
                 <PDFViewerWorker :pdfBytes64="previewUrl" v-if="isPreview" />=
             </div>
 
-            <template v-slot:footer>
+            <!-- <template v-slot:footer>
                 <div class="h-full flex items-center justify-center w-full px-2">
-                    <!-- <button type="button"
-                        class="bg-white px-2.5 py-1 ml-auto border text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
-                        @click="submit()">Print</button> -->
-
                     <div class="flex flex-row gap-2 ml-auto">
                         <button type="button"
                             class="bg-white  px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
@@ -482,7 +424,7 @@
                             @click="submit()"> Print</button>
                     </div>
                 </div>
-            </template>
+            </template> -->
         </Modal>
 
     </div>
@@ -738,8 +680,12 @@ const initialFormData = {
     isWithRemarks: false,
     form_type: '',
     date_filed: format(new Date(), "MMMM dd, yyyy"),
+
+    // ALL FORM  WITHIN "A" HAVE THIS
     page_number: '',
     book_number: '',
+
+
     registry_number: '',
     date_registration: '',
     name_of: '',
@@ -771,11 +717,11 @@ const initialFormData = {
 
     issued_to: '',
     verified_by: 'ERIKA JOYCE B. PARAGAS',
-    position: 'Administrative Aide II',
+    position: 'Registration Officer I',
 
     mcr: 'ISMAEL D. MALICDEM, JR.',
 
-    amount_paid: '',
+    amount_paid: 'Php 130.00',
     or_number: '',
     date_paid: format(new Date(), "MMMM dd, yyyy"),
 }

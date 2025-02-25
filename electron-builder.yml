@@ -42,7 +42,7 @@ appImage:
 npmRebuild: false
 publish:
   provider: github
-  repo: LCRO
+  repo: VBCRAS
   owner: Ralph2001
   protocol: https
   releaseType: release

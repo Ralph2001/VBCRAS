@@ -11,8 +11,10 @@
         </div>
         <div v-if="isLoading" class="z-50 h-full items-center justify-center  w-full flex">Loading...</div>
 
-        <div v-else class="h-fit  mt-20 ">
-            <canvas ref="pdfCanvas" class="h-auto w-auto"></canvas>
+        <div v-else class="h-fit mt-20">
+            <div v-for="(page, index) in pages" :key="index" class="mb-4">
+                <canvas :ref="el => pdfCanvas[index] = el" class="h-auto w-auto"></canvas>
+            </div>
         </div>
     </div>
 </template>
@@ -47,15 +49,14 @@ const props = defineProps({
 });
 
 // Canvas reference and scale factor
-const pdfCanvas = ref(null);
-
+const pdfCanvas = ref([]);
+const pages = ref([]);
 
 let wheelTimeout;
 
 // Function to handle scaling and save to cookie
 const handleWheel = (event) => {
     if (event.ctrlKey) {
-
         clearTimeout(wheelTimeout);
         wheelTimeout = setTimeout(() => {
             event.preventDefault();
@@ -78,12 +79,8 @@ const handleWheel = (event) => {
     }
 };
 
-
-
 // Watch the prop in case the PDF data changes
 watch(() => props.pdfBytes64, () => renderPDF());
-
-
 
 let renderTimeout;
 // Function to render the PDF from base64 data at a specific scale
@@ -94,7 +91,6 @@ const renderPDF = async () => {
     try {
         clearTimeout(renderTimeout);
         renderTimeout = setTimeout(async () => {
-
             const base64String = props.pdfBytes64.startsWith("data:application/pdf;base64,")
                 ? props.pdfBytes64.split(',')[1]
                 : props.pdfBytes64;
@@ -106,28 +102,32 @@ const renderPDF = async () => {
             }
 
             const pdfDoc = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
-            const page = await pdfDoc.getPage(1);
+            const numPages = pdfDoc.numPages;
+            pages.value = Array.from({ length: numPages }, (_, i) => i + 1);
 
-            const canvas = pdfCanvas.value;
-            const context = canvas.getContext('2d');
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < numPages; i++) {
+                const page = await pdfDoc.getPage(i + 1);
+                const canvas = pdfCanvas.value[i];
+                const context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
 
-            const viewport = page.getViewport({ scale: scale.value });
+                const viewport = page.getViewport({ scale: scale.value });
 
-            // Reset transformation matrix and adjust for possible rotations
-            context.setTransform(1, 0, 0, 1, 0, 0);
+                // Reset transformation matrix and adjust for possible rotations
+                context.setTransform(1, 0, 0, 1, 0, 0);
 
-            if (viewport.rotation) {
-                context.rotate((viewport.rotation * Math.PI) / 180);
+                if (viewport.rotation) {
+                    context.rotate((viewport.rotation * Math.PI) / 180);
+                }
+
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
             }
-
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-
-            await page.render({
-                canvasContext: context,
-                viewport: viewport
-            }).promise;
         }, 200);
 
     }
@@ -138,7 +138,6 @@ const renderPDF = async () => {
         isLoading.value = false;
     }
 };
-
 
 // Zoom in function - Increase scale and re-render
 const zoomIn = () => {
