@@ -1,35 +1,83 @@
 <template>
-    <div class="flex flex-col relative justify-center w-full p-10">
+    <div class="flex flex-col relative justify-center w-full p-10 overflow-y-scroll">
         <Header label="Local Civil Registry Forms">
-            <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
+
         </Header>
-        <div class="h-[calc(100vh-200px)] relative flex flex-col items-center justify-center border rounded-sm ">
-            <p class="italic font-thin text-sm  font-mono">Table Here</p>
+
+
+        <div class="h-[calc(100vh-200px)]">
+
+            <div class="flex flex-row items-center justify-center">
+                <div class="flex flex-col w-full py-2.5 gap-1 mb-6">
+                    <p class="font-medium">Show Table </p>
+                    <div class="flex flex-row gap-2 ml-5 items-center ">
+                        <p class="text-xs text-neutral-600 font-medium w-32">Available Record</p>
+                        <button
+                            :class="[selectedForm === available ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
+                            class="rounded  transition-all duration-300 px-2.5 text-xs font-medium"
+                            v-for="available in available_forms" :key="available" @click="fetchFormData(available)">
+                            {{ available }}
+                        </button>
+                    </div>
+                    <div class="flex flex-row gap-2 ml-5 items-center ">
+                        <p class="text-xs text-neutral-600 font-medium w-32">No Record</p>
+                        <button
+                            :class="[selectedForm === not_available ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
+                            class="rounded  transition-all duration-300 px-2.5 text-xs font-medium"
+                            v-for="not_available in no_record_forms" :key="not_available"
+                            @click="fetchFormData(not_available)">
+                            {{ not_available }}
+                        </button>
+                    </div>
+                    <div class="flex flex-row gap-2 ml-5 items-center ">
+                        <p class="text-xs text-neutral-600 font-medium w-32">Destroyed Record</p>
+                        <button
+                            :class="[selectedForm === destroyed ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
+                            class="rounded  transition-all duration-300 px-2.5 text-xs font-medium"
+                            v-for="destroyed in destroyed_forms" :key="destroyed" @click="fetchFormData(destroyed)">
+                            {{ destroyed }}
+                        </button>
+                    </div>
+                </div>
+
+                <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
+            </div>
+            <!-- <p class="italic font-thin text-sm  font-mono">Table Here</p> -->
+
+            <div class="h-full">
+                <TableGrid :data="selectedFormData" :dataColumns="colDefs" :suppressRowTransform="true"
+                    v-if="selectedForm !== null" />
+            </div>
 
         </div>
 
         <Modal footerBG="bg-white" v-if="isFormOpen" :footer="false">
             <template v-slot:header>
-             
+
                 <button
                     class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
                     @click="closeModal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
 
-                <div class="flex ml-auto items-center flex-col justify-center">
+                <div class="flex ml-auto items-center flex-row gap-4 justify-center">
                     <button
                         class="rounded px-2.5 ml-auto bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
                         @click="previewcontent">
                         {{ isPreview ? 'Edit' : 'Preview' }}
                     </button>
+                    <button
+                        class="rounded px-2.5 ml-auto bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
+                        @click="submit">
+                        Save
+                    </button>
                 </div>
-             
+
 
             </template>
 
             <div class="flex flex-row py-20 w-full items-center shadow-page  justify-center  h-max bg-gray-600   gap-4 relative font-medium"
                 v-if="!isPreview">
 
-                <div ref="scalableDiv" :style="[scalableDivStyle, paperStyle]"
+                <div ref="scalableDiv" :style="[paperStyle]"
                     class="flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white  shadow  ">
 
                     <div
@@ -39,12 +87,11 @@
                     </div>
                     <div class="flex items-center pl-10"
                         v-if="selectedType === '1A' || selectedType === '2A' || selectedType === '3A'">
-                        <FormCheckbox label="With Authentication (Abroad)" v-model="formData.isWithAuthenticatedForm" />
+                        <FormCheckbox label="With Authentication (Abroad)" v-model="formData.is_with_authentication" />
                     </div>
                     <div class="flex items-center justify-end">
                         <div class="w-[15rem]">
-                            <InputforForm middle width="full" bold v-model="formData.date_filed"
-                                :error="v$.date_filed.$error" />
+                            <InputforForm middle width="full" bold v-model="formData.date_filed" />
                         </div>
 
                     </div>
@@ -57,11 +104,9 @@
                                 certify that among others, the following facts of {{ fact_of }} appear in our Register
                                 of {{
                                     register_of }} on page
-                                <InputforForm type="number" middle width="6rem" bold v-model="formData.page_number"
-                                    :error="v$.page_number.$error" />
+                                <InputforForm type="number" middle width="6rem" bold v-model="formData.page_number" />
                                 of book number
-                                <InputforForm type="number" middle width="6rem" bold v-model="formData.book_number"
-                                    :error="v$.book_number.$error" /> .
+                                <InputforForm type="number" middle width="6rem" bold v-model="formData.book_number" /> .
                             </p>
                         </div>
 
@@ -69,75 +114,68 @@
                             class="h-full flex flex-col  mt-6 gap-2 ">
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Registry Number">
                                 :
-                                <InputforForm width="100%" v-model="formData.registry_number"
-                                    :error="v$.registry_number.$error" />
+                                <InputforForm width="100%" v-model="formData.registry_number" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'"
                                 label="Date of Registration">
                                 :
 
-                                <InputforForm width="100%" bold v-model="formData.date_registration"
-                                    :error="v$.date_registration.$error" />
+                                <InputforForm width="100%" bold v-model="formData.date_registration" />
                             </InputLabel>
 
-                            <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" :label="name_of">
+                            <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Name of Child">
                                 :
-                                <InputforForm bold @input="formData.name_of = $event.target.value.toUpperCase()"
-                                    width="100%" v-model="formData.name_of" :error="v$.name_of.$error" />
+                                <InputforForm bold @input="formData.name_child = $event.target.value.toUpperCase()"
+                                    width="100%" v-model="formData.name_child" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Sex">
                                 :
-                                <!-- <InputforForm width="100%" v-model="formData.sex" :error="v$.sex.$error" /> -->
+                                <!-- <InputforForm width="100%" v-model="formData.sex"  /> -->
 
-                                <SelectforForm width="100%" v-model="formData.sex" :error="v$.sex.$error" />
+                                <SelectforForm width="100%" v-model="formData.sex" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Date of Birth">
                                 :
 
-                                <InputforForm width="100%" bold v-model="formData.date_of" :error="v$.date_of.$error" />
+                                <InputforForm width="100%" bold v-model="formData.date_birth" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Place of Birth">
                                 :
 
-                                <FormAutoComplete width="100%" v-model="formData.place_of" :error="v$.place_of.$error"
-                                    :suggestion_data="all_" :wait="true" />
+                                <FormAutoComplete width="100%" v-model="formData.place_birth" :suggestion_data="all_"
+                                    :wait="true" />
 
 
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Name of Mother">
                                 :
-                                <InputforForm width="100%" v-model="formData.name_of_mother"
-                                    :error="v$.name_of_mother.$error" />
+                                <InputforForm width="100%" v-model="formData.name_mother" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Citizenship of Mother">
                                 :
-                                <InputforForm width="100%" v-model="formData.citizenship_mother"
-                                    :error="v$.citizenship_mother.$error" />
+                                <InputforForm width="100%" v-model="formData.citizenship_mother" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Name of Father">
                                 :
-                                <InputforForm width="100%" v-model="formData.name_of_father"
-                                    :error="v$.name_of_father.$error" />
+                                <InputforForm width="100%" v-model="formData.name_father" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Citizenship of Father">
                                 :
-                                <InputforForm width="100%" v-model="formData.citizenship_father"
-                                    :error="v$.citizenship_father.$error" />
+                                <InputforForm width="100%" v-model="formData.citizenship_father" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '1A'" label="Date of Marriage">
                                 :
 
-                                <InputforForm width="100%" v-model="formData.date_marriage"
-                                    :error="v$.date_marriage.$error" />
+                                <InputforForm width="100%" v-model="formData.date_marriage_parents" />
 
                             </InputLabel>
 
@@ -145,8 +183,8 @@
                                 :
 
 
-                                <FormAutoComplete width="100%" v-model="formData.place_of_marriage_parents"
-                                    :error="v$.place_of_marriage_parents.$error" :suggestion_data="all_" :wait="true" />
+                                <FormAutoComplete width="100%" v-model="formData.place_marriage_parents"
+                                    :suggestion_data="all_" :wait="true" />
 
 
                             </InputLabel>
@@ -155,35 +193,32 @@
 
                             <InputLabel v-if="selectedType === '2A'" label="Age">
                                 :
-                                <InputforForm width="100%" v-model="formData.age" :error="v$.age.$error" />
+                                <InputforForm width="100%" v-model="formData.age" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '2A'" label="Civil Status">
                                 :
-                                <InputforForm width="100%" v-model="formData.civil_status"
-                                    :error="v$.civil_status.$error" />
+                                <InputforForm width="100%" v-model="formData.civil_status" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '2A'" label="Citizenship">
                                 :
-                                <InputforForm width="100%" v-model="formData.citizenship"
-                                    :error="v$.citizenship.$error" />
+                                <InputforForm width="100%" v-model="formData.citizenship" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '2A'" label="Date of Death">
                                 :
-                                <InputforForm width="100%" v-model="formData.date_of" :error="v$.date_of.$error" />
+                                <InputforForm width="100%" v-model="formData.date_of" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '2A'" label="Place of Death">
                                 :
-                                <InputforForm width="100%" v-model="formData.place_of" :error="v$.place_of.$error" />
+                                <InputforForm width="100%" v-model="formData.place_of" />
                             </InputLabel>
 
                             <InputLabel v-if="selectedType === '2A'" label="Cause of Death">
                                 :
-                                <InputforForm width="100%" v-model="formData.cause_of_death"
-                                    :error="v$.cause_of_death.$error" />
+                                <InputforForm width="100%" v-model="formData.cause_of_death" />
                             </InputLabel>
 
 
@@ -263,13 +298,11 @@
                                 has
                                 no
                                 record of {{ records_of }} of
-                                <InputforForm width="15rem" middle v-model="formData.name_of"
-                                    :error="v$.name_of.$error" /> who
+                                <InputforForm width="15rem" middle v-model="formData.name_of" /> who
                                 is
                                 alleged
                                 to have {{ alleged_to }} on
-                                <InputforForm width="10rem" middle v-model="formData.date_of"
-                                    :error="v$.date_of.$error" /> in this
+                                <InputforForm width="10rem" middle v-model="formData.date_of" /> in this
                                 municipality, <span v-if="selectedType === '1B'"> of parents
                                     <InputforForm width="15rem" middle v-if="selectedType === '1B'" /> and
                                     <InputforForm width="15rem" v-if="selectedType === '1B'" middle />.
@@ -285,8 +318,7 @@
                             <p class="indent-8 text-pretty tracking-wider text-justify"> We also certify that the
                                 records of
                                 {{ records_of }} for the year
-                                <InputforForm width="6rem" middle v-model="formData.records_of_year"
-                                    :error="v$.records_of_year.$error" /> are
+                                <InputforForm width="6rem" middle v-model="formData.records_of_year" /> are
                                 still
                                 intact in the
                                 archives of
@@ -302,25 +334,22 @@
                                 of
                                 {{ records_of }}
                                 filed in the archives of this office include those, which were registered from
-                                <InputforForm width="6rem" middle v-model="formData.registered_from"
-                                    :error="v$.registered_from.$error" /> to
+                                <InputforForm width="6rem" middle v-model="formData.registered_from" /> to
                                 present.
                                 However, the records of {{ records_of }} during period
-                                <InputforForm width="6rem" v-model="formData.period_from"
-                                    :error="v$.period_from.$error" />
+                                <InputforForm width="6rem" v-model="formData.period_from" />
                                 to
-                                <InputforForm width="6rem" v-model="formData.period_to" :error="v$.period_to.$error" />
+                                <InputforForm width="6rem" v-model="formData.period_to" />
                                 were totally destroyed by
-                                <InputforForm width="20rem" v-model="formData.destroyed_by"
-                                    :error="v$.destroyed_by.$error" />
+                                <InputforForm width="20rem" v-model="formData.destroyed_by" />
                                 Hence, we cannot issue as requested, a true transcription from the Register of
                                 {{ register_of }} or
                                 true
                                 copy of the Certification of {{ register_of }} of
-                                <InputforForm width="15rem" v-model="formData.name_of" :error="v$.name_of.$error" /> who
+                                <InputforForm width="15rem" v-model="formData.name_of" /> who
                                 is alleged
                                 to have {{ alleged_to }} on
-                                <InputforForm width="10rem" v-model="formData.date_of" :error="v$.date_of.$error" /> in
+                                <InputforForm width="10rem" v-model="formData.date_of" /> in
                                 this
                                 municipality.
                             </p>
@@ -336,8 +365,7 @@
 
                     <div class="flex items-center justify-center mt-10 relative text-nowrap">
                         This certification is issued to <div class="px-2">
-                            <InputforForm width="15rem" middle v-model="formData.issued_to" :error="v$.issued_to.$error"
-                                bold />
+                            <InputforForm width="15rem" middle v-model="formData.certification_issued_to" bold />
                         </div> upon his/her request.
                     </div>
 
@@ -368,23 +396,22 @@
                             <p class="italic">Verified by:</p>
                             <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
                                 <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
-                                    :error="v$.verified_by.$error"
                                     @input="formData.verified_by = $event.target.value.toUpperCase()" />
                                 <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="formData.position" :error="v$.position.$error" />
+                                    v-model="formData.verifier_position" />
                             </div>
                         </div>
                         <div class="flex flex-col items-center">
                             <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
-                            <InputforForm skip middle width="20rem" bold v-model="formData.mcr"
-                                @input="formData.mcr = $event.target.value.toUpperCase()" :error="v$.mcr.$error" />
+                            <InputforForm skip middle width="20rem" bold v-model="formData.civil_registrar"
+                                @input="formData.civil_registrar = $event.target.value.toUpperCase()" />
                             <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
                             <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
                                 <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
-                                    :error="v$.verified_by.$error"
+                                    
                                     @input="formData.verified_by = $event.target.value.toUpperCase()" />
                                 <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="formData.position" :error="v$.position.$error" />
+                                    v-model="formData.position"  />
                             </div> -->
                         </div>
                     </div>
@@ -432,53 +459,91 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, reactive, ref, watch } from 'vue'
 import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
 import Header from '../../components/essentials/header.vue'
-import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
-import Loading from '../../components/essentials/others/Loading.vue'
+
 import InputforForm from '../../components/Form/InputforForm.vue'
 import ButtonBorderless from '../../components/Form/ButtonBorderless.vue'
 import FormCheckbox from '../../components/Form/FormCheckbox.vue'
 import InputLabel from '../../components/Form/InputLabel.vue'
-import RangeInput from '../../components/Form/RangeInput.vue'
-import VueDatePicker from '@vuepic/vue-datepicker';
+
 import { useVuelidate } from "@vuelidate/core";
-import { required, requiredIf, numeric } from "@vuelidate/validators";
+import { required, requiredIf } from "@vuelidate/validators";
 import { format } from 'date-fns'
-import AutoCompleteAddress from '../../components/Form/FormAutoComplete.vue'
-import { QuillEditor } from '@vueup/vue-quill'
+
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import Cookies from 'js-cookie'; // Import js-cookie library
-import SuggestionInputforForm from '../../components/Form/SuggestionInputforForm.vue';
-import { all_address, complete_municipality, complete_municipality_with_province, complete_province } from '../../utils/Address/index.js'
+import { all_address, } from '../../utils/Address/index.js'
 import SelectforForm from '../../components/Form/SelectforForm.vue';
 import FormAutoComplete from '../../components/Form/FormAutoComplete.vue';
 import Try from '../../components/try.vue';
 import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
-
+import { useForms } from '../../stores/forms.js'
+import TableGrid from '../../components/TableGrid.vue'
 
 const all_ = ref(all_address())
-
-
 
 const is_with_remarks = computed(() => {
     return formData.form_type.includes('A') ? true : false
 })
-const municipality_province = computed(() => {
-    return complete_municipality_with_province(formData.filing_province)
-})
 
 
-// Get scale from cookie if available on mounted
 onMounted(() => {
     calculatePPI();
-    const savedScale = Cookies.get('scale');
-    if (savedScale) {
-        scale.value = parseFloat(savedScale); // Parse the cookie value as a number
-    }
-    window.addEventListener('wheel', handleWheel, { passive: false });
+    fetchFormData('Form 1A')
 });
+
+
+const available_forms = ref(['Form 1A', 'Form 2A', 'Form 3A'])
+const no_record_forms = ref(['Form 1B', 'Form 2B', 'Form 3B'])
+const destroyed_forms = ref(['Form 1C', 'Form 2C', 'Form 3C'])
+
+const selectedForm = ref(null)
+const selectedFormData = ref(null)
+const formsStore = useForms()
+
+const fetchFormData = async (formType) => {
+    selectedForm.value = formType
+    let fetchAction
+
+    switch (formType) {
+        case 'Form 1A':
+            fetchAction = formsStore.get_all_form1a
+            break
+        case 'Form 2A':
+            fetchAction = formsStore.get_all_form2a
+            break
+        case 'Form 3A':
+            fetchAction = formsStore.get_all_form3a
+            break
+        case 'Form 1B':
+            fetchAction = formsStore.get_all_form1b
+            break
+        case 'Form 2B':
+            fetchAction = formsStore.get_all_form2b
+            break
+        case 'Form 3B':
+            fetchAction = formsStore.get_all_form3b
+            break
+        case 'Form 1C':
+            fetchAction = formsStore.get_all_form1c
+            break
+        case 'Form 2C':
+            fetchAction = formsStore.get_all_form2c
+            break
+        default:
+            console.log('Unknown form type:', formType)
+            return
+    }
+
+    try {
+        await fetchAction()
+        selectedFormData.value = formsStore[formType.toLowerCase().replace(' ', '')]
+    } catch (error) {
+        console.log(' fetching data:', error)
+    }
+}
+
 
 
 const ppi = ref(0);
@@ -513,45 +578,6 @@ const paperStyle = computed(() => ({
 
 
 
-onBeforeUnmount(() => {
-    window.removeEventListener('wheel', handleWheel);
-});
-
-// Initial scale
-const scale = ref(1);
-
-// Scaling factor
-const minScale = 0.5;
-const maxScale = 1;
-const scalingStep = 0.1;
-
-
-// Function to handle scaling and save to cookie
-const handleWheel = (event) => {
-    // if (event.ctrlKey) {
-    //     event.preventDefault();
-    //     if (event.deltaY < 0) {
-    //         // Zoom in
-    //         if (scale.value < maxScale) {
-    //             scale.value = Math.min(maxScale, scale.value + scalingStep);
-    //         }
-    //     } else {
-    //         // Zoom out
-    //         if (scale.value > minScale) {
-    //             scale.value = Math.max(minScale, scale.value - scalingStep);
-    //         }
-    //     }
-    //     // Save the current scale to a cookie
-    //     Cookies.set('scale', scale.value, { expires: 7 }); // Cookie expires in 7 days
-    // }
-};
-
-const scalableDivStyle = computed(() => {
-    return {
-        transform: `scale(${scale.value})`,
-    };
-});
-
 const isLoading = ref(false)
 const Modal = defineAsyncComponent(() =>
     import("../../components/client/modal/Modal.vue")
@@ -575,7 +601,6 @@ const date_marriage_parents_options = [
 
 const FormTypes = ref([])
 const isFormOpen = ref(false)
-const selectedForm = ref(null)
 const selectedType = ref(null)
 const print = ref()
 const date_marriage_option = ref(false)
@@ -677,54 +702,88 @@ const preferences = reactive({
 })
 
 const initialFormData = {
-    isWithAuthenticatedForm: false,
-    isWithRemarks: false,
-    form_type: '',
-    date_filed: format(new Date(), "MMMM dd, yyyy"),
 
-    // ALL FORM  WITHIN "A" HAVE THIS
+    is_with_authentication: '', // Is Abroad??
+
+    date_filed: '',
     page_number: '',
     book_number: '',
 
 
     registry_number: '',
     date_registration: '',
-    name_of: '',
+
+    name_child: '',
     sex: '',
-    date_of: '',
-    place_of: '',
-    name_of_mother: '',
-    citizenship_mother: 'Filipino',
-    name_of_father: '',
-    citizenship_father: 'Filipino',
-    date_marriage: '',
-    place_of_marriage_parents: '',
+    date_birth: '',
+    place_birth: '',
+    name_mother: '',
+    citizenship_mother: '',
+    name_father: '',
+    citizenship_father: '',
+    date_marriage_parents: '',
+    place_marriage_parents: '',
 
-
-    age: '',
-    civil_status: '',
-    citizenship: '',
-    cause_of_death: '',
-
-    records_of_year: '',
-
-    registered_from: '',
-    period_from: '',
-    period_to: '',
-    destroyed_by: '',
-
-
+    certification_issued_to: '',
     remarks: '',
-
-    issued_to: '',
     verified_by: 'ERIKA JOYCE B. PARAGAS',
-    position: 'Registration Officer I',
-
-    mcr: 'ISMAEL D. MALICDEM, JR.',
+    verifier_position: 'Registration Officer I',
+    civil_registrar: 'ISMAEL D. MALICDEM, JR.',
+    civil_registrar_position: 'Municipal Civil Registrar',
+    created_by: 1,
 
     amount_paid: 'Php 130.00',
     or_number: '',
     date_paid: format(new Date(), "MMMM dd, yyyy"),
+
+    // isWithAuthenticatedForm: false,
+    // isWithRemarks: false,
+    // form_type: '',
+    // date_filed: format(new Date(), "MMMM dd, yyyy"),
+
+    // // ALL FORM  WITHIN "A" HAVE THIS
+    // page_number: '',
+    // book_number: '',
+
+
+    // registry_number: '',
+    // date_registration: '',
+    // name_of: '',
+    // sex: '',
+    // date_of: '',
+    // place_of: '',
+    // name_of_mother: '',
+    // citizenship_mother: 'Filipino',
+    // name_of_father: '',
+    // citizenship_father: 'Filipino',
+    // date_marriage: '',
+    // place_of_marriage_parents: '',
+
+
+    // age: '',
+    // civil_status: '',
+    // citizenship: '',
+    // cause_of_death: '',
+
+    // records_of_year: '',
+
+    // registered_from: '',
+    // period_from: '',
+    // period_to: '',
+    // destroyed_by: '',
+
+
+    // remarks: '',
+
+    // issued_to: '',
+    // verified_by: 'ERIKA JOYCE B. PARAGAS',
+    // position: 'Registration Officer I',
+
+    // mcr: 'ISMAEL D. MALICDEM, JR.',
+
+    // amount_paid: 'Php 130.00',
+    // or_number: '',
+    // date_paid: format(new Date(), "MMMM dd, yyyy"),
 }
 
 const formData = reactive({ ...initialFormData })
@@ -789,44 +848,45 @@ watch(() => PdfViewerRef.value, () => {
 }, { deep: true });
 
 
-const v$ = useVuelidate(rules, formData);
+// const v$ = useVuelidate(rules, formData);
 const submit = async () => {
 
-    const isFormValid = await v$.value.$validate();
+    const add = await formsStore.add_form1a(formData)
+    // const isFormValid = await v$.value.$validate();
 
-    if (isFormValid) {
-        try {
+    // if (isFormValid) {
+    //     try {
 
-            const dataToSubmit = {
-                ...formData,
-                ...preferences,
-                purpose: 'edit'
-            };
+    //         const dataToSubmit = {
+    //             ...formData,
+    //             ...preferences,
+    //             purpose: 'edit'
+    //         };
 
-            const open = await window.FormApi.createPdfForm(dataToSubmit)
-            console.log(open)
+    //         const open = await window.FormApi.createPdfForm(dataToSubmit)
+    //         console.log(open)
 
-            if (open.status) {
-                const openFolder = await window.FormApi.openPdfForm(open.filepath)
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-        }
-    } else {
-        console.log('Form has validation errors:', v$.value.$errors);
-    }
+    //         if (open.status) {
+    //             const openFolder = await window.FormApi.openPdfForm(open.filepath)
+    //         }
+    //     } catch () {
+    //         console.(' submitting form:', );
+    //     }
+    // } else {
+    //     console.log('Form has validation s:', v$.value.$s);
+    // }
 }
 
 const OpenForms = (e) => {
     e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A", formData.form_type = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A", formData.form_type = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A", formData.form_type = "3A"] : null
     isFormOpen.value = true
     selectedForm.value = e
-    v$.value.$reset()
+    // v$.value.$reset()
 
 }
 const closeModal = () => {
     isFormOpen.value = false
-    v$.value.$reset()
+    // v$.value.$reset()
     resetFormData()
     isPreview.value = false
 
@@ -836,7 +896,7 @@ const toggleForm = (val) => {
     selectedType.value = val
     formData.form_type = val
     nodateforparentsmarriage.value = false
-    v$.value.$reset()
+    // v$.value.$reset()
 }
 
 
@@ -893,5 +953,66 @@ const addremarksvalue = () => {
     remarks.value.focus()
 }
 
+
+const colDefs = ref([
+    {
+        field: "name_child",
+        headerName: "Document Owner",
+        flex: 2,
+        filter: true,
+        cellStyle: { border: "none" },
+        pinned: "left",
+        width: 200,
+        lockPinned: true,
+        resizable: true,
+        sortable: false,
+    },
+    {
+        field: "date_filed",
+        headerName: "Date Filed",
+        filter: true,
+    },
+    {
+        field: "registry_number",
+        headerName: "Registry Number",
+        filter: true,
+    },
+    {
+        field: "date_registration",
+        headerName: "Date Registration",
+        filter: true,
+    },
+
+    {
+        field: "date_birth",
+        headerName: "Date of Birth",
+        filter: true,
+    },
+    {
+        field: "place_birth",
+        headerName: "Place of Birth",
+        filter: true,
+    },
+    {
+        field: "created_by",
+        headerName: "Created By",
+        filter: true,
+    },
+    {
+        field: "",
+        headerName: "Action",
+        filter: false,
+        cellStyle: { border: "none" },
+        pinned: "right",
+        width: 200,
+        flex: 2,
+        lockPinned: true,
+        resizable: true,
+        sortable: false,
+    },
+
+
+
+]);
 
 </script>

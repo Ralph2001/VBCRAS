@@ -3,7 +3,7 @@
     <nav tabindex="-1"
       class="bg-white  shadow-sm text-sm font-sans tracking-tighter  border-gray-200 dark:bg-gray-900 dark:border-gray-700">
       <div tabindex="-1" class="w-full flex flex-wrap items-center justify-between mx-auto p-3.5 relative">
-        <a tabindex="-1" href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <a tabindex="-1" href="/pages/welcome" class="flex items-center space-x-3 rtl:space-x-reverse">
           <!-- <img tabindex="-1" src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" /> -->
           <span tabindex="-1"
             class="self-center text-lg text-gray-800 font-semibold whitespace-nowrap dark:text-white">VBCRAS</span>
@@ -25,13 +25,13 @@
           class="w-full md:block md:w-auto absolute top-[3.5rem] md:static right-0 md:top-0 z-50">
           <ul tabindex="-1"
             class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-200 rounded bg-gray-50 shadow-lg md:shadow-none md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
+            <!-- <li>
               <router-link tabindex="-1" to="/pages/welcome"
                 active-class="text-white bg-blue-700 hover:bg-blue-600 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 class=" block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 Home
               </router-link>
-            </li>
+            </li> -->
 
             <li>
               <router-link tabindex="-1" to="/pages/cce"
@@ -77,13 +77,13 @@
                 Registry Record
               </router-link>
             </li> -->
-            <li>
+            <!-- <li>
               <router-link tabindex="-1" to="/pages/scanned"
                 active-class="text-white bg-blue-700 hover:bg-blue-600  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent"
                 class="block py-2 px-3 text-gray-900 rounded md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                 Scanned Documents
               </router-link>
-            </li>
+            </li> -->
 
             <li>
               <button tabindex="-1" id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar"
