@@ -173,11 +173,14 @@
                 <div class=" grid grid-cols-1 w-full gap-2">
                   <div class="w-full flex flex-col gap-2">
                     <p v-if="formData.petitioner_error_in === 'my'" class="text-xs text-gray-700"><span
-                        class="font-medium">Note:</span> If the petitioner's name differs from the one on the birth certificate, please enter the name exactly as it appears on the birth certificate in this field. If the names match, leave the box checked.</p>
+                        class="font-medium">Note:</span> If the petitioner's name differs from the one on the birth
+                      certificate, please enter the name exactly as it appears on the birth certificate in this field.
+                      If the
+                      names match, leave the box checked.</p>
                     <div v-if="formData.petitioner_error_in === 'my'" class="flex flex-row gap-2 items-center">
                       <CheckBox v-model="is_same_as_petitioner_name" @change="changes_document_owner" />
                       <p class="text-xs font-medium">Same as Petitioner Name</p>
-                    </div>  
+                    </div>
                     <!-- 
                     {{ formData.petitioner_error_in }}
                     {{ formData.event_type }}
@@ -417,7 +420,7 @@
                     </div>
                     <div class="flex flex-col grow">
                       <textarea rows="3" :id="index" v-model="formData.reasons[index].reason"
-                        class="block py-3 tracking-wider px-6 text-justify font-semibold w-full text-md text-black bg-gray-50 rounded-sm border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                        class="block py-3 tracking-wider px-6 text-justify font-semibold w-full text-md text-black bg-gray-50 rounded-sm border border-gray-300 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 outline-none ring-0 focus:border-green-400"></textarea>
                     </div>
                   </div>
                 </div>
@@ -482,8 +485,8 @@
           </div>
 
           <!-- 9th  Page 2 Starts-->
-          <div class="relative border-b-2 border-dashed flex items-center justify-center mt-10 mb-10">
-            <p class="absolute bg-yellow-100 px-2 font-semibold italic text-gray-600">
+          <div class="relative border-b-2 border-dashed border-yellow-400 flex items-center justify-center mt-10 mb-10">
+            <p class="absolute bg-white px-2 font-semibold italic text-gray-800">
               PAGE 2
             </p>
           </div>
@@ -493,7 +496,7 @@
               <Box title="VERIFICATION" width="w-auto">
                 <div class="grid grid-cols-1 w-full gap-2">
                   <Input label="Petitioner Name" skip v-model="formData.petitioner_name"
-                    @input="formData.petitioner_name = $event.target.value.toUpperCase()" readonly />
+                    @input="formData.petitioner_name = $event.target.value.toUpperCase()" />
                 </div>
               </Box>
             </div>
@@ -543,7 +546,7 @@
                     <!-- Migrant -->
                     <div v-if="!formData.is_migrant" class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
                       <textarea tabindex="0" id="message" rows="6" v-model="formData.petition_actions[0].action_text"
-                        class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                        class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 outline-none ring-0 focus:border-green-400"></textarea>
                     </div>
                   </div>
                   <!-- Migrant -->
@@ -559,7 +562,7 @@
                     <div class="grid grid-cols-1 w-full gap-2 px-10 mt-5 mb-5">
                       <textarea tabindex="0" id="message" rows="6"
                         v-model="formData.petition_actions[index].action_text"
-                        class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                        class="block p-2.5 text-justify font-semibold px-5 tracking-wider w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 outline-none ring-0 focus:border-green-400"></textarea>
                     </div>
                   </div>
 
@@ -680,9 +683,6 @@
 
 <script setup>
 
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridVue } from "ag-grid-vue3";
 /**
  * 
  * 
@@ -1510,7 +1510,11 @@ const rules = computed(() => {
     certificate_posting_start: { required },
     certificate_posting_end: { required },
     petition_date_issued: { required },
-    petition_date_granted: { required },
+    petition_date_granted: {
+      requiredIf: requiredIf(() =>
+        !formData.is_migrant ? true : false
+      )
+    },
 
     publication_start: {
       requiredIf: requiredIf(() =>
@@ -1686,9 +1690,14 @@ const submitForm = async () => {
   petition_modal.value = false
 };
 
-const last_saved_filepath = ref()
+const last_saved_filepath = ref(null)
 
 const create_validated_document = async () => {
+
+  if (last_saved_filepath.value === null) {
+    return
+  }
+
   if (alertmodal.value) { return }
   const is_busy = await window.ClericalApi.IsFileBusy(last_saved_filepath.value + 'petition.docx')
 

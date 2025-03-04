@@ -2,9 +2,17 @@
   <div>
     <label v-if="!nolabel" :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
       <span v-if="error" class="text-red-600">*</span></label>
-    <input @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" :type="type"
-      :id="label" :value="modelValue" @input="value_toUpperCase($event.target.value)" :tabindex="skip ? '-1' : ''"
-      :readonly="readonly" :class="{
+    <input 
+      @keydown.enter="focusNextInput" 
+      @keydown.down="focusNextInput" 
+      @keydown.up="focusPreviousInput" 
+      :type="type"
+      :id="label" 
+      :value="modelValue" 
+      @input="value_toUpperCase($event.target)"  
+      :tabindex="skip ? '-1' : ''"
+      :readonly="readonly" 
+      :class="{
         'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
         'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
         'flex items-center text-center': center
@@ -14,6 +22,8 @@
 </template>
 
 <script setup>
+import { nextTick } from 'vue';  // Import nextTick function from Vue
+
 const emit = defineEmits(["update:modelValue"]);
 
 const props = defineProps({
@@ -60,30 +70,24 @@ const props = defineProps({
 
 });
 
-const value_toUpperCase = (value) => {
+const value_toUpperCase = (target) => {
+  let value = target.value;
+  
   if (props.cap) {
-    const uppercase_this = value
-    emit('update:modelValue', uppercase_this.toUpperCase())
-    //
-    return
+    value = value.toUpperCase();
   }
-
-  // // Split the value into words
-  // const splitted = value.split(' ')
-
-  // // Capitalize only the first letter of the first word
-  // if (splitted.length > 0) {
-  //   splitted[0] = splitted[0].charAt(0).toUpperCase() + splitted[0].slice(1)
-  // }
-
-  // // Join the words back together into a string
-  // const main_value = splitted.join(' ')
-
-  // Emit the updated value
-
-  emit('update:modelValue', value)
+  
+  // Save cursor position before update
+  const start = target.selectionStart;
+  const end = target.selectionEnd;
+  
+  emit('update:modelValue', value);
+  
+  // Restore cursor position after DOM update
+  nextTick(() => {
+    target.setSelectionRange(start, end);
+  });
 }
-
 
 const focusPreviousInput = (event) => {
   event.preventDefault();
@@ -97,7 +101,6 @@ const focusPreviousInput = (event) => {
     inputs[index - 1].focus();
   }
 }
-
 const focusNextInput = (event) => {
   if (props.skipnext) {
     return
@@ -115,8 +118,3 @@ const focusNextInput = (event) => {
 }
 
 </script>
-
-
-
-
-<style lang="scss" scoped></style>

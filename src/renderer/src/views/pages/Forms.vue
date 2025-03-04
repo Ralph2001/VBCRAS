@@ -6,7 +6,6 @@
 
 
         <div class="h-[calc(100vh-200px)]">
-
             <div class="flex flex-row items-center justify-center">
                 <div class="flex flex-col w-full py-2.5 gap-1 mb-6">
                     <p class="font-medium">Show Table </p>
@@ -53,406 +52,106 @@
 
         <Modal footerBG="bg-white" v-if="isFormOpen" :footer="false">
             <template v-slot:header>
-
-                <button
-                    class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
-                    @click="closeModal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
-
-                <div class="flex ml-auto items-center flex-row gap-4 justify-center">
-                    <button
-                        class="rounded px-2.5 ml-auto bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
-                        @click="previewcontent">
-                        {{ isPreview ? 'Edit' : 'Preview' }}
-                    </button>
-                    <button
-                        class="rounded px-2.5 ml-auto bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
-                        @click="submit">
-                        Save
-                    </button>
-                </div>
-
-
+                <ControlButton :icon="['fas', 'arrow-left']" button-text="Return" @action="closeModal()" />
             </template>
 
-            <div class="flex flex-row py-20 w-full items-center shadow-page  justify-center  h-max bg-gray-600   gap-4 relative font-medium"
-                v-if="!isPreview">
-
-                <div ref="scalableDiv" :style="[paperStyle]"
-                    class="flex flex-col px-10 py-20  ease-in-out transition-transform duration-200 bg-white  shadow  ">
-
-                    <div
-                        class="w-full grid grid-cols-3 mb-6  rounded items-center justify-evenly border shadow-sm font-medium">
-                        <ButtonBorderless v-for="type in FormTypes" :key="type" :label="`Form ${type}`"
-                            @click="toggleForm(`${type}`)" :isActive="selectedType === type" />
-                    </div>
-                    <div class="flex items-center pl-10"
-                        v-if="selectedType === '1A' || selectedType === '2A' || selectedType === '3A'">
-                        <FormCheckbox label="With Authentication (Abroad)" v-model="formData.is_with_authentication" />
-                    </div>
-                    <div class="flex items-center justify-end">
-                        <div class="w-[15rem]">
-                            <InputforForm middle width="full" bold v-model="formData.date_filed" />
-                        </div>
-
-                    </div>
-
-                    <p class="px-9 italic font-semibold font-serif">TO WHOM IT MAY CONCERN:</p>
-
-                    <div v-if="selectedType === '1A' || selectedType === '2A' || selectedType === '3A'">
-                        <div class="px-10 mt-5">
-                            <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-gray-900">We
-                                certify that among others, the following facts of {{ fact_of }} appear in our Register
-                                of {{
-                                    register_of }} on page
-                                <InputforForm type="number" middle width="6rem" bold v-model="formData.page_number" />
-                                of book number
-                                <InputforForm type="number" middle width="6rem" bold v-model="formData.book_number" /> .
-                            </p>
-                        </div>
-
-                        <div :class="{ ' sm:px-[1rem] md:lg:px-[2.5rem]': selectedType === '3A', 'sm:px-[2rem] md:lg:px-[5rem]': selectedType !== '3A' }"
-                            class="h-full flex flex-col  mt-6 gap-2 ">
-                            <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Registry Number">
-                                :
-                                <InputforForm width="100%" v-model="formData.registry_number" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A' || selectedType === '2A'"
-                                label="Date of Registration">
-                                :
-
-                                <InputforForm width="100%" bold v-model="formData.date_registration" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Name of Child">
-                                :
-                                <InputforForm bold @input="formData.name_child = $event.target.value.toUpperCase()"
-                                    width="100%" v-model="formData.name_child" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A' || selectedType === '2A'" label="Sex">
-                                :
-                                <!-- <InputforForm width="100%" v-model="formData.sex"  /> -->
-
-                                <SelectforForm width="100%" v-model="formData.sex" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Date of Birth">
-                                :
-
-                                <InputforForm width="100%" bold v-model="formData.date_birth" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Place of Birth">
-                                :
-
-                                <FormAutoComplete width="100%" v-model="formData.place_birth" :suggestion_data="all_"
-                                    :wait="true" />
-
-
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Name of Mother">
-                                :
-                                <InputforForm width="100%" v-model="formData.name_mother" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Citizenship of Mother">
-                                :
-                                <InputforForm width="100%" v-model="formData.citizenship_mother" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Name of Father">
-                                :
-                                <InputforForm width="100%" v-model="formData.name_father" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Citizenship of Father">
-                                :
-                                <InputforForm width="100%" v-model="formData.citizenship_father" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Date of Marriage">
-                                :
-
-                                <InputforForm width="100%" v-model="formData.date_marriage_parents" />
-
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '1A'" label="Place of Marriage of Parents">
-                                :
-
-
-                                <FormAutoComplete width="100%" v-model="formData.place_marriage_parents"
-                                    :suggestion_data="all_" :wait="true" />
-
-
-                            </InputLabel>
-
-                            <!-- Form 2 -->
-
-                            <InputLabel v-if="selectedType === '2A'" label="Age">
-                                :
-                                <InputforForm width="100%" v-model="formData.age" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '2A'" label="Civil Status">
-                                :
-                                <InputforForm width="100%" v-model="formData.civil_status" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '2A'" label="Citizenship">
-                                :
-                                <InputforForm width="100%" v-model="formData.citizenship" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '2A'" label="Date of Death">
-                                :
-                                <InputforForm width="100%" v-model="formData.date_of" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '2A'" label="Place of Death">
-                                :
-                                <InputforForm width="100%" v-model="formData.place_of" />
-                            </InputLabel>
-
-                            <InputLabel v-if="selectedType === '2A'" label="Cause of Death">
-                                :
-                                <InputforForm width="100%" v-model="formData.cause_of_death" />
-                            </InputLabel>
-
-
-                            <!-- Form 3 -->
-
-                            <InputLabel twoInput v-if="selectedType === '3A'" label="Name">
-                                :
-                                <InputforForm width="100%" />
-                                :
-                                <InputforForm width="100%" she />
-                            </InputLabel>
-
-                            <InputLabel twoInput v-if="selectedType === '3A'" label="Date of Birth">
-                                :
-                                <InputforForm width="100%" />
-                                :
-                                <InputforForm width="100%" she />
-                            </InputLabel>
-                            <InputLabel twoInput v-if="selectedType === '3A'" label="Age">
-                                :
-                                <InputforForm width="100%" />
-                                :
-                                <InputforForm width="100%" she />
-                            </InputLabel>
-                            <InputLabel twoInput v-if="selectedType === '3A'" label="Citizenship">
-                                :
-                                <InputforForm width="100%" />
-                                :
-                                <InputforForm width="100%" she />
-                            </InputLabel>
-                            <InputLabel twoInput v-if="selectedType === '3A'" label="Civil Status">
-                                :
-                                <InputforForm width="100%" />
-                                :
-                                <InputforForm width="100%" she />
-                            </InputLabel>
-                            <InputLabel twoInput v-if="selectedType === '3A'" label="Mother">
-                                :
-                                <InputforForm width="100%" />
-                                :
-                                <InputforForm width="100%" she />
-                            </InputLabel>
-                            <InputLabel twoInput v-if="selectedType === '3A'" label="Father">
-                                :
-                                <InputforForm width="100%" />
-                                :
-                                <InputforForm width="100%" she />
-                            </InputLabel>
-                            <InputLabel v-if="selectedType === '3A'" label="Registry Number">
-                                :
-                                <InputforForm width="50%" />
-
-                            </InputLabel>
-                            <InputLabel v-if="selectedType === '3A'" label="Date of Registration">
-                                :
-                                <InputforForm width="50%" />
-
-                            </InputLabel>
-                            <InputLabel v-if="selectedType === '3A'" label="Date of Marriage">
-                                :
-                                <InputforForm width="50%" />
-
-                            </InputLabel>
-                            <InputLabel v-if="selectedType === '3A'" label="Place of Marriage">
-                                :
-                                <InputforForm width="50%" />
-
-                            </InputLabel>
-
-                        </div>
-                    </div>
-
-                    <div v-if="selectedType === '1B' || selectedType === '2B' || selectedType === '3B'">
-                        <div class="mt-10 px-10">
-                            <p class="indent-8 text-pretty leading-10 tracking-wider text-justify">We certify that this
-                                office
-                                has
-                                no
-                                record of {{ records_of }} of
-                                <InputforForm width="15rem" middle v-model="formData.name_of" /> who
-                                is
-                                alleged
-                                to have {{ alleged_to }} on
-                                <InputforForm width="10rem" middle v-model="formData.date_of" /> in this
-                                municipality, <span v-if="selectedType === '1B'"> of parents
-                                    <InputforForm width="15rem" middle v-if="selectedType === '1B'" /> and
-                                    <InputforForm width="15rem" v-if="selectedType === '1B'" middle />.
-                                </span> Hence, we cannot issue,
-                                as
-                                requested, a true
-                                copy of his/her Certificate of {{ register_of }} or transcription from the Register of
-                                {{ transcription_register_of }}.
-                            </p>
-                        </div>
-
-                        <div class="mt-10 px-10 ">
-                            <p class="indent-8 text-pretty tracking-wider text-justify"> We also certify that the
-                                records of
-                                {{ records_of }} for the year
-                                <InputforForm width="6rem" middle v-model="formData.records_of_year" /> are
-                                still
-                                intact in the
-                                archives of
-                                this office.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div v-if="selectedType === '1C' || selectedType === '2C' || selectedType === '3C'">
-                        <div class="mt-10 px-10">
-                            <p class="indent-8 text-pretty leading-10 tracking-wider text-justify"> We certify that the
-                                records
-                                of
-                                {{ records_of }}
-                                filed in the archives of this office include those, which were registered from
-                                <InputforForm width="6rem" middle v-model="formData.registered_from" /> to
-                                present.
-                                However, the records of {{ records_of }} during period
-                                <InputforForm width="6rem" v-model="formData.period_from" />
-                                to
-                                <InputforForm width="6rem" v-model="formData.period_to" />
-                                were totally destroyed by
-                                <InputforForm width="20rem" v-model="formData.destroyed_by" />
-                                Hence, we cannot issue as requested, a true transcription from the Register of
-                                {{ register_of }} or
-                                true
-                                copy of the Certification of {{ register_of }} of
-                                <InputforForm width="15rem" v-model="formData.name_of" /> who
-                                is alleged
-                                to have {{ alleged_to }} on
-                                <InputforForm width="10rem" v-model="formData.date_of" /> in
-                                this
-                                municipality.
-                            </p>
-                        </div>
-
-                        <div class="mt-10 px-10 flex flex-col gap-2 w-full opacity-50 ">
-                            <div class="w-[calc(100%-50px)]  ml-auto h-[1rem] bg-gray-200 rounded-lg "></div>
-                            <div class="w-full h-[1rem] bg-gray-200 rounded-lg "></div>
-                            <div class="w-full h-[1rem] bg-gray-200 rounded-lg "></div>
-                            <div class="w-[calc(100%-400px)]  h-[1rem] bg-gray-200 rounded-lg "></div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-center mt-10 relative text-nowrap">
-                        This certification is issued to <div class="px-2">
-                            <InputforForm width="15rem" middle v-model="formData.certification_issued_to" bold />
-                        </div> upon his/her request.
-                    </div>
-
-                    <div class="flex  flex-col  px-14 py-2 w-full gap-2" v-if="is_with_remarks">
-
-                        <div class="h-24 block"></div>
-                        <!-- <p class="font-bold font-serif">REMARKS: <span
-                                class="text-xs font-sans italic font-normal text-gray-600">(Leave it blank if no
-                                remarks)</span></p> -->
-                        <!-- As Remarks  v-if="formData.form_type.includes('A')"-->
-                        <div class="w-full flex flex-col gap-1">
-                            <!-- <QuillEditor theme="snow" :toolbar="['bold', 'italic']" v-model:content="formData.remarks" /> -->
-                            <Try />
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex sm:flex-col md:lg:flex-row justify-between items-start w-full  mt-10     relative text-nowrap gap-2  px-2   ">
-                        <!-- <div class="absolute -right-[15rem]">
-                            <button class="text-xs text-blue-500 border rounded-sm p-2 hover:bg-white">
-                                <p>
-                                    ADD <span class="italic">"For and in the
-                                        absence:"</span>
-                                </p>
-                            </button>
-                        </div> -->
-                        <div class="flex flex-col items-start sm:gap-2 mb-4 md:lg:gap-10">
-                            <p class="italic">Verified by:</p>
-                            <div class="sm:pl-0 md:lg:pl-20 flex flex-col items-center gap-[0.10rem]">
-                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
-                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
-                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="formData.verifier_position" />
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center">
-                            <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
-                            <InputforForm skip middle width="20rem" bold v-model="formData.civil_registrar"
-                                @input="formData.civil_registrar = $event.target.value.toUpperCase()" />
-                            <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
-                            <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
-                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
-                                    
-                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
-                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="formData.position"  />
-                            </div> -->
-                        </div>
-                    </div>
-                    <!--     Required for all forms      -->
-                    <div class="flex  flex-col px-2 gap-2 w-[25rem] mt-auto">
-                        <InputLabel label="Amount Paid">
-                            <InputforForm width="100%" v-model="formData.amount_paid" />
+            <div class="w-full h-full grid grid-cols-2 p-4 bg-white">
+                <div class="flex flex-col gap-2 px-4 py-10">
+                    <div class="grid grid-cols-2 gap-4 mb-10">
+                        <InputLabel label="Page">
+                            :
+                            <InputforForm />
                         </InputLabel>
-                        <InputLabel label="O.R. Number">
-                            <InputforForm width="100%" v-model="formData.or_number" />
+                        <InputLabel label="Book">
+                            :
+                            <InputforForm />
+                        </InputLabel>
+                    </div>
+                    <InputLabel label="Registry Number">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Date of Registration">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Name of Child">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Date of Birth">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Place of Birth">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Name of Mother">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Citizenship of Mother">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Name of Father">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Citizenship of Father">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Date of Marriage of parents">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Place of Marriage of parents">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+
+                </div>
+                <div class="flex flex-col gap-2 px-4 py-10">
+                    <InputLabel label="Issued to">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Verified by">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Verifier Position">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+                    <InputLabel label="Civil Registrar ">
+                        :
+                        <InputforForm width="100%" />
+                    </InputLabel>
+
+                    <div class="flex flex-col gap-2 mt-auto
+                   ">
+                        <InputLabel label="O.R. Number ">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+
+                        <InputLabel label="Amount Paid">
+                            :
+                            <InputforForm width="100%" />
                         </InputLabel>
                         <InputLabel label="Date Paid">
-                            <InputforForm width="100%" bold v-model="formData.date_paid" />
+                            :
+                            <InputforForm width="100%" />
                         </InputLabel>
                     </div>
 
                 </div>
-
-
             </div>
 
-            <div class=" bg-gray-100 w-full " v-if="isPreview">
-                <PDFViewerWorker :pdfBytes64="previewUrl" v-if="isPreview" />
-            </div>
 
-            <!-- <template v-slot:footer>
-                <div class="h-full flex items-center justify-center w-full px-2">
-                    <div class="flex flex-row gap-2 ml-auto">
-                        <button type="button"
-                            class="bg-white  px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
-                            @click="submit()">Submit</button>
-                        <button type="button"
-                            class="bg-white  px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
-                            @click="submit()">Submit &
-                            Print</button>
-                        <button type="button"
-                            class="bg-white  px-2.5 py-1 gap-2 flex outline-none hover:bg-blue-600  items-center font-medium  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300  hover:text-white"
-                            @click="submit()"> Print</button>
-                    </div>
-                </div>
-            </template> -->
         </Modal>
 
     </div>
@@ -480,6 +179,8 @@ import Try from '../../components/try.vue';
 import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
 import { useForms } from '../../stores/forms.js'
 import TableGrid from '../../components/TableGrid.vue'
+import ControlButton from '../../components/ControlButton.vue'
+import FormInput from './FormInput.vue'
 
 const all_ = ref(all_address())
 

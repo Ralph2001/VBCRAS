@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen relative mainHTML scale-70 bg-neutral-100/90">
+  <div class="h-screen relative mainHTML scale-70 bg-[#FDFDFE]">
 
     <NavBar />
     <Menu />

@@ -1,12 +1,12 @@
 <template>
-    <div class="relative h-[calc(100vh-60px)] flex  md:lg:flex-row w-full overflow-y-scroll ">
+    <div class="relative h-[calc(100vh-60px)] bg-[#FDFDFE] flex  md:lg:flex-row w-full overflow-y-scroll ">
 
         <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="exit_approval()" />
         <div role="dialog" aria-modal="true" v-if="isCreatingFinality"
             class="fixed top-0 bottom-0 left-0 right-0 h-full items-center justify-center flex p-4 z-50 backdrop-blur-sm backdrop-brightness-[0.7]"
             tabindex="-1">
             <div
-                class="h-auto w-[25rem] gap-1 bg-white border rounded-md border-gray-300 shadow-sm flex flex-col p-4 items-center justify-center ">
+                class="h-auto w-[25rem] gap-1 bg-[#FDFDFE] border rounded-md border-gray-300 shadow-sm flex flex-col p-4 items-center justify-center ">
                 <!-- <Loading /> -->
 
                 <div class="relative h-[10rem] w-full bg-gray-100 rounded-lg brightness-95 hover:border-gray-300 border   transition-all hover:brightness-100"
@@ -20,14 +20,15 @@
             </div>
         </div>
 
-        <div
-            class="w-full h-full  bg-white border-s border-gray-200 flex flex-col px-4 py-6 gap-2 basis-[80%] shadow-md ">
-            <p class="font-medium  text-2xl">Petition</p>
+        <div class="h-full  bg-[#FDFDFE] border-s border-gray-200 flex flex-col px-4 py-6 gap-2 w-[60%] shadow-md ">
+            <div class="w-full h-16 flex items-center justify-center bg-blue-400 text-white">
+                <p class="font-medium  text-lg">Petition Info</p>
+            </div>
             <div v-if="loading" class="flex items-center justify-center h-full">
                 <p class="text-sm text-gray-500">Getting petition info...</p>
             </div>
             <!---->
-            <div v-else class="w-full h-full flex flex-col p-3 gap-5 py-4 overflow-y-scroll shadow-inner ">
+            <div v-else class="w-full h-full flex flex-col p-3 gap-5 py-4 overflow-y-scroll bg-neutral-50/80 ">
                 <div class="flex flex-row h-auto ">
                     <p class="w-[8rem] font-normal text-sm justify-start flex text-gray-900 ">Date Filed</p>
                     <p class="w-fit text-sm justify-start flex">:</p>
@@ -93,8 +94,12 @@
                         'PPpp') }}
                     </p>
                 </div>
-                <p class="font-medium p-2">{{ petition_info.petition_type === "CCE" ? `Clerical Errors` : `Change of
-                    First Name` }}</p>
+                <div class="w-full bg-red-500 rounded-full text-white flex items-center  justify-center">
+                    <p class="font-medium p-2">{{ petition_info.petition_type === "CCE" ? `Clerical Errors` : `Change of
+                        First Name` }}</p>
+                </div>
+
+
                 <div>
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500  h-full">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50  ">
@@ -114,7 +119,7 @@
                             </tr>
                         </thead>
                         <tbody class="h-full">
-                            <tr class="bg-white border-b  " v-for="data in clerical_errors">
+                            <tr class="bg-[#FDFDFE] border-b  " v-for="data in clerical_errors">
                                 <th scope="row" class="px-6 py-4  text-gray-900 whitespace-nowrap ">
                                     {{ data.error_num }}
                                 </th>
@@ -131,56 +136,61 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="font-medium p-2">Supporting Documents</p>
-                <div>
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50   h-full">
-                            <tr>
+                <div class="w-full bg-yellow-300 rounded-full  text-neutral-950 flex items-center  justify-center">
+                    <p class="font-medium p-2"><font-awesome-icon icon="fa-solid fa-paperclip" /> Supporting Documents
+                    </p>
+                </div>
+                <div class="px-4">
 
-                                <th scope="col" class="px-6 py-3">
-                                    Document Name
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="h-full">
-                            <tr class="bg-white border-b  " v-for="data in petition_info.supporting_documents">
+                    <ul class="list-disc space-y-1">
+                        <li class="font-medium text-neutral-800" v-for="data in petition_info.supporting_documents"
+                            :key="data.id">
+                            {{ data.document_name }}
+                        </li>
+                    </ul>
+
+                    <!-- <tbody class="h-full">
+                            <tr class="bg-[#FDFDFE] border-b  " v-for="data in petition_info.supporting_documents">
 
                                 <th scope="row" class="px-6 py-4  text-gray-900 ">
                                     {{ data.document_name }}
                                 </th>
 
                             </tr>
-                        </tbody>
-                    </table>
+                        </tbody> -->
+
                 </div>
             </div>
 
         </div>
 
-        <div class="w-full h-full  bg-white border-s border-gray-200 flex flex-col p-10 gap-2 ">
+        <div class="w-full h-full  bg-[#FDFDFE] border-s border-gray-200 flex flex-col p-10 gap-2 ">
 
             <p class="font-bold text-2xl mt-5">Attachments</p>
             <div class="flex items-center p-2">
                 <p class="font-normal text-sm text-gray-800">
-                    <span class="font-medium">Note:</span> Upon approval, a <span class="font-medium">Finality</span>
-                    and
-                    <span class="font-medium">Endorsement Letter</span> will be automatically generated. However, you
-                    will still need
-                    to create an Annotated Form 102.
+                    Add Requirement to proceed approval.
                 </p>
-
             </div>
+            <p class="font-normal text-sm text-gray-800 mt-2">
+                Please ensure you have created an annotated 102 or Form 1A before proceeding with the petition approval
+                process. This documentation is crucial as it provides the necessary details and verification required
+                for a thorough review. Completing the annotated form ensures that all aspects of the petition are
+                clearly outlined and meet our procedural standards, allowing you to move forward confidently in the
+                approval workflow.
+            </p>
+
 
 
 
             <div class="flex flex-col w-full p-1" v-if="!annotation">
                 <button
-                    :class="{ 'bg-gray-700 text-white  hover:text-white hover:bg-gray-800': annotated_unannotated, 'bg-white': !annotated_unannotated, ' pointer-events-none bg-gray-700 text-white hidden hover:text-white hover:bg-gray-800  ': selectfromscanned }"
+                    :class="{ 'bg-gray-700 text-white  hover:text-white hover:bg-gray-800': annotated_unannotated, 'bg-[#FDFDFE]': !annotated_unannotated, ' pointer-events-none bg-gray-700 text-white hidden hover:text-white hover:bg-gray-800  ': selectfromscanned }"
                     class="w-fit text-sm font-semibold px-2.5 py-2 text-gray-700 shadow-md rounded border  items-center flex hover:bg-gray-100"
                     type="button" @click="annotated_unannotated = !annotated_unannotated"> Add Requirement
                     <font-awesome-icon icon="fa-solid fa-arrow-down" class="ms-2 text-xs" /></button>
 
-                <div class="h-auto flex flex-col bg-white w-fit p-2 border items-start mt-5 gap-3 shadow-md transition-all text-gray-600"
+                <div class="h-auto flex flex-col bg-[#FDFDFE] w-fit p-2 border items-start mt-5 gap-3 shadow-md transition-all text-gray-600"
                     v-if="annotated_unannotated">
                     <p class="text-sm bg-gray-100 px-1 w-full">Annotated/Form 102</p>
                     <div class="flex flex-col items-start    w-full">
@@ -244,7 +254,7 @@
                             Cancel
                         </button>
                         <button type="button" @click="submit()"
-                            class=" font-medium text-sm border px-2.5 py-1 rounded bg-white hover:bg-gray-200 text-gray-700">
+                            class=" font-medium text-sm border px-2.5 py-1 rounded bg-[#FDFDFE] hover:bg-gray-200 text-gray-700">
                             Select
                         </button>
                     </div>
@@ -256,7 +266,7 @@
                 <!-- <button
                     class="border w-[10rem] rounded-sm bg-gray-800 hover:bg-gray-900 text-sm py-2  text-white font-medium shadow-sm transition-all active:scale-95 ">Impugn</button> -->
                 <button @click="back"
-                    class="border w-[10rem] rounded-sm bg-white text-sm py-2 hover:bg-red-400 text-gray-800 font-medium shadow-sm transition-all active:scale-95 hover:text-white">Cancel</button>
+                    class="border w-[10rem] rounded-sm bg-[#FDFDFE] text-sm py-2 hover:bg-red-400 text-gray-800 font-medium shadow-sm transition-all active:scale-95 hover:text-white">Cancel</button>
 
                 <button type="button" @click="create_finality" :disabled="!annotation"
                     class="bg-green-600 disabled:bg-green-400 disabled:hover:cursor-not-allowed hover:bg-green-500 hover:cursor-pointer py-2 px-10 font-medium rounded-sm text-white ">Approve</button>
@@ -270,17 +280,18 @@
         <!-- <ul v-for="(value, key) in petition.petition_data" :key="key">
             <li>{{ key + ' : ' + value }}</li>
         </ul> -->
-        <div class="fixed bg-white z-[9999] top-0 bottom-0 left-0 right-0 flex flex-col p-4 -full w-full border gap-2 px-10"
+        <div class="fixed bg-[#FDFDFE] z-[9999] top-0 bottom-0 left-0 right-0 flex flex-col p-4 h-full w-full border gap-2 px-10"
             v-if="AnnotationEditor">
 
             <div class="h-full flex flex-col overflow-y-scroll gap-1">
                 <div class="grid grid-cols-2 w-full h-full gap-5 ">
                     <div class="flex h-full  w-full border relative  bottom-0">
-                        <div
+                        <PDFViewerWorker :pdfBytes64="pdfbase64" />
+                        <!-- <div
                             class="absolute right-[3.5rem] top-[0.4rem]  h-[3rem] w-[5rem] flex items-center justify-center bg-[#323639] z-[999]">
                             <p class="text-white text-xs tracking-wider font-medium">VBCRAS</p>
                         </div>
-                        <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe>
+                        <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe> -->
                     </div>
 
                     <div class="flex flex-col">
@@ -407,20 +418,13 @@ import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useComputerStore } from '../../../stores/Computer';
 import Wave from '../../../components/Wave.vue';
-import PDFViewerCCE from '../../../components/PDFViewerCCE.vue';
 import { format } from 'date-fns';
-
-
-
-
+import PDFViewerWorker from '../../../components/PDFViewerWorker.vue';
+import PDFViewerCCE from '../../../components/PDFViewerCCE.vue';
 
 const computer = useComputerStore()
 
 
-const { files, open, reset, onChange } = useFileDialog({
-    accept: 'application/pdf',
-    directory: false,
-})
 
 const filter_type = ref('Birth')
 const filter_year = ref(2024)
@@ -466,22 +470,6 @@ const CancelSelectFromScanned = () => {
     data.value = null
 }
 
-onChange((file) => {
-    if (file[0].type != 'application/pdf' || file.length > 1) {
-
-        annotated_unannotated.value = false
-        return
-    }
-    console.log(file[0].path)
-
-    // formData.filepath = file[0].path.replace(`C:\\Users\\${computer.desktop_name}\\`, '')
-    // console.log(formData.filepath)
-
-    // console.log(file[0])
-    submit()
-    annotated_unannotated.value = false
-
-})
 
 const clerical_errors = ref();
 const loading = ref(true);
@@ -545,7 +533,15 @@ const initialFormData = {
 };
 
 const formData = reactive({ ...initialFormData });
+const open = async () => {
+    const file = await window.LocalCivilApi.selectFile()
 
+    formData.filepath = file.replace(`C:\\Users\\${computer.desktop_name}\\`, '')
+
+    submit()
+    annotated_unannotated.value = false
+
+}
 
 const submit = async () => {
 
@@ -577,7 +573,7 @@ const submit = async () => {
     const submit = await window.ClericalApi.CreateAnnotated(data);
 
     AnnotationEditor.value = true
-    pdfbase64.value = 'data:application/pdf;filename=generated.pdf;base64,' + submit.pdfbase64
+    pdfbase64.value = submit.pdfbase64
     raw_pdf.value = submit.pdfbase64
 }
 const raw_pdf = ref()

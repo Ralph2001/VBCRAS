@@ -1,6 +1,7 @@
 from ..extensions import db, jsonify, request, create_access_token, Blueprint
 from ..models.civil_registry_corrections import Petitions, PetitionSupportingDocuments, PetitionClericalErrors
 from ..schemas.petition_schema import PetitionSchema
+from ..extensions import desc
 
 
 petitions = Blueprint("petitions", __name__)
@@ -17,7 +18,7 @@ petitions_list_schema = PetitionSchema(many=True)
 
 @petitions.route("/petitions", methods=["GET"])
 def get_all_petitions():
-    petitions_records = Petitions.query.all()
+    petitions_records = Petitions.query.order_by(desc(Petitions.created_at)).all()
     result = petitions_list_schema.dump(petitions_records)
     return jsonify(result), 200
 

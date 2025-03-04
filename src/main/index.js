@@ -863,7 +863,7 @@ ipcMain.handle('select-folder', async (event) => {
 })
 
 ipcMain.handle('select-file', async (event) => {
-    if (dialogOpen) return
+    if (dialogOpen) return { canceled: true, filePaths: [] }  // Always return an object
     try {
         dialogOpen = true
         const { canceled, filePaths } = await dialog.showOpenDialog({

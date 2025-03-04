@@ -14,7 +14,7 @@ from flask_jwt_extended import JWTManager
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
 from marshmallow import fields
-
+from sqlalchemy import desc
 
 ma = Marshmallow()
 jwt = JWTManager()

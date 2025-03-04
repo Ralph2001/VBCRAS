@@ -93,8 +93,8 @@ import {
     faChevronRight,
     faChevronUp,
     faChevronDown,
-    faCircleExclamation
-    
+    faCircleExclamation,
+    faPaperclip
 
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -174,7 +174,8 @@ library.add(
     faChevronUp,
     faChevronDown,
     faCircleExclamation,
-    faClock
+    faClock,
+    faPaperclip
 
 )
 

@@ -1,6 +1,6 @@
 <template>
     <div class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
-        <div class="w-full bg-[#525659] flex  absolute  px-4 py-2 top-0 z-[99999]">
+        <div class="w-full bg-[#0D1B2A] flex  absolute  px-4 py-2 top-0 z-[99999]">
             <div class="flex flex-row gap-2 items-center">
                 <p class="text-md  text-gray-100 font-medium  italic">
                     <!-- Correction of Clerical Error - Ralph Advincula Villanueva -->
@@ -25,22 +25,19 @@
         </div>
 
         <button @click="sidebar = true"
-            class="absolute left-0 top-0 bottom-0 pt-20 w-fit p-1 bg-gray-700 hover:bg-gray-800  transition-all outline-none flex items-center justify-center  ">
+            class="absolute left-0 top-0 bottom-0 pt-20 w-fit p-1 z-40 bg-gray-700 hover:bg-gray-800  transition-all outline-none flex items-center justify-center  ">
             <font-awesome-icon icon="fa-solid fa-angles-right" class=" text-lg  text-white" />
         </button>
 
 
         <div v-if="sidebar"
-            class="absolute top-0 bottom-0 left-0 w-[20rem]  pt-18 items-center gap-2 bg-[#525659] z-40 flex flex-col transition-all">
-            <div class="flex flex-row w-full h-full gap-1 bg-gray-700">
+            class="absolute top-0 bottom-0 left-0 w-[20rem] z-40 pt-18 items-center gap-2 bg-[#0D1B2A]  flex flex-col transition-all">
+            <div class="flex flex-row w-full h-full gap-1 bg-[#0D1B2A]">
                 <div class=" w-full flex flex-col gap-2 items-center h-full pt-20 px-2">
-                    <div class="w-full grid grid-cols-2 items-center justify-center  shadow">
+                    <div class="w-full grid   shadow">
                         <button @click="changeMenu('Files')"
                             :class="[menu === 'Files' ? 'bg-gray-800' : 'hover:bg-gray-800']"
-                            class="font-medium transition-all text-gray-50 ">Files</button>
-                        <!-- <button @click="changeMenu('Info')" disabled
-                            :class="[menu === 'Info' ? 'bg-gray-800' : 'hover:bg-gray-800']"
-                            class="font-medium transition-all text-gray-50 hover:bg-gray-800 hover:cursor-not-allowed">Info</button> -->
+                            class="font-medium w-full transition-all text-gray-50 ">Documents</button>
                     </div>
                     <div class="flex flex-col gap-2 items-center justify-center w-full p-3 h-full   "
                         v-if="menu === 'Files'">
@@ -49,53 +46,48 @@
                             class="p-2 shadow-inner outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex items-start">
                             {{ item.name }}
                         </button>
-                        <div class="mt-auto flex flex-col gap-2 w-full">
+                        <div class="mt-10 flex flex-col gap-2 w-full">
                             <button v-if="props.details" @click="openfolder(props.details)"
-                                class="bg-blue-200 hover:bg-blue-300 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-sm rounded-sm ">
+                                class="bg-green-500 text-white hover:bg-green-600 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-xs rounded-sm ">
                                 Open Folder
                             </button>
                             <button v-if="props.details" @click="create_certificate_filing(props.details)"
-                                class="bg-yellow-200 hover:bg-yellow-300 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-sm rounded-sm ">
+                                class="bg-yellow-300 hover:bg-yellow-400 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-xs rounded-sm ">
                                 Create Certificate of Filing (.docx)
                             </button>
                         </div>
 
                     </div>
-                    <div class="flex flex-col gap-2 items-center justify-center w-full h-full p-3"
-                        v-if="menu === 'Info'">
-                        <p class="italic text-white">Soon :)</p>
+                    <div class="flex flex-col gap-2 items-center justify-center w-full h-full p-3">
+                        <p class="italic text-[#0D1B2A]">Created by Ralph :)</p>
 
-                        <!-- <div v-if="props.details" class="flex flex-col h-full overflow-y-scroll">
-                            <div v-for="(key, value) in details">{{ key }}</div>
-                        </div> -->
                     </div>
 
                 </div>
 
                 <button @click="sidebar = false"
-                    class="h-full bg-gray-700 hover:bg-gray-800 shadow-md px-2  transition-all outline-none flex items-center  justify-center  ">
+                    class="h-full bg-[#0D1B2A] hover:bg-gray-800 z-[99999999999999999999] shadow-md px-2  transition-all outline-none flex items-center  justify-center  ">
                     <font-awesome-icon icon="fa-solid fa-angles-right " class=" text-lg  text-white rotate-180" />
                 </button>
 
             </div>
         </div>
 
-        <div class="absolute right-0 w-[2rem] h-full block bg-[#525659] ">
+        <div class="absolute right-0 w-[2rem] h-full block bg-[#0D1B2A] ">
 
         </div>
-        <div class="h-full w-full bg-[#525659] items-center flex justify-center">
+        <div class="h-full w-full bg-[#0D1B2A] items-center flex justify-center">
             <div class=" z-[9999999]" v-if="!active_pdf_link">
                 <p class="text-white italic">Select Option Above</p>
             </div>
-
-            <iframe ref="iframeRef" class="h-full w-full" v-if="active_pdf_link" :src="base64(active_pdf_link)"
-                frameborder="1" allowfullscreen=""></iframe>
+            <PDFViewerWorker v-if="active_pdf_link"  :pdfBytes64="active_pdf_link" />
         </div>
     </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import PDFViewerWorker from './PDFViewerWorker.vue';
 
 const emit = defineEmits(['cancel-btn', 'save-print', 'exit-btn']);
 const props = defineProps({
@@ -122,7 +114,7 @@ function base64(data) {
 const pdfs = ref(props.pdf_data)
 const active_pdf = ref(null)
 const active_pdf_link = ref(null)
-const sidebar = ref(true)
+const sidebar = ref(false)
 const menu = ref('Files')
 
 function changeMenu(data) {
