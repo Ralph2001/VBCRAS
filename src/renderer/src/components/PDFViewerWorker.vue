@@ -1,14 +1,6 @@
 <template>
     <div class="h-full w-full flex flex-col items-center relative bg-[#1B263B] overflow-y-scroll py-20  ">
-        <!-- <div class="controls py-4 fixed  w-full items-center justify-center bg-gray-300">
-            <button @click="zoomIn" :disabled="isLoading"
-                class="bg-white text-gray-700 rounded border border-gray-300 px-2 text-xs font-medium hover:bg-gray-400 active:scale-95">Zoom
-                In</button>
-            <button @click="zoomOut" :disabled="isLoading"
-                class="bg-white text-gray-700 rounded border border-gray-300 px-2 text-xs font-medium hover:bg-gray-400 active:scale-95">Zoom
-                Out</button>
-            <p class="shadow-inner px-2 border border-gray-300 rounded bg-gray-300"> {{ percent }}</p>
-        </div> -->
+       
         <div v-if="isLoading" class="z-50 h-full items-center justify-center  w-full flex">Loading...</div>
 
         <div v-else class="h-fit ">

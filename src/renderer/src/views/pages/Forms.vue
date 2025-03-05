@@ -52,100 +52,243 @@
 
         <Modal footerBG="bg-white" v-if="isFormOpen" :footer="false">
             <template v-slot:header>
-                <ControlButton :icon="['fas', 'arrow-left']" button-text="Return" @action="closeModal()" />
+                <div class="flex flex-row w-full">
+                    <ControlButton :icon="['fas', 'arrow-left']" button-text="Return" @action="closeModal()" />
+
+                    <div class="flex flex-row gap-2 ml-auto">
+                        <button @click="toggleForm(`${type}`)" v-for="type in FormTypes" :key="type"
+                            :class="[selectedType === type ? 'text-white bg-[#1B263B] ' : '']"
+                            class="p-4 h-7 w-fit    hover:bg-[#1B263B]/50 transition-all duration-100 flex items-center text-sm justify-center  text-neutral-200 hover:text-neutral-300  rounded">
+                            Form {{ type }}
+                        </button>
+                    </div>
+                </div>
             </template>
 
-            <div class="w-full h-full grid grid-cols-2 p-4 bg-white">
-                <div class="flex flex-col gap-2 px-4 py-10">
-                    <div class="grid grid-cols-2 gap-4 mb-10">
-                        <InputLabel label="Page">
-                            :
-                            <InputforForm />
-                        </InputLabel>
-                        <InputLabel label="Book">
-                            :
-                            <InputforForm />
-                        </InputLabel>
-                    </div>
-                    <InputLabel label="Registry Number">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Date of Registration">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Name of Child">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Date of Birth">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Place of Birth">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Name of Mother">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Citizenship of Mother">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Name of Father">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Citizenship of Father">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Date of Marriage of parents">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Place of Marriage of parents">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
+            <div class="w-full h-full grid lg:grid-cols-2 px-4 py-1.5 bg-gray-200 overflow-y-auto">
+                <div class="flex flex-col gap-1 px-4 py-10">
+                    <div class="flex items-center justify-end">
+                        <div class="w-[15rem]">
+                            <InputforForm middle width="full" bold v-model="formData.date_filed" />
+                        </div>
 
+                    </div>
+                    <p class="px-9 italic font-semibold font-serif">TO WHOM IT MAY CONCERN:</p>
+
+                    <!-- Forms with `A` -->
+                    <div class="flex flex-col gap-2 mt-auto" v-if="selectedType.includes('A')">
+
+                        <div class="sm:mb-5 lg:mb-auto">
+                            <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-gray-900">We
+                                certify that among others, the following facts of {{ fact_of }} appear in our Register
+                                of {{
+                                    register_of }} on page
+                                <InputforForm type="number" middle width="6rem" bold v-model="formData.page_number" />
+                                of book number
+                                <InputforForm type="number" middle width="6rem" bold v-model="formData.book_number" /> .
+                            </p>
+                        </div>
+                        <InputLabel label="Registry Number">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Date of Registration">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Name of Child">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Sex">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Date of birth">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Place of birth">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Name of Mother">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Citizenship of Mother">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Name of Father">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Citizenship of Father">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Date of Marriage">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+                        <InputLabel label="Place of Marriage of parents">
+                            :
+                            <InputforForm width="100%" />
+                        </InputLabel>
+
+                    </div>
+
+                    <!-- Forms with `B` -->
+                    <div class="flex flex-col gap-2 mt-auto mb-auto" v-if="selectedType.includes('B')">
+
+                        <div class="mt-10 px-10">
+                            <p class="indent-8 text-pretty leading-10 tracking-wider text-justify">We certify that
+                                this
+                                office
+                                has
+                                no
+                                record of {{ records_of }} of
+                                <InputforForm width="15rem" middle v-model="formData.name_of" /> who
+                                is
+                                alleged
+                                to have {{ alleged_to }} on
+                                <InputforForm width="10rem" middle v-model="formData.date_of" /> in this
+                                municipality, <span v-if="selectedType === '1B'"> of parents
+                                    <InputforForm width="15rem" middle v-if="selectedType === '1B'" /> and
+                                    <InputforForm width="15rem" v-if="selectedType === '1B'" middle />.
+                                </span> Hence, we cannot issue,
+                                as
+                                requested, a true
+                                copy of his/her Certificate of {{ register_of }} or transcription from the Register
+                                of
+                                {{ transcription_register_of }}.
+                            </p>
+                        </div>
+
+                        <div class="mt-10 px-10 ">
+                            <p class="indent-8 text-pretty tracking-wider text-justify"> We also certify that the
+                                records of
+                                {{ records_of }} for the year
+                                <InputforForm width="6rem" middle v-model="formData.records_of_year" /> are
+                                still
+                                intact in the
+                                archives of
+                                this office.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Forms with `C` -->
+                    <div class="flex flex-col gap-2 mt-auto mb-auto" v-if="selectedType.includes('C')">
+
+                        <p class="indent-8 text-pretty leading-10 tracking-wider text-justify"> We certify that the
+                            records
+                            of
+                            {{ records_of }}
+                            filed in the archives of this office include those, which were registered from
+                            <InputforForm width="6rem" middle v-model="formData.registered_from" /> to
+                            present.
+                            However, the records of {{ records_of }} during period
+                            <InputforForm width="6rem" v-model="formData.period_from" />
+                            to
+                            <InputforForm width="6rem" v-model="formData.period_to" />
+                            were totally destroyed by
+                            <InputforForm width="20rem" v-model="formData.destroyed_by" />
+                            Hence, we cannot issue as requested, a true transcription from the Register of
+                            {{ register_of }} or
+                            true
+                            copy of the Certification of {{ register_of }} of
+                            <InputforForm width="15rem" v-model="formData.name_of" /> who
+                            is alleged
+                            to have {{ alleged_to }} on
+                            <InputforForm width="10rem" v-model="formData.date_of" /> in
+                            this
+                            municipality.
+                        </p>
+
+                    </div>
                 </div>
                 <div class="flex flex-col gap-2 px-4 py-10">
-                    <InputLabel label="Issued to">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Verified by">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Verifier Position">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
-                    <InputLabel label="Civil Registrar ">
-                        :
-                        <InputforForm width="100%" />
-                    </InputLabel>
+                    <div class="flex items-center justify-center relative text-nowrap">
+                        This certification is issued to <div class="px-2">
+                            <InputforForm width="15rem" middle bold />
+                        </div> upon his/her request.
+                    </div>
 
-                    <div class="flex flex-col gap-2 mt-auto
-                   ">
-                        <InputLabel label="O.R. Number ">
-                            :
-                            <InputforForm width="100%" />
+                    <div class="flex flex-col gap-2 " v-if="is_with_remarks">
+                        <div class="flex flex-row gap-2 items-center">
+
+                            <input type="checkbox" v-model="is_remarks_check" name="" id="remark_btn"
+                                class="border rounded-sm border-gray-600">
+                            <label for="remark_btn" class="text-md font-medium text-neutral-800">Add Remarks</label>
+                        </div>
+                        <!-- <p class="font-medium text-xs">Add Remarks</p> -->
+
+                        <div class="flex  flex-col  py-2 w-full gap-2" v-if="is_remarks_check">
+                            <p class="font-bold font-serif">REMARKS: </p>
+
+                            <div class="w-full flex flex-col gap-1 bg-white">
+                                <QuillEditor theme="snow" :toolbar="['bold', 'italic']"
+                                    v-model:content="formData.remarks" />
+
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="flex     flex-row justify-between items-start w-full  mt-auto     relative text-nowrap gap-2  px-2   ">
+                        <!-- <div class="absolute -right-[15rem]">
+                            <button class="text-xs text-blue-500 border rounded-sm p-2 hover:bg-white">
+                                <p>
+                                    ADD <span class="italic">"For and in the
+                                        absence:"</span>
+                                </p>
+                            </button>
+                        </div> -->
+                        <div class="flex flex-col items-start sm:gap-2 mb-4 md:lg:gap-10">
+                            <p class="italic">Verified by:</p>
+                            <div class="pl-0 flex flex-col items-center gap-[0.10rem]">
+                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
+                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
+                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
+                                    v-model="formData.verifier_position" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
+                            <InputforForm skip middle width="20rem" bold v-model="formData.civil_registrar"
+                                @input="formData.civil_registrar = $event.target.value.toUpperCase()" />
+                            <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
+                            <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
+                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
+                                    
+                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
+                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
+                                    v-model="formData.position"  />
+                            </div> -->
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2  w-[50%]">
+                        <InputLabel label="Amount Paid ">
+                            <InputforForm width="100%" v-model="formData.amount_paid" />
                         </InputLabel>
 
-                        <InputLabel label="Amount Paid">
-                            :
-                            <InputforForm width="100%" />
+                        <InputLabel label="O.R. Number">
+                            <InputforForm width="100%" v-model="formData.or_number" />
                         </InputLabel>
                         <InputLabel label="Date Paid">
-                            :
-                            <InputforForm width="100%" />
+                            <InputforForm width="100%" v-model="formData.date_paid" />
                         </InputLabel>
+                    </div>
+                    <div class="flex flex-row gap-2 p-4 border rounded items-center justify-end bg-gray-100 shadow">
+                        <button
+                            class="bg-white hover:bg-gray-100 border text-gray-800 px-4 font-medium  py-3.5 rounded-md "
+                            @click="previewcontent">Preview</button>
+                        <button
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button>
+
                     </div>
 
                 </div>
@@ -181,12 +324,15 @@ import { useForms } from '../../stores/forms.js'
 import TableGrid from '../../components/TableGrid.vue'
 import ControlButton from '../../components/ControlButton.vue'
 import FormInput from './FormInput.vue'
+import { QuillEditor } from '@vueup/vue-quill'
 
 const all_ = ref(all_address())
 
 const is_with_remarks = computed(() => {
     return formData.form_type.includes('A') ? true : false
 })
+
+const is_remarks_check = ref(false)
 
 
 onMounted(() => {
@@ -402,11 +548,23 @@ const preferences = reactive({
     authenticate_position_y: '3.5'
 })
 
+
+const initialAvailable = ref({
+    is_with_authentication: '',
+    date_registration: '',
+    page_number: '',
+    book_number: '',
+    registry_number: '',
+    remarks: '',
+})
+
+
+
 const initialFormData = {
 
     is_with_authentication: '', // Is Abroad??
 
-    date_filed: '',
+    date_filed: format(new Date(), "MMMM dd, yyyy"),
     page_number: '',
     book_number: '',
 
