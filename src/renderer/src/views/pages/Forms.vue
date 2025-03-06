@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col relative justify-center w-full p-10 overflow-y-scroll">
         <Header label="Local Civil Registry Forms">
-
+            <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
         </Header>
 
 
@@ -13,7 +13,7 @@
                         <p class="text-xs text-neutral-600 font-medium w-32">Available Record</p>
                         <button
                             :class="[selectedForm === available ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
-                            class="rounded  transition-all duration-300 px-2.5 text-xs font-medium"
+                            class="rounded hover:bg-yellow-300  transition-all duration-300 px-2.5 text-xs font-medium"
                             v-for="available in available_forms" :key="available" @click="fetchFormData(available)">
                             {{ available }}
                         </button>
@@ -22,7 +22,7 @@
                         <p class="text-xs text-neutral-600 font-medium w-32">No Record</p>
                         <button
                             :class="[selectedForm === not_available ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
-                            class="rounded  transition-all duration-300 px-2.5 text-xs font-medium"
+                            class="rounded hover:bg-yellow-300  transition-all duration-300 px-2.5 text-xs font-medium"
                             v-for="not_available in no_record_forms" :key="not_available"
                             @click="fetchFormData(not_available)">
                             {{ not_available }}
@@ -32,21 +32,21 @@
                         <p class="text-xs text-neutral-600 font-medium w-32">Destroyed Record</p>
                         <button
                             :class="[selectedForm === destroyed ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
-                            class="rounded  transition-all duration-300 px-2.5 text-xs font-medium"
+                            class="rounded hover:bg-yellow-300  transition-all duration-300 px-2.5 text-xs font-medium"
                             v-for="destroyed in destroyed_forms" :key="destroyed" @click="fetchFormData(destroyed)">
                             {{ destroyed }}
                         </button>
                     </div>
                 </div>
 
-                <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
+               
             </div>
             <!-- <p class="italic font-thin text-sm  font-mono">Table Here</p> -->
 
-            <div class="h-full">
+            <!-- <div class="h-full">
                 <TableGrid :data="selectedFormData" :dataColumns="colDefs" :suppressRowTransform="true"
                     v-if="selectedForm !== null" />
-            </div>
+            </div> -->
 
         </div>
 
@@ -66,10 +66,11 @@
             </template>
 
             <div class="w-full h-full grid lg:grid-cols-2 px-4 py-1.5 bg-gray-200 overflow-y-auto">
+                <!-- <div class="absolute right-0">{{ TransactionDetails }}</div> -->
                 <div class="flex flex-col gap-1 px-4 py-10">
                     <div class="flex items-center justify-end">
                         <div class="w-[15rem]">
-                            <InputforForm middle width="full" bold v-model="formData.date_filed" />
+                            <InputforForm middle width="full" bold v-model="TransactionDetails.date_filed" />
                         </div>
 
                     </div>
@@ -213,7 +214,8 @@
                 <div class="flex flex-col gap-2 px-4 py-10">
                     <div class="flex items-center justify-center relative text-nowrap">
                         This certification is issued to <div class="px-2">
-                            <InputforForm width="15rem" middle bold />
+                            <InputforForm width="15rem" middle bold
+                                v-model="TransactionDetails.certification_issued_to" />
                         </div> upon his/her request.
                     </div>
 
@@ -249,17 +251,18 @@
                         <div class="flex flex-col items-start sm:gap-2 mb-4 md:lg:gap-10">
                             <p class="italic">Verified by:</p>
                             <div class="pl-0 flex flex-col items-center gap-[0.10rem]">
-                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
+                                <InputforForm skip width="20rem" bold middle v-model="TransactionDetails.verified_by"
                                     @input="formData.verified_by = $event.target.value.toUpperCase()" />
                                 <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="formData.verifier_position" />
+                                    v-model="TransactionDetails.verifier_position" />
                             </div>
                         </div>
-                        <div class="flex flex-col items-center">
+                        <div class="flex flex-col items-center gap-[0.10rem]">
                             <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
-                            <InputforForm skip middle width="20rem" bold v-model="formData.civil_registrar"
+                            <InputforForm skip middle width="20rem" bold v-model="TransactionDetails.civil_registrar"
                                 @input="formData.civil_registrar = $event.target.value.toUpperCase()" />
-                            <p class="italic font-medium text-sm">Municipal Civil Registrar</p>
+                            <InputforForm skip width="20rem" middle italic unbordered isTransparent
+                                v-model="TransactionDetails.civil_registrar_position" />
                             <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
                                 <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
                                     
@@ -272,14 +275,14 @@
 
                     <div class="flex flex-col gap-2  w-[50%]">
                         <InputLabel label="Amount Paid ">
-                            <InputforForm width="100%" v-model="formData.amount_paid" />
+                            <InputforForm width="100%" v-model="TransactionDetails.amount_paid" />
                         </InputLabel>
 
                         <InputLabel label="O.R. Number">
-                            <InputforForm width="100%" v-model="formData.or_number" />
+                            <InputforForm width="100%" v-model="TransactionDetails.or_number" />
                         </InputLabel>
                         <InputLabel label="Date Paid">
-                            <InputforForm width="100%" v-model="formData.date_paid" />
+                            <InputforForm width="100%" v-model="TransactionDetails.date_paid" />
                         </InputLabel>
                     </div>
                     <div class="flex flex-row gap-2 p-4 border rounded items-center justify-end bg-gray-100 shadow">
@@ -325,6 +328,48 @@ import TableGrid from '../../components/TableGrid.vue'
 import ControlButton from '../../components/ControlButton.vue'
 import FormInput from './FormInput.vue'
 import { QuillEditor } from '@vueup/vue-quill'
+import { useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
+
+
+const TransactionDetails = reactive(useTransactionDetails)
+
+
+// Form A's
+const Form1A = reactive(useForm1A)
+const Form2A = reactive(useForm2A)
+const Form3A = reactive(useForm3A)
+
+// Form B's
+const Form1B = reactive(useForm1B)
+const Form2B = reactive(useForm2B)
+const Form3B = reactive(useForm3B)
+
+// Form C's
+const Form1C = reactive(useForm1C)
+const Form2C = reactive(useForm2C)
+const Form3C = reactive(useForm3C)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const all_ = ref(all_address())
 

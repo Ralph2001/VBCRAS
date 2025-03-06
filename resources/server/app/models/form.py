@@ -38,7 +38,7 @@ class RegisteredPeriodMixin:
 # -------------------- A-Series Forms --------------------
 class Form1A(BaseCertificate, PaymentMixin, AvailableMixin):
     __tablename__ = 'form1a'
-
+    __table_args__ = (db.Index("idx_registry_number", "registry_number"),)
     # Child information
     name_child = db.Column(db.String(255), nullable=False)
     sex = db.Column(db.String(10), nullable=False)

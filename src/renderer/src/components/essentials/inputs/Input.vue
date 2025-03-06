@@ -2,17 +2,9 @@
   <div>
     <label v-if="!nolabel" :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
       <span v-if="error" class="text-red-600">*</span></label>
-    <input 
-      @keydown.enter="focusNextInput" 
-      @keydown.down="focusNextInput" 
-      @keydown.up="focusPreviousInput" 
-      :type="type"
-      :id="label" 
-      :value="modelValue" 
-      @input="value_toUpperCase($event.target)"  
-      :tabindex="skip ? '-1' : ''"
-      :readonly="readonly" 
-      :class="{
+    <input @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" :type="type"
+      :id="label" :value="modelValue" @input="value_toUpperCase($event.target)" :tabindex="skip ? '-1' : ''"
+      :readonly="readonly" :class="{
         'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
         'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
         'flex items-center text-center': center
@@ -72,17 +64,17 @@ const props = defineProps({
 
 const value_toUpperCase = (target) => {
   let value = target.value;
-  
+
   if (props.cap) {
     value = value.toUpperCase();
   }
-  
+
   // Save cursor position before update
   const start = target.selectionStart;
   const end = target.selectionEnd;
-  
+
   emit('update:modelValue', value);
-  
+
   // Restore cursor position after DOM update
   nextTick(() => {
     target.setSelectionRange(start, end);

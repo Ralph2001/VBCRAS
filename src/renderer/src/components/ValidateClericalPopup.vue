@@ -2,16 +2,16 @@
     <div class="fixed top-0 bottom-0 p-10 right-0 left-0 z-50 backdrop-brightness-50 flex justify-center items-center">
         <div class="h-full w-[50rem] rounded-md shadow bg-white p-7 flex flex-col gap-4">
             <!-- Header -->
-            <div class="p-1 border-b border-gray-200">
+            <div class=" border-b border-gray-200">
                 <h2 class="text-lg font-bold text-red-600 flex items-center gap-2">
                     🛑 Important Notice
                 </h2>
             </div>
 
             <!-- Main Content -->
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-2 overflow-y-auto">
                 <!-- Warning Section -->
-                <div class="bg-yellow-50 px-4 py-2 rounded-md border border-yellow-200">
+                <div class="bg-yellow-50 px-4 py-1 rounded-md border border-yellow-200">
                     <p class="font-semibold"> ⚠️ Due to system limitations:</p>
                     <ul class="list-disc pl-6 mt-2 space-y-2">
                         <li>Some formatting may not be perfect</li>
@@ -20,12 +20,23 @@
                 </div>
 
                 <!-- Instructions -->
-                <div>
+                <div class="bg-green-50 px-4 py-1 rounded-md border border-green-200">
                     <h3 class="font-bold">🔧 What to Do:</h3>
-                    <ul class="pl-4 mt-2 space-y-2">
+                    <ul class="pl-4 space-y-2">
                         <li>• Fix formatting (bold text, fonts, spacing)</li>
                         <li>• Move fields if they're misplaced</li>
                     </ul>
+                </div>
+
+                <!-- Save Instructions -->
+                <div class="bg-blue-50 px-4 py-1 rounded-md border border-blue-200">
+                    <h3 class="font-bold text-blue-600">💡 After fixing the design:</h3>
+                    <p>To save your desired layout:</p>
+                    <ul class="list-disc pl-6 mt-1 space-y-2">
+                        <li>Press <span class="font-bold">Ctrl + S</span> to save the document.</li>
+                        <li>Close the document after saving.</li>
+                    </ul>
+                    <p>Then click <span class="font-semibold">Continue to generate</span> to generate other files.</p>
                 </div>
 
                 <!-- Data Warning -->
@@ -72,8 +83,6 @@
 <script setup>
 import AlertPath from './Alert/AlertPath.vue';
 const emit = defineEmits(['proceed', 'cancel'])
-
-
 
 const proceed = () => {
     emit('proceed')

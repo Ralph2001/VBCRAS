@@ -1,9 +1,32 @@
 <template>
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
-      <Button label="Create" isActive :class="`rounded`" @click="open_modal()" />
+      <div class="w-full gap-2 flex flex-row items-center justify-center">
+        <Button label="Create New" isActive :class="`rounded`" @click="open_modal()" />
+        <button @click="quick_settings = !quick_settings"
+          class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
+            icon="fa-solid fa-info" /></button>
+      </div>
     </Header>
 
+    <div v-if="quick_settings"
+      class="fixed top-0 left-0 right-0 bottom-0 z-50 h-full w-full flex items-center justify-center  backdrop-blur-sm backdrop-brightness-95 p-2">
+      <div class="h-[20rem] w-full  max-w-screen-md p-4 rounded-md bg-white shadow flex flex-col gap-2">
+        <div class="flex flex-row items-center h-8 ">
+          <p class="text-lg font-medium text-gray-800"><font-awesome-icon icon="fa-solid fa-info" /> </p>
+          <button @click="quick_settings = false"
+            class="border border-gray-300 rounded-full px-2.5 py-1 ml-auto hover:bg-red-400 hover:text-white">
+            <font-awesome-icon icon="fa-solid fa-xmark" />
+          </button>
+        </div>
+        <div class="flex-1 p-1 gap-2 flex flex-col">
+          <p class="font-medium text-xs text-gray-700">Default Filepath</p>
+          <div class="p-4 bg-gray-100 shadow-inner ">
+            <p class="text-wrap text-sm">{{ system_setting.defaults[0].petition_default_file_path }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
     <AlertPath v-if="alertmodal" :title="alertmodal_title" :body="alertmodal_body" />
@@ -523,8 +546,8 @@
                     :error="v$.exhibiting_his_her.$error" />
                   <Input :label="formData.exhibiting_his_her || `No.`" v-model="formData.exhibiting_number"
                     :error="v$.exhibiting_number.$error" />
-                  <Input label="Issued at" skip v-model="formData.issued_at" :error="v$.issued_at.$error" />
-                  <Input label="Issued on" skip type="date" v-model="formData.issued_on" :error="v$.issued_on.$error" />
+                  <Input label="Issued at" v-model="formData.issued_at" :error="v$.issued_at.$error" />
+                  <Input label="Issued on" type="date" v-model="formData.issued_on" :error="v$.issued_on.$error" />
                 </div>
               </Box>
             </div>
@@ -749,7 +772,7 @@ import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue
 
 
 const tutorial = ref(false)
-
+const quick_settings = ref(false)
 const is_regen = ref(false)
 
 const alertmodal = ref(false)
