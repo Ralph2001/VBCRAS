@@ -11,8 +11,10 @@
                     props.data.petitioner_name }}</span></p>
                 <p class=" text-md mt-1">Petition Type: <span class="font-semibold text-gray-800">{{
                     props.data.petition_type }}</span></p>
-                <p class=" text-md mt-1">Event Type: <span class="font-semibold text-gray-800">{{
-                    props.data.event_type }}</span></p>
+                <p class=" text-md mt-1">Event Type: <span class="font-semibold text-gray-800">{{ props.data.event_type
+                        }}</span></p>
+                <p class=" text-md mt-1 text-blue-500 font-medium">File Path: <span
+                        class="font-semibold text-gray-800">{{ props.data.file_path }}</span></p>
             </div>
 
             <p class="mt-4 text-md font-sans px-6 text-justify">
@@ -29,11 +31,13 @@
             <p class="mt-4 text-md font-sans px-6 text-justify">
                 The **dates and existing data will remain unchanged** as stored in the database.
                 If you need to modify the dates or any other details, please <span class="font-medium">edit them
-                    first</span>
-                before regenerating the document.
+                    first</span> before regenerating the document.
             </p>
 
-       
+            <p class="mt-4 text-md font-sans px-6 text-justify font-bold">
+                Please note that if you choose to regenerate the document again, you will need to validate the layout
+                once more.
+            </p>
 
             <p class="mt-4 text-md font-sans px-6 text-justify text-red-500 font-medium">
                 ⚠️ **Double-check all details before proceeding!**
@@ -41,11 +45,9 @@
 
             <div class="mt-auto flex flex-row gap-2 justify-end">
                 <button @click="emits('cancel')"
-                    class="rounded outline-none ring-0 py-1.5 px-2 bg-red-500 text-white font-medium hover:bg-red-600">
-                    Cancel</button>
+                    class="rounded outline-none ring-0 py-1.5 px-2 bg-red-500 text-white font-medium hover:bg-red-600">Cancel</button>
                 <button @click="emits('proceed')"
-                    class="rounded outline-none ring-0 py-1.5 px-2 bg-green-500 hover:bg-green-600 font-medium text-white">
-                    Proceed</button>
+                    class="rounded outline-none ring-0 py-1.5 px-2 bg-green-500 hover:bg-green-600 font-medium text-white">Proceed</button>
             </div>
         </div>
     </div>

@@ -1,7 +1,16 @@
 <template>
-    <div class="flex flex-col relative justify-center w-full p-10 overflow-y-scroll">
-        <Header label="Local Civil Registry Forms">
+    <div class="flex flex-col relative justify-center w-full p-10 ">
+        <!-- <Header label="Local Civil Registry Forms">
             <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
+        </Header> -->
+
+        <Header label="LOCAL CIVIL REGISTRY FORMS">
+            <div class="w-full gap-2 flex flex-row items-center justify-center">
+                <BtnDrop label="Create New" :options="options" @open-modal="OpenForms" />
+                <button
+                    class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
+                        icon="fa-solid fa-info" /></button>
+            </div>
         </Header>
 
 
@@ -39,7 +48,7 @@
                     </div>
                 </div>
 
-               
+
             </div>
             <!-- <p class="italic font-thin text-sm  font-mono">Table Here</p> -->
 

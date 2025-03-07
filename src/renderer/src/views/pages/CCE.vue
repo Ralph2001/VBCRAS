@@ -1604,8 +1604,6 @@ const submitForm = async () => {
 
   const data = {
 
-
-
     header_province: formData.header_province,
     header_municipality: formData.header_municipality,
 
@@ -2007,6 +2005,31 @@ const openRegenerate = (data) => {
   is_regen.value = true;
   regen_data.value = data;
 };
+
+
+const handleRegenerate = async () => {
+  is_regen.value = false
+  console.log("regenerating")
+  const main_data = regen_data.value
+
+
+  is_validating.value = true
+  const petition_ = JSON.stringify(data);
+  console.log(petition_)
+  const generate_ = await window.ClericalApi.createPetitionDocument(petition_);
+  last_saved_filepath.value = generate_.filepath
+
+  // console.log(generate_)
+
+}
+
+
+
+
+
+
+
+
 
 const colDefs = ref([
   {

@@ -80,13 +80,13 @@
             <div class=" z-[9999999]" v-if="!active_pdf_link">
                 <p class="text-white italic">Select Option Above</p>
             </div>
-            <PDFViewerWorker v-if="active_pdf_link"  :pdfBytes64="active_pdf_link" />
+            <PDFViewerWorker v-if="active_pdf_link" :pdfBytes64="active_pdf_link" />
         </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import PDFViewerWorker from './PDFViewerWorker.vue';
 
 const emit = defineEmits(['cancel-btn', 'save-print', 'exit-btn']);
@@ -108,9 +108,7 @@ const props = defineProps({
     }
 })
 
-function base64(data) {
-    return 'data:application/pdf;filename=generated.pdf;base64,' + data
-}
+
 const pdfs = ref(props.pdf_data)
 const active_pdf = ref(null)
 const active_pdf_link = ref(null)
@@ -122,9 +120,8 @@ function changeMenu(data) {
 }
 
 onMounted(() => {
-    // console.log(pdfs.value[0].name)
     change_active_pdf(pdfs.value[0].name, pdfs.value[0].link)
-    console.log(pdfs.value)
+
 })
 
 
@@ -133,25 +130,24 @@ const change_active_pdf = (name, link) => {
     active_pdf_link.value = link
 }
 
-const cancel = () => {
-    emit('cancel-btn')
-}
 
-const save_print = () => {
-    emit('save-print')
-}
 
 const exit_btn = () => {
     emit('exit-btn')
+}
+const handleKeydown = (event) => {
+    // Check if Ctrl + P is pressed
+    if (event.ctrlKey && event.key === 'p') {
+        event.preventDefault() // Prevent the default action (such as opening print dialog)
+        console.log('Ctrl + P was pressed')
+        // Call your function here
+        printPDF()
+    }
 }
 
 const printPDF = async () => {
     const base64Data = active_pdf_link.value
     const open = await window.LocalCivilApi.printPDFBase64(base64Data)
-}
-
-const printAllPDF = () => {
-    // alert('Not Available yet')
 }
 
 const openfolder = async (param) => {
@@ -168,6 +164,15 @@ const create_certificate_filing = async (data) => {
     const create = await window.ClericalApi.CreateCertificateFiling(data)
 }
 
+
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeydown)
+})
 </script>
 
 <style lang="scss" scoped></style>

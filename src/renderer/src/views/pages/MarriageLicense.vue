@@ -1,9 +1,17 @@
 <template>
     <div class="flex flex-col relative justify-center w-full p-10">
-        <Header label="APPLICATION FOR MARRIAGE LICENSE">
+        <!-- <Header label="APPLICATION FOR MARRIAGE LICENSE">
             <Button label="Create" isActive :class="`rounded`" @click="open_model" />
-        </Header>
+        </Header> -->
 
+        <Header label="APPLICATION FOR MARRIAGE LICENSE">
+            <div class="w-full gap-2 flex flex-row items-center justify-center">
+                <Button label="Create New" isActive :class="`rounded`" @click="open_model" />
+                <button
+                    class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
+                        icon="fa-solid fa-info" /></button>
+            </div>
+        </Header>
 
         <div class="h-[calc(100vh-200px)]">
             <TableGrid :data="apl.application_marriage_license" :dataColumns="colDefs" :suppressRowTransform="true" />
@@ -159,14 +167,13 @@
 
 
                 <div class="h-full  w-full flex   justify-center relative ">
-                    <div v-if="!preview"
-                        class="h-full w-full flex  overflow-scroll justify-center  p-20 pt-24 pb-44">
+                    <div v-if="!preview" class="h-full w-full flex  overflow-scroll justify-center  p-20 pt-24 pb-44">
                         <div v-if="!preview" :style="paperStyle"
                             class="flex bg-gray-50 shadow-md flex-col scale-110 relative"
                             :class="[page === 1 ? 'py-14 pl-12 pr-10 ' : 'px-20 py-10']">
-                            <button
-                                class="absolute top-0 -right-24 hover:text-green-400 hover:underline py-3.5 text-gray-800 text-sm px-2 "
-                                @click="blank()">BLANK</button>
+                            <button v-if="page === 1"
+                                class="absolute top-0 -right-36 hover:text-green-400 hover:underline py-3.5 text-gray-800 text-sm px-2 "
+                                @click="blank()">MAKE BLANK PAGE</button>
                             <div v-if="page === 1"
                                 class="w-full h-full border-[3px] border-gray-700 flex flex-col relative">
 

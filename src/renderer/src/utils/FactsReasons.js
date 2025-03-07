@@ -24,7 +24,7 @@ export function factReason(data) {
         'father-in-law',
         'son-in-law'
     ];
-    
+
     const female = [
         'girlfriend',
         'wife',
@@ -71,7 +71,7 @@ export function factReason(data) {
                 pronouns,
                 owner
             },
-            message: `To correct the above mentioned clerical error in ${owner} Certificate of ${certificate} which is inconsistent with all of ${pronouns} documents.`
+            message: `To correct the above-mentioned clerical error in ${owner} Certificate of ${certificate} which is inconsistent with all of ${pronouns} documents.`
         }
     }
     else if (event_type === "Death") {
@@ -88,7 +88,7 @@ export function factReason(data) {
             pronouns = 'her'
         }
 
-        return `To correct the above mentioned clerical error in ${owner} Certificate of Death which is inconsistent with all of ${pronouns} documents. `;
+        return `To correct the above-mentioned clerical error in ${owner} Certificate of Death which is inconsistent with all of ${pronouns} documents. `;
     } else {
         return `To correct the `;
     }

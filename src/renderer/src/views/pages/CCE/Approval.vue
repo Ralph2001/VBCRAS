@@ -183,14 +183,14 @@
 
 
 
-            <div class="flex flex-col w-full p-1" v-if="!annotation">
+            <div class="flex flex-col w-full p-1 gap-2 relative">
                 <button
                     :class="{ 'bg-gray-700 text-white  hover:text-white hover:bg-gray-800': annotated_unannotated, 'bg-[#FDFDFE]': !annotated_unannotated, ' pointer-events-none bg-gray-700 text-white hidden hover:text-white hover:bg-gray-800  ': selectfromscanned }"
                     class="w-fit text-sm font-semibold px-2.5 py-2 text-gray-700 shadow-md rounded border  items-center flex hover:bg-gray-100"
                     type="button" @click="annotated_unannotated = !annotated_unannotated"> Add Requirement
                     <font-awesome-icon icon="fa-solid fa-arrow-down" class="ms-2 text-xs" /></button>
 
-                <div class="h-auto flex flex-col bg-[#FDFDFE] w-fit p-2 border items-start mt-5 gap-3 shadow-md transition-all text-gray-600"
+                <div class="h-auto flex flex-col absolute top-10 bg-[#FDFDFE] w-fit p-2 border items-start mt-5 gap-3 shadow-md transition-all text-gray-600"
                     v-if="annotated_unannotated">
                     <p class="text-sm bg-gray-100 px-1 w-full">Annotated/Form 102</p>
                     <div class="flex flex-col items-start    w-full">
@@ -212,11 +212,12 @@
                             1A</button>
                     </div> -->
                 </div>
+                <div v-if="annotation" class="flex mt-4 flex-row gap-2 items-center text-green-500">
+                    <p class="font-medium text-sm ">Annotation Added</p>
+                    <font-awesome-icon icon="fa-solid fa-check" />
+                </div>
             </div>
-            <div v-else class="flex flex-row gap-2 items-center text-green-500">
-                <p class="font-medium text-sm ">Annotation Added</p>
-                <font-awesome-icon icon="fa-solid fa-check" />
-            </div>
+
 
 
             <div class="border bg-gray-100 shadow-sm flex px-4 py-3 h-[calc(100vh-310px)] w-full flex-col gap-2"
@@ -280,23 +281,20 @@
         <!-- <ul v-for="(value, key) in petition.petition_data" :key="key">
             <li>{{ key + ' : ' + value }}</li>
         </ul> -->
-        <div class="fixed bg-[#FDFDFE] z-[9999] top-0 bottom-0 left-0 right-0 flex flex-col p-4 h-full w-full border gap-2 px-10"
+        <div class="fixed  z-[9999] top-0 bottom-0  bg-white left-0 right-0 flex flex-col w-full  gap-2 "
             v-if="AnnotationEditor">
 
-            <div class="h-full flex flex-col overflow-y-scroll gap-1">
-                <div class="grid grid-cols-2 w-full h-full gap-5 ">
-                    <div class="flex h-full  w-full border relative  bottom-0">
+            <div class="h-full flex flex-col gap-1">
+                <div class="flex flex-row w-full h-full  ">
+                    <div class="flex-1 flex flex-col h-full  p-4 bg-black/10  w-full  relative  bottom-0">
+
                         <PDFViewerWorker :pdfBytes64="pdfbase64" />
-                        <!-- <div
-                            class="absolute right-[3.5rem] top-[0.4rem]  h-[3rem] w-[5rem] flex items-center justify-center bg-[#323639] z-[999]">
-                            <p class="text-white text-xs tracking-wider font-medium">VBCRAS</p>
-                        </div>
-                        <iframe :src="pdfbase64" frameborder="0" class="h-full w-full"></iframe> -->
+
                     </div>
 
-                    <div class="flex flex-col">
+                    <div class="flex flex-col gap-1 w-[40%]  bg-white shadow-lg">
                         <div
-                            class="flex flex-col p-4 w-full border gap-2 rounded-md border-gray-200 shadow-sm overflow-y-scroll h-full">
+                            class="flex flex-col p-4  w-full border gap-2 rounded-md border-gray-200 shadow-md overflow-y-scroll h-full">
                             <p class="text-gray-800 font-medium text-2xl h-[3rem] ">Adjustments </p>
                             <div class="h-auto flex flex-col gap-2">
                                 <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
@@ -389,13 +387,13 @@
 
                         </div>
 
-                        <div class="mt-2 flex justify-items-end gap-2 w-full">
+                        <div class="mt-auto flex justify-items-end gap-2 p-4 w-full ">
                             <button
-                                class=" text-sm tracking-wider ml-auto border rounded font-semibold   hover:bg-red-500 hover:text-white px-3 py-2 "
+                                class=" text-sm tracking-wider ml-auto border rounded font-semibold bg-red-400 text-white   hover:bg-red-500 hover:text-white px-3 py-2 "
                                 @click="AnnotationEditor = !AnnotationEditor">Cancel</button>
                             <button @click="create_annotation()"
-                                class=" text-sm tracking-wider  border px-3 bg-green-500 text-white  py-2  font-semibold rounded hover:bg-green-600"
-                                type="button">Done</button>
+                                class=" text-sm tracking-wider   px-20 bg-green-400 text-white outline-none  py-2  font-semibold rounded hover:bg-green-600"
+                                type="button">Proceed</button>
                         </div>
                     </div>
                 </div>
