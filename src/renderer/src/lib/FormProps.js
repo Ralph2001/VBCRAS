@@ -19,7 +19,7 @@ export const useRegisteredPeriod = {
     destroyed_by: '',
 }
 export const useAvailableForm = {
-    is_with_authentication: '',
+    is_with_authentication: false,
     date_registration: '',
     page_number: '',
     book_number: '',
@@ -38,7 +38,6 @@ export const useForm1A = {
     citizenship_father: '',
     date_marriage_parents: '',
     place_marriage_parents: '',
-    ...useAvailableForm,
 
 }
 
@@ -50,8 +49,7 @@ export const useForm2A = {
     deceased_citizenship: '',
     date_of_death: '',
     place_of_death: '',
-    cause_of_deathD: '',
-    ...useAvailableForm,
+    cause_of_death: '',
 
 }
 
@@ -72,7 +70,6 @@ export const useForm3A = {
     bride_father: '',
     date_marriage: '',
     place_marriage: '',
-    ...useAvailableForm,
 
 }
 

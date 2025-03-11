@@ -6,6 +6,97 @@ const fs = require('fs')
 const dateFns = require('date-fns')
 
 
+/* {
+    "action_taken_date": "2025-03-21",
+    "administering_officer_name": "ISMAEL D. MALICDEM, JR.",
+    "administering_officer_position": "Municipal Civil Registrar",
+    "amount_paid": "₱1,200.00",
+    "certificate_posting_end": "2025-03-17",
+    "certificate_posting_start": "2025-03-07",
+    "clerical_errors": [
+        {
+            "description": "Child's first name",
+            "error_description_from": "RALPH",
+            "error_description_to": "RALPH",
+            "error_num": "6",
+            "id": 1
+        }
+    ],
+    "created_at": "2025-03-05T09:26:00.482148",
+    "created_by": 1,
+    "created_by_user": {
+        "position": null,
+        "username": "Admin"
+    },
+    "date_filed": "2025-03-05",
+    "date_paid": "2025-03-05",
+    "document_owner": "N/A",
+    "event_country": "Philippines",
+    "event_date": "2001-05-16",
+    "event_municipality": "Bayambang",
+    "event_province": "Pangasinan",
+    "event_type": "Birth",
+    "exhibiting_his_her": "Community Tax Certificate No.",
+    "exhibiting_number": "98346938",
+    "file_path": "C:\\Petitions\\Admin\\9048\\CCE Birth\\2025\\CCE-0001-2025  - RALPH ADVINCULA VILLANUEVA",
+    "filing_city_municipality": "Bayambang",
+    "filing_province": "Pangasinan",
+    "first_name_from": "",
+    "first_name_to": "",
+    "ground_a": false,
+    "ground_b": false,
+    "ground_b_data": "",
+    "ground_c": false,
+    "ground_d": false,
+    "ground_e": false,
+    "ground_f": false,
+    "ground_f_data": "",
+    "header_municipality": "MUNICIPALITY OF BAYAMBANG",
+    "header_province": "Pangasinan",
+    "id": 1,
+    "is_indigent": false,
+    "is_migrant": false,
+    "issued_at": "Bayambang, Pangasinan",
+    "issued_on": "2025-03-05",
+    "municipal_civil_registrar": "ISMAEL D. MALICDEM, JR.",
+    "nationality": "Filipino",
+    "notice_posting": "2025-03-06",
+    "o_r_number": "9865289",
+    "petition_actions": [
+        {
+            "action_decision": "Granted",
+            "action_text": "Finding the petition sufficient in form and substance, the same is hereby GRANTED, the child's first name from \"RALPH\" to \"RALPH\" is hereby corrected.",
+            "error_num": 1,
+            "id": 1
+        }
+    ],
+    "petition_date_granted": "2025-03-21",
+    "petition_date_issued": "2025-03-18",
+    "petition_number": "CCE-0001-2025 ",
+    "petition_type": "CCE",
+    "petitioner_address": "Anulid, Alcala, Pangasinan",
+    "petitioner_error_in": "my",
+    "petitioner_name": "RALPH ADVINCULA VILLANUEVA",
+    "publication_end": "",
+    "publication_newspaper": "",
+    "publication_place": "",
+    "publication_start": "",
+    "registry_number": "2001-16",
+    "relation_owner": "N/A",
+    "remarks": null,
+    "republic_act_number": "9048",
+    "spouse_name": "",
+    "status": "FINISHED",
+    "subscribe_sworn_city_municipality": "Bayambang, Pangasinan",
+    "subscribe_sworn_date": "2025-03-05",
+    "supporting_documents": [
+        {
+            "document_name": "Child's COLB to be corrected by PSA",
+            "id": 1
+        }
+    ]
+} */
+
 
 // CHANGEABLE FOLDER PATH
 // USED IN RETURNING THE RESULT FILEPATH

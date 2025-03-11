@@ -21,7 +21,7 @@
         </div>
         <div class="flex-1 p-1 gap-2 flex flex-col">
           <p class="font-medium text-xs text-gray-700">Default Filepath</p>
-          <div class="p-4 bg-gray-100 shadow-inner ">
+          <div class="p-4 bg-gray-100 shadow-inner rounded-md  ">
             <p class="text-wrap text-sm">{{ system_setting.defaults[0].petition_default_file_path }}</p>
           </div>
         </div>
@@ -1344,8 +1344,8 @@ const initialForm = {
   relation_owner: '',
   event_date: '',// Testing 
   event_country: 'Philippines',
-  event_province: '',// Testing 
-  event_municipality: '',// Testing 
+  event_province: system_setting.defaults[0].petition_default_filling_province || '',// Testing 
+  event_municipality: system_setting.defaults[0].petition_default_filling_municipality || '',// Testing 
   registry_number: '',// Testing 
   filing_city_municipality: system_setting.defaults[0].petition_default_filling_municipality || '',
   filing_province: system_setting.defaults[0].petition_default_filling_province || '',
@@ -1997,7 +1997,7 @@ const mapDataToForm = (data) => {
 
 const handleEdit = (data) => {
   console.log(data)
-  mapDataToForm(data);
+  // mapDataToForm(data);
   petition_modal.value = true;
 };
 const regen_data = ref()
@@ -2011,13 +2011,13 @@ const handleRegenerate = async () => {
   is_regen.value = false
   console.log("regenerating")
   const main_data = regen_data.value
+  console.log(main_data)
 
-
-  is_validating.value = true
-  const petition_ = JSON.stringify(data);
-  console.log(petition_)
-  const generate_ = await window.ClericalApi.createPetitionDocument(petition_);
-  last_saved_filepath.value = generate_.filepath
+  //is_validating.value = true
+  // const petition_ = JSON.stringify(data);
+  // console.log(petition_)
+  // const generate_ = await window.ClericalApi.createPetitionDocument(petition_);
+  // last_saved_filepath.value = generate_.filepath
 
   // console.log(generate_)
 

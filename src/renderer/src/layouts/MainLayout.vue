@@ -1,6 +1,7 @@
 <template>
   <div class="h-screen relative mainHTML scale-70 bg-[#FDFDFE]">
 
+    <Noice />
     <NavBar />
     <Menu />
 
@@ -17,6 +18,7 @@
 import { onMounted } from "vue";
 import NavBar from "../components/client/NavBar.vue";
 import Menu from "../components/Menu.vue";
+import Noice from "./Noice.vue";
 
 
 onMounted(() => {

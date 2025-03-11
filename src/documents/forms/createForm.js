@@ -7,6 +7,35 @@ const path = require('path')
 export async function generate_form(formData) {
 
 
+    // {
+    //     "date_filed": "March 11, 2025",
+    //     "certification_issued_to": "",
+    //     "verified_by": "ERIKA JOYCE B. PARAGAS",
+    //     "verifier_position": "Registration Officer I",
+    //     "civil_registrar": "ISMAEL D. MALICDEM, JR.",
+    //     "civil_registrar_position": "Municipal Civil Registrar",
+    //     "created_by": "",
+    //     "amount_paid": "Php 130.00",
+    //     "or_number": "",
+    //     "date_paid": "March 11, 2025",
+    //     "is_with_authentication": "",
+    //     "date_registration": "",
+    //     "page_number": "",
+    //     "book_number": "",
+    //     "registry_number": "",
+    //     "remarks": "",
+    //     "name_child": "",
+    //     "sex": "",
+    //     "date_birth": "",
+    //     "place_birth": "",
+    //     "name_mother": "",
+    //     "citizenship_mother": "",
+    //     "name_father": "",
+    //     "citizenship_father": "",
+    //     "date_marriage_parents": "",
+    //     "place_marriage_parents": ""
+    // }
+
     const pdfDoc = await PDFDocument.create()
     const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman)
     const timesRomanFontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold)
@@ -20,7 +49,7 @@ export async function generate_form(formData) {
     })
     pdfDoc.setAuthor('VBCRAS')
     pdfDoc.setSubject(`Form ${form_type} `)
-    pdfDoc.setKeywords(['amazing', 'one piece', 'pdf generate'])
+    pdfDoc.setKeywords(['amazing', 'the one piece is real', 'pdf generate'])
     pdfDoc.setProducer('VBCRAS')
     pdfDoc.setCreationDate(new Date())
     pdfDoc.setModificationDate(new Date())
@@ -155,7 +184,7 @@ export async function generate_form(formData) {
     FORM_TYPE.includes('A') ? create_we_clerify(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) : ''
     FORM_TYPE.includes('A') ? create_info_list(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold) : create_paragraph_format(formData, page, height, fontSize, timesRomanFont, timesRomanFontBold)
 
-
+ 
     const certification = [
         { text: 'This certification is issued to', isBold: false },
         { text: ` ${formData.issued_to.replace('"', '“').replace('"', '”')} `, isBold: true },
@@ -345,7 +374,7 @@ async function createAuthenticationForm(pdfDoc, formData) {
     const dateVerifiedText = `DATE VERIFIED: ${format(new Date(formData.date_filed), 'MM/dd/yyyy')}`;
     const dateVerifiedX = setCenter(dateVerifiedText, timesRomanFont);
     const dateVerifiedY = height - position_of_all - 190;
-    
+
     page.drawText(dateVerifiedText, {
         x: dateVerifiedX,
         y: dateVerifiedY,
@@ -353,23 +382,23 @@ async function createAuthenticationForm(pdfDoc, formData) {
         font: timesRomanFont,
         color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
     });
-    
+
     // Draw underline for date_filed value
     const dateFiledValue = format(new Date(formData.date_filed), 'MM/dd/yyyy');
     const dateFiledValueWidth = timesRomanFont.widthOfTextAtSize(dateFiledValue, fontSize);
     const dateFiledValueX = dateVerifiedX + timesRomanFont.widthOfTextAtSize('DATE VERIFIED: ', fontSize);
-    
+
     page.drawLine({
         start: { x: dateFiledValueX + 1, y: dateVerifiedY - 2 },
         end: { x: dateFiledValueX + dateFiledValueWidth + 1, y: dateVerifiedY - 2 },
         thickness: 1,
         color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
     });
-    
+
     const verifiedByText = `VERIFIED BY: ${formData.verified_by}`;
     const verifiedByX = setCenter(verifiedByText, timesRomanFont);
     const verifiedByY = height - position_of_all - 202;
-    
+
     page.drawText(verifiedByText, {
         x: verifiedByX,
         y: verifiedByY,
@@ -377,12 +406,12 @@ async function createAuthenticationForm(pdfDoc, formData) {
         font: timesRomanFont,
         color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
     });
-    
+
     // Draw underline for verified_by value
     const verifiedByValue = formData.verified_by;
     const verifiedByValueWidth = timesRomanFont.widthOfTextAtSize(verifiedByValue, fontSize);
     const verifiedByValueX = verifiedByX + timesRomanFont.widthOfTextAtSize('VERIFIED BY: ', fontSize);
-    
+
     page.drawLine({
         start: { x: verifiedByValueX + 1, y: verifiedByY - 2 },
         end: { x: verifiedByValueX + verifiedByValueWidth + 1, y: verifiedByY - 2 },

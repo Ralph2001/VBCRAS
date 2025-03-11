@@ -2,6 +2,14 @@ from ..extensions import db
 
 class DocumentAvailable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
+
+    form_type = db.Column(db.String(45))
+
+    # Form 1A Birth
+    # Form 2A Death
+    # Form 3A Marriage
+
     # Transaction Details
     date_filed = db.Column(db.Date, nullable=False)
     certification_issued_to = db.Column(db.String(255))
@@ -19,7 +27,7 @@ class DocumentAvailable(db.Model):
     registry_number = db.Column(db.String(50))
     remarks = db.Column(db.Text)
 
-    # Document Information
+    # Document Information, This can be 1A or since the date and place can be birth or death, for example date of (birth), date of (death) as the event
     document_name = db.Column(db.String(255))
     sex = db.Column(db.String(10))
     date_of_event = db.Column(db.Date)
@@ -49,6 +57,7 @@ class DocumentAvailable(db.Model):
     bride_mother = db.Column(db.String(255))
     bride_father = db.Column(db.String(255))
 
+    # This is for Form 1A
     name_mother = db.Column(db.String(255))
     citizenship_mother = db.Column(db.String(100))
     name_father = db.Column(db.String(255))

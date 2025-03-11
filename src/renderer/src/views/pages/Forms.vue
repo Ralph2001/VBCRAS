@@ -64,88 +64,196 @@
                 <div class="flex flex-row w-full">
                     <ControlButton :icon="['fas', 'arrow-left']" button-text="Return" @action="closeModal()" />
 
-                    <div class="flex flex-row gap-2 ml-auto">
+                    <div class="flex items-center flex-row gap-2 ml-auto">
+                        <p class="text-sm font-medium text-white pr-4">Selected Form: </p>
                         <button @click="toggleForm(`${type}`)" v-for="type in FormTypes" :key="type"
-                            :class="[selectedType === type ? 'text-white bg-[#1B263B] ' : '']"
-                            class="p-4 h-7 w-fit    hover:bg-[#1B263B]/50 transition-all duration-100 flex items-center text-sm justify-center  text-neutral-200 hover:text-neutral-300  rounded">
+                            :class="[selectedType === type ? 'text-white bg-green-500 ' : '']"
+                            class="p-4 h-7 w-fit    hover:bg-green-600 transition-all duration-100 flex items-center text-sm justify-center  text-neutral-200 hover:text-neutral-300  rounded">
                             Form {{ type }}
                         </button>
                     </div>
                 </div>
             </template>
 
-            <div class="w-full h-full grid lg:grid-cols-2 px-4 py-1.5 bg-gray-200 overflow-y-auto">
-                <!-- <div class="absolute right-0">{{ TransactionDetails }}</div> -->
+            <div class="w-full h-full grid grid-cols-1 lg:grid-cols-[60%_40%]  py-1.5 bg-gray-200 overflow-y-auto">
+                <!-- <div class="absolute w-[20rem] right-0">
+                    {{ main_form }}
+                </div> -->
+
+
+                <!-- Page 1, Main Page -->
                 <div class="flex flex-col gap-1 px-4 py-10">
                     <div class="flex items-center justify-end">
                         <div class="w-[15rem]">
-                            <InputforForm middle width="full" bold v-model="TransactionDetails.date_filed" />
+                            <InputforForm middle width="full" bold v-model="transactions.date_filed" />
                         </div>
 
                     </div>
                     <p class="px-9 italic font-semibold font-serif">TO WHOM IT MAY CONCERN:</p>
 
-                    <!-- Forms with `A` -->
-                    <div class="flex flex-col gap-2 mt-auto" v-if="selectedType.includes('A')">
+                    <div class="flex flex-col gap-2 " v-if="selectedType.includes('A')">
 
-                        <div class="sm:mb-5 lg:mb-auto">
+                        <div class="">
                             <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-gray-900">We
                                 certify that among others, the following facts of {{ fact_of }} appear in our Register
                                 of {{
                                     register_of }} on page
-                                <InputforForm type="number" middle width="6rem" bold v-model="formData.page_number" />
+                                <InputforForm type="number" middle width="6rem" bold v-model="available.page_number" />
                                 of book number
-                                <InputforForm type="number" middle width="6rem" bold v-model="formData.book_number" /> .
+                                <InputforForm type="number" middle width="6rem" bold v-model="available.book_number" />
+                                .
                             </p>
                         </div>
+                        <!-- For Form 3A -->
+                        <div v-if="selectedType === '3A'" class="flex flex-col mt-4 gap-2 w-full">
+                            <InputLabel label="Name" twoInput>
+                                :
+                                <InputforForm width="100%" v-model="Form3A.groom_name" />
+                                :
+                                <InputforForm width="100%" v-model="Form3A.bride_name" />
+                            </InputLabel>
+                            <InputLabel label="Age" twoInput>
+                                :
+                                <InputforForm width="100%" v-model="Form3A.groom_age" />
+                                :
+                                <InputforForm width="100%" v-model="Form3A.bride_age" />
+                            </InputLabel>
+
+                            <InputLabel label="Citizenship" twoInput>
+                                :
+                                <InputforForm width="100%" v-model="Form3A.groom_citizenship" />
+                                :
+                                <InputforForm width="100%" v-model="Form3A.bride_citizenship" />
+                            </InputLabel>
+
+                            <InputLabel label="Civil Status" twoInput>
+                                :
+                                <InputforForm width="100%" v-model="Form3A.groom_civil_status" />
+                                :
+                                <InputforForm width="100%" v-model="Form3A.bride_civil_status" />
+                            </InputLabel>
+                            <InputLabel label="Mother" twoInput>
+                                :
+                                <InputforForm width="100%" v-model="Form3A.groom_mother" />
+                                :
+                                <InputforForm width="100%" v-model="Form3A.bride_mother" />
+                            </InputLabel>
+
+                            <InputLabel label="Father" twoInput>
+                                :
+                                <InputforForm width="100%" v-model="Form3A.groom_father" />
+                                :
+                                <InputforForm width="100%" v-model="Form3A.bride_father" />
+                            </InputLabel>
+                        </div>
+
+                        <div class="mt-4"></div>
+                        <!-- Required for Available Form -->
                         <InputLabel label="Registry Number">
                             :
-                            <InputforForm width="100%" />
+                            <InputforForm width="100%" v-model="available.registry_number" />
                         </InputLabel>
+
                         <InputLabel label="Date of Registration">
                             :
-                            <InputforForm width="100%" />
+                            <InputforForm width="100%" v-model="available.date_registration" />
                         </InputLabel>
-                        <InputLabel label="Name of Child">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Sex">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Date of birth">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Place of birth">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Name of Mother">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Citizenship of Mother">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Name of Father">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Citizenship of Father">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Date of Marriage">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
-                        <InputLabel label="Place of Marriage of parents">
-                            :
-                            <InputforForm width="100%" />
-                        </InputLabel>
+
+                        <div v-if="selectedType === '3A'" class="flex flex-col mt-auto gap-2">
+                            <InputLabel label="Date of Marriage">
+                                :
+                                <InputforForm width="100%" v-model="Form3A.date_marriage" />
+
+                            </InputLabel>
+                            <InputLabel label="Place of Marriage">
+                                :
+                                <InputforForm width="100%" v-model="Form3A.place_marriage" />
+
+                            </InputLabel>
+
+                        </div>
+
+                        <!-- For Form 1A -->
+                        <div v-if="selectedType === '1A'" class="flex flex-col  gap-2">
+                            <InputLabel label="Name of Child">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.name_child" />
+                            </InputLabel>
+                            <InputLabel label="Sex">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.sex" />
+                            </InputLabel>
+                            <InputLabel label="Date of birth">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.date_birth" />
+                            </InputLabel>
+                            <InputLabel label="Place of birth">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.place_birth" />
+                            </InputLabel>
+                            <InputLabel label="Name of Mother">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.name_mother" />
+                            </InputLabel>
+                            <InputLabel label="Citizenship of Mother">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.citizenship_mother" />
+                            </InputLabel>
+                            <InputLabel label="Name of Father">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.name_father" />
+                            </InputLabel>
+                            <InputLabel label="Citizenship of Father">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.citizenship_father" />
+                            </InputLabel>
+                            <InputLabel label="Date of Marriage">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.date_marriage_parents" />
+                            </InputLabel>
+                            <InputLabel label="Place of Marriage of parents">
+                                :
+                                <InputforForm width="100%" v-model="Form1A.place_marriage_parents" />
+                            </InputLabel>
+                        </div>
+                        <!-- For Form 2A -->
+                        <div v-if="selectedType === '2A'" class="flex flex-col mt-auto gap-2">
+                            <InputLabel label="Name of deceased">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.name_deceased" />
+                            </InputLabel>
+                            <InputLabel label="Sex">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.sex" />
+                            </InputLabel>
+                            <InputLabel label="Age">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.deceased_age" />
+                            </InputLabel>
+                            <InputLabel label="Civil Status">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.deceased_civil_status" />
+                            </InputLabel>
+                            <InputLabel label="Citizenship">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.deceased_citizenship" />
+                            </InputLabel>
+                            <InputLabel label="Date of Death">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.date_of_death" />
+                            </InputLabel>
+
+                            <InputLabel label="Place of Death">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.place_of_death" />
+                            </InputLabel>
+                            <InputLabel label="Cause of Death">
+                                :
+                                <InputforForm width="100%" v-model="Form2A.cause_of_death" />
+                            </InputLabel>
+                        </div>
+
+
 
                     </div>
 
@@ -220,17 +328,22 @@
 
                     </div>
                 </div>
+
+
+
+                <!-- Page 2,  Other Side -->
+                <!-- This is Required for all Forms -->
                 <div class="flex flex-col gap-2 px-4 py-10">
-                    <div class="flex items-center justify-center relative text-nowrap">
+                    <div class="flex items-center justify-center relative   text-nowrap">
                         This certification is issued to <div class="px-2">
-                            <InputforForm width="15rem" middle bold
-                                v-model="TransactionDetails.certification_issued_to" />
+                            <InputforForm width="15rem" middle bold v-model="transactions.certification_issued_to" />
                         </div> upon his/her request.
                     </div>
 
+
+
                     <div class="flex flex-col gap-2 " v-if="is_with_remarks">
                         <div class="flex flex-row gap-2 items-center">
-
                             <input type="checkbox" v-model="is_remarks_check" name="" id="remark_btn"
                                 class="border rounded-sm border-gray-600">
                             <label for="remark_btn" class="text-md font-medium text-neutral-800">Add Remarks</label>
@@ -247,8 +360,7 @@
                             </div>
                         </div>
                     </div>
-                    <div
-                        class="flex     flex-row justify-between items-start w-full  mt-auto     relative text-nowrap gap-2  px-2   ">
+                    <div class="mt-auto grid grid-cols-2   mb-4">
                         <!-- <div class="absolute -right-[15rem]">
                             <button class="text-xs text-blue-500 border rounded-sm p-2 hover:bg-white">
                                 <p>
@@ -257,21 +369,21 @@
                                 </p>
                             </button>
                         </div> -->
-                        <div class="flex flex-col items-start sm:gap-2 mb-4 md:lg:gap-10">
-                            <p class="italic">Verified by:</p>
+                        <div class="flex flex-col ">
+                            <p class="italic mb-10">Verified by:</p>
                             <div class="pl-0 flex flex-col items-center gap-[0.10rem]">
-                                <InputforForm skip width="20rem" bold middle v-model="TransactionDetails.verified_by"
+                                <InputforForm skip width="100%" bold middle v-model="transactions.verified_by"
                                     @input="formData.verified_by = $event.target.value.toUpperCase()" />
-                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="TransactionDetails.verifier_position" />
+                                <InputforForm skip width="100%" middle italic unbordered isTransparent
+                                    v-model="transactions.verifier_position" />
                             </div>
                         </div>
                         <div class="flex flex-col items-center gap-[0.10rem]">
                             <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
-                            <InputforForm skip middle width="20rem" bold v-model="TransactionDetails.civil_registrar"
+                            <InputforForm skip middle width="100%" bold v-model="transactions.civil_registrar"
                                 @input="formData.civil_registrar = $event.target.value.toUpperCase()" />
-                            <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                v-model="TransactionDetails.civil_registrar_position" />
+                            <InputforForm skip width="100%" middle italic unbordered isTransparent
+                                v-model="transactions.civil_registrar_position" />
                             <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
                                 <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
                                     
@@ -284,23 +396,33 @@
 
                     <div class="flex flex-col gap-2  w-[50%]">
                         <InputLabel label="Amount Paid ">
-                            <InputforForm width="100%" v-model="TransactionDetails.amount_paid" />
+                            <InputforForm width="100%" v-model="transactions.amount_paid" />
                         </InputLabel>
 
                         <InputLabel label="O.R. Number">
-                            <InputforForm width="100%" v-model="TransactionDetails.or_number" />
+                            <InputforForm width="100%" v-model="transactions.or_number" />
                         </InputLabel>
                         <InputLabel label="Date Paid">
-                            <InputforForm width="100%" v-model="TransactionDetails.date_paid" />
+                            <InputforForm width="100%" v-model="transactions.date_paid" />
                         </InputLabel>
                     </div>
-                    <div class="flex flex-row gap-2 p-4 border rounded items-center justify-end bg-gray-100 shadow">
-                        <button
-                            class="bg-white hover:bg-gray-100 border text-gray-800 px-4 font-medium  py-3.5 rounded-md "
-                            @click="previewcontent">Preview</button>
-                        <button
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button>
+                    <div class="flex flex-row gap-2 p-4 border rounded items-center justify-center bg-gray-100 shadow">
 
+                        <div class="flex flex-row gap-2 items-center" v-if="selectedType.includes('A')">
+                            <input type="checkbox" v-model="available.is_with_authentication" name=""
+                                id="with_authentication" class="border rounded-sm border-gray-600">
+                            <label for="with_authentication" class="text-md font-medium text-neutral-800">With
+                                Authentication</label>
+                        </div>
+
+                        <div class="ml-auto flex items-center justify-center gap-2">
+                            <button
+                                class="bg-white hover:bg-gray-100 border text-gray-800 px-4 font-medium  py-3.5 rounded-md "
+                                @click="previewcontent">Preview</button>
+                            <button @click="createForm()"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button>
+
+                        </div>
                     </div>
 
                 </div>
@@ -337,11 +459,11 @@ import TableGrid from '../../components/TableGrid.vue'
 import ControlButton from '../../components/ControlButton.vue'
 import FormInput from './FormInput.vue'
 import { QuillEditor } from '@vueup/vue-quill'
-import { useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
+import { useAvailableForm, useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
 
 
-const TransactionDetails = reactive(useTransactionDetails)
-
+const transactions = reactive(useTransactionDetails)
+const available = reactive(useAvailableForm)
 
 // Form A's
 const Form1A = reactive(useForm1A)
@@ -357,6 +479,60 @@ const Form3B = reactive(useForm3B)
 const Form1C = reactive(useForm1C)
 const Form2C = reactive(useForm2C)
 const Form3C = reactive(useForm3C)
+
+
+const selectedType = ref(null)
+
+const createForm = () => {
+    const type = selectedType.value;
+    const formAvailableMapping = {
+        '1A': Form1A,
+        '2A': Form2A,
+        '3A': Form3A
+    };
+
+    // Check if the type exists in the formMapping
+    if (formAvailableMapping[type]) {
+        const main_data = reactive({
+            ...transactions,
+            ...available,
+            ...formAvailableMapping[type]
+        });
+        console.log(main_data);
+    } else {
+        console.log('Invalid form type selected');
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -502,7 +678,6 @@ const date_marriage_parents_options = [
 
 const FormTypes = ref([])
 const isFormOpen = ref(false)
-const selectedType = ref(null)
 const print = ref()
 const date_marriage_option = ref(false)
 
@@ -548,50 +723,6 @@ const date_paid = ref(new Date())
 
 
 
-function handleDateFiled(modelData) {
-    if (!modelData) { return }
-
-    const date = new Date(modelData);
-    const formatted = format(date, "MMMM dd, yyyy");
-    date_filed.value = formatted
-    formData.date_filed = formatted;
-}
-function handleDateRegistration(modelData) {
-    if (!modelData) { return }
-
-    const date = new Date(modelData);
-    const formatted = format(date, "MMMM dd, yyyy");
-    date_registration.value = formatted
-    formData.date_registration = formatted;
-}
-function handleDateOf(modelData) {
-    if (!modelData) { return }
-
-    const date = new Date(modelData);
-    const formatted = format(date, "MMMM dd, yyyy");
-    date_of.value = formatted
-    formData.date_of = formatted;
-}
-function handleDateMarriage(modelData) {
-    if (!modelData) { return }
-
-    const date = new Date(modelData);
-    const formatted = format(date, "MMMM dd, yyyy");
-    date_marriage.value = formatted
-    formData.date_marriage = formatted;
-}
-
-function handleDatePaid(modelData) {
-    if (!modelData) { return }
-
-    const date = new Date(modelData);
-    const formatted = format(date, "MMMM dd, yyyy");
-    date_paid.value = formatted
-    formData.date_paid = formatted;
-}
-
-
-
 const preferences = reactive({
     civil_x: '0.3',
     civil_y: '0.3',
@@ -601,18 +732,6 @@ const preferences = reactive({
     certificate_y: '8.8',
     authenticate_position_y: '3.5'
 })
-
-
-const initialAvailable = ref({
-    is_with_authentication: '',
-    date_registration: '',
-    page_number: '',
-    book_number: '',
-    registry_number: '',
-    remarks: '',
-})
-
-
 
 const initialFormData = {
 
@@ -705,63 +824,6 @@ function resetFormData() {
     Object.assign(formData, initialFormData);
 }
 
-const rules = computed(() => ({
-
-    date_filed: { required }, //form 1,2,3
-
-    page_number: {
-        requiredIf: requiredIf(() => ['1A', '2A', '3A'].includes(selectedType.value))
-    },
-
-    book_number: {
-        requiredIf: requiredIf(() => ['1A', '2A', '3A'].includes(selectedType.value))
-    },
-
-    registry_number: { requiredIf: requiredIf(() => ['1A', , '2A'].includes(selectedType.value)) },
-    date_registration: { requiredIf: requiredIf(() => ['1A', '2A'].includes(selectedType.value)) },
-    name_of: { requiredIf: requiredIf(() => ['1A', '2A', '1B', '2B', '1C', '2C'].includes(selectedType.value)) },
-    sex: { requiredIf: requiredIf(() => ['1A', '2A'].includes(selectedType.value)) },
-    date_of: { requiredIf: requiredIf(() => ['1A', '2A', '1B', '2B', '1C', '2C'].includes(selectedType.value)) },
-    place_of: { requiredIf: requiredIf(() => ['1A', '2A'].includes(selectedType.value)) },
-    name_of_mother: { requiredIf: requiredIf(() => ['1A'].includes(selectedType.value)) },
-    citizenship_mother: { requiredIf: requiredIf(() => ['1A'].includes(selectedType.value)) },
-    name_of_father: { requiredIf: requiredIf(() => ['1A'].includes(selectedType.value)) },
-    citizenship_father: { requiredIf: requiredIf(() => ['1A'].includes(selectedType.value)) },
-    date_marriage: { requiredIf: requiredIf(() => ['1A'].includes(selectedType.value)) },
-    place_of_marriage_parents: { requiredIf: requiredIf(() => ['1A'].includes(selectedType.value)) },
-
-    records_of_year: { requiredIf: requiredIf(() => ['1B', '2B'].includes(selectedType.value)) },
-
-    registered_from: { requiredIf: requiredIf(() => ['1C', '2C'].includes(selectedType.value)) },
-
-    period_from: { requiredIf: requiredIf(() => ['1C', '2C'].includes(selectedType.value)) },
-    period_to: { requiredIf: requiredIf(() => ['1C', '2C'].includes(selectedType.value)) },
-    destroyed_by: { requiredIf: requiredIf(() => ['1C', '2C'].includes(selectedType.value)) },
-
-
-    age: { requiredIf: requiredIf(() => ['2A'].includes(selectedType.value)) },
-    civil_status: { requiredIf: requiredIf(() => ['2A'].includes(selectedType.value)) },
-    citizenship: { requiredIf: requiredIf(() => ['2A'].includes(selectedType.value)) },
-    cause_of_death: { requiredIf: requiredIf(() => ['2A'].includes(selectedType.value)) },
-
-    issued_to: { required },
-    verified_by: { required },
-    position: { required },
-
-    mcr: { required },
-}))
-
-
-const PdfViewerRef = ref()
-watch(() => PdfViewerRef.value, () => {
-    PdfViewerRef.value.zoom = 150;
-    console.log(PdfViewerRef.value)
-
-
-}, { deep: true });
-
-
-// const v$ = useVuelidate(rules, formData);
 const submit = async () => {
 
     const add = await formsStore.add_form1a(formData)
@@ -794,12 +856,11 @@ const OpenForms = (e) => {
     e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A", formData.form_type = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A", formData.form_type = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A", formData.form_type = "3A"] : null
     isFormOpen.value = true
     selectedForm.value = e
-    // v$.value.$reset()
 
 }
 const closeModal = () => {
     isFormOpen.value = false
-    // v$.value.$reset()
+
     resetFormData()
     isPreview.value = false
 
@@ -809,7 +870,7 @@ const toggleForm = (val) => {
     selectedType.value = val
     formData.form_type = val
     nodateforparentsmarriage.value = false
-    // v$.value.$reset()
+
 }
 
 
