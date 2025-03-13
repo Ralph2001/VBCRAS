@@ -61,7 +61,7 @@ const formattedValue = ref(formatCurrency(props.modelValue));
 function formatCurrency(value) {
   const numberValue = parseFloat(value);
   if (isNaN(numberValue)) {
-    return "";
+    return value;
   }
 
   return new Intl.NumberFormat("fil-PH", {

@@ -1,7 +1,7 @@
 <template>
     <div class="relative w-full h-full ">
         <button :tabindex="tabIndex" @focus="onFocus" @click="onClick" :class="buttonClass"
-            class="w-full relative p-0 outline-none hover:border-blue-400  hover:border  h-full  bg-blue-100 ring-0 active:bg-blue-200 focus:bg-blue-200 py-0 text-ellipsis">
+            class="w-full relative p-0 outline-none hover:border-blue-400  hover:border  h-full bg-blue-100 ring-0 active:bg-blue-200 focus:bg-blue-200 py-0 text-ellipsis">
             <p @focus="onFocus" @click="onClick" :class="[isCenter ? 'justify-center' : 'pl-2']"
                 class="font-semibold text-xs flex items-center text-gray-900 absolute top-0 bottom-0 text-nowrap truncate right-0 left-0 w-full overflow-x-hidden "
                 v-if="!props.isSeparated">
@@ -9,7 +9,7 @@
             </p>
 
             <div @focus="onFocus" @click="onClick"
-                class="flex flex-row absolute w-full justify-around text-gray-900 top-0 bottom-0 overflow-x-hidden"
+                class="flex flex-row absolute w-full justify-around text-gray-900 top-0 bottom-0 overflow-hidden"
                 v-if="props.isSeparated">
                 <p class="font-semibold text-xs flex items-center" v-if="separatedDate.day">{{ separatedDate.day }}</p>
                 <p class="font-semibold text-xs flex items-center" v-if="separatedDate.month">{{ separatedDate.month }}

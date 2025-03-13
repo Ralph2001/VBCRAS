@@ -18,24 +18,54 @@
             Manage
         </button>
 
-        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-[10rem]"
+        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-[12rem]"
             v-if="dropdown">
             <button type="button" @click="approve_petition()" v-if="props.params.data.status === 'PENDING'"
-                class=" disabled:bg-gray-100 bg-yellow-200 hover:bg-yellow-300 items-center justify-center flex-row gap-2 disabled:hover:cursor-not-allowed flex  text-md font-medium  px-5 w-full">
-                <font-awesome-icon icon="fa-solid fa-pen-to-square" />
-                Create
-                Finality</button>
+                class=" disabled:bg-gray-100 bg-yellow-200 hover:bg-yellow-300 items-center   disabled:hover:cursor-not-allowed flex  text-md font-medium  w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-plus" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>Create Finality</p>
+                </div></button>
             <button type="button" @click="opendocuments(props.params.data)"
-                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">View
-                Document</button>
+                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-expand" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>View Document</p>
+                </div>
+                
+            </button>
             <button type="button" @click="props.params.onClick(props.params.data)"
-                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Edit
-                Document</button>
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>Edit Document</p>
+                </div>
+            </button>
             <button type="button" @click="props.params.onRegenerate(props.params.data)"
-                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 px-5 w-full">Re-Generate</button>
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-arrows-rotate" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>ReGenerate</p>
+                </div>
+            </button>
             <button v-if="user.user_role === 1 || user.user_id === props.params.data.created_by" type="button"
                 @click="removeItem()"
-                class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-red-500 hover:text-white px-5 w-full">Delete</button>
+                class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-center  text-md font-medium hover:bg-red-500 hover:text-white w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-trash" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>Delete</p>
+                </div>
+            </button>
         </div>
     </div>
 </template>

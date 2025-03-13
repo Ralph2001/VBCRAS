@@ -108,27 +108,30 @@
 
       <!-- Input Fields -->
       <div
-        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center bg-gray-300 ">
-        <div :class="[backround_per_event]" class="h-full flex flex-col px-10 py-10 gap-2  ">
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll bg-gray-300 ">
+        <div :class="[backround_per_event]" class="h-full flex flex-col py-4  ">
 
           <!-- 1st  Document Selector-->
           <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-2 items-start w-full justify-center p-2"
             ref="isFormVisible">
-            <Box title="Document Type" width="w-full ">
+            <Box title="Document Type" width="w-full">
+              <p class="text-sm text-gray-400" v-if="is_document_edit_mode">Fields cannot be changed while in Edit Mode.
+              </p>
               <div class="grid grid-cols-2 flex-wrap p-2 gap-3 items-center justify-center w-full" ref="documentChanger"
                 tabindex="-1">
-                <Select :error="v$.republic_act_number.$error" skip :options="republic_act"
-                  v-model="formData.republic_act_number" label="Republic Act" @change="watch_republic_act" />
-                <Select :error="v$.petition_type.$error" skip :options="petition_type" v-model="formData.petition_type"
-                  label="Petition Type" @change="petition_by_type_retriever" />
-                <Select :error="v$.event_type.$error" skip :options="event_type" v-model="formData.event_type"
-                  label="Document Type" @change="change_event_selected_error_in()" />
-
+                <!-- Select components with change handlers properly defined -->
+                <Select :readonly="is_document_edit_mode" :error="v$.republic_act_number.$error" skip
+                  :options="republic_act" v-model="formData.republic_act_number" label="Republic Act"
+                  @change="watch_republic_act" />
+                <Select :readonly="is_document_edit_mode" :error="v$.petition_type.$error" skip :options="petition_type"
+                  v-model="formData.petition_type" label="Petition Type" @change="petition_by_type_retriever" />
+                <Select :readonly="is_document_edit_mode" :error="v$.event_type.$error" skip :options="event_type"
+                  v-model="formData.event_type" label="Document Type" @change="change_event_selected_error_in" />
                 <div class="flex flex-row items-center gap-2 ml-4 mt-4">
-                  <CheckBox skip v-model="formData.is_migrant" @change="change_migrant()" />
+                  <CheckBox :readonly="is_document_edit_mode" skip v-model="formData.is_migrant"
+                    @change="change_migrant" />
                   <p class="text-sm font-medium text-gray-800 uppercase">Migrant</p>
                 </div>
-
               </div>
             </Box>
             <!-- {{ petitioner_number }} -->
@@ -617,9 +620,9 @@
                   </div>
                   <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" label="O.R. No." type="text"
                     v-model="formData.o_r_number" />
-                  <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" readonly
-                    v-if="formData.is_indigent" label="Amount Paid" v-model="formData.amount_paid" />
-                  <Input :readonly="formData.is_indigent" readonly v-if="formData.is_indigent" label="Date Paid" skip
+                  <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" v-if="formData.is_indigent"
+                    label="Amount Paid" v-model="formData.amount_paid" />
+                  <Input :readonly="formData.is_indigent" v-if="formData.is_indigent" label="Date Paid" skip
                     v-model="formData.date_paid" />
 
 
@@ -882,36 +885,34 @@ function publication_date_setter() {
 
 // Retrieve Latest Petitioner Number
 // CCE and CFN
-const petition_by_type_retriever = computed(async () => {
+const petition_by_type_retriever = async () => {
   if (formData.petition_type === 'CCE') {
-    const cce = await petitions.get_latest_cce()
-    publication_date_setter()
+    const cce = await petitions.get_latest_cce();
+    publication_date_setter();
     if (cce) {
-      const latest = cce.data.petition_number.split('-')
-      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
-      return
+      const latest = cce.data.petition_number.split('-');
+      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0");
+    } else {
+      is_default_petitioner_number.value = '0001';
     }
-    else {
-      is_default_petitioner_number.value = '0001'
-    }
-  }
-  else if (formData.petition_type === 'CFN') {
-    const cfn = await petitions.get_latest_cfn()
-    publication_date_setter()
+  } else if (formData.petition_type === 'CFN') {
+    const cfn = await petitions.get_latest_cfn();
+    publication_date_setter();
     if (cfn) {
-      const latest = cfn.data.petition_number.split('-')
-      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
-      return
-    }
-    else {
-      is_default_petitioner_number.value = '0001'
+      const latest = cfn.data.petition_number.split('-');
+      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0");
+    } else {
+      is_default_petitioner_number.value = '0001';
     }
   }
-})
+};
+
 
 
 const close_modal = () => {
   petition_modal.value = false
+  clerical_errors_items.value = [0]
+  supporting_items.value = [0]
   resetForm()
 }
 const supporting_items = ref([0])
@@ -1155,6 +1156,7 @@ const next_input = (event, to_add) => {
 // Function that adds clerical error field
 function add_clerical_error() {
   clerical_errors_items.value.push('');
+  console.log(clerical_errors_items.value)
   const newClericalError = {
     error_num: '',
     description: '',
@@ -1931,73 +1933,108 @@ const filteredRowData = computed(() => {
 });
 
 const mapDataToForm = (data) => {
-  formData.status = data.status;
-  formData.created_by = data.created_by;
-  formData.header_province = data.header_province;
-  formData.header_municipality = data.header_municipality;
-  formData.is_migrant = data.is_migrant;
-  formData.date_filed = data.date_filed;
-  formData.republic_act_number = data.republic_act_number;
-  formData.petition_type = data.petition_type;
-  formData.event_type = data.event_type;
-  formData.petition_number = data.petition_number;
-  formData.petitioner_name = data.petitioner_name;
-  formData.nationality = data.nationality;
-  formData.petitioner_address = data.petitioner_address;
-  formData.petitioner_error_in = data.petitioner_error_in;
-  formData.document_owner = data.document_owner;
-  formData.spouse_name = data.spouse_name;
-  formData.relation_owner = data.relation_owner;
-  formData.event_date = data.event_date;
-  formData.event_country = data.event_country;
-  formData.event_province = data.event_province;
-  formData.event_municipality = data.event_municipality;
-  formData.registry_number = data.registry_number;
-  formData.filing_city_municipality = data.filing_city_municipality;
-  formData.filing_province = data.filing_province;
-  formData.administering_officer_name = data.administering_officer_name;
-  formData.administering_officer_position = data.administering_officer_position;
-  formData.subscribe_sworn_date = data.subscribe_sworn_date;
-  formData.subscribe_sworn_city_municipality = data.subscribe_sworn_city_municipality;
-  formData.exhibiting_his_her = data.exhibiting_his_her;
-  formData.exhibiting_number = data.exhibiting_number;
-  formData.issued_at = data.issued_at;
-  formData.issued_on = data.issued_on;
-  formData.action_taken_date = data.action_taken_date;
-  formData.municipal_civil_registrar = data.municipal_civil_registrar;
-  formData.o_r_number = data.o_r_number;
-  formData.amount_paid = data.amount_paid;
-  formData.date_paid = data.date_paid;
-  formData.first_name_from = data.first_name_from;
-  formData.first_name_to = data.first_name_to;
-  formData.ground_a = data.ground_a;
-  formData.ground_b = data.ground_b;
-  formData.ground_c = data.ground_c;
-  formData.ground_d = data.ground_d;
-  formData.ground_e = data.ground_e;
-  formData.ground_f = data.ground_f;
-  formData.ground_b_data = data.ground_b_data;
-  formData.ground_f_data = data.ground_f_data;
-  formData.notice_posting = data.notice_posting;
-  formData.certificate_posting_start = data.certificate_posting_start;
-  formData.certificate_posting_end = data.certificate_posting_end;
-  formData.petition_date_issued = data.petition_date_issued;
-  formData.petition_date_granted = data.petition_date_granted;
-  formData.publication_start = data.publication_start;
-  formData.publication_end = data.publication_end;
-  formData.publication_newspaper = data.publication_newspaper;
-  formData.publication_place = data.publication_place;
-  formData.petition_actions = data.petition_actions;
-  formData.supporting_documents = data.supporting_documents;
-  formData.clerical_errors = data.clerical_errors;
-  formData.reasons = data.reasons;
-  formData.is_indigent = data.is_indigent;
+  const length = data.clerical_errors.length; // Clerical Errors
+  const supporting_doc_length = data.supporting_documents.length // Supporting Documents
+
+  formData.created_by = data.created_by
+  formData.action_taken_date = data.action_taken_date
+  formData.administering_officer_name = data.administering_officer_name
+  formData.administering_officer_position = data.administering_officer_position
+  formData.amount_paid = data.amount_paid
+  formData.certificate_posting_end = data.certificate_posting_end
+  formData.certificate_posting_start = data.certificate_posting_start
+  formData.petitioner_name = data.petitioner_name
+
+
+  formData.clerical_errors = data.clerical_errors
+
+
+  formData.date_filed = data.date_filed
+  formData.date_paid = data.date_paid
+  formData.document_owner = data.document_owner
+  formData.event_country = data.event_country
+  formData.event_date = data.event_date
+  formData.event_municipality = data.event_municipality
+  formData.event_province = data.event_province
+  formData.event_type = data.event_type
+  formData.exhibiting_his_her = data.exhibiting_his_her
+  formData.exhibiting_number = data.exhibiting_number
+  formData.filing_city_municipality = data.filing_city_municipality
+  formData.filing_province = data.filing_province
+  formData.first_name_from = data.first_name_from
+  formData.first_name_to = data.first_name_to
+  formData.ground_a = data.ground_a
+  formData.ground_b = data.ground_b
+  formData.ground_b_data = data.ground_b_data
+  formData.ground_c = data.ground_c
+  formData.ground_d = data.ground_d
+  formData.ground_e = data.ground_e
+  formData.ground_f = data.ground_f
+  formData.ground_f_data = data.ground_f_data
+  formData.header_municipality = data.header_municipality
+  formData.header_province = data.header_province
+  // formData.id= data.id
+  formData.is_indigent = data.is_indigent
+  formData.is_migrant = data.is_migrant
+  formData.issued_at = data.issued_at
+  formData.issued_on = data.issued_on
+  formData.municipal_civil_registrar = data.municipal_civil_registrar
+  formData.nationality = data.nationality
+  formData.notice_posting = data.notice_posting
+  formData.o_r_number = data.o_r_number
+  formData.petition_actions = data.petition_actions
+  formData.petition_date_granted = data.petition_date_granted
+  formData.petition_date_issued = data.petition_date_issued
+  // formData.petition_number = data.petition_number
+  formData.petition_type = data.petition_type
+  formData.petitioner_address = data.petitioner_address
+  formData.petitioner_error_in = data.petitioner_error_in
+  formData.publication_end = data.publication_end
+  formData.publication_newspaper = data.publication_newspaper
+  formData.publication_place = data.publication_place
+  formData.publication_start = data.publication_start
+  formData.registry_number = data.registry_number
+  formData.relation_owner = data.relation_owner
+  formData.remarks = data.remarks
+  formData.republic_act_number = data.republic_act_number
+  formData.spouse_name = data.spouse_name
+  formData.status = data.status
+  formData.subscribe_sworn_city_municipality = data.subscribe_sworn_city_municipality
+  formData.subscribe_sworn_date = data.subscribe_sworn_date
+  formData.supporting_documents = data.supporting_documents
+
+
+  // Push blank values to clerical_errors based on its length
+  if (length > 0) {
+    for (let i = 1; i < length; i++) {
+      clerical_errors_items.value.push('');
+      const newClericalError = {
+        error_num: '',
+        description: '',
+        error_description_from: '',
+        error_description_to: '',
+      };
+
+      formData.clerical_errors.push(newClericalError);
+    }
+  }
+  if (supporting_doc_length > 0) {
+    for (let i = 1; i < supporting_doc_length; i++) {
+      supporting_items.value.push('');
+      const newSupportingDocuments = {
+        document_name: ''
+      }
+      formData.supporting_documents.push(newSupportingDocuments);
+    }
+  }
+
 };
 
-
+const is_document_edit_mode = ref(false)
 const handleEdit = (data) => {
   console.log(data)
-  // mapDataToForm(data);
+  is_document_edit_mode.value = true
+  mapDataToForm(data);
   petition_modal.value = true;
 };
 const regen_data = ref()

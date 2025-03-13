@@ -156,7 +156,7 @@
                     <div class="flex flex-col w-[30rem] gap-2 h-full justify-center">
                         <label for="" class="text-xs uppercase font-medium text-nowrap">Please enter {{
                             active_document_form
-                        }}:</label>
+                            }}:</label>
                         <input type="text" v-model="input_form_value" ref="input_form_field" tabindex="-1"
                             @keydown="handleTabNavigation"
                             @keydown.enter="submit_input_data($event, active_input_field)"
@@ -2090,7 +2090,6 @@ const submit_input_data = (event, field) => {
         'groom_municipality': 18,
         'bride_municipality': 21,
         'groom_ss_at': 76,
-
     }
 
     const fields = active_input_field.value;
@@ -2102,13 +2101,8 @@ const submit_input_data = (event, field) => {
 
     // Define possible date formats
     const dateFormats = [
-        'MM/dd/yyyy',  // Format: 11/20/2024
-        'MM-dd-yyyy',  // Format: 11-20-2024
         'MM/dd/yy',    // Format: 11/20/24
         'MM-dd-yy',    // Format: 11-20-24
-        'MM.dd.yyyy',
-        'MMMM dd, yyyy',
-
     ];
 
     // Check if the current tab is a date field and data is provided
@@ -2116,9 +2110,12 @@ const submit_input_data = (event, field) => {
         let parsedDate = null;
 
         for (let formatString of dateFormats) {
+            // Use 'yy' format to parse two-digit years correctly
             parsedDate = parse(data, formatString, new Date());
 
+
             if (isValid(parsedDate)) {
+
 
                 if (field === 'date_of_receipt' || field === 'date_issuance_marriage_license' || field === 'groom_ctc_on' || field === 'bride_ctc_on') {
                     const formattedDate = format(parsedDate, 'MMMM dd, yyyy').toUpperCase();
@@ -2179,8 +2176,8 @@ const submit_input_data = (event, field) => {
         formData[field] = data ? data.toUpperCase() : data;
     }
     focusNextInput(event);
-
 };
+
 
 const add_age = (birth_date, field) => {
 

@@ -64,7 +64,7 @@ export const AuthStore = defineStore('auth', {
                             headers: { Authorization: `Bearer ${tokenStr}` }
                         }
                     )
-                    console.log(user)
+                    // console.log(user)
 
                     this.user = user.data.username
                     this.user_id = user.data.id
@@ -72,7 +72,7 @@ export const AuthStore = defineStore('auth', {
 
                     return true
                 } catch (error) {
-                    console.log(error)
+                    // console.log(error)
                     localStorage.removeItem('token')
                     return false
                 }
