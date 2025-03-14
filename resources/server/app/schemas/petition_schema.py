@@ -29,7 +29,6 @@ class PetitionSchema(ma.SQLAlchemyAutoSchema):
     reasons = ma.Nested(PetitionReasonsSchema, many=True)
     created_by_user = ma.Nested(CreatedUserSchema, attribute="users") 
 
-
     class Meta:
         model = Petitions
         load_instance = True

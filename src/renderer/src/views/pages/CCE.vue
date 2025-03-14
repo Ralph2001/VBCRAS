@@ -64,21 +64,23 @@
       class="fixed top-0 bottom-0 left-0 right-0 h-full items-center justify-center flex p-4 z-50 backdrop-blur-sm backdrop-brightness-[0.7]"
       tabindex="-1">
       <div
-        class="h-auto w-[25rem] gap-1 bg-white border rounded-md border-gray-300 shadow-sm flex flex-col p-4 items-center justify-center ">
+        class="h-auto w-[25rem] gap-1 bg-white border rounded-md border-gray-300 shadow-sm flex flex-col p-4 items-center justify-center">
         <!-- <Loading /> -->
 
         <div
-          class="relative h-[10rem] w-full bg-gray-100 rounded-lg brightness-95 hover:border-gray-300 border   transition-all hover:brightness-100"
+          class="relative h-[10rem] w-full bg-gray-100 rounded-lg brightness-95 hover:border-gray-300 border transition-all hover:brightness-100"
           title="wave">
           <Wave />
         </div>
-        <p class="text-2xl text-gray-800 mt-5">Creating Document</p>
-        <p class="text-xs text-gray-600">This may take a while—approximately 20 seconds or more.</p>
+        <p class="text-2xl text-gray-800 mt-5">{{ is_document_edit_mode ? "Updating" : is_document_regenerating ?
+          "Regenerating" : "Creating" }} Document</p>
+        <p class="text-xs text-gray-600">This process might take 30 seconds or longer.</p>
         <p class="text-xs text-gray-600">
-          Please wait...
+          Please be patient...
         </p>
       </div>
     </div>
+
 
     <RegenerateMessage v-if="is_regen" @proceed="handleRegenerate" @cancel="is_regen = false" :data="regen_data" />
 
@@ -88,7 +90,7 @@
 
         <button
           class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
-          @click="close_modal()"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
+          @click="close_modal"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
         <!-- <ModalCloseButton @click="close_modal()" /> -->
       </template>
 
@@ -108,8 +110,8 @@
 
       <!-- Input Fields -->
       <div
-        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll bg-gray-300 ">
-        <div :class="[backround_per_event]" class="h-full flex flex-col py-4  ">
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll  bg-gray-300 ">
+        <div :class="[backround_per_event]" class="h-full flex flex-col py-4 gap-2 ">
 
           <!-- 1st  Document Selector-->
           <div class="grid sm:grid-cols-1 md:lg:grid-cols-2 gap-2 items-start w-full justify-center p-2"
@@ -310,6 +312,9 @@
                 </div>
 
                 <div class="flex flex-col gap-2 w-full mt-5">
+
+                  <p class="text-xs text-gray-300"> {{ formData.clerical_errors.length }}</p>
+
                   <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
                     :key="index">
                     <div class="basis-[10%]">
@@ -698,7 +703,8 @@
           </div>
           <button type="button" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
             class="bg-white ml-auto px-2.5 py-1  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
-            @click="submitForm()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Submit</button>
+            @click="submitForm()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" /> {{ !is_document_edit_mode ?
+              'Submit' : 'Update' }}</button>
         </div>
       </template>
     </Modal>
@@ -911,8 +917,8 @@ const petition_by_type_retriever = async () => {
 
 const close_modal = () => {
   petition_modal.value = false
-  clerical_errors_items.value = [0]
-  supporting_items.value = [0]
+  supporting_items.value = [0];
+  clerical_errors_items.value = [0];
   resetForm()
 }
 const supporting_items = ref([0])
@@ -1311,6 +1317,7 @@ const focusNextInput = (event) => {
 
 
 const initialForm = {
+  id: '', //For Update Only
   status: 'PENDING',
   created_by: auth.user_id,
 
@@ -1584,6 +1591,10 @@ watch(
   }
 );
 const resetForm = () => {
+  is_document_edit_mode.value = false
+
+  supporting_items.value = [0];
+  clerical_errors_items.value = [0];
   Object.assign(formData, { ...initialForm });
   v$.value.$reset();
 };
@@ -1776,7 +1787,6 @@ const create_validated_document = async () => {
 
   const petition_ = ref({
 
-
     header_province: formData.header_province,
     header_municipality: formData.header_municipality,
 
@@ -1867,14 +1877,17 @@ const create_validated_document = async () => {
     is_indigent: formData.is_indigent
   })
 
-  const submit_ = petitions.add_petition(petition_.value)
+  const submit_ = is_document_edit_mode.value || is_document_regenerating
+    ? petitions.edit_petition(formData.id, petition_.value)
+    :
+    petitions.add_petition(petition_.value);
 
   resetForm();
-  if (check.status) {
-    is_creating.value = false
-    open_generated(check.filepath)
-  }
 
+  if (check.status) {
+    is_creating.value = false;
+    open_generated(check.filepath);
+  }
 }
 
 const cancel_validating_stage = async () => {
@@ -1933,9 +1946,13 @@ const filteredRowData = computed(() => {
 });
 
 const mapDataToForm = (data) => {
+
   const length = data.clerical_errors.length; // Clerical Errors
   const supporting_doc_length = data.supporting_documents.length // Supporting Documents
 
+
+
+  formData.id = data.id
   formData.created_by = data.created_by
   formData.action_taken_date = data.action_taken_date
   formData.administering_officer_name = data.administering_officer_name
@@ -1946,7 +1963,9 @@ const mapDataToForm = (data) => {
   formData.petitioner_name = data.petitioner_name
 
 
-  formData.clerical_errors = data.clerical_errors
+  formData.clerical_errors = [...data.clerical_errors]
+  formData.supporting_documents = [...data.supporting_documents]
+  console.log(data.clerical_errors.length)
 
 
   formData.date_filed = data.date_filed
@@ -1986,6 +2005,8 @@ const mapDataToForm = (data) => {
   formData.petition_date_granted = data.petition_date_granted
   formData.petition_date_issued = data.petition_date_issued
   // formData.petition_number = data.petition_number
+
+  change_petitioner_number(data.petition_number.split('-')[1])
   formData.petition_type = data.petition_type
   formData.petitioner_address = data.petitioner_address
   formData.petitioner_error_in = data.petitioner_error_in
@@ -2001,38 +2022,34 @@ const mapDataToForm = (data) => {
   formData.status = data.status
   formData.subscribe_sworn_city_municipality = data.subscribe_sworn_city_municipality
   formData.subscribe_sworn_date = data.subscribe_sworn_date
-  formData.supporting_documents = data.supporting_documents
+
 
 
   // Push blank values to clerical_errors based on its length
+  // Add blank values to clerical_errors and supporting_documents based on the length
   if (length > 0) {
+    // Loop through the length of clerical_errors and add the necessary empty entries
     for (let i = 1; i < length; i++) {
-      clerical_errors_items.value.push('');
-      const newClericalError = {
-        error_num: '',
-        description: '',
-        error_description_from: '',
-        error_description_to: '',
-      };
+      clerical_errors_items.value.push(''); // Add an empty value for clerical_errors
 
-      formData.clerical_errors.push(newClericalError);
     }
   }
+
   if (supporting_doc_length > 0) {
+    // Loop through the length of supporting_documents and add the necessary empty entries
     for (let i = 1; i < supporting_doc_length; i++) {
-      supporting_items.value.push('');
-      const newSupportingDocuments = {
-        document_name: ''
-      }
-      formData.supporting_documents.push(newSupportingDocuments);
+      supporting_items.value.push(''); // Add an empty value for supporting_documents
     }
   }
+
 
 };
 
 const is_document_edit_mode = ref(false)
 const handleEdit = (data) => {
-  console.log(data)
+  console.log(data.clerical_errors.length)
+  resetForm()
+
   is_document_edit_mode.value = true
   mapDataToForm(data);
   petition_modal.value = true;
@@ -2043,12 +2060,15 @@ const openRegenerate = (data) => {
   regen_data.value = data;
 };
 
-
+const is_document_regenerating = ref(false)
 const handleRegenerate = async () => {
+  resetForm()
   is_regen.value = false
-  console.log("regenerating")
   const main_data = regen_data.value
-  console.log(main_data)
+  mapDataToForm(main_data);
+  is_document_regenerating.value = true
+  submitForm()
+
 
   //is_validating.value = true
   // const petition_ = JSON.stringify(data);

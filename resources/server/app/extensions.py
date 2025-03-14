@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from flask_cors import CORS
 
 from flask_marshmallow import Marshmallow
-
+from marshmallow.exceptions import ValidationError
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity

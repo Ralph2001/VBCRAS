@@ -1,6 +1,6 @@
 from ..extensions import db, jsonify, request, create_access_token, Blueprint
-from ..models.civil_registry_corrections import Petitions, PetitionSupportingDocuments, PetitionClericalErrors
-from ..schemas.petition_schema import PetitionSchema
+from ..models.civil_registry_corrections import Petitions, PetitionSupportingDocuments, PetitionClericalErrors, PetitionActions
+from ..schemas.petition_schema import PetitionSchema, PetitionActionsSchema
 from ..extensions import desc
 
 
@@ -33,32 +33,140 @@ def get_petition_by_id(id):
     result = petition_schema.dump(petition_record)
     return jsonify(result), 200
 
-@petitions.route("/petitions/edit-petition/<int:id>", methods=["GET", "PUT"])
+#########
+# Update
+#########
+
+@petitions.route("/petitions/edit-petition/<int:id>", methods=["PUT"])
 def edit_petition(id):
-    if request.method == "GET":
-        # Retrieve the petition by id
-        petition_record = Petitions.query.get(id)
+    # Get the request data
+    data = request.get_json()
 
-        if not petition_record:
-            return jsonify({"message": "Petition not found"}), 404
+    # Retrieve the petition record to update
+    petition_record = Petitions.query.get_or_404(id)
 
-        result = petition_schema.dump(petition_record)
-        return jsonify(result), 200
+    # Update the main petition fields from the received data
+    petition_record.action_taken_date = data.get("action_taken_date", petition_record.action_taken_date)
+    petition_record.administering_officer_name = data.get("administering_officer_name", petition_record.administering_officer_name)
+    petition_record.administering_officer_position = data.get("administering_officer_position", petition_record.administering_officer_position)
+    petition_record.amount_paid = data.get("amount_paid", petition_record.amount_paid)
+    petition_record.certificate_posting_end = data.get("certificate_posting_end", petition_record.certificate_posting_end)
+    petition_record.certificate_posting_start = data.get("certificate_posting_start", petition_record.certificate_posting_start)
+    petition_record.created_by = data.get("created_by", petition_record.created_by)
+    petition_record.date_filed = data.get("date_filed", petition_record.date_filed)
+    petition_record.date_paid = data.get("date_paid", petition_record.date_paid)
+    petition_record.document_owner = data.get("document_owner", petition_record.document_owner)
+    petition_record.event_country = data.get("event_country", petition_record.event_country)
+    petition_record.event_date = data.get("event_date", petition_record.event_date)
+    petition_record.event_municipality = data.get("event_municipality", petition_record.event_municipality)
+    petition_record.event_province = data.get("event_province", petition_record.event_province)
+    petition_record.event_type = data.get("event_type", petition_record.event_type)
+    petition_record.exhibiting_his_her = data.get("exhibiting_his_her", petition_record.exhibiting_his_her)
+    petition_record.exhibiting_number = data.get("exhibiting_number", petition_record.exhibiting_number)
+    petition_record.file_path = data.get("file_path", petition_record.file_path)
+    petition_record.filing_city_municipality = data.get("filing_city_municipality", petition_record.filing_city_municipality)
+    petition_record.filing_province = data.get("filing_province", petition_record.filing_province)
+    petition_record.first_name_from = data.get("first_name_from", petition_record.first_name_from)
+    petition_record.first_name_to = data.get("first_name_to", petition_record.first_name_to)
+    petition_record.ground_a = data.get("ground_a", petition_record.ground_a)
+    petition_record.ground_b = data.get("ground_b", petition_record.ground_b)
+    petition_record.ground_b_data = data.get("ground_b_data", petition_record.ground_b_data)
+    petition_record.ground_c = data.get("ground_c", petition_record.ground_c)
+    petition_record.ground_d = data.get("ground_d", petition_record.ground_d)
+    petition_record.ground_e = data.get("ground_e", petition_record.ground_e)
+    petition_record.ground_f = data.get("ground_f", petition_record.ground_f)
+    petition_record.ground_f_data = data.get("ground_f_data", petition_record.ground_f_data)
+    petition_record.header_municipality = data.get("header_municipality", petition_record.header_municipality)
+    petition_record.header_province = data.get("header_province", petition_record.header_province)
+    petition_record.is_indigent = data.get("is_indigent", petition_record.is_indigent)
+    petition_record.is_migrant = data.get("is_migrant", petition_record.is_migrant)
+    petition_record.issued_at = data.get("issued_at", petition_record.issued_at)
+    petition_record.issued_on = data.get("issued_on", petition_record.issued_on)
+    petition_record.municipal_civil_registrar = data.get("municipal_civil_registrar", petition_record.municipal_civil_registrar)
+    petition_record.nationality = data.get("nationality", petition_record.nationality)
+    petition_record.notice_posting = data.get("notice_posting", petition_record.notice_posting)
+    petition_record.o_r_number = data.get("o_r_number", petition_record.o_r_number)
+    petition_record.petition_date_granted = data.get("petition_date_granted", petition_record.petition_date_granted)
+    petition_record.petition_date_issued = data.get("petition_date_issued", petition_record.petition_date_issued)
+    petition_record.petition_number = data.get("petition_number", petition_record.petition_number)
+    petition_record.petition_type = data.get("petition_type", petition_record.petition_type)
+    petition_record.petitioner_address = data.get("petitioner_address", petition_record.petitioner_address)
+    petition_record.petitioner_error_in = data.get("petitioner_error_in", petition_record.petitioner_error_in)
+    petition_record.petitioner_name = data.get("petitioner_name", petition_record.petitioner_name)
+    petition_record.publication_end = data.get("publication_end", petition_record.publication_end)
+    petition_record.publication_newspaper = data.get("publication_newspaper", petition_record.publication_newspaper)
+    petition_record.publication_place = data.get("publication_place", petition_record.publication_place)
+    petition_record.publication_start = data.get("publication_start", petition_record.publication_start)
+    petition_record.registry_number = data.get("registry_number", petition_record.registry_number)
+    petition_record.relation_owner = data.get("relation_owner", petition_record.relation_owner)
+    petition_record.remarks = data.get("remarks", petition_record.remarks)
+    petition_record.republic_act_number = data.get("republic_act_number", petition_record.republic_act_number)
+    petition_record.spouse_name = data.get("spouse_name", petition_record.spouse_name)
+    petition_record.status = data.get("status", petition_record.status)
+    petition_record.subscribe_sworn_city_municipality = data.get("subscribe_sworn_city_municipality", petition_record.subscribe_sworn_city_municipality)
+    petition_record.subscribe_sworn_date = data.get("subscribe_sworn_date", petition_record.subscribe_sworn_date)
 
-    if request.method == "PUT":
-        # Update the petition
-        petition_record = Petitions.query.get(id)
+    if "petition_actions" in data:
+        for action_data in data["petition_actions"]:
+            # Use the PetitionActions model to query, not the schema
+            action = PetitionActions.query.get(action_data.get("id"))
+            if action:
+                action.action_decision = action_data.get("action_decision", action.action_decision)
+                action.action_text = action_data.get("action_text", action.action_text)
+                action.error_num = action_data.get("error_num", action.error_num)
+            else:
+                new_action = PetitionActions(
+                    petition_id=petition_record.id,
+                    action_decision=action_data["action_decision"],
+                    action_text=action_data["action_text"],
+                    error_num=action_data["error_num"]
+                )
+                db.session.add(new_action)
 
-        if not petition_record:
-            return jsonify({"message": "Petition not found"}), 404
+    # Handle clerical_errors (update or add new ones)
+    if "clerical_errors" in data:
+        for error_data in data["clerical_errors"]:
+            error = PetitionClericalErrors.query.get(error_data.get("id"))
+            if error:
+                error.description = error_data.get("description", error.description)
+                error.error_description_from = error_data.get("error_description_from", error.error_description_from)
+                error.error_description_to = error_data.get("error_description_to", error.error_description_to)
+                error.error_num = error_data.get("error_num", error.error_num)
+            else:
+                new_error = PetitionClericalErrors(
+                    petition_id=petition_record.id,
+                    description=error_data["description"],
+                    error_description_from=error_data["error_description_from"],
+                    error_description_to=error_data["error_description_to"],
+                    error_num=error_data["error_num"]
+                )
+                db.session.add(new_error)
 
-        # Load the request data into the schema to validate and deserialize
-        petition_data = petition_schema.load(request.json, instance=petition_record, partial=True)
+    # Handle supporting_documents (remove existing ones and add new ones)
+    if "supporting_documents" in data:
+        # Remove all existing supporting documents for the petition
+        PetitionSupportingDocuments.query.filter_by(petition_id=petition_record.id).delete()
 
-        # Save changes to the database
+        # Add the new supporting documents
+        for doc_data in data["supporting_documents"]:
+            new_doc = PetitionSupportingDocuments(
+                petition_id=petition_record.id,
+                document_name=doc_data["document_name"]
+            )
+            db.session.add(new_doc)
+
+        # Commit the changes to the database
         db.session.commit()
 
-        return jsonify(petition_schema.dump(petition_record)), 200
+
+    # Commit changes to the database
+    try:
+        db.session.commit()
+        return jsonify({"message": "Petition updated successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return jsonify({"error": "An error occurred while updating the petition."}), 500
 
 # Get Latest Petitions
 @petitions.route("/petitions/latest-cce", methods=["GET"])
