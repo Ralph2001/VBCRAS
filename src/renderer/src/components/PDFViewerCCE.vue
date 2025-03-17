@@ -80,7 +80,7 @@
             <div class=" z-[9999999]" v-if="!active_pdf_link">
                 <p class="text-white italic">Select Option Above</p>
             </div>
-            <PDFViewerWorker v-if="active_pdf_link" :pdfBytes64="active_pdf_link" />
+            <PDFViewerWorker :scale="1" v-if="active_pdf_link" :pdfBytes64="active_pdf_link" />
         </div>
     </div>
 </template>

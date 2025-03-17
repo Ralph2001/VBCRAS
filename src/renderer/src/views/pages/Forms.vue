@@ -62,9 +62,9 @@
         <Modal footerBG="bg-white" v-if="isFormOpen" :footer="false">
             <template v-slot:header>
                 <div class="flex flex-row w-full">
-                    <ControlButton :icon="['fas', 'arrow-left']" button-text="Return" @action="closeModal()" />
+                    <ControlButton :icon="['fas', 'arrow-left']" button-text="Exit" @action="closeModal()" />
 
-                    <div class="flex items-center flex-row gap-2 ml-auto">
+                    <div class="flex items-center flex-row gap-2 ml-auto" v-if="!isPreview">
                         <p class="text-sm font-medium text-white pr-4">Selected Form: </p>
                         <button @click="toggleForm(`${type}`)" v-for="type in FormTypes" :key="type"
                             :class="[selectedType === type ? 'text-white bg-green-500 ' : '']"
@@ -72,38 +72,53 @@
                             Form {{ type }}
                         </button>
                     </div>
+                    <div v-else class="ml-auto px-2">
+                        <button class="text-white hover:underline" @click="settings = !settings">Settings</button>
+                    </div>
                 </div>
             </template>
 
-            <div class="w-full h-full grid grid-cols-1 lg:grid-cols-[60%_40%]  py-1.5 bg-gray-200 overflow-y-auto">
+            <div v-if="!isPreview"
+                class="w-full h-full grid grid-cols-1 lg:grid-cols-[55%_45%]  py-1.5 bg-gray-200 overflow-y-auto">
                 <!-- <div class="absolute w-[20rem] right-0">
                     {{ main_form }}
                 </div> -->
 
 
                 <!-- Page 1, Main Page -->
-                <div class="flex flex-col gap-1 px-4 py-10">
+                <div class="flex flex-col gap-1 px-4 py-4">
                     <div class="flex items-center justify-end">
                         <div class="w-[15rem]">
-                            <InputforForm middle width="full" bold v-model="transactions.date_filed" />
+                            <InputforForm middle width="full" v-model="transactions.date_filed" />
                         </div>
 
                     </div>
-                    <p class="px-9 italic font-semibold font-serif">TO WHOM IT MAY CONCERN:</p>
+                    <!-- <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN:</p> -->
 
-                    <div class="flex flex-col gap-2 " v-if="selectedType.includes('A')">
+                    <div class="flex flex-col gap-1 " v-if="selectedType.includes('A')">
+                        <div class="flex flex-col gap-2 pl-10 w-[50%]">
+                            <InputLabel label="Page ">
+                                :
+                                <InputforForm width="10rem" v-model="available.page_number" />
+                            </InputLabel>
 
-                        <div class="">
+                            <InputLabel label="Book ">
+                                :
+                                <InputforForm width="10rem" v-model="available.book_number" />
+                            </InputLabel>
+
+                        </div>
+                        <!-- <div class="text-sm">
                             <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-gray-900">We
                                 certify that among others, the following facts of {{ fact_of }} appear in our Register
                                 of {{
                                     register_of }} on page
-                                <InputforForm type="number" middle width="6rem" bold v-model="available.page_number" />
+                                <InputforForm middle width="6rem" bold v-model="available.page_number" />
                                 of book number
-                                <InputforForm type="number" middle width="6rem" bold v-model="available.book_number" />
+                                <InputforForm middle width="6rem" bold v-model="available.book_number" />
                                 .
                             </p>
-                        </div>
+                        </div> -->
                         <!-- For Form 3A -->
                         <div v-if="selectedType === '3A'" class="flex flex-col mt-4 gap-2 w-full">
                             <InputLabel label="Name" twoInput>
@@ -147,7 +162,7 @@
                             </InputLabel>
                         </div>
 
-                        <div class="mt-4"></div>
+                        <div class=""></div>
                         <!-- Required for Available Form -->
                         <InputLabel label="Registry Number">
                             :
@@ -177,7 +192,7 @@
                         <div v-if="selectedType === '1A'" class="flex flex-col  gap-2">
                             <InputLabel label="Name of Child">
                                 :
-                                <InputforForm width="100%" v-model="Form1A.name_child" />
+                                <InputforForm isUpperCase width="100%" bold v-model="Form1A.name_child" />
                             </InputLabel>
                             <InputLabel label="Sex">
                                 :
@@ -333,10 +348,10 @@
 
                 <!-- Page 2,  Other Side -->
                 <!-- This is Required for all Forms -->
-                <div class="flex flex-col gap-2 px-4 py-10">
-                    <div class="flex items-center justify-center relative   text-nowrap">
+                <div class="flex flex-col gap-2 px-4 py-4">
+                    <div class="flex items-center justify-center relative text-sm font-sans  flex-col">
                         This certification is issued to <div class="px-2">
-                            <InputforForm width="15rem" middle bold v-model="transactions.certification_issued_to" />
+                            <InputforForm width="30rem" middle bold v-model="transactions.certification_issued_to" />
                         </div> upon his/her request.
                     </div>
 
@@ -345,8 +360,9 @@
                     <div class="flex flex-col gap-2 " v-if="is_with_remarks">
                         <div class="flex flex-row gap-2 items-center">
                             <input type="checkbox" v-model="is_remarks_check" name="" id="remark_btn"
-                                class="border rounded-sm border-gray-600">
-                            <label for="remark_btn" class="text-md font-medium text-neutral-800">Add Remarks</label>
+                                class="border rounded-sm border-gray-400">
+                            <label for="remark_btn" class="text-md font-medium text-neutral-800 text-sm">Add
+                                Remarks</label>
                         </div>
                         <!-- <p class="font-medium text-xs">Add Remarks</p> -->
 
@@ -373,7 +389,7 @@
                             <p class="italic mb-10">Verified by:</p>
                             <div class="pl-0 flex flex-col items-center gap-[0.10rem]">
                                 <InputforForm skip width="100%" bold middle v-model="transactions.verified_by"
-                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
+                                    isUpperCase />
                                 <InputforForm skip width="100%" middle italic unbordered isTransparent
                                     v-model="transactions.verifier_position" />
                             </div>
@@ -381,7 +397,7 @@
                         <div class="flex flex-col items-center gap-[0.10rem]">
                             <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
                             <InputforForm skip middle width="100%" bold v-model="transactions.civil_registrar"
-                                @input="formData.civil_registrar = $event.target.value.toUpperCase()" />
+                                isUpperCase />
                             <InputforForm skip width="100%" middle italic unbordered isTransparent
                                 v-model="transactions.civil_registrar_position" />
                             <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
@@ -394,9 +410,9 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col gap-2  w-[50%]">
+                    <div class="flex flex-col gap-2  w-[60%]">
                         <InputLabel label="Amount Paid ">
-                            <InputforForm width="100%" v-model="transactions.amount_paid" />
+                            <InputforForm width="100%" v-model="transactions.amount_paid" skip />
                         </InputLabel>
 
                         <InputLabel label="O.R. Number">
@@ -417,17 +433,162 @@
 
                         <div class="ml-auto flex items-center justify-center gap-2">
                             <button
-                                class="bg-white hover:bg-gray-100 border text-gray-800 px-4 font-medium  py-3.5 rounded-md "
-                                @click="previewcontent">Preview</button>
-                            <button @click="createForm()"
-                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button>
+                                class="bg-blue-600 hover:bg-blue-700 text-white border px-4 font-medium  py-3.5 rounded-md "
+                                @click="previewForm">Next</button>
+                            <!-- <button @click="createForm()"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button> -->
 
                         </div>
                     </div>
 
                 </div>
             </div>
+            <div v-else class="h-full w-full relative ">
 
+                <div v-if="settings"
+                    class="absolute top-6 z-50 bg-white p-4 right-10 w-auto px-6 h-auto border border-gray-300 shadow-2xl rounded flex flex-col">
+                    <p class="text-sm font-medium text-blue-600">Form Adjustments</p>
+
+                    <div class="flex flex-col gap-2 w-full mt-4">
+
+                        <div class="w-full flex flex-col">
+                            <p class="text-sm font-medium">Right Logo</p>
+
+                            <div class="grid grid-cols-3 items-center justify-center mt-1">
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm  ">Scale</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.left_scale" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm  ">X:</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.left_x" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm  ">Y:</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.left_y" />
+                                </div>
+
+                            </div>
+                            <p class="text-sm font-medium mt-2">Left Logo</p>
+
+                            <div class="grid grid-cols-3 items-center justify-center mt-1">
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm  ">Scale</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.right_scale" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm  ">X:</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.right_x" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm  ">Y:</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.right_y" />
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Left Logo Scale</p>
+                            <InputforForm width="6rem" type="number" v-model="preference.left_logo_scale" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Right Logo Scale</p>
+                            <InputforForm width="6rem" type="number" v-model="preference.right_logo_scale" />
+                        </div> -->
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Header </p>
+
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.header.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Concern </p>
+
+                            x:
+                            <InputforForm width="6rem" type="number" v-model="preference.concern.x" />
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.concern.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Page/Book Number </p>
+
+                            x:
+                            <InputforForm width="6rem" type="number" v-model="preference.page_book_number.x" />
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.page_book_number.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Body/Data </p>
+
+                            x:
+                            <InputforForm width="6rem" type="number" v-model="preference.body_data.x" />
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.body_data.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Issued to </p>
+
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.issued_to.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Verifier</p>
+
+                            x:
+                            <InputforForm width="6rem" type="number" v-model="preference.verifier.x" />
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.verifier.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">C/MCR</p>
+
+                            x:
+                            <InputforForm width="6rem" type="number" v-model="preference.c_mcr.x" />
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.c_mcr.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Billing Info</p>
+
+                            x:
+                            <InputforForm width="6rem" type="number" v-model="preference.billing_info.x" />
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.billing_info.y" />
+                        </div>
+
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Authentication</p>
+
+                            y:
+                            <InputforForm width="6rem" type="number" v-model="preference.authentication.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <button @click="settings = false"
+                                class="text-sm font-medium ml-auto bg-blue-600 text-white rounded py-2 border px-2.5">Okay</button>
+                        </div>
+
+                    </div>
+                </div>
+                <PDFViewerWorker :scale="1" :pdfBytes64="previewUrl" />
+                <div class="fixed bottom-0 h-14  gap-2 w-full shadow-3xl z-40 flex items-center justify-end px-4">
+                    <button @click="isPreview = false"
+                        class="bg-white border border-gray-400 hover:bg-gray-300 text-gray-800 px-4 font-medium  py-1.5 rounded-md ">
+
+                        Return</button>
+                    <button @click="createForm()"
+                        class="bg-yellow-300 hover:bg-yellow-400 text-gray-800 px-4 font-medium  py-1.5 rounded-md ">Save
+                        and Print
+                        Form {{ selectedType }}</button>
+
+                </div>
+
+            </div>
 
         </Modal>
 
@@ -438,30 +599,18 @@
 import { computed, defineAsyncComponent, onMounted, reactive, ref, watch } from 'vue'
 import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
 import Header from '../../components/essentials/header.vue'
-
 import InputforForm from '../../components/Form/InputforForm.vue'
-import ButtonBorderless from '../../components/Form/ButtonBorderless.vue'
-import FormCheckbox from '../../components/Form/FormCheckbox.vue'
 import InputLabel from '../../components/Form/InputLabel.vue'
-
-import { useVuelidate } from "@vuelidate/core";
-import { required, requiredIf } from "@vuelidate/validators";
 import { format } from 'date-fns'
-
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { all_address, } from '../../utils/Address/index.js'
-import SelectforForm from '../../components/Form/SelectforForm.vue';
-import FormAutoComplete from '../../components/Form/FormAutoComplete.vue';
-import Try from '../../components/try.vue';
+
 import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
 import { useForms } from '../../stores/forms.js'
-import TableGrid from '../../components/TableGrid.vue'
 import ControlButton from '../../components/ControlButton.vue'
-import FormInput from './FormInput.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import { useAvailableForm, useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
 
-
+const settings = ref(false)
 const transactions = reactive(useTransactionDetails)
 const available = reactive(useAvailableForm)
 
@@ -482,23 +631,130 @@ const Form3C = reactive(useForm3C)
 
 
 const selectedType = ref(null)
+const isPreview = ref(false)
+const previewUrl = ref('')
 
+
+const preference = reactive({
+    logo: {
+        left_scale: 0.38,
+        right_scale: 0.38,
+        left_x: 420,
+        left_y:  797.75,
+        right_x: 110,
+        right_y:  797.75
+    },
+
+
+
+    // Add Postition of logos
+    header: {
+        x: 0, // Not Needed
+        y: 6
+    },
+    concern: {
+        x: 72,
+        y: 125
+    },
+    page_book_number: {
+        x: 125,
+        y: 150
+    },
+    body_data: {
+        x: 110, // 110 for 1A, 2A, 54 for 3A
+        y: 196
+    },
+    issued_to: {
+        x: 0,
+        y: 310
+    },
+    verifier: {
+        x: 72,
+        y: 190
+    },
+    c_mcr: {
+        x: 360,
+        y: 216
+    },
+    billing_info: {
+        x: 76,
+        y: 108
+    },
+    authentication: {
+        x: 0,
+        y: 350
+    }
+})
+
+watch(preference, (newPreferences, oldPreferences) => {
+    previewForm();
+}, { deep: true });
 const createForm = () => {
-    const type = selectedType.value;
+    console.log('Creating form')
+    const form_type = selectedType.value;
     const formAvailableMapping = {
+        // For Form A's
         '1A': Form1A,
         '2A': Form2A,
-        '3A': Form3A
+        '3A': Form3A,
+
+        // For Form B's
+        '1B': Form1B,
+        '2B': Form2B,
+        '3B': Form3B,
+
+        // For Form C's
+        '1C': Form1C,
+        '2C': Form2C,
+        '3C': Form3C,
     };
 
-    // Check if the type exists in the formMapping
-    if (formAvailableMapping[type]) {
+    if (formAvailableMapping[form_type]) {
         const main_data = reactive({
+            form_type,
             ...transactions,
-            ...available,
-            ...formAvailableMapping[type]
+            ...(form_type.endsWith('A') ? available : {}),
+            ...formAvailableMapping[form_type],
         });
         console.log(main_data);
+    } else {
+        console.log('Invalid form type selected');
+    }
+};
+
+const previewForm = async () => {
+    console.log('Previewing form')
+    const form_type = selectedType.value;
+
+    const formAvailableMapping = {
+        // For Form A's
+        '1A': Form1A,
+        '2A': Form2A,
+        '3A': Form3A,
+
+        // For Form B's
+        '1B': Form1B,
+        '2B': Form2B,
+        '3B': Form3B,
+
+        // For Form C's
+        '1C': Form1C,
+        '2C': Form2C,
+        '3C': Form3C,
+    };
+
+    if (formAvailableMapping[form_type]) {
+        const main_data = reactive({
+            form_type,
+            ...preference,
+            ...transactions,
+            ...(form_type.endsWith('A') ? available : {}),
+            ...formAvailableMapping[form_type],
+        });
+        const preview = await window.FormApi.PreviewFormPDF(JSON.stringify(main_data));
+        previewUrl.value = preview.result.pdfbase64;
+        isPreview.value = true
+
     } else {
         console.log('Invalid form type selected');
     }
@@ -552,12 +808,6 @@ const createForm = () => {
 
 
 
-
-
-
-
-const all_ = ref(all_address())
-
 const is_with_remarks = computed(() => {
     return formData.form_type.includes('A') ? true : false
 })
@@ -566,7 +816,6 @@ const is_remarks_check = ref(false)
 
 
 onMounted(() => {
-    calculatePPI();
     fetchFormData('Form 1A')
 });
 
@@ -623,39 +872,8 @@ const fetchFormData = async (formType) => {
 
 
 
-const ppi = ref(0);
-
-const calculatePPI = () => {
-    const screenWidthPx = window.screen.width;
-    const screenHeightPx = window.screen.height;
-
-    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-    const dpi = isPortrait ? 96 : 113;
-
-    const widthInches = screenWidthPx / dpi;
-    const heightInches = screenHeightPx / dpi;
-
-    const ppiValue = Math.sqrt((screenWidthPx ** 2) + (screenHeightPx ** 2)) / Math.sqrt((widthInches ** 2) + (heightInches ** 2));
-    ppi.value = Math.round(ppiValue);
-};
-
-const paper_height = computed(() => {
-    return formData.form_type.includes('A') ? 13 : 11
-})
-
-const paperDimensions = computed(() => ({
-    width: 8.5 * ppi.value,
-    height: paper_height * ppi.value,
-}));
-
-const paperStyle = computed(() => ({
-    height: `${paperDimensions.value.height}px`,
-    width: `${paperDimensions.value.width}px`,
-}));
 
 
-
-const isLoading = ref(false)
 const Modal = defineAsyncComponent(() =>
     import("../../components/client/modal/Modal.vue")
 )
@@ -667,30 +885,11 @@ const options = ref(
     ]
 )
 
-const date_marriage_parents_options = [
-    'Not Married',
-    'Not Applicable',
-    'Forgotten',
-    'No Column',
-    'No Entry',
-]
 
 
 const FormTypes = ref([])
 const isFormOpen = ref(false)
-const print = ref()
-const date_marriage_option = ref(false)
 
-
-const name_of = computed(() => {
-    return selectedType.value === "1A" ? 'Name of Child' : selectedType.value === "2A" ? 'Name of Deceased' : selectedType.value === "3A" ? 'Name' : ''
-})
-const fact_of = computed(() => {
-    const selected = selectedType.value
-    return selected === "1A" || selected === "1B" || selected === "1C" ? 'birth' :
-        selected === "2A" || selected === "2B" || selected === "2C" ? 'death' :
-            selected === "3A" || selected === "3B" || selected === "3C" ? 'marriage' : ''
-})
 const transcription_register_of = computed(() => {
     const selected = selectedType.value
     return selected === "1A" || selected === "1B" || selected === "1C" ? 'Births' :
@@ -715,23 +914,7 @@ const alleged_to = computed(() => {
 })
 
 
-const date_filed = ref(new Date())
-const date_registration = ref()
-const date_of = ref()
-const date_marriage = ref()
-const date_paid = ref(new Date())
 
-
-
-const preferences = reactive({
-    civil_x: '0.3',
-    civil_y: '0.3',
-    info_x: '1.3',
-    info_y: '3.7',
-    certificate_x: '2.3',
-    certificate_y: '8.8',
-    authenticate_position_y: '3.5'
-})
 
 const initialFormData = {
 
@@ -768,54 +951,6 @@ const initialFormData = {
     or_number: '',
     date_paid: format(new Date(), "MMMM dd, yyyy"),
 
-    // isWithAuthenticatedForm: false,
-    // isWithRemarks: false,
-    // form_type: '',
-    // date_filed: format(new Date(), "MMMM dd, yyyy"),
-
-    // // ALL FORM  WITHIN "A" HAVE THIS
-    // page_number: '',
-    // book_number: '',
-
-
-    // registry_number: '',
-    // date_registration: '',
-    // name_of: '',
-    // sex: '',
-    // date_of: '',
-    // place_of: '',
-    // name_of_mother: '',
-    // citizenship_mother: 'Filipino',
-    // name_of_father: '',
-    // citizenship_father: 'Filipino',
-    // date_marriage: '',
-    // place_of_marriage_parents: '',
-
-
-    // age: '',
-    // civil_status: '',
-    // citizenship: '',
-    // cause_of_death: '',
-
-    // records_of_year: '',
-
-    // registered_from: '',
-    // period_from: '',
-    // period_to: '',
-    // destroyed_by: '',
-
-
-    // remarks: '',
-
-    // issued_to: '',
-    // verified_by: 'ERIKA JOYCE B. PARAGAS',
-    // position: 'Registration Officer I',
-
-    // mcr: 'ISMAEL D. MALICDEM, JR.',
-
-    // amount_paid: 'Php 130.00',
-    // or_number: '',
-    // date_paid: format(new Date(), "MMMM dd, yyyy"),
 }
 
 const formData = reactive({ ...initialFormData })
@@ -824,33 +959,6 @@ function resetFormData() {
     Object.assign(formData, initialFormData);
 }
 
-const submit = async () => {
-
-    const add = await formsStore.add_form1a(formData)
-    // const isFormValid = await v$.value.$validate();
-
-    // if (isFormValid) {
-    //     try {
-
-    //         const dataToSubmit = {
-    //             ...formData,
-    //             ...preferences,
-    //             purpose: 'edit'
-    //         };
-
-    //         const open = await window.FormApi.createPdfForm(dataToSubmit)
-    //         console.log(open)
-
-    //         if (open.status) {
-    //             const openFolder = await window.FormApi.openPdfForm(open.filepath)
-    //         }
-    //     } catch () {
-    //         console.(' submitting form:', );
-    //     }
-    // } else {
-    //     console.log('Form has validation s:', v$.value.$s);
-    // }
-}
 
 const OpenForms = (e) => {
     e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A", formData.form_type = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A", formData.form_type = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A", formData.form_type = "3A"] : null
@@ -876,56 +984,10 @@ const toggleForm = (val) => {
 
 
 
-const isPreview = ref(false)
-const previewUrl = ref('')
-
-const previewcontent = async () => {
-    isPreview.value = !isPreview.value
-    if (isPreview) {
-        const dataToSubmit = {
-            ...formData,
-            ...preferences,
-            purpose: 'edit'
-        };
-
-        const open = await window.FormApi.createPdfForm(dataToSubmit)
-        console.log(open)
-        previewUrl.value = open.dataurl
-
-    }
-    else {
-        previewUrl.value = null
-    }
-}
-
-const change_preferences = async () => {
-    if (isPreview) {
-        const dataToSubmit = {
-            ...formData,
-            ...preferences,
-            purpose: 'edit'
-        };
-
-        const open = await window.FormApi.createPdfForm(dataToSubmit)
-        previewUrl.value = open.dataurl
-    }
-}
-
-
 const nodateforparentsmarriage = ref(false)
-const parentsdatemarriage_opt = (val) => {
-    nodateforparentsmarriage.value = true
-    formData.date_marriage = val
-    formData.place_of_marriage_parents = 'Not Applicable'
-
-    date_marriage_option.value = false
-}
 
 
-const remarks = ref()
-const addremarksvalue = () => {
-    remarks.value.focus()
-}
+
 
 
 const colDefs = ref([

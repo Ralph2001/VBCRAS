@@ -27,7 +27,8 @@
                 </div>
                 <div class="flex-1  flex text-start px-1">
                     <p>Create Finality</p>
-                </div></button>
+                </div>
+            </button>
             <button type="button" @click="opendocuments(props.params.data)"
                 class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
@@ -36,9 +37,10 @@
                 <div class="flex-1  flex text-start px-1">
                     <p>View Document</p>
                 </div>
-                
+
             </button>
-            <button type="button" @click="props.params.onClick(props.params.data)"
+            <button type="button"
+                @click="props.params.onClick(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
                     <font-awesome-icon icon="fa-solid fa-pen-to-square" />
@@ -47,7 +49,9 @@
                     <p>Edit Document</p>
                 </div>
             </button>
-            <button type="button" @click="props.params.onRegenerate(props.params.data)"
+           
+            <button  type="button"
+                @click="props.params.onRegenerate(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
                     <font-awesome-icon icon="fa-solid fa-arrows-rotate" />
@@ -56,6 +60,7 @@
                     <p>ReGenerate</p>
                 </div>
             </button>
+          
             <button v-if="user.user_role === 1 || user.user_id === props.params.data.created_by" type="button"
                 @click="removeItem()"
                 class=" disabled:bg-gray-100  disabled:hover:cursor-not-allowed flex items-center  text-md font-medium hover:bg-red-500 hover:text-white w-full">

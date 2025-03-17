@@ -66,8 +66,8 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex gap-2 justify-end">
-                <button @click="cancel_btn"
+            <div class="flex gap-2 justify-end" >
+                <button
                     class="px-4 py-2 text-sm  bg-yellow-300 hover:bg-yellow-400 font-medium rounded ">
                     Return to Form Editor
                 </button>
@@ -93,7 +93,11 @@ const cancel_btn = () => {
 
 const props = defineProps({
     path: String,
-    default: ''
+    default: '',
+    atEdit: {
+        type: Boolean,
+        default: false
+    }
 })
 
 const open_folder_instead = async (path) => {

@@ -115,7 +115,7 @@ class Petitions(db.Model):
 
 
     petition_actions = db.relationship("PetitionActions", backref="petition", lazy=True)
-    petition_reasons = db.relationship("PetitionReasons", backref="petition", lazy=True)
+    reasons = db.relationship("PetitionReasons", backref="petition", lazy=True)
     
 
 

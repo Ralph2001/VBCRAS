@@ -8,7 +8,7 @@ export const usePetitions = defineStore('petitions', {
         petitionData: [],
         relation_to_document_owner: ['Brother', 'Mother', 'Father', 'Sister'],
         saved_supporting: [],
-        saved_clerical: [],
+        saved_clerical: []
     }),
     actions: {
         async get_all_petitions() {
@@ -20,6 +20,7 @@ export const usePetitions = defineStore('petitions', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.petitions = response.data
+                console.log(response.data)
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -52,7 +53,7 @@ export const usePetitions = defineStore('petitions', {
                         }
                     }
                 )
-
+                console.log(response)
                 this.refresh()
             } catch (error) {
                 console.error('Error inserting data:', error)
@@ -79,7 +80,6 @@ export const usePetitions = defineStore('petitions', {
             }
         },
 
-
         async get_latest_cce() {
             try {
                 const hostAdd = localStorage.getItem('host')
@@ -104,7 +104,6 @@ export const usePetitions = defineStore('petitions', {
                 )
                 this.latest = response
                 return response
-
             } catch (error) {
                 return false
                 // console.error('Error fetching data:', error)
@@ -133,8 +132,6 @@ export const usePetitions = defineStore('petitions', {
             this.get_saved_supporting_documents()
             this.get_saved_clerical_errors()
         },
-
-
 
         // ADDITIONALS
 
@@ -170,10 +167,6 @@ export const usePetitions = defineStore('petitions', {
             } catch (error) {
                 return false
             }
-        },
-
-
-
-
+        }
     }
 })

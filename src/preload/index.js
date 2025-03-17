@@ -92,22 +92,26 @@ contextBridge.exposeInMainWorld('ClericalApi', {
 })
 
 contextBridge.exposeInMainWorld('FormApi', {
-    CreateForm: async (formData) => {
-        const result = await ipcRenderer.invoke('createForm', formData)
-        return { status: result.status, filepath: result.filepath }
-    },
-    createPdfForm: async (formData) => {
-        const result = await ipcRenderer.invoke('createPdfForm', formData)
-        return {
-            status: result.status,
-            filepath: result.filepath,
-            dataurl: result.dataurl
-        }
-    },
-    openPdfForm: async (source) => {
-        const result = await ipcRenderer.invoke('open-form', source)
-        return true
+    PreviewFormPDF: async (data) => {
+        const result = await ipcRenderer.invoke('previewFormPDF', data)
+        return { result }
     }
+    // CreateForm: async (formData) => {
+    //     const result = await ipcRenderer.invoke('createForm', formData)
+    //     return { status: result.status, filepath: result.filepath }
+    // },
+    // createPdfForm: async (formData) => {
+    //     const result = await ipcRenderer.invoke('createPdfForm', formData)
+    //     return {
+    //         status: result.status,
+    //         filepath: result.filepath,
+    //         dataurl: result.dataurl
+    //     }
+    // },
+    // openPdfForm: async (source) => {
+    //     const result = await ipcRenderer.invoke('open-form', source)
+    //     return true
+    // }
 })
 
 //  AUSF

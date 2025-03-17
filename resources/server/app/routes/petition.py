@@ -122,6 +122,22 @@ def edit_petition(id):
                     error_num=action_data["error_num"]
                 )
                 db.session.add(new_action)
+                
+    if "reasons" in data:
+        for reason_data in data["reasons"]:
+            # Use the PetitionActions model to query, not the schema
+            reason = PetitionActions.query.get(reason_data.get("id"))
+            if reason:
+                reason.action_decision = reason_data.get("action_decision", reason.action_decision)
+                reason.action_text = reason_data.get("action_text", reason.action_text)
+                reason.error_num = reason_data.get("error_num", reason.error_num)
+            else:
+                new_reason = PetitionActions(
+                    petition_id=petition_record.id,
+                    error_num=reason_data["error_num"],
+                    reason=reason_data["reason"],
+                )
+                db.session.add(new_reason)
 
     # Handle clerical_errors (update or add new ones)
     if "clerical_errors" in data:
@@ -273,8 +289,8 @@ def delete_petition(id):
         for petition_action in petition.petition_actions:
             db.session.delete(petition_action)
 
-        for petition_reason in petition.petition_reasons:
-            db.session.delete(petition_reason)
+        for reason in petition.reasons:
+            db.session.delete(reason)
 
         # Delete the petition itself
         db.session.delete(petition)

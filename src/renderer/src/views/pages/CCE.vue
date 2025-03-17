@@ -31,8 +31,8 @@
 
     <AlertPath v-if="alertmodal" :title="alertmodal_title" :body="alertmodal_body" />
     <!-- v-if="is_validating" -->
-    <ValidateClericalPopup v-if="is_validating" :path="last_saved_filepath" @cancel="cancel_validating_stage"
-      @proceed="create_validated_document" />
+    <ValidateClericalPopup  v-if="is_validating" :path="last_saved_filepath"
+      @cancel="cancel_validating_stage" @proceed="create_validated_document" />
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
@@ -916,6 +916,8 @@ const petition_by_type_retriever = async () => {
 
 
 const close_modal = () => {
+  is_document_edit_mode.value = false
+  is_document_regenerating.value = false
   petition_modal.value = false
   supporting_items.value = [0];
   clerical_errors_items.value = [0];
@@ -1877,7 +1879,7 @@ const create_validated_document = async () => {
     is_indigent: formData.is_indigent
   })
 
-  const submit_ = is_document_edit_mode.value || is_document_regenerating
+  const submit_ = is_document_edit_mode.value || is_document_regenerating.value
     ? petitions.edit_petition(formData.id, petition_.value)
     :
     petitions.add_petition(petition_.value);
@@ -1947,11 +1949,12 @@ const filteredRowData = computed(() => {
 
 const mapDataToForm = (data) => {
 
+  console.log(data)
   const length = data.clerical_errors.length; // Clerical Errors
   const supporting_doc_length = data.supporting_documents.length // Supporting Documents
 
 
-
+  // formData.reasons = data.reasons
   formData.id = data.id
   formData.created_by = data.created_by
   formData.action_taken_date = data.action_taken_date
@@ -1965,7 +1968,9 @@ const mapDataToForm = (data) => {
 
   formData.clerical_errors = [...data.clerical_errors]
   formData.supporting_documents = [...data.supporting_documents]
-  console.log(data.clerical_errors.length)
+  formData.reasons = [...data.reasons]
+  formData.petition_actions = [...data.petition_actions]
+
 
 
   formData.date_filed = data.date_filed
@@ -2001,7 +2006,6 @@ const mapDataToForm = (data) => {
   formData.nationality = data.nationality
   formData.notice_posting = data.notice_posting
   formData.o_r_number = data.o_r_number
-  formData.petition_actions = data.petition_actions
   formData.petition_date_granted = data.petition_date_granted
   formData.petition_date_issued = data.petition_date_issued
   // formData.petition_number = data.petition_number

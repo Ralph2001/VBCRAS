@@ -1,6 +1,6 @@
 <template>
     <div :class="{ 'flex flex-row': twoInput, 'grid grid-cols-3': !twoInput }" class=" font-medium items-center">
-        <p :class="{ 'basis-[25%]': twoInput }">{{ label }}</p>
+        <p :class="{ 'basis-[25%] ': twoInput }">{{ label }}</p>
         <div :class="{ 'grow ': twoInput }" class="flex flex-row  col-span-2 items-center gap-1 w-full">
             <slot></slot>
         </div>

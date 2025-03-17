@@ -25,6 +25,7 @@ import {
     print_decided_license,
     save_marriage_license_and_notice
 } from '../documents/marriage'
+import { generateFormPDF } from '../documents/forms/GenerateDocument'
 
 const log = require('electron-log')
 autoUpdater.logger = log
@@ -143,42 +144,55 @@ ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     await printPDF(base64Data, sumatraPath)
 })
 
-// Form IPCMAIN
+/**
+ * Form IPC
+ * @FORM
+ * Document
+ */
 
-ipcMain.handle('createPdfForm', async (event, formData) => {
+ipcMain.handle('previewFormPDF', async (event, formData) => {
     try {
-        const generate_record = await generate_form(formData)
-        if ((generate_record.success = true)) {
-            return {
-                status: generate_record.status,
-                filepath: true,
-                dataurl: generate_record.pdfbase64
-            }
-        }
+        const generate_form = await generateFormPDF(formData)
+        return generate_form
     } catch (error) {
         console.log(error)
     }
 })
 
-ipcMain.handle('open-form', async (event, source) => {
-    try {
-        win = new BrowserWindow({
-            webPreferences: {
-                plugins: true,
-                devTools: true
-            },
+// ipcMain.handle('createPdfForm', async (event, formData) => {
+//     try {
+//         const generate_record = await generate_form(formData)
+//         if ((generate_record.success = true)) {
+//             return {
+//                 status: generate_record.status,
+//                 filepath: true,
+//                 dataurl: generate_record.pdfbase64
+//             }
+//         }
+//     } catch (error) {
+//         console.log(error)
+//     }
+// })
 
-            autoHideMenuBar: true,
-            show: true
-        })
+// ipcMain.handle('open-form', async (event, source) => {
+//     try {
+//         win = new BrowserWindow({
+//             webPreferences: {
+//                 plugins: true,
+//                 devTools: true
+//             },
 
-        const load = await win.loadURL(source)
-        return true
-    } catch (error) {
-        win.close()
-        return false
-    }
-})
+//             autoHideMenuBar: true,
+//             show: true
+//         })
+
+//         const load = await win.loadURL(source)
+//         return true
+//     } catch (error) {
+//         win.close()
+//         return false
+//     }
+// })
 
 /////////////
 /////////////
@@ -863,7 +877,7 @@ ipcMain.handle('select-folder', async (event) => {
 })
 
 ipcMain.handle('select-file', async (event) => {
-    if (dialogOpen) return { canceled: true, filePaths: [] }  // Always return an object
+    if (dialogOpen) return { canceled: true, filePaths: [] } // Always return an object
     try {
         dialogOpen = true
         const { canceled, filePaths } = await dialog.showOpenDialog({

@@ -1,6 +1,6 @@
 <template>
-    <div class="h-full w-full flex flex-col items-center relative bg-[#1B263B] overflow-y-scroll py-20  ">
-       
+    <div tabindex="-1" class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center relative bg-[#1B263B] overflow-y-scroll py-20  ">
+
         <div v-if="isLoading" class="z-50 h-full items-center justify-center  w-full flex">Loading...</div>
 
         <div v-else class="h-fit ">
@@ -22,7 +22,19 @@ import * as pdfjsLib from 'pdfjs-dist/webpack';
 import Cookies from 'js-cookie'; // Import js-cookie library
 const isLoading = ref(false);
 
-const scale = ref(1.5); // Initial scale
+
+
+// Props
+const props = defineProps({
+    pdfBytes64: {
+        required: true
+    },
+    scale: {
+        type: Number,
+        default: 1.5
+    }
+});
+const scale = ref(props.scale); // Initial scale
 // Scaling factor
 const minScale = 0.5;
 const maxScale = 2.5;
@@ -38,12 +50,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('wheel', handleWheel);
 });
 
-// Props
-const props = defineProps({
-    pdfBytes64: {
-        required: true
-    }
-});
+
 
 // Canvas reference and scale factor
 const pdfCanvas = ref([]);
