@@ -12,10 +12,10 @@ class BaseCertificate(db.Model):
     civil_registrar = db.Column(db.String(255))
     civil_registrar_position = db.Column(db.String(255))
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    is_with_authentication = db.Column(db.Boolean, default=False)
 
 class AvailableMixin:
     """Fields for forms with available records"""
-    is_with_authentication = db.Column(db.Boolean, default=False)
     date_registration = db.Column(db.Date)
     page_number = db.Column(db.String(20))
     book_number = db.Column(db.String(20))

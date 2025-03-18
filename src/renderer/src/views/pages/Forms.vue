@@ -424,8 +424,8 @@
                     </div>
                     <div class="flex flex-row gap-2 p-4 border rounded items-center justify-center bg-gray-100 shadow">
 
-                        <div class="flex flex-row gap-2 items-center" v-if="selectedType.includes('A')">
-                            <input type="checkbox" v-model="available.is_with_authentication" name=""
+                        <div class="flex flex-row gap-2 items-center">
+                            <input type="checkbox" v-model="transactions.is_with_authentication" name=""
                                 id="with_authentication" class="border rounded-sm border-gray-600">
                             <label for="with_authentication" class="text-md font-medium text-neutral-800">With
                                 Authentication</label>
@@ -462,12 +462,12 @@
                                 </div>
 
                                 <div class="flex flex-row gap-1 items-center justify-center">
-                                    <p class="text-sm  ">X:</p>
+                                    <p class="text-sm  ">x:</p>
                                     <InputforForm width="6rem" type="number" v-model="preference.logo.left_x" />
                                 </div>
 
                                 <div class="flex flex-row gap-1 items-center justify-center">
-                                    <p class="text-sm  ">Y:</p>
+                                    <p class="text-sm  ">y:</p>
                                     <InputforForm width="6rem" type="number" v-model="preference.logo.left_y" />
                                 </div>
 
@@ -637,12 +637,12 @@ const previewUrl = ref('')
 
 const preference = reactive({
     logo: {
-        left_scale: 0.38,
-        right_scale: 0.38,
+        left_scale: 0.35,
+        right_scale: 0.35,
         left_x: 420,
-        left_y:  797.75,
+        left_y: 797.75,
         right_x: 110,
-        right_y:  797.75
+        right_y: 797.75
     },
 
 
@@ -654,15 +654,15 @@ const preference = reactive({
     },
     concern: {
         x: 72,
-        y: 125
+        y: 140
     },
     page_book_number: {
         x: 125,
-        y: 150
+        y: 163
     },
     body_data: {
         x: 110, // 110 for 1A, 2A, 54 for 3A
-        y: 196
+        y: 205
     },
     issued_to: {
         x: 0,
@@ -670,7 +670,7 @@ const preference = reactive({
     },
     verifier: {
         x: 72,
-        y: 190
+        y: 185
     },
     c_mcr: {
         x: 360,
@@ -678,11 +678,25 @@ const preference = reactive({
     },
     billing_info: {
         x: 76,
-        y: 108
+        y: 97
     },
     authentication: {
         x: 0,
         y: 350
+    }
+})
+
+watch(isPreview, (newValue, oldValue) => {
+    if (selectedType.value.includes('A')) {
+        preference.authentication.y = 350
+        preference.logo.right_y = 797.75
+        preference.logo.left_y = 797.75
+
+
+    }else{
+        preference.authentication.y = 300
+        preference.logo.right_y = 703.75
+        preference.logo.left_y = 703.75
     }
 })
 

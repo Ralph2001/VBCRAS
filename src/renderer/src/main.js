@@ -97,6 +97,7 @@ import {
     faPaperclip,
     faInfo,
     faArrowsRotate,
+    faTowerCell
 
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -179,7 +180,8 @@ library.add(
     faClock,
     faPaperclip,
     faInfo,
-    faArrowsRotate
+    faArrowsRotate,
+    faTowerCell
 
 )
 

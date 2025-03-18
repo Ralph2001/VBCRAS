@@ -36,8 +36,8 @@
         </ConnectModal>
 
         <div class="absolute top-0 right-0 p-4">
-            <button @click="more_option = !more_option">
-                <font-awesome-icon icon="fa-solid fa-bars" class="text-gray-700" />
+            <button @click="more_option = !more_option" title="Connect">
+                <font-awesome-icon icon="fa-solid fa-tower-cell" class="text-2xl text-gray-700 hover:text-gray-600 " />
             </button>
 
         </div>

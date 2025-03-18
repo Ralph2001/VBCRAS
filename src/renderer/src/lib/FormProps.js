@@ -11,6 +11,7 @@ export const useTransactionDetails = {
     amount_paid: 'Php 130.00',
     or_number: '',
     date_paid: format(new Date(), "MMMM dd, yyyy"),
+    is_with_authentication: false,
 }
 export const useRegisteredPeriod = {
     registered_from: '',
@@ -19,7 +20,6 @@ export const useRegisteredPeriod = {
     destroyed_by: '',
 }
 export const useAvailableForm = {
-    is_with_authentication: false,
     date_registration: '',
     page_number: '',
     book_number: '',

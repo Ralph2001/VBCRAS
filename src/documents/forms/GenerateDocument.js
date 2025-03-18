@@ -345,18 +345,18 @@ function create_we_clerify(data, page, height, fontSize, fonts) {
         data.form_type === '1A'
             ? 'birth'
             : data.form_type === '2A'
-              ? 'death'
-              : data.form_type === '3A'
-                ? 'marriage'
-                : ''
+                ? 'death'
+                : data.form_type === '3A'
+                    ? 'marriage'
+                    : ''
     const typeofdocument =
         data.form_type === '1A'
             ? 'Births'
             : data.form_type === '2A'
-              ? 'Deaths'
-              : data.form_type === '3A'
-                ? 'Marriage'
-                : ''
+                ? 'Deaths'
+                : data.form_type === '3A'
+                    ? 'Marriage'
+                    : ''
 
     page.drawText(
         `We certify that among others the following facts of ${type} appear in our Register of`,
@@ -469,10 +469,10 @@ function document_body_available(data, page, height, fontSize, fonts) {
     const table = data.form_type.includes('1A')
         ? table_for_1
         : data.form_type.includes('2A')
-          ? table_for_2
-          : data.form_type.includes('3A')
-            ? table_for_3
-            : []
+            ? table_for_2
+            : data.form_type.includes('3A')
+                ? table_for_3
+                : []
 
     let tableGap = 0
     const tablePositionX = Number(data.body_data.x)
@@ -483,18 +483,18 @@ function document_body_available(data, page, height, fontSize, fonts) {
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 145
                 : data.form_type.includes('3A') && item.another_data
-                  ? 72
-                  : data.form_type.includes('3A')
-                    ? 107
-                    : 0
+                    ? 72
+                    : data.form_type.includes('3A')
+                        ? 107
+                        : 0
         const xAdderForData =
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 155
                 : data.form_type.includes('3A') && item.another_data
-                  ? 79
-                  : data.form_type.includes('3A')
-                    ? 127
-                    : 0
+                    ? 79
+                    : data.form_type.includes('3A')
+                        ? 127
+                        : 0
 
         page.drawText(item.title, {
             x: tablePositionX,
@@ -547,17 +547,17 @@ function document_body_unavailable_destroyed(
     const record_of = data.form_type.includes('1')
         ? 'of birth of '
         : data.form_type.includes('2')
-          ? 'of death of'
-          : data.form_type.includes('3')
-            ? 'of marriage between'
-            : ''
+            ? 'of death of'
+            : data.form_type.includes('3')
+                ? 'of marriage between'
+                : ''
     const have_b = data.form_type.includes('1')
         ? 'have been born'
         : data.form_type.includes('2')
-          ? 'have died'
-          : data.form_type.includes('3')
-            ? 'have been married'
-            : ''
+            ? 'have died'
+            : data.form_type.includes('3')
+                ? 'have been married'
+                : ''
     const is_for_1 = data.form_type.includes('1')
         ? ', of parents {{UNKNOWN PARENTS}} and {{UNKNOWN PARENTS}}'
         : '' // With Parents Name kasi
@@ -569,17 +569,17 @@ function document_body_unavailable_destroyed(
     const certificate_of = data.form_type.includes('1')
         ? 'Live Birth'
         : data.form_type.includes('2')
-          ? 'Death'
-          : data.form_type.includes('3')
-            ? 'Marriage'
-            : ''
+            ? 'Death'
+            : data.form_type.includes('3')
+                ? 'Marriage'
+                : ''
     const register_of = data.form_type.includes('1')
         ? 'Births'
         : data.form_type.includes('2')
-          ? 'Deaths'
-          : data.form_type.includes('3')
-            ? 'Marriages'
-            : ''
+            ? 'Deaths'
+            : data.form_type.includes('3')
+                ? 'Marriages'
+                : ''
 
     const we_clerify_for_b = `We certify that this office has no record ${record_of} {{UNKNOWN NAME}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{UNKNOWN DATE}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
     const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`
@@ -623,10 +623,10 @@ function document_body_unavailable_destroyed(
     const we_also_certify_records_of_b = data.form_type.includes('1')
         ? 'births'
         : data.form_type.includes('2')
-          ? 'deaths'
-          : data.form_type.includes('3')
-            ? 'marriage'
-            : ''
+            ? 'deaths'
+            : data.form_type.includes('3')
+                ? 'marriage'
+                : ''
     const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{2024}} are still intact in the archives of this office`
     const for_C = `We also certify that for every registered birth, this office submits a copy of the Certificate of Live Birth to the Office of the Civil Registrar General, Philippine Statistics Authority (PSA), East Avenue, Diliman, Quezon City, Metro Manila. In view of this, the interested party is hereby advised to make further verification in the archives of that office.`
 
@@ -670,7 +670,12 @@ function document_body_unavailable_destroyed(
 // Draw authentication details for abroad forms
 
 async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
-    const page = pdfDoc.addPage([612, 936]) // 8.5 x 13 inches in points
+    const FORM_TYPE = data.form_type
+    const size_of_paper_by_type_x = FORM_TYPE.includes('A') ? 612 : 595.44
+    const size_of_paper_by_type_y = FORM_TYPE.includes('A') ? 936 : 841.68
+    const page = pdfDoc.addPage([size_of_paper_by_type_x, size_of_paper_by_type_y])
+
+    // const page = pdfDoc.addPage([612, 936]) // 8.5 x 13 inches in points
     const height = page.getHeight()
 
     function setCenter(text, font) {
