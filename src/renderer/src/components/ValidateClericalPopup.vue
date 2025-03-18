@@ -68,6 +68,7 @@
             <!-- Action Buttons -->
             <div class="flex gap-2 justify-end" >
                 <button
+                @click="cancel_btn"
                     class="px-4 py-2 text-sm  bg-yellow-300 hover:bg-yellow-400 font-medium rounded ">
                     Return to Form Editor
                 </button>

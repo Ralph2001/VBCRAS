@@ -461,6 +461,23 @@ ipcMain.handle('create_certificate_filing', async (event, data) => {
         return false
     }
 })
+ipcMain.handle('create_publication_letter', async (event, data) => {
+    try {
+        const create_certificate_filing = await certificate_filing(data)
+        const filefolder = await shell.openExternal(
+            create_certificate_filing.filepath
+        )
+
+        if (!filefolder) {
+            await shell.openPath(create_certificate_filing.filepath)
+            return true
+        }
+
+        return true
+    } catch (error) {
+        return false
+    }
+})
 
 ipcMain.handle('open-clerical', async (event, source) => {
     try {

@@ -93,6 +93,18 @@ export function add_publication_start() {
     return format(publicationStart, 'yyyy-MM-dd');
 }
 
+export function add_publication_and() {
+    const publicationStart = add_publication_start();
+    const startDate = new Date(publicationStart);
+
+
+    // Calculate the middle date (1 week after the publication start date)
+    const middleDate = new Date(startDate);
+    middleDate.setDate(startDate.getDate() + 7); // Add 7 days to the start date
+
+    return format(middleDate, 'yyyy-MM-dd');
+}
+
 // Function to calculate publication end date
 export function add_publication_end() {
     const publicationStart = add_publication_start();

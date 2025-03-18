@@ -55,6 +55,14 @@
                                 class="bg-yellow-300 hover:bg-yellow-400 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-xs rounded-sm ">
                                 Create Certificate of Filing (.docx)
                             </button>
+                            <div v-if="props.details" class="w-full">
+                                <button
+                                    v-if="props.details.petition_type === 'CFN' || props.details.republic_act_number === '10172'"
+                                    @click="create_publication_letter(props.details)"
+                                    class="bg-yellow-300 hover:bg-yellow-400 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-xs rounded-sm ">
+                                    Publication Letter (.docx)
+                                </button>
+                            </div>
                         </div>
 
                     </div>
@@ -164,6 +172,10 @@ const create_certificate_filing = async (data) => {
     const create = await window.ClericalApi.CreateCertificateFiling(data)
 }
 
+const create_publication_letter = async (data) => {
+    console.log(data)
+    // const create = await window.ClericalApi.CreatePublicationLetter(data)
+}
 
 
 onMounted(() => {

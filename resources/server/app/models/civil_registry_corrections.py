@@ -73,6 +73,7 @@ class Petitions(db.Model):
 
     # Publication for CFN and 10172
     publication_start =  db.Column(db.String, nullable=True)
+    publication_and =  db.Column(db.String, nullable=True)
     publication_end =  db.Column(db.String, nullable=True)
     publication_newspaper = db.Column(db.String, nullable=True)
     publication_place = db.Column(db.String, nullable=True)

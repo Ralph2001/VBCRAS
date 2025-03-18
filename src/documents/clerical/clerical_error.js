@@ -221,10 +221,15 @@ async function endorsement_letter(data) {
             : data.petition_type === 'CFN'
                 ? 'Change of First Name'
                 : ''
-    const granted_date = dateFns.format(
-        data.petition_date_granted,
-        'dd MMMM yyyy'
-    )
+    // const granted_date = dateFns.format(
+    //     data.petition_date_granted,
+    //     'dd MMMM yyyy'
+    // )
+    const granted_date = !data.is_migrant
+        ? dateFns.format(data.petition_date_granted, 'dd MMMM yyyy')
+        : ''
+
+
     const subject_code =
         data.republic_act_number === '9048'
             ? 'R.A 9048'
@@ -454,10 +459,14 @@ async function record_sheet(data) {
         data.certificate_posting_end,
         'dd MMMM yyyy'
     )
-    const granted_date = dateFns.format(
-        data.petition_date_granted,
-        'dd MMMM yyyy'
-    )
+    // const granted_date = dateFns.format(
+    //     data.petition_date_granted,
+    //     'dd MMMM yyyy'
+    // )
+    const granted_date = !data.is_migrant
+    ? dateFns.format(data.petition_date_granted, 'dd MMMM yyyy')
+    : ''
+
     const first_name_from = data.first_name_from
     const first_name_to = data.first_name_to
 

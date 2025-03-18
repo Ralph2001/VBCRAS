@@ -31,8 +31,8 @@
 
     <AlertPath v-if="alertmodal" :title="alertmodal_title" :body="alertmodal_body" />
     <!-- v-if="is_validating" -->
-    <ValidateClericalPopup  v-if="is_validating" :path="last_saved_filepath"
-      @cancel="cancel_validating_stage" @proceed="create_validated_document" />
+    <ValidateClericalPopup v-if="is_validating" :path="last_saved_filepath" @cancel="cancel_validating_stage"
+      @proceed="create_validated_document" />
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
@@ -52,7 +52,7 @@
         </div>
       </div>
       <!-- -->
-      <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="pdf_viewer = false" />
+      <PDFViewerCCE v-if="pdf_viewer" :pdf_data="data_pdfs" @exit-btn="close_generated()" />
       <TableGrid :data="filteredRowData" :dataColumns="colDefs" :suppressRowTransform="true" />
 
 
@@ -617,25 +617,38 @@
             <div class="basis-[35%]">
               <Box title="Payment of filing fee" width="w-auto">
 
-                <div class="grid grid-cols-1 w-full gap-2">
-                  <div class="flex flex-row gap-2 items-center p-4">
-                    <CheckBox @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
-                      v-model="formData.is_indigent" @change="is_indigent()" />
-                    <label for="" class="font-medium text-sm">Indigent</label>
+                <div class="flex flex-col justify-between items-center w-full h-full">
+                  <div class="grid grid-cols-1 w-full gap-2">
+                    <div class="flex flex-row gap-2 items-center p-4">
+                      <CheckBox @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
+                        v-model="formData.is_indigent" @change="is_indigent()" />
+                      <label for="" class="font-medium text-sm">Indigent</label>
+                    </div>
+                    <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" label="O.R. No." type="text"
+                      v-model="formData.o_r_number" />
+                    <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" v-if="formData.is_indigent"
+                      label="Amount Paid" v-model="formData.amount_paid" />
+                    <Input :readonly="formData.is_indigent" v-if="formData.is_indigent" label="Date Paid" skip
+                      v-model="formData.date_paid" />
+
+
+                    <InputCurrency @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
+                      v-if="!formData.is_indigent" label="Amount Paid" v-model="formData.amount_paid" />
+                    <Input v-if="!formData.is_indigent" label="Date Paid" type="date" skip
+                      v-model="formData.date_paid" />
+
                   </div>
-                  <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" label="O.R. No." type="text"
-                    v-model="formData.o_r_number" />
-                  <Input :readonly="formData.is_indigent" :skip="formData.is_indigent" v-if="formData.is_indigent"
-                    label="Amount Paid" v-model="formData.amount_paid" />
-                  <Input :readonly="formData.is_indigent" v-if="formData.is_indigent" label="Date Paid" skip
-                    v-model="formData.date_paid" />
+                  <div class="grid grid-cols-1 mt-4 w-full h-full gap-2"
+                    v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
 
+                    <p class="font-medium text-gray-800">Publication Details</p>
+                    <Input label="Name of Newspaper" skip v-model="formData.publication_newspaper" />
+                    <Input label="Place of Publication" skip v-model="formData.publication_place" />
 
-                  <InputCurrency @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
-                    v-if="!formData.is_indigent" label="Amount Paid" v-model="formData.amount_paid" />
-                  <Input v-if="!formData.is_indigent" label="Date Paid" type="date" skip v-model="formData.date_paid" />
-
+                  </div>
                 </div>
+
+
               </Box>
             </div>
 
@@ -676,6 +689,7 @@
                     v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
                     <Input skip :error="v$.publication_start.$error" label="Publication Start" type="date"
                       v-model="formData.publication_start" />
+                    <Input skip label="And" type="date" v-model="formData.publication_and" />
                     <Input skip :error="v$.publication_end.$error" label="Publication End" type="date"
                       v-model="formData.publication_end" />
                   </div>
@@ -689,6 +703,8 @@
               </Box>
             </div>
           </div>
+
+
         </div>
       </div>
 
@@ -757,6 +773,7 @@ import {
   add_publication_start,
   add_publication_end,
   add_date_granted_with_publication,
+  add_publication_and,
 } from "../../utils/ClericalDateCount.js";
 
 import { grantedText } from "../../utils/GrantedText.js";
@@ -777,7 +794,9 @@ import Selector from "../../components/Selector.vue";
 import DocumentStatus from "../../components/essentials/buttons/table/DocumentStatus.vue";
 import EditForm from "../../components/Correction/EditForm.vue";
 import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue";
+// import { useRouter } from "vue-router";
 
+// const router = useRouter();
 
 
 const tutorial = ref(false)
@@ -870,20 +889,28 @@ const open_modal = async () => {
 }
 
 function publication_date_setter() {
-  if (formData.petition_type === "CFN") {
+  if (formData.petition_type === "CFN" || formData.republic_act_number === "10172") {
     formData.publication_start = add_publication_start().toString()
+    formData.publication_and = add_publication_and().toString()
     formData.publication_end = add_publication_end().toString()
     formData.petition_date_granted = add_date_granted_with_publication().toString()
-  }
-  else if (formData.petition_type === "CCE" && formData.republic_act_number === "10172") {
+    formData.publication_newspaper = 'GLOBAL SUNDAY CHRONICLE'
+    formData.publication_place = 'PROVINCE OF PANGASINAN'
 
-    formData.publication_start = add_publication_start().toString()
-    formData.publication_end = add_publication_end().toString()
-    formData.petition_date_granted = add_date_granted_with_publication().toString()
   }
+  // else if (formData.petition_type === "CCE" && formData.republic_act_number === "10172") {
+
+  //   formData.publication_start = add_publication_start().toString()
+  //   formData.publication_and = add_publication_and().toString()
+  //   formData.publication_end = add_publication_end().toString()
+  //   formData.petition_date_granted = add_date_granted_with_publication().toString()
+  // }
   else {
     formData.publication_start = ''
+    formData.publication_and = ''
     formData.publication_end = ''
+    formData.publication_newspaper = ''
+    formData.publication_place = ''
 
     formData.petition_date_granted = add_date_granted().toString()
   }
@@ -1225,11 +1252,14 @@ function watch_republic_act() {
     formData.petition_date_granted = add_date_granted_with_publication().toString()
   } else if (formData.petition_type === "CFN" && formData.republic_act_number === "9048") {
     formData.publication_start = add_publication_start().toString()
+    formData.publication_and = add_publication_and().toString()
     formData.publication_end = add_publication_end().toString()
     formData.petition_date_granted = add_date_granted_with_publication().toString()
+
   }
   else {
     formData.publication_start = ''
+    formData.publication_and = ''
     formData.publication_end = ''
     formData.petition_date_granted = add_date_granted().toString()
   }
@@ -1403,7 +1433,11 @@ const initialForm = {
 
   // Publications
   publication_start: '',
+  publication_and: '',
   publication_end: '',
+  publication_newspaper: '',
+  publication_place: '',
+
   publication_newspaper: '',
   publication_place: '',
 
@@ -1418,6 +1452,7 @@ const initialForm = {
   supporting_documents: [
     { document_name: '' }
   ],
+
 
   // Clerical Errors, 
 
@@ -1689,6 +1724,7 @@ const submitForm = async () => {
 
     // Publication CFN or 10172
     publication_start: formData.publication_start,
+    publication_and: formData.publication_and,
     publication_end: formData.publication_end,
     publication_newspaper: formData.publication_newspaper,
     publication_place: formData.publication_place,
@@ -1710,6 +1746,7 @@ const submitForm = async () => {
   }
 
   const petition_ = JSON.stringify(data);
+
 
   const generate_ = await window.ClericalApi.createPetitionDocument(petition_);
   last_saved_filepath.value = generate_.filepath
@@ -1865,6 +1902,7 @@ const create_validated_document = async () => {
 
     // Publication CFN or 10172
     publication_start: formData.publication_start,
+    publication_and: formData.publication_and,
     publication_end: formData.publication_end,
     publication_newspaper: formData.publication_newspaper,
     publication_place: formData.publication_place,
@@ -1920,6 +1958,11 @@ const open_generated = async (path) => {
   console.log(check)
   data_pdfs.value = check
   pdf_viewer.value = !pdf_viewer.value
+}
+const close_generated = () => {
+  console.log('click this')
+  pdf_viewer.value = false
+  //  router.go(router.currentRoute())
 }
 // 
 
@@ -2018,6 +2061,7 @@ const mapDataToForm = (data) => {
   formData.publication_newspaper = data.publication_newspaper
   formData.publication_place = data.publication_place
   formData.publication_start = data.publication_start
+  formData.publication_and= data.publication_and,
   formData.registry_number = data.registry_number
   formData.relation_owner = data.relation_owner
   formData.remarks = data.remarks

@@ -3,10 +3,10 @@
     <nav tabindex="-1"
       class="bg-[#0D1B2A]  flex flex-row shadow-lg text-sm font-sans tracking-tighter  border-gray-200 ">
       <div tabindex="-1" class="w-full flex flex-row items-center  mx-auto p-2 relative">
-        <a tabindex="-1" href="/pages/welcome" class="flex items-center space-x-3 rtl:space-x-reverse">
-          <!-- <img tabindex="-1" src="../../assets/logo.png" class="h-12" alt="Local Civil Registry" /> -->
+        <router-link tabindex="-1" to="/pages/welcome" class="flex items-center space-x-3 rtl:space-x-reverse">
           <span tabindex="-1" class="self-center text-lg font-semibold whitespace-nowrap text-gray-300 ">VBCRAS</span>
-        </a>
+        </router-link>
+
 
 
         <div class="w-auto ml-auto flex z-50">
