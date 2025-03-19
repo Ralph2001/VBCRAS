@@ -72,6 +72,8 @@ class Petitions(db.Model):
 
 
     # Publication for CFN and 10172
+    name_father = db.Column(db.String, nullable=True)
+    name_mother = db.Column(db.String, nullable=True)
     publication_start =  db.Column(db.String, nullable=True)
     publication_and =  db.Column(db.String, nullable=True)
     publication_end =  db.Column(db.String, nullable=True)

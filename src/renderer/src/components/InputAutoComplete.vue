@@ -2,9 +2,9 @@
     <div class="relative">
         <label v-if="!nolabel" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
         </label>
-        <input ref="suggestion_input_field" @keydown.up="focusPreviousInput" @keydown.enter="focusNextInput"
-            @keydown.down="focusNextInput" @input="typing_input" :type="type" :id="label" :value="modelValue"
-            :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
+        <input @focus="scrollToView" ref="suggestion_input_field" @keydown.up="focusPreviousInput"
+            @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @input="typing_input" :type="type"
+            :id="label" :value="modelValue" :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
                 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
                 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
                 'text-center': center
@@ -25,9 +25,20 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { onClickOutside, useDebounceFn } from '@vueuse/core'
 
+
+const scrollToView = (event) => {
+
+    nextTick(() => {
+        event.target.scrollIntoView({
+            behavior: "smooth",   // Smooth scrolling
+            block: "center",      // Scroll to center of the screen
+            inline: "nearest"     // Scroll inline if necessary
+        });
+    });
+};
 
 // Example Array of Data
 // import countryList from '../utils/country.js';
@@ -240,6 +251,8 @@ const focusPreviousInput = (event) => {
 
 const how_many_downs = ref(1)
 const focusNextInput = (event) => {
+    event.preventDefault();
+
     // console.log(how_many_downs.value)
     // console.log(result.value.length)
     // how_many_downs.value++

@@ -96,16 +96,16 @@
 
 
       <div v-if="v$.$error"
-        class="fixed top-16 bg-red-400 rounded right-10 z-[9999] h-auto border p-4 flex flex-col items-center justify-center">
-        <p class="font-semibold tracking-wider text-white text-sm"> Required Fields
+        class="fixed top-16 bg-red-500 rounded shadow-2xl right-10 z-[9999] h-auto px-4 py-2.5 flex flex-col items-center justify-center">
+        <p class="font-semibold tracking-wider text-white text-sm font-mono"> Required Field/s
         </p>
-        <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
+         <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
           <p v-for="error in v$.$errors" >
             {{ error.$propertyPath.replace('_', ' ') }}
 
-          </p> -->
+          </p> 
 
-        <!-- </div> -->
+       </div>  -->
       </div>
 
       <!-- Input Fields -->
@@ -124,7 +124,7 @@
                 <!-- Select components with change handlers properly defined -->
                 <Select :readonly="is_document_edit_mode" :error="v$.republic_act_number.$error" skip
                   :options="republic_act" v-model="formData.republic_act_number" label="Republic Act"
-                  @change="watch_republic_act" />
+                  @change="PublicationSetter" />
                 <Select :readonly="is_document_edit_mode" :error="v$.petition_type.$error" skip :options="petition_type"
                   v-model="formData.petition_type" label="Petition Type" @change="petition_by_type_retriever" />
                 <Select :readonly="is_document_edit_mode" :error="v$.event_type.$error" skip :options="event_type"
@@ -614,10 +614,10 @@
           </div>
           <!-- 12th Payment and Date Preview-->
           <div class="flex sm:flex-col md:lg:flex-row gap-2">
-            <div class="basis-[35%]">
-              <Box title="Payment of filing fee" width="w-auto">
+            <div class=" flex flex-col  gap-2 basis-[35%]">
+              <Box title="Payment of filing fee" width="w-auto  ">
 
-                <div class="flex flex-col justify-between items-center w-full h-full">
+                <div class="flex flex-col justify-between items-center w-full">
                   <div class="grid grid-cols-1 w-full gap-2">
                     <div class="flex flex-row gap-2 items-center p-4">
                       <CheckBox @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
@@ -638,17 +638,22 @@
                       v-model="formData.date_paid" />
 
                   </div>
-                  <div class="grid grid-cols-1 mt-4 w-full h-full gap-2"
-                    v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
-
-                    <p class="font-medium text-gray-800">Publication Details</p>
-                    <Input label="Name of Newspaper" skip v-model="formData.publication_newspaper" />
-                    <Input label="Place of Publication" skip v-model="formData.publication_place" />
-
-                  </div>
                 </div>
 
+              </Box>
 
+              <Box title="Publication Details" width="w-auto"
+                v-if="formData.petition_type === 'CFN' || formData.republic_act_number === '10172'">
+                <div class="grid grid-cols-1 mt-4 w-full h-full gap-2">
+
+                  <!-- <p class="text-xs italic">Optional, notice for publication</p> -->
+                  <Input label="Father Name" v-model="formData.name_father" />
+                  <Input label="Mother Name" v-model="formData.name_mother" />
+
+                  <Input label="Name of Newspaper" skip v-model="formData.publication_newspaper" />
+                  <Input label="Place of Publication" skip v-model="formData.publication_place" />
+
+                </div>
               </Box>
             </div>
 
@@ -741,7 +746,7 @@
 
 import { usePetitions } from "../../stores/Petition/petitions.js";
 import ModalCloseButton from "../../components/client/modal/ModalCloseButton.vue";
-import { ref, onMounted, reactive, computed, defineAsyncComponent, watch } from "vue";
+import { ref, onMounted, reactive, computed, defineAsyncComponent, watch, nextTick } from "vue";
 import "@vuepic/vue-datepicker/dist/main.css";
 import Header from "../../components/essentials/header.vue";
 import Modal from "../../components/client/modal/Modal.vue";
@@ -798,6 +803,16 @@ import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue
 
 // const router = useRouter();
 
+const scrollToView = (event) => {
+
+  nextTick(() => {
+    event.target.scrollIntoView({
+      behavior: "smooth",   // Smooth scrolling
+      block: "center",      // Scroll to center of the screen
+      inline: "nearest"     // Scroll inline if necessary
+    });
+  });
+};
 
 const tutorial = ref(false)
 const quick_settings = ref(false)
@@ -866,6 +881,12 @@ const data_pdfs = ref(null)
 
 
 const open_modal = async () => {
+  petition_modal.value = true
+
+
+  if (is_document_edit_mode.value || is_document_regenerating.value) {
+    return
+  }
   const cce = await petitions.get_latest_cce()
 
   if (cce) {
@@ -876,7 +897,6 @@ const open_modal = async () => {
     is_default_petitioner_number.value = '0001'
   }
 
-  petition_modal.value = true
 
   formData.notice_posting = add_date_notice().toString()
   formData.certificate_posting_start = add_date_certificate_start().toString()
@@ -889,54 +909,47 @@ const open_modal = async () => {
 }
 
 function publication_date_setter() {
-  if (formData.petition_type === "CFN" || formData.republic_act_number === "10172") {
-    formData.publication_start = add_publication_start().toString()
-    formData.publication_and = add_publication_and().toString()
-    formData.publication_end = add_publication_end().toString()
-    formData.petition_date_granted = add_date_granted_with_publication().toString()
-    formData.publication_newspaper = 'GLOBAL SUNDAY CHRONICLE'
-    formData.publication_place = 'PROVINCE OF PANGASINAN'
 
-  }
-  // else if (formData.petition_type === "CCE" && formData.republic_act_number === "10172") {
+}
 
-  //   formData.publication_start = add_publication_start().toString()
-  //   formData.publication_and = add_publication_and().toString()
-  //   formData.publication_end = add_publication_end().toString()
-  //   formData.petition_date_granted = add_date_granted_with_publication().toString()
-  // }
-  else {
-    formData.publication_start = ''
-    formData.publication_and = ''
-    formData.publication_end = ''
-    formData.publication_newspaper = ''
-    formData.publication_place = ''
 
-    formData.petition_date_granted = add_date_granted().toString()
-  }
+// Optimized Publication Setter
+function PublicationSetter() {
+  const isCFNorRA10172 = formData.petition_type === 'CFN' || formData.republic_act_number === '10172';
+
+  const publicationDefaults = {
+    publication_start: isCFNorRA10172 ? add_publication_start().toString() : '',
+    publication_and: isCFNorRA10172 ? add_publication_and().toString() : '',
+    publication_end: isCFNorRA10172 ? add_publication_end().toString() : '',
+    petition_date_granted: isCFNorRA10172 ? add_date_granted_with_publication().toString() : add_date_granted().toString(),
+    publication_newspaper: isCFNorRA10172 ? 'GLOBAL SUNDAY CHRONICLE' : '',
+    publication_place: isCFNorRA10172 ? 'PROVINCE OF PANGASINAN' : ''
+  };
+
+  // Update formData with publicationDefaults
+  Object.assign(formData, publicationDefaults);
 }
 
 // Retrieve Latest Petitioner Number
-// CCE and CFN
 const petition_by_type_retriever = async () => {
+  let latestPetitionData;
+
+  // Based on petition type, call appropriate API to retrieve the latest petition
   if (formData.petition_type === 'CCE') {
-    const cce = await petitions.get_latest_cce();
-    publication_date_setter();
-    if (cce) {
-      const latest = cce.data.petition_number.split('-');
-      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0");
-    } else {
-      is_default_petitioner_number.value = '0001';
-    }
+    latestPetitionData = await petitions.get_latest_cce();
   } else if (formData.petition_type === 'CFN') {
-    const cfn = await petitions.get_latest_cfn();
-    publication_date_setter();
-    if (cfn) {
-      const latest = cfn.data.petition_number.split('-');
-      is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0");
-    } else {
-      is_default_petitioner_number.value = '0001';
-    }
+    latestPetitionData = await petitions.get_latest_cfn();
+  }
+
+  // Call PublicationSetter once, as it's common for both petition types
+  PublicationSetter();
+
+  // Process the retrieved petition data and set the default petitioner number
+  if (latestPetitionData) {
+    const latest = latestPetitionData.data.petition_number.split('-');
+    is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0");
+  } else {
+    is_default_petitioner_number.value = '0001';
   }
 };
 
@@ -1245,26 +1258,6 @@ function remove_supporting_documents() {
   }
 }
 
-function watch_republic_act() {
-  if (formData.republic_act_number === "10172" && formData.petition_type === "CCE") {
-    formData.publication_start = add_publication_start().toString()
-    formData.publication_end = add_publication_end().toString()
-    formData.petition_date_granted = add_date_granted_with_publication().toString()
-  } else if (formData.petition_type === "CFN" && formData.republic_act_number === "9048") {
-    formData.publication_start = add_publication_start().toString()
-    formData.publication_and = add_publication_and().toString()
-    formData.publication_end = add_publication_end().toString()
-    formData.petition_date_granted = add_date_granted_with_publication().toString()
-
-  }
-  else {
-    formData.publication_start = ''
-    formData.publication_and = ''
-    formData.publication_end = ''
-    formData.petition_date_granted = add_date_granted().toString()
-  }
-}
-
 // Document Changer Dynamically Change the Error in 
 function change_event_selected_error_in() {
   changes_document_owner()
@@ -1297,18 +1290,21 @@ function change_migrant() {
   if (formData.is_migrant) {
     formData.administering_officer_name = ''
     formData.administering_officer_position = ''
-
+    formData.event_province = ''
+    formData.event_municipality = ''
 
     formData.action_taken_date = ''
     formData.header_province = ''
     formData.header_municipality = ''
 
-    return
+
   }
-  else if (!formData.is_migrant) {
+  else {
+
     formData.administering_officer_name = system_setting.defaults[0].petition_default_administering_officer_name || ''
     formData.administering_officer_position = system_setting.defaults[0].petition_default_administering_officer_position || ''
-
+    formData.event_province = system_setting.defaults[0].petition_default_filling_province || ''
+    formData.event_municipality = system_setting.defaults[0].petition_default_filling_municipality || ''
 
     formData.action_taken_date = add_date_granted().toString()
     formData.header_province = system_setting.defaults[0].header_province || ''
@@ -1432,6 +1428,8 @@ const initialForm = {
   petition_date_granted: '',
 
   // Publications
+  name_father: '',
+  name_mother: '',
   publication_start: '',
   publication_and: '',
   publication_end: '',
@@ -1585,6 +1583,24 @@ const rules = computed(() => {
       )
     },
 
+    // name_father: {
+    //   requiredIf: requiredIf(() =>
+    //     formData.petition_type === "CFN" || formData.republic_act_number === '10172' ? true : false
+    //   )
+    // },
+
+    // name_mother: {
+    //   requiredIf: requiredIf(() =>
+    //     formData.petition_type === "CFN" || formData.republic_act_number === '10172' ? true : false
+    //   )
+    // },
+
+    publication_and: {
+      requiredIf: requiredIf(() =>
+        formData.petition_type === "CFN" || formData.republic_act_number === '10172' ? true : false
+      )
+    },
+
     publication_start: {
       requiredIf: requiredIf(() =>
         formData.petition_type === "CFN" || formData.republic_act_number === '10172' ? true : false
@@ -1723,6 +1739,8 @@ const submitForm = async () => {
     petition_date_granted: formData.petition_date_granted,
 
     // Publication CFN or 10172
+    name_father: formData.name_father,
+    name_mother: formData.name_mother,
     publication_start: formData.publication_start,
     publication_and: formData.publication_and,
     publication_end: formData.publication_end,
@@ -1901,6 +1919,8 @@ const create_validated_document = async () => {
 
 
     // Publication CFN or 10172
+    name_father: formData.name_father,
+    name_mother: formData.name_mother,
     publication_start: formData.publication_start,
     publication_and: formData.publication_and,
     publication_end: formData.publication_end,
@@ -2057,12 +2077,18 @@ const mapDataToForm = (data) => {
   formData.petition_type = data.petition_type
   formData.petitioner_address = data.petitioner_address
   formData.petitioner_error_in = data.petitioner_error_in
-  formData.publication_end = data.publication_end
+
+
+
+  formData.name_father = data.name_father,
+    formData.name_mother = data.name_mother,
+
+    formData.publication_end = data.publication_end
   formData.publication_newspaper = data.publication_newspaper
   formData.publication_place = data.publication_place
   formData.publication_start = data.publication_start
-  formData.publication_and= data.publication_and,
-  formData.registry_number = data.registry_number
+  formData.publication_and = data.publication_and,
+    formData.registry_number = data.registry_number
   formData.relation_owner = data.relation_owner
   formData.remarks = data.remarks
   formData.republic_act_number = data.republic_act_number

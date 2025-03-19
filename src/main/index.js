@@ -26,6 +26,7 @@ import {
     save_marriage_license_and_notice
 } from '../documents/marriage'
 import { generateFormPDF } from '../documents/forms/GenerateDocument'
+import { create_publication_letter } from '../documents/clerical/create_publication'
 
 const log = require('electron-log')
 autoUpdater.logger = log
@@ -463,13 +464,13 @@ ipcMain.handle('create_certificate_filing', async (event, data) => {
 })
 ipcMain.handle('create_publication_letter', async (event, data) => {
     try {
-        const create_certificate_filing = await certificate_filing(data)
+        const publication_letter = await create_publication_letter(data)
         const filefolder = await shell.openExternal(
-            create_certificate_filing.filepath
+            publication_letter.filepath
         )
 
         if (!filefolder) {
-            await shell.openPath(create_certificate_filing.filepath)
+            await shell.openPath(publication_letter.filepath)
             return true
         }
 

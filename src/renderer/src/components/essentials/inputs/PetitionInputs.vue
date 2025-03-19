@@ -5,7 +5,8 @@
 
     <input  :value="props.petition_number_value"
       @input="input_petition_number($event.target.value)"
-      class="bg-gray-50 border outline-none ring-0   border-s-0 border-e-0 items-center font-bold text-gray-800 text-sm focus:ring-green-500 focus:border-green-500 flex justify-center text-center w-full active:ring-green-500 p-2.5" />
+      ref="input"
+      class="bg-gray-50 border outline-none ring-0   border-s-0 border-e-0 items-center font-bold text-gray-800 text-sm border-t-2 border-b-2 focus:ring-green-500 focus:border-green-500 flex justify-center text-center w-full active:ring-green-500 p-2.5" />
 
     <input disabled :tabindex="skip ? '-1' : '0'" @input="emit('type-year', $event.target.value)"
       :class="[props.republic_act === '10172' ? 'border-e-transparent' : '']" v-model="year"
@@ -15,9 +16,16 @@
   </div>
 </template>
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const emit = defineEmits(['type-petition-number', 'type-year'])
+const input = ref(null);
+
+onMounted(() => {
+ 
+    input.value.focus();
+
+});
 
 const date = new Date();
 const year = ref(date.getFullYear());

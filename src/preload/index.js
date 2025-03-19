@@ -88,6 +88,13 @@ contextBridge.exposeInMainWorld('ClericalApi', {
             data
         )
         return certificate_filing
+    },
+    CreatePublicationLetter: async (data) => {
+        const publication_letter = await ipcRenderer.invoke(
+            'create_publication_letter',
+            data
+        )
+        return publication_letter
     }
 })
 

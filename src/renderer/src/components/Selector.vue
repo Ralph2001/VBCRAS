@@ -1,7 +1,7 @@
 <template>
     <div class="flex items-center gap-2" v-for="(value, key) in options" :key="key">
 
-        <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" @keydown.right="focusNextInput"
+        <button @focus="scrollToView" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" @keydown.right="focusNextInput"
             @keydown.left="focusPreviousInput" @click="select_this(key)"
             :class="[key === props.modelValue ? 'bg-blue-300' : 'bg-gray-100']"
             class="flex items-center justify-center h-6 rounded w-6   border border-gray-300 theselector">
@@ -15,6 +15,8 @@
 </template>
 
 <script setup>
+import { nextTick } from 'vue';
+
 
 
 const emit = defineEmits(["update:modelValue", 'change_']);
@@ -62,6 +64,18 @@ const focusNextInput = (event) => {
     inputs[index + 1].focus();
   }
 }
+
+const scrollToView = (event) => {
+
+  nextTick(() => {
+    event.target.scrollIntoView({
+      behavior: "smooth",   // Smooth scrolling
+      block: "center",      // Scroll to center of the screen
+      inline: "nearest"     // Scroll inline if necessary
+    });
+  });
+};
+
 
 
 </script>

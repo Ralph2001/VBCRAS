@@ -372,8 +372,9 @@
                             <div class="w-full flex flex-col gap-1 bg-white">
                                 <QuillEditor theme="snow" :toolbar="['bold', 'italic']"
                                     v-model:content="formData.remarks" />
-
                             </div>
+
+                            {{ formData.remarks }}
                         </div>
                     </div>
                     <div class="mt-auto grid grid-cols-2   mb-4">

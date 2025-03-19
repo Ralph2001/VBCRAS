@@ -1,3 +1,14 @@
+/**
+ * 
+ * @description
+ * Grabe hirap naman nito
+ * 
+ */
+
+
+
+
+
 import { degrees, PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 const path = require('path')
 const fs = require('fs')

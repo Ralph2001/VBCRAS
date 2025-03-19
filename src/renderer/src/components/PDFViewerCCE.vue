@@ -43,26 +43,29 @@
                         v-if="menu === 'Files'">
                         <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
                             :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
-                            class="p-2 shadow-inner outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex items-start">
-                            {{ item.name }}
+                            class="p-2 shadow-inner items-center flex-row gap-2 outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex ">
+                            <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-[#F40F02]" /> {{ item.name }}
                         </button>
-                        <div class="mt-10 flex flex-col gap-2 w-full">
-                            <button v-if="props.details" @click="openfolder(props.details)"
-                                class="bg-green-500 text-white hover:bg-green-600 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-xs rounded-sm ">
-                                Open Folder
-                            </button>
-                            <button v-if="props.details" @click="create_certificate_filing(props.details)"
-                                class="bg-yellow-300 hover:bg-yellow-400 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-xs rounded-sm ">
-                                Create Certificate of Filing (.docx)
-                            </button>
+                        <div class="mt-4 flex flex-col gap-2 w-full">
                             <div v-if="props.details" class="w-full">
                                 <button
                                     v-if="props.details.petition_type === 'CFN' || props.details.republic_act_number === '10172'"
                                     @click="create_publication_letter(props.details)"
-                                    class="bg-yellow-300 hover:bg-yellow-400 flex justify-center items-center p-2 shadow-inner outline-none ring-0 w-full  font-medium text-xs rounded-sm ">
-                                    Publication Letter (.docx)
+                                    class="p-2 bg-white shadow-inner items-center flex-row gap-2 outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex ">
+                                    <font-awesome-icon icon="fa-solid fa-file-word" class="text-[#2B7Cd3]" />
+                                    Publication Letter
                                 </button>
                             </div>
+                            <button v-if="props.details" @click="create_certificate_filing(props.details)"
+                                class="p-2 bg-white shadow-inner items-center flex-row gap-2 outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex ">
+                                <font-awesome-icon icon="fa-solid fa-file-word" class="text-[#2B7Cd3]" /> Create
+                                Certificate of Filing
+                            </button>
+
+                            <button v-if="props.details" @click="openfolder(props.details)"
+                                class="p-2 bg-green-400 hover:bg-green-500 text-white  shadow-inner items-center flex-row gap-2 text-center  justify-center outline-none ring-0 w-full  font-medium text-sm rounded-sm flex ">
+                                Open Folder
+                            </button>
                         </div>
 
                     </div>
@@ -84,17 +87,25 @@
         <div class="absolute right-0 w-[2rem] h-full block bg-[#0D1B2A] ">
 
         </div>
-        <div class="h-full w-full bg-[#0D1B2A] items-center flex justify-center">
+        <div class="h-full w-full bg-[#0D1B2A] items-center flex justify-center relative">
             <div class=" z-[9999999]" v-if="!active_pdf_link">
                 <p class="text-white italic">Select Option Above</p>
             </div>
             <PDFViewerWorker :scale="1" v-if="active_pdf_link" :pdfBytes64="active_pdf_link" />
+
+            <div tabindex="-1"
+                class="absolute top-0 bottom-0 z-50 right-0   w-12 items-center bg-[#1B263B] hover:bg-[#0D1B2A] transition-all duration-400 group justify-center flex flex-col gap-2">
+                <button @click="nextPDF" tabindex="-1" class="w-full h-full" title="Next">
+                    <font-awesome-icon icon="fa-solid fa-caret-right"
+                        class="text-white  opacity-30 text-5xl group-hover:opacity-100 outline-none ring-0 focus:outline-none focus:ring-0" />
+                </button>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import PDFViewerWorker from './PDFViewerWorker.vue';
 
 const emit = defineEmits(['cancel-btn', 'save-print', 'exit-btn']);
@@ -120,24 +131,44 @@ const props = defineProps({
 const pdfs = ref(props.pdf_data)
 const active_pdf = ref(null)
 const active_pdf_link = ref(null)
-const sidebar = ref(false)
+
+const currentIndex = ref(0); // Track the current index of the active PDF
+
+// Compute whether the current index is at the last PDF
+const isLastPDF = computed(() => currentIndex.value === pdfs.value.length - 1);
+
+
+
+const sidebar = ref(true)
 const menu = ref('Files')
+
+
+
 
 function changeMenu(data) {
     menu.value = data
 }
-
 onMounted(() => {
-    change_active_pdf(pdfs.value[0].name, pdfs.value[0].link)
+    if (pdfs.value.length > 0) {
+        change_active_pdf(pdfs.value[0].name, pdfs.value[0].link);
+    }
+});
 
-})
+const nextPDF = () => {
+    if (currentIndex.value < pdfs.value.length - 1) {
+        currentIndex.value++;
+        change_active_pdf(pdfs.value[currentIndex.value].name, pdfs.value[currentIndex.value].link);
+    }else{
+        currentIndex.value = 0;
+        change_active_pdf(pdfs.value[currentIndex.value].name, pdfs.value[currentIndex.value].link);
+    }
+};
 
 
 const change_active_pdf = (name, link) => {
-    active_pdf.value = name
-    active_pdf_link.value = link
-}
-
+    active_pdf.value = name;
+    active_pdf_link.value = link;
+};
 
 
 const exit_btn = () => {
@@ -173,8 +204,8 @@ const create_certificate_filing = async (data) => {
 }
 
 const create_publication_letter = async (data) => {
-    console.log(data)
-    // const create = await window.ClericalApi.CreatePublicationLetter(data)
+    const create = await window.ClericalApi.CreatePublicationLetter(data)
+    console.log(create)
 }
 
 

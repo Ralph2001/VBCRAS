@@ -1,28 +1,25 @@
 <template>
-    <div tabindex="-1" class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center relative bg-[#1B263B] overflow-y-scroll py-20  ">
+    <div tabindex="-1" class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center relative bg-[#1B263B] overflow-y-auto py-20">
+        <div v-if="isLoading" class="z-50 h-full items-center justify-center w-full flex">Loading...</div>
 
-        <div v-if="isLoading" class="z-50 h-full items-center justify-center  w-full flex">Loading...</div>
-
-        <div v-else class="h-fit ">
+        <div v-else class="h-fit">
             <div v-for="(page, index) in pages" :key="index" class="mb-4">
-                <canvas :ref="el => pdfCanvas[index] = el" class="h-auto w-auto shadow-2xl"></canvas>
+                <canvas
+                    :ref="el => pdfCanvas[index] = el"
+                    class="h-auto w-auto shadow-2xl transition-transform duration-200 ease-in-out"
+                    :style="{ transform: `scale(${scale.value})` }"
+                ></canvas>
             </div>
         </div>
     </div>
 </template>
-<style scoped>
-canvas {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
-</style>
 
 <script setup>
 import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
 import * as pdfjsLib from 'pdfjs-dist/webpack';
-import Cookies from 'js-cookie'; // Import js-cookie library
+import Cookies from 'js-cookie';
+
 const isLoading = ref(false);
-
-
 
 // Props
 const props = defineProps({
@@ -34,8 +31,8 @@ const props = defineProps({
         default: 1.5
     }
 });
+
 const scale = ref(props.scale); // Initial scale
-// Scaling factor
 const minScale = 0.5;
 const maxScale = 2.5;
 const scalingStep = 0.5;
@@ -50,9 +47,7 @@ onBeforeUnmount(() => {
     window.removeEventListener('wheel', handleWheel);
 });
 
-
-
-// Canvas reference and scale factor
+// Canvas reference and pages
 const pdfCanvas = ref([]);
 const pages = ref([]);
 
@@ -78,12 +73,11 @@ const handleWheel = (event) => {
                 }
             }
             // Save the current scale to a cookie
-            Cookies.set('scale-marriage', scale.value, { expires: 7 }); // Cookie expires in 7 days
+            Cookies.set('scale-marriage', scale.value, { expires: 7 });
         }, 100);
     }
 };
 
-// Watch the prop in case the PDF data changes
 watch(() => props.pdfBytes64, () => renderPDF());
 
 let renderTimeout;
@@ -91,7 +85,7 @@ let renderTimeout;
 const renderPDF = async () => {
     if (!props.pdfBytes64) return;
 
-    isLoading.value = true
+    isLoading.value = true;
     try {
         clearTimeout(renderTimeout);
         renderTimeout = setTimeout(async () => {
@@ -133,29 +127,10 @@ const renderPDF = async () => {
                 }).promise;
             }
         }, 200);
-
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error rendering PDF:', error);
-    }
-    finally {
+    } finally {
         isLoading.value = false;
-    }
-};
-
-// Zoom in function - Increase scale and re-render
-const zoomIn = () => {
-    if (scale.value < maxScale) {
-        scale.value = Math.min(maxScale, scale.value + scalingStep);
-        renderPDF();
-    }
-};
-
-// Zoom out function - Decrease scale and re-render
-const zoomOut = () => {
-    if (scale.value > 0.5) {
-        scale.value -= 0.5;
-        renderPDF();
     }
 };
 
@@ -169,6 +144,7 @@ onMounted(() => {
 <style scoped>
 canvas {
     max-width: 100%;
+    transition: transform 0.2s ease-in-out;
 }
 
 .controls {
