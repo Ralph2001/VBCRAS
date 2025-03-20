@@ -31,8 +31,11 @@
 </template>
 
 <script setup>
-import { defineProps, computed, defineEmits, ref, watch } from 'vue';
+import { defineProps, computed, defineEmits, ref, watch, nextTick } from 'vue';
 import { parse, format, isValid } from 'date-fns'; // You can install date-fns if needed for date formatting
+
+
+
 
 // Props
 const props = defineProps({
@@ -83,7 +86,15 @@ const separateDate = () => {
 watch(() => props.formData[props.field], separateDate, { immediate: true });
 
 // Methods
-const onFocus = () => {
+const onFocus = (event) => {
+
+    nextTick(() => {
+        event.target.scrollIntoView({
+            behavior: "smooth",   // Smooth scrolling
+            block: "center",      // Scroll to center of the screen
+            inline: "nearest"     // Scroll inline if necessary
+        });
+    });
     props.openFormInput(props.documentName, props.field, props.tabIndex, props.isDate, props.isAddress);
 };
 

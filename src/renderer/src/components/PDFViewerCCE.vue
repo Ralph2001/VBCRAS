@@ -91,7 +91,7 @@
             <div class=" z-[9999999]" v-if="!active_pdf_link">
                 <p class="text-white italic">Select Option Above</p>
             </div>
-            <PDFViewerWorker :scale="1" v-if="active_pdf_link" :pdfBytes64="active_pdf_link" />
+            <PDFViewerWorker :scale="1.3" v-if="active_pdf_link" :pdfBytes64="active_pdf_link" />
 
             <div tabindex="-1"
                 class="absolute top-0 bottom-0 z-50 right-0   w-12 items-center bg-[#1B263B] hover:bg-[#0D1B2A] transition-all duration-400 group justify-center flex flex-col gap-2">

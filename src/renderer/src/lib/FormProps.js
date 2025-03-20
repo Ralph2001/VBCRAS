@@ -83,7 +83,7 @@ export const useForm1B = {
 
 }
 export const useForm2B = {
-    no_record_birth_of: '',
+    no_record_death_of: '',
     born_on: '',
     mother_name: '',
     father_name: '',
@@ -94,7 +94,6 @@ export const useForm3B = {
     no_record_marriage_of: '',
     married_on: '',
     intact_marriage_year: '',
-
 }
 
 export const useForm1C = {

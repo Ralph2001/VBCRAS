@@ -331,7 +331,7 @@ function document_base(data, page, fonts, height, fontSize) {
         const partWidth = currentFont.widthOfTextAtSize(part.text, fontSize) + 4
         page.drawText(part.text, {
             x: 72 + noteGap,
-            y: 36,
+            y: 50,
             size: fontSize,
             font: currentFont
         })
@@ -413,10 +413,7 @@ function document_body_available(data, page, height, fontSize, fonts) {
         { title: 'Name of Father', data: data.name_father },
         { title: 'Citizenship of Father', data: data.citizenship_father },
         { title: 'Date of Marriage', data: data.date_marriage_parents },
-        {
-            title: 'Place of marriage of parents',
-            data: data.place_marriage_parents
-        }
+        { title: 'Place of marriage of parents', data: data.place_marriage_parents }
     ]
 
     const table_for_2 = [
@@ -434,32 +431,12 @@ function document_body_available(data, page, height, fontSize, fonts) {
 
     const table_for_3 = [
         { title: 'Name', data: data.groom_name, another_data: data.bride_name },
-        {
-            title: 'Date of Birth',
-            data: data.groom_date_birth,
-            another_data: data.bride_date_birth
-        },
+        { title: 'Date of Birth', data: data.groom_date_birth, another_data: data.bride_date_birth },
         { title: 'Age', data: data.groom_age, another_data: data.bride_age },
-        {
-            title: 'Citizenship',
-            data: data.groom_citizenship,
-            another_data: data.bride_citizenship
-        },
-        {
-            title: 'Civil Status',
-            data: data.groom_civil_status,
-            another_data: data.bride_civil_status
-        },
-        {
-            title: 'Mother',
-            data: data.groom_mother,
-            another_data: data.bride_mother
-        },
-        {
-            title: 'Father',
-            data: data.groom_father,
-            another_data: data.bride_father
-        },
+        { title: 'Citizenship', data: data.groom_citizenship, another_data: data.bride_citizenship },
+        { title: 'Civil Status', data: data.groom_civil_status, another_data: data.bride_civil_status },
+        { title: 'Mother', data: data.groom_mother, another_data: data.bride_mother },
+        { title: 'Father', data: data.groom_father, another_data: data.bride_father },
         { title: 'Registry Number', data: data.registry_number },
         { title: 'Date of Registration', data: data.date_registration },
         { title: 'Date of Marriage', data: data.date_marriage },
@@ -477,6 +454,11 @@ function document_body_available(data, page, height, fontSize, fonts) {
     let tableGap = 0
     const tablePositionX = Number(data.body_data.x)
     const tablePositionY = Number(data.body_data.y) // Adjust if needed
+
+    // Function to check and adjust the font size for long text
+    function getFontSizeBasedOnLength(text) {
+        return text.length > 40 ? fontSize * 0.8 : fontSize; // Reduce font size by 20% if text length exceeds 40
+    }
 
     for (const item of table) {
         const xAdderForDot =
@@ -496,6 +478,10 @@ function document_body_available(data, page, height, fontSize, fonts) {
                         ? 127
                         : 0
 
+        // Get the appropriate font size for each piece of data
+        const dataFontSize = getFontSizeBasedOnLength(item.data);
+        const anotherDataFontSize = item.another_data ? getFontSizeBasedOnLength(item.another_data) : null;
+
         page.drawText(item.title, {
             x: tablePositionX,
             y: height - 6 * fontSize - (tablePositionY + tableGap),
@@ -513,7 +499,7 @@ function document_body_available(data, page, height, fontSize, fonts) {
         page.drawText(item.data, {
             x: tablePositionX + xAdderForData,
             y: height - 6 * fontSize - (tablePositionY + tableGap),
-            size: fontSize,
+            size: dataFontSize, // Use the calculated font size
             font: fonts.bold
         })
 
@@ -527,7 +513,7 @@ function document_body_available(data, page, height, fontSize, fonts) {
             page.drawText(item.another_data, {
                 x: tablePositionX + 290,
                 y: height - 6 * fontSize - (tablePositionY + tableGap),
-                size: fontSize,
+                size: anotherDataFontSize, // Use the calculated font size for another data
                 font: fonts.bold
             })
         }
@@ -535,6 +521,7 @@ function document_body_available(data, page, height, fontSize, fonts) {
         tableGap += 30
     }
 }
+
 
 function document_body_unavailable_destroyed(
     data,
@@ -580,6 +567,9 @@ function document_body_unavailable_destroyed(
             : data.form_type.includes('3')
                 ? 'Marriages'
                 : ''
+
+
+    const document_owner = data.form_type.includes('1') ? data.name_child : data.form_type.includes('2') ? data.name_deceased : data.form_type.includes('3') ? data.groom_name : ''
 
     const we_clerify_for_b = `We certify that this office has no record ${record_of} {{UNKNOWN NAME}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{UNKNOWN DATE}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
     const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`

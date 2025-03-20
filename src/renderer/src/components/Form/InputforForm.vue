@@ -5,7 +5,7 @@
             {
                 'text-center': middle,
                 'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
-                'border border-gray-300 focus:ring-blue-500 focus:border-blue-500': !unbordered,
+                'border shadow-sm border-gray-300 bg-red-400 focus:ring-blue-500 focus:border-blue-500': !unbordered,
                 italic: italic,
                 'font-bold': bold,
                 'bg-transparent': isTransparent,

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 const api = {}
@@ -14,6 +14,46 @@ if (process.contextIsolated) {
     window.electron = electronAPI
     window.api = api
 }
+
+
+
+contextBridge.exposeInMainWorld('getPathApi', {
+  showFilePath(files) {
+    try {
+      // Convert the files object into an array using Object.values()
+      const fileArray = Object.values(files);
+
+      // Process the files as an array
+      if (fileArray.length > 1) {
+        // Handle multiple files
+        return fileArray.map(file => {
+          try {
+            // Ensure getPathForFile doesn't throw errors
+            return webUtils.getPathForFile(file);
+          } catch (err) {
+            console.error("Error processing file:", file, err);
+            return null; // Return null if an error occurs
+          } 
+        }).filter(path => path !== null); // Filter out null values from errors
+      } else if (fileArray.length === 1) {
+        // Handle single file
+        try {
+          return [webUtils.getPathForFile(fileArray[0])];
+        } catch (err) {
+          console.error("Error processing file:", fileArray[0], err);
+          return []; // Return an empty array if an error occurs
+        }
+      }
+
+      return [];
+    } catch (err) {
+      console.error("Error in showFilePath function:", err);
+      return []; // Return an empty array if a general error occurs
+    }
+  }
+});
+
+
 
 contextBridge.exposeInMainWorld('ClericalApi', {
     CreateAnnotated: async (formData) => {

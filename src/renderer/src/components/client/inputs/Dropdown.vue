@@ -5,7 +5,7 @@
             :class="{ 'border-red-400': error, 'border-gray-300': !error }"
             class=" border  text-gray-900 text-sm rounded-md font-bold focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
             <option selected disabled></option>
-            <option v-for="option in optionData" :key="option" :value="option" :selected="option === modelValue">{{
+            <option class="font-medium text-sm" v-for="option in optionData" :key="option" :value="option" :selected="option === modelValue">{{
             option }}
             </option>
         </select>

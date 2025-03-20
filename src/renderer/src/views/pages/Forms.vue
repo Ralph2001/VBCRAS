@@ -79,7 +79,7 @@
             </template>
 
             <div v-if="!isPreview"
-                class="w-full h-full grid grid-cols-1 lg:grid-cols-[55%_45%]  py-1.5 bg-gray-200 overflow-y-auto">
+                class="w-full h-full grid grid-cols-1 lg:grid-cols-[55%_45%]  py-1.5 bg-white overflow-y-auto">
                 <!-- <div class="absolute w-[20rem] right-0">
                     {{ main_form }}
                 </div> -->
@@ -93,10 +93,10 @@
                         </div>
 
                     </div>
-                    <!-- <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN:</p> -->
+                    <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN:</p>
 
-                    <div class="flex flex-col gap-1 " v-if="selectedType.includes('A')">
-                        <div class="flex flex-col gap-2 pl-10 w-[50%]">
+                    <div class="flex flex-col gap-1 h-full " v-if="selectedType.includes('A')">
+                        <!-- <div class="flex flex-col gap-2 pl-10 w-[50%]">
                             <InputLabel label="Page ">
                                 :
                                 <InputforForm width="10rem" v-model="available.page_number" />
@@ -107,8 +107,8 @@
                                 <InputforForm width="10rem" v-model="available.book_number" />
                             </InputLabel>
 
-                        </div>
-                        <!-- <div class="text-sm">
+                        </div> -->
+                        <div class="text-sm w-full px-10 my-auto">
                             <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-gray-900">We
                                 certify that among others, the following facts of {{ fact_of }} appear in our Register
                                 of {{
@@ -118,8 +118,9 @@
                                 <InputforForm middle width="6rem" bold v-model="available.book_number" />
                                 .
                             </p>
-                        </div> -->
+                        </div>
                         <!-- For Form 3A -->
+
                         <div v-if="selectedType === '3A'" class="flex flex-col mt-4 gap-2 w-full">
                             <InputLabel label="Name" twoInput>
                                 :
@@ -162,19 +163,22 @@
                             </InputLabel>
                         </div>
 
-                        <div class=""></div>
+                        <div class="flex flex-col  gap-2">
+                            <InputLabel label="Registry Number">
+                                :
+                                <InputforForm width="100%" v-model="available.registry_number" />
+                            </InputLabel>
+
+                            <InputLabel label="Date of Registration">
+                                :
+                                <InputforForm width="100%" v-model="available.date_registration" />
+                            </InputLabel>
+
+
+                        </div>
                         <!-- Required for Available Form -->
-                        <InputLabel label="Registry Number">
-                            :
-                            <InputforForm width="100%" v-model="available.registry_number" />
-                        </InputLabel>
 
-                        <InputLabel label="Date of Registration">
-                            :
-                            <InputforForm width="100%" v-model="available.date_registration" />
-                        </InputLabel>
-
-                        <div v-if="selectedType === '3A'" class="flex flex-col mt-auto gap-2">
+                        <div v-if="selectedType === '3A'" class="flex flex-col  gap-2 mb-auto">
                             <InputLabel label="Date of Marriage">
                                 :
                                 <InputforForm width="100%" v-model="Form3A.date_marriage" />
@@ -189,7 +193,7 @@
                         </div>
 
                         <!-- For Form 1A -->
-                        <div v-if="selectedType === '1A'" class="flex flex-col  gap-2">
+                        <div v-if="selectedType === '1A'" class="flex flex-col mb-auto gap-2">
                             <InputLabel label="Name of Child">
                                 :
                                 <InputforForm isUpperCase width="100%" bold v-model="Form1A.name_child" />
@@ -232,7 +236,7 @@
                             </InputLabel>
                         </div>
                         <!-- For Form 2A -->
-                        <div v-if="selectedType === '2A'" class="flex flex-col mt-auto gap-2">
+                        <div v-if="selectedType === '2A'" class="flex flex-col gap-2 mb-auto">
                             <InputLabel label="Name of deceased">
                                 :
                                 <InputforForm width="100%" v-model="Form2A.name_deceased" />
@@ -423,7 +427,7 @@
                             <InputforForm width="100%" v-model="transactions.date_paid" />
                         </InputLabel>
                     </div>
-                    <div class="flex flex-row gap-2 p-4 border rounded items-center justify-center bg-gray-100 shadow">
+                    <div class="flex flex-row gap-2 p-4  rounded items-center justify-center bg-gray-100 shadow">
 
                         <div class="flex flex-row gap-2 items-center">
                             <input type="checkbox" v-model="transactions.is_with_authentication" name=""
@@ -434,7 +438,7 @@
 
                         <div class="ml-auto flex items-center justify-center gap-2">
                             <button
-                                class="bg-blue-600 hover:bg-blue-700 text-white border px-4 font-medium  py-3.5 rounded-md "
+                                class="bg-blue-600 hover:bg-blue-700 text-white border px-10 font-medium  py-2.5 rounded-md "
                                 @click="previewForm">Next</button>
                             <!-- <button @click="createForm()"
                                 class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button> -->
@@ -641,9 +645,9 @@ const preference = reactive({
         left_scale: 0.35,
         right_scale: 0.35,
         left_x: 420,
-        left_y: 797.75,
+        left_y: 790,
         right_x: 110,
-        right_y: 797.75
+        right_y: 790
     },
 
 
@@ -651,11 +655,11 @@ const preference = reactive({
     // Add Postition of logos
     header: {
         x: 0, // Not Needed
-        y: 6
+        y: 6.5
     },
     concern: {
         x: 72,
-        y: 140
+        y: 135
     },
     page_book_number: {
         x: 125,
@@ -667,7 +671,7 @@ const preference = reactive({
     },
     issued_to: {
         x: 0,
-        y: 310
+        y: 300
     },
     verifier: {
         x: 72,
@@ -679,7 +683,7 @@ const preference = reactive({
     },
     billing_info: {
         x: 76,
-        y: 97
+        y: 118
     },
     authentication: {
         x: 0,
@@ -694,7 +698,7 @@ watch(isPreview, (newValue, oldValue) => {
         preference.logo.left_y = 797.75
 
 
-    }else{
+    } else {
         preference.authentication.y = 300
         preference.logo.right_y = 703.75
         preference.logo.left_y = 703.75
