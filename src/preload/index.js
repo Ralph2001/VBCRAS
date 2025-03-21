@@ -18,39 +18,14 @@ if (process.contextIsolated) {
 
 
 contextBridge.exposeInMainWorld('getPathApi', {
-  showFilePath(files) {
-    try {
-      // Convert the files object into an array using Object.values()
-      const fileArray = Object.values(files);
-
-      // Process the files as an array
-      if (fileArray.length > 1) {
-        // Handle multiple files
-        return fileArray.map(file => {
-          try {
-            // Ensure getPathForFile doesn't throw errors
-            return webUtils.getPathForFile(file);
-          } catch (err) {
-            console.error("Error processing file:", file, err);
-            return null; // Return null if an error occurs
-          } 
-        }).filter(path => path !== null); // Filter out null values from errors
-      } else if (fileArray.length === 1) {
-        // Handle single file
+    showFilePath(file) {
         try {
-          return [webUtils.getPathForFile(fileArray[0])];
+            return webUtils.getPathForFile(file);
         } catch (err) {
-          console.error("Error processing file:", fileArray[0], err);
-          return []; // Return an empty array if an error occurs
+            console.error("Error in showFilePath function:", err);
+            return;
         }
-      }
-
-      return [];
-    } catch (err) {
-      console.error("Error in showFilePath function:", err);
-      return []; // Return an empty array if a general error occurs
     }
-  }
 });
 
 
