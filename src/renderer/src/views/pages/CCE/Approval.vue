@@ -286,9 +286,9 @@
 
             <div class="h-full flex flex-col gap-1">
                 <div class="flex flex-row w-full h-full  ">
-                    <div class="flex-1 flex flex-col h-full  p-4 bg-black/10  w-full  relative  bottom-0">
+                    <div class="flex-1 flex flex-col h-full   bg-black/10  w-full  relative  bottom-0">
 
-                        <PDFViewerWorker :pdfBytes64="pdfbase64" />
+                        <PDFViewerWorker :scale="0.7" :pdfBytes64="pdfbase64" />
 
                     </div>
 
@@ -300,6 +300,8 @@
                                 <p class="text-gray-800 text-sm font-medium">Annotation Text</p>
                                 <QuillEditor theme="snow" :toolbar="['bold']" v-model:content="formData.annotation"
                                     contentType="html" />
+
+                                    {{ formData.annotation }}
                                 <button @click="submit()"
                                     class="border rounded border-gray-300 font-medium text-sm hover:bg-blue-500 hover:text-white w-fit p-2 ml-auto">Change</button>
                             </div>

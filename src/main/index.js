@@ -465,9 +465,7 @@ ipcMain.handle('create_certificate_filing', async (event, data) => {
 ipcMain.handle('create_publication_letter', async (event, data) => {
     try {
         const publication_letter = await create_publication_letter(data)
-        const filefolder = await shell.openExternal(
-            publication_letter.filepath
-        )
+        const filefolder = await shell.openExternal(publication_letter.filepath)
 
         if (!filefolder) {
             await shell.openPath(publication_letter.filepath)
@@ -703,6 +701,24 @@ function mainWindow() {
 
     ipcMain.handle('app-version', () => app.getVersion())
     handleUpdates(mainWindow)
+
+    // Listen for the close event on the window
+    mainWindow.on('close', (e) => {
+        // Display a modal confirmation dialog
+        const choice = dialog.showMessageBoxSync(mainWindow, {
+            type: 'question',
+            buttons: ['Exit', 'Cancel'],
+            title: 'Confirm Exit',
+            message: 'Are you sure you want to exit?',
+            defaultId: 0,
+            cancelId: 1,
+            noLink: true
+        })
+
+        if (choice === 1) {
+            e.preventDefault()
+        }
+    })
 }
 
 app.whenReady().then(() => {

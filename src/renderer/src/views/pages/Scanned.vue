@@ -1,10 +1,9 @@
 <template>
     <div class="flex flex-col relative justify-center w-full p-10" @dragenter="isDropzoneOpen = true">
         <div class="h-[calc(100vh-180px)] relative">
-
+            <ScannedDetails v-if="isDetailsOpen" @close-details="isDetailsOpen = false" />
             <DropZone v-if="isDropzoneOpen" @dragleave="isDropzoneOpen = false" @drop="handleDrop" @dragover.prevent />
-            <ExplorerView v-if="isExplorerVisible" :types="documents.scanned_types.map(doc => doc.name)"
-                :data="documents.scanned" />
+            <ExplorerView v-if="isExplorerVisible" :types="documents.scanned_types" @open-details="isDetailsOpen = true"/>
             <Transition mode="out-in" name="zoom_in">
                 <div tabindex="-1" v-if="IsModalOpen"
                     class="fixed top-0 p-2 bottom-0 left-0 right-0 flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-75">
@@ -98,13 +97,14 @@ import { required } from "@vuelidate/validators";
 import { useScannedDocuments } from '../../stores/Scanned';
 import { AuthStore } from '../../stores/Authentication';
 import ExplorerView from '../../components/client/ExplorerView.vue';
+import ScannedDetails from '../../components/scanned/ScannedDetails.vue';
 
 
 const isDropzoneOpen = ref(false)
 const isSubmitting = ref(false)
 const IsModalOpen = ref(false)
 const isExplorerVisible = ref(false)
-
+const isDetailsOpen = ref(false)
 /**
  *  @Documents
  * 
@@ -123,7 +123,6 @@ onMounted(() => {
     isDropzoneOpen.value = false
     // Get All Scanned Type, Birth;Death;Marriage and so on
     documents.getScannedType()
-    documents.getScanned()
 
     setTimeout(() => {
         isExplorerVisible.value = true
@@ -169,14 +168,6 @@ const years = computed(() => {
 const mainData = reactive({
     Files: []
 })
-
-
-// id
-// name
-// filepath
-// type_id
-// month
-// year
 
 const formData = reactive({
     type_id: '',

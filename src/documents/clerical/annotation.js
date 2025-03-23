@@ -1,13 +1,9 @@
 /**
- * 
+ *
  * @description
  * Grabe hirap naman nito
- * 
+ *
  */
-
-
-
-
 
 import { degrees, PageSizes, PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 const path = require('path')
@@ -94,7 +90,7 @@ export async function CreateAnnotated(user, formData) {
         const textWidth = fontType.widthOfTextAtSize(text, 12) + 3
 
         //if Total Width Reaches Max Limit, it will save the current array
-      
+
         if (totalWidthSoFar + textWidth >= annotation_width) {
             filtered.push(currentArray)
 
@@ -161,8 +157,6 @@ export async function CreateAnnotated(user, formData) {
      * dadagdag siya ng blanks/width para sa sakto sa limit na fe. 900
      */
     function addBlanks(data) {
-    
-
         // Create a new array to store the modified lines without modifying the original data
         let newData = []
 
@@ -170,7 +164,7 @@ export async function CreateAnnotated(user, formData) {
             let totalWidth = line.reduce((acc, item) => acc + item.size, 0)
 
             // Check if totalWidth is less than (annotation_width - 100)
-            if (totalWidth < (annotation_width - 100)) {
+            if (totalWidth < annotation_width - 100) {
                 // Push the original line to the new array without modifications
                 newData.push([...line])
                 continue // Skip adding blanks if totalWidth is less than 700
@@ -276,7 +270,6 @@ export async function CreateAnnotated(user, formData) {
                     rotate: degrees(annotation_rotation),
                     lineHeight: 14
                 })
-
             }
             // Annotation is Horizontal
             else if (annotation_rotation === Number(0)) {
@@ -290,13 +283,11 @@ export async function CreateAnnotated(user, formData) {
                 })
             }
             splitedwidth += item.size
-    
-
         }
         new_line += 14
         splitedwidth = 0
     }
-    
+
     pdfBytes = await pdfDoc.saveAsBase64()
 
     return { status: true, pdfbase64: pdfBytes }

@@ -7,10 +7,16 @@ class ScannedTypeSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         exclude = ("id",)
         
-class ScannnedSchema(ma.SQLAlchemyAutoSchema):
+class ScanListSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Scans
-        load_instance = True
+        fields = ("id", "name", "type_id", "year", "month", "scanned_type")
+
+    scanned_type = ma.Nested(ScannedTypeSchema, many=False)
+    
+class ScanDetailSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Scans
         include_fk = True
 
-    scanned_type = ma.Nested(ScannedTypeSchema, many=False) 
+    scanned_type = ma.Nested(ScannedTypeSchema, many=False)

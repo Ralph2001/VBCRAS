@@ -1,6 +1,7 @@
 <template>
     <div class="flex mt-2  flex-row justify-cente6r h-16 items-center gap-2 p-2 w-full">
         <button
+        :disabled="!props.month && !props.type && !props.year"
             class="rounded-full hover:bg-gray-50 active:scale-95 px-2 disabled:text-gray-200 text-blue-400 hover:text-blue-500"
             @click="navigateHistory()">
             <font-awesome-icon icon="fa-solid fa-circle-arrow-left" />
@@ -62,7 +63,7 @@
                                 d="m1 9 4-4-4-4" />
                         </svg>
                         <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2 dark:text-gray-400">{{ props.month
-                        }}</span>
+                            }}</span>
                     </div>
                 </li>
             </ol>
@@ -73,13 +74,13 @@
 <script setup>
 const props = defineProps({
     type: {
-        type: String
+        type: [String, Number]
     },
     year: {
         type: [String, Number]
     },
     month: {
-        type: String
+        type: [String, Number]
     },
 })
 

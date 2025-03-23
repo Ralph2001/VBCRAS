@@ -8,7 +8,8 @@
         class="text-gray-300 pointer-events-none absolute mt-[0.80rem] ml-2" />
 
     <!-- Search Input -->
-    <input :value="props.modelValue" @input="emit('update:modelValue', $event.target.value);" type="text" ref="input"
+    <input  :value="props.modelValue"
+        @input="emit('update:modelValue', $event.target.value);" type="text" ref="input"
         class="placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-full select-none"
         placeholder="Search" />
 </template>

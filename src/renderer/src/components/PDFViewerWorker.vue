@@ -1,14 +1,19 @@
 <template>
-    <div tabindex="-1" class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center relative bg-[#1B263B] overflow-y-auto py-20">
+    <div tabindex="-1"
+        class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center  relative bg-[#1B263B] overflow-y-auto py-20">
+        <!-- Loading State -->
         <div v-if="isLoading" class="z-50 h-full items-center justify-center w-full flex">Loading...</div>
+
+        <!-- Error State -->
+        <div v-if="errorMessage" class="text-white p-5 my-auto text-center">
+            {{ errorMessage }}
+        </div>
 
         <div v-else class="h-fit">
             <div v-for="(page, index) in pages" :key="index" class="mb-4">
-                <canvas
-                    :ref="el => pdfCanvas[index] = el"
+                <canvas :ref="el => pdfCanvas[index] = el"
                     class="h-auto w-auto shadow-2xl transition-transform duration-200 ease-in-out"
-                    :style="{ transform: `scale(${scale.value})` }"
-                ></canvas>
+                    :style="{ transform: `scale(${scale.value})` }"></canvas>
             </div>
         </div>
     </div>
@@ -18,7 +23,9 @@
 import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
 import * as pdfjsLib from 'pdfjs-dist/webpack';
 import Cookies from 'js-cookie';
+import { useDebounceFn, useEventListener } from '@vueuse/core'
 
+const errorMessage = ref(null); // Track error messages
 const isLoading = ref(false);
 
 // Props
@@ -43,6 +50,7 @@ const percent = computed(() => {
 })
 
 onBeforeUnmount(() => {
+    props.pdfBytes64 = null
     clearTimeout(renderTimeout);
     window.removeEventListener('wheel', handleWheel);
 });
@@ -78,14 +86,24 @@ const handleWheel = (event) => {
     }
 };
 
-watch(() => props.pdfBytes64, () => renderPDF());
+const debouncedFn = useDebounceFn(() => {
+    renderPDF();
+}, 500, { maxWait: 5000 })
+
+watch(() => props.pdfBytes64, () =>
+    debouncedFn()
+);
 
 let renderTimeout;
 // Function to render the PDF from base64 data at a specific scale
 const renderPDF = async () => {
-    if (!props.pdfBytes64) return;
+    if (!props.pdfBytes64) {
+        errorMessage.value = 'The PDF could not be loaded. Please check the file and try again.';
+        return;
+    }
 
     isLoading.value = true;
+    errorMessage.value = null;
     try {
         clearTimeout(renderTimeout);
         renderTimeout = setTimeout(async () => {
@@ -129,8 +147,11 @@ const renderPDF = async () => {
         }, 200);
     } catch (error) {
         console.error('Error rendering PDF:', error);
+        errorMessage.value = 'The PDF could not be loaded. Please check the file and try again.';
+        pages.value = [];
     } finally {
         isLoading.value = false;
+        errorMessage.value = null
     }
 };
 
