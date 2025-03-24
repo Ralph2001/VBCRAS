@@ -5,7 +5,7 @@
             {
                 'text-center': middle,
                 'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
-                'border shadow-sm border-gray-300 bg-red-400 focus:ring-blue-500 focus:border-blue-500': !unbordered,
+                'border  border-gray-300  focus:ring-blue-500 focus:border-blue-500': !unbordered,
                 italic: italic,
                 'font-bold': bold,
                 'bg-transparent': isTransparent,
@@ -70,7 +70,7 @@ const props = defineProps({
 const baseClasses = computed(() => [
     `w-[${props.width}]`,
     !props.bold ? 'font-semibold' : '',
-    !props.isTransparent ? 'bg-white' : '',
+    !props.isTransparent ? 'bg-neutral-50' : '',
     !props.she ? 'focus:ring-blue-500 focus:border-blue-500' : '',
     'items-center text-gray-900 text-sm rounded px-2 py-1.5'
 ]);

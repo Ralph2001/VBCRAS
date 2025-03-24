@@ -268,6 +268,12 @@ const router = createRouter({
                     beforeEnter: navGuard
                 },
                 {
+                    path: 'supplemental',
+                    name: 'supplemental',
+                    component: () => import('../views/pages/Supplemental.vue'),
+                    beforeEnter: navGuard
+                },
+                {
                     path: 'ausf',
                     name: 'page_ausf',
                     component: () => import('../views/pages/AUSF.vue'),

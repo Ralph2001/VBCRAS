@@ -12,6 +12,9 @@ export const useTransactionDetails = {
     or_number: '',
     date_paid: format(new Date(), "MMMM dd, yyyy"),
     is_with_authentication: false,
+    for_and_in_the_absence: false,
+    absence_verified_by: 'GLENN ALBERT R. MALICDEM',
+    absence_verifier_position: 'Administrative Aide III',
 }
 export const useRegisteredPeriod = {
     registered_from: '',
@@ -24,6 +27,8 @@ export const useAvailableForm = {
     page_number: '',
     book_number: '',
     registry_number: '',
+    is_reconstructed: false,
+    is_other_remarks: false,
     remarks: '',
 }
 

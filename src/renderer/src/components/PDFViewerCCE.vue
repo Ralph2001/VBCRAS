@@ -12,10 +12,11 @@
                     class="text-white hover:text-white hover:bg-green-600 gap-3  text-sm bg-green-500  shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center"
                     v-if="active_pdf_link" @click="printPDF">
                     <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
-                    <div class="flex flex-col  items-start ">
+                    <div class="flex flex-col  items-start  ">
                         <p class="text-xs">Print Active
                             Document</p>
                         <p class="text-xs text-gray-50 font-thin">{{ active_pdf }}</p>
+                        <!-- <p class="text-xs text-gray-50 font-thin italic">(Crtl + P)</p> -->
                     </div>
 
                 </button>
@@ -158,7 +159,7 @@ const nextPDF = () => {
     if (currentIndex.value < pdfs.value.length - 1) {
         currentIndex.value++;
         change_active_pdf(pdfs.value[currentIndex.value].name, pdfs.value[currentIndex.value].link);
-    }else{
+    } else {
         currentIndex.value = 0;
         change_active_pdf(pdfs.value[currentIndex.value].name, pdfs.value[currentIndex.value].link);
     }

@@ -35,6 +35,20 @@
 
             </li>
             <li>
+              <router-link tabindex="-1" to="/pages/supplemental" active-class="text-white bg-[#1B263B] "
+                class="   p-4 h-7 w-fit    hover:bg-[#1B263B]/50 transition-all duration-100 flex items-center justify-center  text-neutral-200 hover:text-neutral-300  rounded">
+                Supplemental
+              </router-link>
+
+            </li>
+            <li>
+              <router-link tabindex="-1" to="/pages/marriage-license" active-class="text-white bg-[#1B263B] "
+                class="   p-4 h-7 w-fit    hover:bg-[#1B263B]/50 transition-all duration-100 flex items-center justify-center  text-neutral-200 hover:text-neutral-300  rounded">
+                Legitimation
+              </router-link>
+
+            </li>
+            <li>
               <router-link tabindex="-1" to="/pages/scanned" active-class="text-white bg-[#1B263B] "
                 class="   p-4 h-7 w-fit    hover:bg-[#1B263B]/50 transition-all duration-100 flex items-center justify-center  text-neutral-200 hover:text-neutral-300  rounded">
                 Scanned Documents

@@ -1,5 +1,6 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { format } from 'date-fns'
+
 const fs = require('fs')
 const path = require('path')
 
@@ -62,6 +63,11 @@ export async function generateFormPDF(main_data) {
         document_body_available(data, page, height, CONFIG.FONT_SIZE, fonts)
     } else {
         document_body_unavailable_destroyed(data, page, height, CONFIG.FONT_SIZE, fonts.regular, fonts.bold)
+    }
+
+    // Draw Remarks if Available
+    if (data.is_reconstructed || data.is_other_remarks) {
+        createRemarks(pdfDoc, data, page, fonts, CONFIG.FONT_SIZE)
     }
 
     // Save the PDF as a Base64 string
@@ -237,28 +243,75 @@ function document_base(data, page, fonts, height, fontSize) {
         font: fonts.italic
     })
 
-    // Civil Registrar details
+    /**
+     * Civil Registrar Details, Add for and in the absence if checked
+     */
+
+
+
+    // Draw Civil Registrar
     page.drawText(data.civil_registrar, {
         x: Number(data.c_mcr.x),
         y: Number(data.c_mcr.y),
         size: fontSize,
         font: fonts.bold
-    })
-    const mcrWidth = fonts.bold.widthOfTextAtSize(
-        data.civil_registrar,
-        fontSize
-    )
-    const mcrPosWidth = fonts.bold.widthOfTextAtSize(
+    });
+
+    const mcrWidth = fonts.bold.widthOfTextAtSize(data.civil_registrar, fontSize);
+
+    // Draw Civil Registrar Position (centered under name)
+    const civilRegistrarPosWidth = fonts.italic.widthOfTextAtSize(
         data.civil_registrar_position,
         fontSize
-    )
-    // Same as the civil registrar but with different position
+    );
     page.drawText(data.civil_registrar_position, {
-        x: Number(data.c_mcr.x) + mcrWidth / 2 - mcrPosWidth / 2,
+        x: Number(data.c_mcr.x) + mcrWidth / 2 - civilRegistrarPosWidth / 2, // Correctly centered
         y: Number(data.c_mcr.y) - 12,
         size: fontSize,
         font: fonts.italic
-    })
+    });
+
+    if (data.for_and_in_the_absence) {
+        // Calculate width of "For and in the absence of:"
+        const absenceLabel = "For and in the absence of:";
+        const absenceLabelWidth = fonts.italic.widthOfTextAtSize(absenceLabel, fontSize);
+
+        // Draw "For and in the absence of:" (centered under Civil Registrar)
+        page.drawText(absenceLabel, {
+            x: Number(data.c_mcr.x) + mcrWidth / 2 - absenceLabelWidth / 2, // Use its own width
+            y: Number(data.c_mcr.y) + 12,
+            size: fontSize,
+            font: fonts.italic
+        });
+
+        // Calculate widths for Verifier's details
+        const verifierNameWidth = fonts.bold.widthOfTextAtSize(data.absence_verified_by, fontSize);
+        const verifierPosWidth = fonts.italic.widthOfTextAtSize(data.absence_verifier_position, fontSize);
+
+        // Draw Verifier's Name (centered under Civil Registrar)
+        page.drawText(data.absence_verified_by, {
+            x: Number(data.c_mcr.x) + mcrWidth / 2 - verifierNameWidth / 2, // Use verifier's name width
+            y: Number(data.c_mcr.y) - 50,
+            size: fontSize,
+            font: fonts.bold
+        });
+
+        // Draw Verifier's Position (centered under their name)
+        page.drawText(data.absence_verifier_position, {
+            x: Number(data.c_mcr.x) + mcrWidth / 2 - verifierPosWidth / 2, // Use verifier's position width
+            y: Number(data.c_mcr.y) - 62,
+            size: fontSize,
+            font: fonts.italic
+        });
+    }
+
+
+
+
+
+
+
+
 
     // Verifier details
     page.drawText(data.verified_by, {
@@ -782,27 +835,228 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
         color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
     })
 
-    const mcrText = data.civil_registrar
+
+
+    // Draw Civil Registrar's Name (centered on page)
+    const mcrText = data.civil_registrar;
+    const mcrTextWidth = fonts.bold.widthOfTextAtSize(mcrText, fontSize);
+    const mcrTextX = setCenter(mcrText, fonts.bold); // Center of page
+
     page.drawText(mcrText, {
-        x: setCenter(mcrText, fonts.bold),
+        x: mcrTextX,
         y: height - position_of_all - 250,
         size: fontSize,
         font: fonts.bold,
-        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
-    })
+        color: rgb(0.12, 0.29, 0.49)
+    });
 
-    const mcrPositionText = data.civil_registrar_position
+
+    // Draw Civil Registrar's Position (centered under NAME)
+
+    const mcrPositionText = data.civil_registrar_position;
+    const mcrPositionWidth = fonts.regular.widthOfTextAtSize(mcrPositionText, fontSize);
+    const mcrPositionX = mcrTextX + mcrTextWidth / 2 - mcrPositionWidth / 2; // Center under name
+
     page.drawText(mcrPositionText, {
-        x: setCenter(mcrPositionText, fonts.regular),
+        x: mcrPositionX,
         y: height - position_of_all - 262,
         size: fontSize,
         font: fonts.regular,
-        color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
-    })
+        color: rgb(0.12, 0.29, 0.49)
+    });
 
-    console.log('Authentication Form created')
+    // For Absence Section
+    if (data.for_and_in_the_absence) {
+        // "For and in the absence of:" label
+        const absenceLabel = "For and in the absence of:";
+        const absenceLabelWidth = fonts.italic.widthOfTextAtSize(absenceLabel, fontSize);
+        const absenceLabelX = mcrTextX + mcrTextWidth / 2 - absenceLabelWidth / 2;
+
+        page.drawText(absenceLabel, {
+            x: absenceLabelX,
+            y: height - position_of_all - 238, // Adjust Y position as needed
+            size: fontSize,
+            font: fonts.italic,
+            color: rgb(0.12, 0.29, 0.49)
+        });
+
+        // Verified By Name
+        const verifiedByName = data.absence_verified_by;
+        const verifiedByNameWidth = fonts.bold.widthOfTextAtSize(verifiedByName, fontSize);
+        const verifiedByNameX = mcrTextX + mcrTextWidth / 2 - verifiedByNameWidth / 2;
+
+        page.drawText(verifiedByName, {
+            x: verifiedByNameX,
+            y: height - position_of_all - 304, // Adjust Y position as needed
+            size: fontSize,
+            font: fonts.bold,
+            color: rgb(0.12, 0.29, 0.49)
+        });
+
+        // Verified By Position
+        const verifiedByPos = data.absence_verifier_position;
+        const verifiedByPosWidth = fonts.regular.widthOfTextAtSize(verifiedByPos, fontSize);
+        const verifiedByPosX = mcrTextX + mcrTextWidth / 2 - verifiedByPosWidth / 2;
+
+        page.drawText(verifiedByPos, {
+            x: verifiedByPosX,
+            y: height - position_of_all - 316, // Adjust Y position as needed
+            size: fontSize,
+            font: fonts.regular,
+            color: rgb(0.12, 0.29, 0.49)
+        });
+    }
+
+
 }
 
+
+async function createRemarks(pdfDoc, data, page, fonts, fontSize) {
+
+    page.drawText("REMARKS:", {
+        x: 72,
+        y: 276,
+        size: fontSize,
+        font: fonts.bold,
+    })
+
+
+    const remarksWidth = fonts.bold.widthOfTextAtSize("REMARKS:", fontSize)
+    if (data.is_reconstructed) (
+        page.drawText("Reconstructed Copy", {
+            x: (72 + remarksWidth) + 12,
+            y: 276,
+            size: fontSize,
+            font: fonts.italic,
+        })
+    )
+
+    if (data.is_other_remarks) {
+        remark_annotation_maker(data.remarks, fonts, page, pdfDoc)
+    }
+}
+
+
+
+
+/**
+ * Remarks Maker 
+ * Hirap naman neto langya hahahaha
+ */
+
+async function remark_annotation_maker(data, fonts, page, pdfDoc) {
+    let currentY = 260;
+    const lineHeight = 14;
+    const maxWidth = 595 - 144; // A4 width minus margins
+
+    const words = [];
+    for (const main_value of data.ops) {
+        const attributes = main_value.attributes || {};
+        const fontType = attributes.bold && attributes.italic ? fonts.boldItalic :
+            attributes.bold ? fonts.bold :
+                attributes.italic ? fonts.italic :
+                    fonts.regular;
+
+        const insertText = main_value.insert || '';
+        // Split text into paragraphs using newline characters
+        const lines = insertText.split('\n');
+        for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+            const line = lines[lineIdx];
+            // Split paragraph into words
+            const splitWords = line.split(/\s+/).filter(word => word.length > 0);
+            for (const wordText of splitWords) {
+                words.push({ text: wordText, font: fontType });
+            }
+            // Add a forced newline marker after each line except the last one
+            if (lineIdx < lines.length - 1) {
+                words.push({ isNewLine: true });
+            }
+        }
+    }
+
+    let currentLine = [];
+    let currentLineWidth = 0;
+
+    for (const word of words) {
+        if (word.isNewLine) {
+            // Force a new line for Enter key
+            if (currentLine.length > 0) {
+                drawLine(currentLine, 90, currentY, maxWidth, page, true);
+                currentY -= lineHeight;
+                if (currentY < 72) {
+                    page = pdfDoc.addPage();
+                    currentY = page.getHeight() - 72;
+                }
+            }
+            currentLine = [];
+            currentLineWidth = 0;
+            continue;
+        }
+
+        const wordWidth = word.font.widthOfTextAtSize(word.text, 12);
+        let tentativeWidth = currentLineWidth + (currentLine.length > 0 ? word.font.widthOfTextAtSize(' ', 12) : 0) + wordWidth;
+
+        if (tentativeWidth > maxWidth) {
+            drawLine(currentLine, 90, currentY, maxWidth, page, false);
+            currentY -= lineHeight;
+            if (currentY < 72) {
+                page = pdfDoc.addPage();
+                currentY = page.getHeight() - 72;
+            }
+            currentLine = [word];
+            currentLineWidth = wordWidth;
+        } else {
+            if (currentLine.length > 0) {
+                currentLineWidth += word.font.widthOfTextAtSize(' ', 12);
+            }
+            currentLine.push(word);
+            currentLineWidth += wordWidth;
+        }
+    }
+
+    if (currentLine.length > 0) {
+        drawLine(currentLine, 90, currentY, maxWidth, page, true);
+    }
+}
+
+function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
+    if (lineWords.length === 0) return;
+
+    let totalWordsWidth = 0;
+    let totalSpacesWidth = 0;
+    const numberOfGaps = lineWords.length - 1;
+
+    for (let i = 0; i < lineWords.length; i++) {
+        const word = lineWords[i];
+        totalWordsWidth += word.font.widthOfTextAtSize(word.text, 12);
+        if (i < numberOfGaps) {
+            const spaceWidth = word.font.widthOfTextAtSize(' ', 12);
+            totalSpacesWidth += spaceWidth;
+        }
+    }
+
+    const totalWidth = totalWordsWidth + totalSpacesWidth;
+    let extraSpacePerGap = 0;
+
+    if (!isLastLine && numberOfGaps > 0) {
+        extraSpacePerGap = (maxWidth - totalWidth) / numberOfGaps;
+    }
+
+    let currentX = xStart;
+
+    for (let i = 0; i < lineWords.length; i++) {
+        const word = lineWords[i];
+        if (i === 0) {
+            page.drawText(word.text, { x: currentX, y, font: word.font, size: 12 });
+            currentX += word.font.widthOfTextAtSize(word.text, 12);
+        } else {
+            const spaceWidth = lineWords[i - 1].font.widthOfTextAtSize(' ', 12) + extraSpacePerGap;
+            currentX += spaceWidth;
+            page.drawText(word.text, { x: currentX, y, font: word.font, size: 12 });
+            currentX += word.font.widthOfTextAtSize(word.text, 12);
+        }
+    }
+}
 
 /////////////////////////
 // Parangraph Function //
@@ -861,8 +1115,6 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
     return filtered
 }
 
-
-
 function addBlanks(data) {
     const targetWidth = 451;
     const minimumWidthToAddBlanks = 350;
@@ -897,9 +1149,6 @@ function addBlanks(data) {
     }
     return newData
 }
-
-
-
 
 function distributeBlanks(data) {
     return data.map(array => {

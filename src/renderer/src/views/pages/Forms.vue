@@ -353,7 +353,8 @@
                 <!-- Page 2,  Other Side -->
                 <!-- This is Required for all Forms -->
                 <div class="flex flex-col gap-2 px-4 py-4">
-                    <div class="flex items-center justify-center relative text-sm font-sans  flex-col">
+                    <div
+                        class="flex items-center justify-center relative text-sm font-sans flex-row text-nowrap lg:text-wrap lg:flex-col">
                         This certification is issued to <div class="px-2">
                             <InputforForm width="30rem" middle bold v-model="transactions.certification_issued_to" />
                         </div> upon his/her request.
@@ -363,22 +364,27 @@
 
                     <div class="flex flex-col gap-2 " v-if="is_with_remarks">
                         <div class="flex flex-row gap-2 items-center">
-                            <input type="checkbox" v-model="is_remarks_check" name="" id="remark_btn"
-                                class="border rounded-sm border-gray-400">
-                            <label for="remark_btn" class="text-md font-medium text-neutral-800 text-sm">Add
+                            <input type="checkbox" v-model="available.is_reconstructed"
+                                class="border rounded-sm border-gray-400" id="is_reconstructed">
+                            <label class="text-md font-medium text-neutral-800 text-sm"
+                                for="is_reconstructed">Reconstructed
+                                Copy</label>
+                        </div>
+
+                        <div class="flex flex-row gap-2 items-center">
+                            <input type="checkbox" v-model="available.is_other_remarks"
+                                class="border rounded-sm border-gray-400" id="is_other_remarks">
+                            <label class="text-md font-medium text-neutral-800 text-sm" for="is_other_remarks">Other
                                 Remarks</label>
                         </div>
                         <!-- <p class="font-medium text-xs">Add Remarks</p> -->
 
-                        <div class="flex  flex-col  py-2 w-full gap-2" v-if="is_remarks_check">
-                            <p class="font-bold font-serif">REMARKS: </p>
-
+                        <div class="flex  flex-col  py-2 w-full gap-2" v-if="available.is_other_remarks">
                             <div class="w-full flex flex-col gap-1 bg-white">
                                 <QuillEditor theme="snow" :toolbar="['bold', 'italic']"
-                                    v-model:content="formData.remarks" />
+                                    v-model:content="available.remarks" contentType="delta" content="delta" />
                             </div>
 
-                            {{ formData.remarks }}
                         </div>
                     </div>
                     <div class="mt-auto grid grid-cols-2   mb-4">
@@ -400,18 +406,20 @@
                             </div>
                         </div>
                         <div class="flex flex-col items-center gap-[0.10rem]">
-                            <!-- <p class="italic font-medium text-sm">For and in the absence of:</p> -->
+                            <p v-if="transactions.for_and_in_the_absence" class="italic font-medium text-sm">For and in
+                                the absence
+                                of:</p>
                             <InputforForm skip middle width="100%" bold v-model="transactions.civil_registrar"
                                 isUpperCase />
                             <InputforForm skip width="100%" middle italic unbordered isTransparent
                                 v-model="transactions.civil_registrar_position" />
-                            <!-- <div class="mt-10 flex flex-col items-center gap-[0.10rem] absolute top-20">
-                                <InputforForm skip width="20rem" bold middle v-model="formData.verified_by"
-                                    
-                                    @input="formData.verified_by = $event.target.value.toUpperCase()" />
+                            <div v-if="transactions.for_and_in_the_absence"
+                                class="mt-4 flex flex-col items-center gap-[0.10rem] ">
+                                <InputforForm skip width="20rem" bold middle v-model="transactions.absence_verified_by"
+                                    @input="transactions.absence_verified_by = $event.target.value.toUpperCase()" />
                                 <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="formData.position"  />
-                            </div> -->
+                                    v-model="transactions.absence_verifier_position" />
+                            </div>
                         </div>
                     </div>
 
@@ -429,17 +437,31 @@
                     </div>
                     <div class="flex flex-row gap-2 p-4  rounded items-center justify-center bg-gray-100 shadow">
 
-                        <div class="flex flex-row gap-2 items-center">
-                            <input type="checkbox" v-model="transactions.is_with_authentication" name=""
-                                id="with_authentication" class="border rounded-sm border-gray-600">
-                            <label for="with_authentication" class="text-md font-medium text-neutral-800">With
-                                Authentication</label>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex flex-row gap-2 items-center">
+                                <input type="checkbox" v-model="transactions.is_with_authentication" name=""
+                                    id="with_authentication" class="border rounded-sm border-gray-600">
+                                <label for="with_authentication" class="text-md font-medium text-neutral-800">With
+                                    Authentication</label>
+                            </div>
+                            <div class="flex flex-row gap-2 items-center">
+                                <input v-model="transactions.for_and_in_the_absence" type="checkbox"
+                                    id="for_and_in_the_absence" class="border rounded-sm border-gray-600">
+                                <label for="for_and_in_the_absence" class="text-md font-medium text-neutral-800">For and
+                                    in
+                                    the absence
+                                    of</label>
+                            </div>
+
                         </div>
+
 
                         <div class="ml-auto flex items-center justify-center gap-2">
                             <button
                                 class="bg-blue-600 hover:bg-blue-700 text-white border px-10 font-medium  py-2.5 rounded-md "
                                 @click="previewForm">Next</button>
+
+
                             <!-- <button @click="createForm()"
                                 class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button> -->
 
@@ -580,16 +602,29 @@
 
                     </div>
                 </div>
-                <PDFViewerWorker :scale="1" :pdfBytes64="previewUrl" />
-                <div class="fixed bottom-0 h-14  gap-2 w-full shadow-3xl z-40 flex items-center justify-end px-4">
+                <PDFViewerWorker :scale="1.5" :pdfBytes64="previewUrl" />
+                <div
+                    class="fixed bottom-0 bg-gray-900 h-14  gap-2 w-full shadow-3xl z-40 flex items-center justify-end px-4">
                     <button @click="isPreview = false"
-                        class="bg-white border border-gray-400 hover:bg-gray-300 text-gray-800 px-4 font-medium  py-1.5 rounded-md ">
-
+                        class="bg-white hover:bg-gray-200 text-gray-700  shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center">
                         Return</button>
-                    <button @click="createForm()"
-                        class="bg-yellow-300 hover:bg-yellow-400 text-gray-800 px-4 font-medium  py-1.5 rounded-md ">Save
-                        and Print
-                        Form {{ selectedType }}</button>
+
+                    <button
+                        class="text-white hover:text-white hover:bg-green-600 gap-3  text-sm bg-green-500  shadow-sm rounded-sm  outline-none font-medium px-4  py-2 tracking-wide flex flex-row  items-center"
+                        @click="createForm">
+                        <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
+                        <div class="flex flex-col  items-start  ">
+                            <p>Print
+                                Document</p>
+
+
+                        </div>
+
+                    </button>
+
+                    <!-- <button @click="createForm()"
+                        class="bg-yellow-300 hover:bg-yellow-400 text-gray-800 px-4 font-medium  py-1.5 rounded "> Print
+                        Form {{ selectedType }}</button> -->
 
                 </div>
 
@@ -614,6 +649,7 @@ import { useForms } from '../../stores/forms.js'
 import ControlButton from '../../components/ControlButton.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import { useAvailableForm, useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
+import { dumb_maker } from '../../lib/lala.js'
 
 const settings = ref(false)
 const transactions = reactive(useTransactionDetails)
@@ -638,7 +674,10 @@ const Form3C = reactive(useForm3C)
 const selectedType = ref(null)
 const isPreview = ref(false)
 const previewUrl = ref('')
+const for_and_in_the_absence = ref(false)
 
+
+const fact_of = ref('')
 
 const preference = reactive({
     logo: {
@@ -687,7 +726,7 @@ const preference = reactive({
     },
     authentication: {
         x: 0,
-        y: 350
+        y: 300
     }
 })
 
@@ -708,8 +747,9 @@ watch(isPreview, (newValue, oldValue) => {
 watch(preference, (newPreferences, oldPreferences) => {
     previewForm();
 }, { deep: true });
-const createForm = () => {
-    console.log('Creating form')
+
+
+const createForm = async () => {
     const form_type = selectedType.value;
     const formAvailableMapping = {
         // For Form A's
@@ -731,11 +771,14 @@ const createForm = () => {
     if (formAvailableMapping[form_type]) {
         const main_data = reactive({
             form_type,
+            ...preference,
             ...transactions,
             ...(form_type.endsWith('A') ? available : {}),
             ...formAvailableMapping[form_type],
         });
-        console.log(main_data);
+        const preview = await window.FormApi.PreviewFormPDF(JSON.stringify(main_data));
+        const print = await window.LocalCivilApi.printPDFBase64(preview.result.pdfbase64)
+
     } else {
         console.log('Invalid form type selected');
     }

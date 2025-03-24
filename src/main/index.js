@@ -85,59 +85,46 @@ function generateRandomString(length) {
  * Function to print a document using SumatraPDF.
  * @param {string} base64Data - PDF document Data
  * @param {string} sumatraPath - Path to the SumatraPDF executable
- * @param {string} [paperSize] - Optional paper size (e.g., 'Legal', 'A4'). Defaults to `none`.
  */
 async function printPDF(base64Data, sumatraPath, paperSize = 'none') {
+    let pdfPath; // Declare here for cleanup later
     try {
-        const randomFileName = `temp_${generateRandomString(20)}.pdf`
-        const pdfPath = join(
+        const randomFileName = `temp_${generateRandomString(20)}.pdf`;
+        pdfPath = join(
             __dirname,
             '../../resources/temp/',
             randomFileName
-        ).replace('app.asar', 'app.asar.unpacked')
-        const fileDirectory = join(__dirname, '../../resources/temp/').replace(
-            'app.asar',
-            'app.asar.unpacked'
-        )
+        ).replace('app.asar', 'app.asar.unpacked');
 
-        // Write the base64 PDF data to a temporary file
-        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'))
+        // Write the PDF file
+        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'));
 
-        // Build the SumatraPDF arguments
-        const args = ['-print-dialog', '-exit-when-done']
-        if (paperSize !== 'none') {
-            args.push('-print-settings', `paper=${paperSize}`)
-        }
-        args.push(pdfPath)
+        // Add explicit page range handling
+        const args = [
+            '-print-dialog',
+            '-exit-when-done',
+            pdfPath // Explicitly specify the file to print
+        ];
 
-        // Spawn the SumatraPDF process to print the PDF
-        const printProcess = spawn(sumatraPath, args)
+        const printProcess = spawn(sumatraPath, args);
 
-        printProcess.on('error', (error) => {
-            console.error('Failed to start SumatraPDF process:', error)
-        })
-
-        printProcess.on('close', (code) => {
-            if (code === 0) {
-                console.log('Printed successfully')
-            } else {
-                console.error(`SumatraPDF process exited with code ${code}`)
+        // Delay cleanup until printing completes
+        printProcess.on('exit', async (code) => {
+            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
+            try {
+                await fs.promises.unlink(pdfPath);
+                console.log('Temp PDF deleted successfully');
+            } catch (err) {
+                console.error('Error deleting temp file:', err);
             }
+        });
 
-            // Clean up: delete the temporary PDF file
-            fs.unlink(pdfPath, (err) => {
-                if (err) {
-                    console.error('Failed to delete temp PDF file', err)
-                } else {
-                    console.log('Temp PDF file deleted successfully')
-                }
-            })
-
-            // Empty the temp directory
-            fse.emptyDirSync(fileDirectory)
-        })
     } catch (error) {
-        console.error('Error printing PDF:', error)
+        // Cleanup if error occurs
+        if (pdfPath) {
+            await fs.promises.unlink(pdfPath).catch(console.error);
+        }
+        console.error('Error printing PDF:', error);
     }
 }
 
