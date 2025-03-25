@@ -286,14 +286,14 @@
                                 has
                                 no
                                 record of {{ records_of }} of
-                                <InputforForm width="15rem" middle v-model="formData.name_of" /> who
+                                <InputforForm width="30rem" bold isUpperCase middle v-model="formData.name_of" /> who
                                 is
                                 alleged
                                 to have {{ alleged_to }} on
-                                <InputforForm width="10rem" middle v-model="formData.date_of" /> in this
+                                <InputforForm width="10rem" bold middle v-model="formData.date_of" /> in this
                                 municipality, <span v-if="selectedType === '1B'"> of parents
-                                    <InputforForm width="15rem" middle v-if="selectedType === '1B'" /> and
-                                    <InputforForm width="15rem" v-if="selectedType === '1B'" middle />.
+                                    <InputforForm width="18rem" bold middle v-if="selectedType === '1B'" /> and
+                                    <InputforForm width="18rem" bold v-if="selectedType === '1B'" middle />.
                                 </span> Hence, we cannot issue,
                                 as
                                 requested, a true
@@ -307,7 +307,7 @@
                             <p class="indent-8 text-pretty tracking-wider text-justify"> We also certify that the
                                 records of
                                 {{ records_of }} for the year
-                                <InputforForm width="6rem" middle v-model="formData.records_of_year" /> are
+                                <InputforForm width="6rem" bold middle v-model="formData.records_of_year" /> are
                                 still
                                 intact in the
                                 archives of
@@ -726,26 +726,30 @@ const preference = reactive({
     },
     authentication: {
         x: 0,
-        y: 300
+        y: 280
     }
 })
 
 watch(isPreview, (newValue, oldValue) => {
     if (selectedType.value.includes('A')) {
-        preference.authentication.y = 350
+        preference.authentication.y = 280
         preference.logo.right_y = 797.75
         preference.logo.left_y = 797.75
 
 
     } else {
-        preference.authentication.y = 300
+        preference.body_data.y = selectedType.value.includes('B') ? 500 : selectedType.value.includes('C') ? 570 : 205
+        preference.concern.y = selectedType.value.includes('B') ? 200 : selectedType.value.includes('C') ? 160 : 135
+        preference.authentication.y = 250
         preference.logo.right_y = 703.75
         preference.logo.left_y = 703.75
     }
 })
 
 watch(preference, (newPreferences, oldPreferences) => {
-    previewForm();
+    if (isPreview) {
+        previewForm();
+    }
 }, { deep: true });
 
 

@@ -89,7 +89,7 @@ export const useForm1B = {
 }
 export const useForm2B = {
     no_record_death_of: '',
-    born_on: '',
+    died_on: '',
     mother_name: '',
     father_name: '',
     intact_birth_year: '',

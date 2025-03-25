@@ -38,7 +38,10 @@ export async function generateFormPDF(main_data) {
 
     const size_of_paper_by_type_x = FORM_TYPE.includes('A') ? 612 : 595.44
     const size_of_paper_by_type_y = FORM_TYPE.includes('A') ? 936 : 841.68
-    const page = pdfDoc.addPage([size_of_paper_by_type_x, size_of_paper_by_type_y])
+    const page = pdfDoc.addPage([
+        size_of_paper_by_type_x,
+        size_of_paper_by_type_y
+    ])
 
     const { width, height } = page.getSize()
     // Set document metadata
@@ -62,7 +65,14 @@ export async function generateFormPDF(main_data) {
         create_we_clerify(data, page, height, CONFIG.FONT_SIZE, fonts)
         document_body_available(data, page, height, CONFIG.FONT_SIZE, fonts)
     } else {
-        document_body_unavailable_destroyed(data, page, height, CONFIG.FONT_SIZE, fonts.regular, fonts.bold)
+        document_body_intact_or_destroyed(
+            data,
+            page,
+            height,
+            CONFIG.FONT_SIZE,
+            fonts.regular,
+            fonts.bold
+        )
     }
 
     // Draw Remarks if Available
@@ -247,34 +257,38 @@ function document_base(data, page, fonts, height, fontSize) {
      * Civil Registrar Details, Add for and in the absence if checked
      */
 
-
-
     // Draw Civil Registrar
     page.drawText(data.civil_registrar, {
         x: Number(data.c_mcr.x),
         y: Number(data.c_mcr.y),
         size: fontSize,
         font: fonts.bold
-    });
+    })
 
-    const mcrWidth = fonts.bold.widthOfTextAtSize(data.civil_registrar, fontSize);
+    const mcrWidth = fonts.bold.widthOfTextAtSize(
+        data.civil_registrar,
+        fontSize
+    )
 
     // Draw Civil Registrar Position (centered under name)
     const civilRegistrarPosWidth = fonts.italic.widthOfTextAtSize(
         data.civil_registrar_position,
         fontSize
-    );
+    )
     page.drawText(data.civil_registrar_position, {
         x: Number(data.c_mcr.x) + mcrWidth / 2 - civilRegistrarPosWidth / 2, // Correctly centered
         y: Number(data.c_mcr.y) - 12,
         size: fontSize,
         font: fonts.italic
-    });
+    })
 
     if (data.for_and_in_the_absence) {
         // Calculate width of "For and in the absence of:"
-        const absenceLabel = "For and in the absence of:";
-        const absenceLabelWidth = fonts.italic.widthOfTextAtSize(absenceLabel, fontSize);
+        const absenceLabel = 'For and in the absence of:'
+        const absenceLabelWidth = fonts.italic.widthOfTextAtSize(
+            absenceLabel,
+            fontSize
+        )
 
         // Draw "For and in the absence of:" (centered under Civil Registrar)
         page.drawText(absenceLabel, {
@@ -282,11 +296,17 @@ function document_base(data, page, fonts, height, fontSize) {
             y: Number(data.c_mcr.y) + 12,
             size: fontSize,
             font: fonts.italic
-        });
+        })
 
         // Calculate widths for Verifier's details
-        const verifierNameWidth = fonts.bold.widthOfTextAtSize(data.absence_verified_by, fontSize);
-        const verifierPosWidth = fonts.italic.widthOfTextAtSize(data.absence_verifier_position, fontSize);
+        const verifierNameWidth = fonts.bold.widthOfTextAtSize(
+            data.absence_verified_by,
+            fontSize
+        )
+        const verifierPosWidth = fonts.italic.widthOfTextAtSize(
+            data.absence_verifier_position,
+            fontSize
+        )
 
         // Draw Verifier's Name (centered under Civil Registrar)
         page.drawText(data.absence_verified_by, {
@@ -294,7 +314,7 @@ function document_base(data, page, fonts, height, fontSize) {
             y: Number(data.c_mcr.y) - 50,
             size: fontSize,
             font: fonts.bold
-        });
+        })
 
         // Draw Verifier's Position (centered under their name)
         page.drawText(data.absence_verifier_position, {
@@ -302,16 +322,8 @@ function document_base(data, page, fonts, height, fontSize) {
             y: Number(data.c_mcr.y) - 62,
             size: fontSize,
             font: fonts.italic
-        });
+        })
     }
-
-
-
-
-
-
-
-
 
     // Verifier details
     page.drawText(data.verified_by, {
@@ -398,18 +410,18 @@ function create_we_clerify(data, page, height, fontSize, fonts) {
         data.form_type === '1A'
             ? 'birth'
             : data.form_type === '2A'
-                ? 'death'
-                : data.form_type === '3A'
-                    ? 'marriage'
-                    : ''
+              ? 'death'
+              : data.form_type === '3A'
+                ? 'marriage'
+                : ''
     const typeofdocument =
         data.form_type === '1A'
             ? 'Births'
             : data.form_type === '2A'
-                ? 'Deaths'
-                : data.form_type === '3A'
-                    ? 'Marriage'
-                    : ''
+              ? 'Deaths'
+              : data.form_type === '3A'
+                ? 'Marriage'
+                : ''
 
     page.drawText(
         `We certify that among others the following facts of ${type} appear in our Register of`,
@@ -466,7 +478,10 @@ function document_body_available(data, page, height, fontSize, fonts) {
         { title: 'Name of Father', data: data.name_father },
         { title: 'Citizenship of Father', data: data.citizenship_father },
         { title: 'Date of Marriage', data: data.date_marriage_parents },
-        { title: 'Place of marriage of parents', data: data.place_marriage_parents }
+        {
+            title: 'Place of marriage of parents',
+            data: data.place_marriage_parents
+        }
     ]
 
     const table_for_2 = [
@@ -484,12 +499,32 @@ function document_body_available(data, page, height, fontSize, fonts) {
 
     const table_for_3 = [
         { title: 'Name', data: data.groom_name, another_data: data.bride_name },
-        { title: 'Date of Birth', data: data.groom_date_birth, another_data: data.bride_date_birth },
+        {
+            title: 'Date of Birth',
+            data: data.groom_date_birth,
+            another_data: data.bride_date_birth
+        },
         { title: 'Age', data: data.groom_age, another_data: data.bride_age },
-        { title: 'Citizenship', data: data.groom_citizenship, another_data: data.bride_citizenship },
-        { title: 'Civil Status', data: data.groom_civil_status, another_data: data.bride_civil_status },
-        { title: 'Mother', data: data.groom_mother, another_data: data.bride_mother },
-        { title: 'Father', data: data.groom_father, another_data: data.bride_father },
+        {
+            title: 'Citizenship',
+            data: data.groom_citizenship,
+            another_data: data.bride_citizenship
+        },
+        {
+            title: 'Civil Status',
+            data: data.groom_civil_status,
+            another_data: data.bride_civil_status
+        },
+        {
+            title: 'Mother',
+            data: data.groom_mother,
+            another_data: data.bride_mother
+        },
+        {
+            title: 'Father',
+            data: data.groom_father,
+            another_data: data.bride_father
+        },
         { title: 'Registry Number', data: data.registry_number },
         { title: 'Date of Registration', data: data.date_registration },
         { title: 'Date of Marriage', data: data.date_marriage },
@@ -499,10 +534,10 @@ function document_body_available(data, page, height, fontSize, fonts) {
     const table = data.form_type.includes('1A')
         ? table_for_1
         : data.form_type.includes('2A')
-            ? table_for_2
-            : data.form_type.includes('3A')
-                ? table_for_3
-                : []
+          ? table_for_2
+          : data.form_type.includes('3A')
+            ? table_for_3
+            : []
 
     let tableGap = 0
     const tablePositionX = Number(data.body_data.x)
@@ -510,7 +545,7 @@ function document_body_available(data, page, height, fontSize, fonts) {
 
     // Function to check and adjust the font size for long text
     function getFontSizeBasedOnLength(text) {
-        return text.length > 40 ? fontSize * 0.8 : fontSize; // Reduce font size by 20% if text length exceeds 40
+        return text.length > 40 ? fontSize * 0.8 : fontSize // Reduce font size by 20% if text length exceeds 40
     }
 
     for (const item of table) {
@@ -518,22 +553,24 @@ function document_body_available(data, page, height, fontSize, fonts) {
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 145
                 : data.form_type.includes('3A') && item.another_data
-                    ? 72
-                    : data.form_type.includes('3A')
-                        ? 107
-                        : 0
+                  ? 72
+                  : data.form_type.includes('3A')
+                    ? 107
+                    : 0
         const xAdderForData =
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 155
                 : data.form_type.includes('3A') && item.another_data
-                    ? 79
-                    : data.form_type.includes('3A')
-                        ? 127
-                        : 0
+                  ? 79
+                  : data.form_type.includes('3A')
+                    ? 127
+                    : 0
 
         // Get the appropriate font size for each piece of data
-        const dataFontSize = getFontSizeBasedOnLength(item.data);
-        const anotherDataFontSize = item.another_data ? getFontSizeBasedOnLength(item.another_data) : null;
+        const dataFontSize = getFontSizeBasedOnLength(item.data)
+        const anotherDataFontSize = item.another_data
+            ? getFontSizeBasedOnLength(item.another_data)
+            : null
 
         page.drawText(item.title, {
             x: tablePositionX,
@@ -575,8 +612,7 @@ function document_body_available(data, page, height, fontSize, fonts) {
     }
 }
 
-
-function document_body_unavailable_destroyed(
+function document_body_intact_or_destroyed(
     data,
     page,
     height,
@@ -587,17 +623,17 @@ function document_body_unavailable_destroyed(
     const record_of = data.form_type.includes('1')
         ? 'of birth of '
         : data.form_type.includes('2')
-            ? 'of death of'
-            : data.form_type.includes('3')
-                ? 'of marriage between'
-                : ''
+          ? 'of death of'
+          : data.form_type.includes('3')
+            ? 'of marriage between'
+            : ''
     const have_b = data.form_type.includes('1')
         ? 'have been born'
         : data.form_type.includes('2')
-            ? 'have died'
-            : data.form_type.includes('3')
-                ? 'have been married'
-                : ''
+          ? 'have died'
+          : data.form_type.includes('3')
+            ? 'have been married'
+            : ''
     const is_for_1 = data.form_type.includes('1')
         ? ', of parents {{UNKNOWN PARENTS}} and {{UNKNOWN PARENTS}}'
         : '' // With Parents Name kasi
@@ -609,20 +645,25 @@ function document_body_unavailable_destroyed(
     const certificate_of = data.form_type.includes('1')
         ? 'Live Birth'
         : data.form_type.includes('2')
-            ? 'Death'
-            : data.form_type.includes('3')
-                ? 'Marriage'
-                : ''
+          ? 'Death'
+          : data.form_type.includes('3')
+            ? 'Marriage'
+            : ''
     const register_of = data.form_type.includes('1')
         ? 'Births'
         : data.form_type.includes('2')
-            ? 'Deaths'
-            : data.form_type.includes('3')
-                ? 'Marriages'
-                : ''
+          ? 'Deaths'
+          : data.form_type.includes('3')
+            ? 'Marriages'
+            : ''
 
-
-    const document_owner = data.form_type.includes('1') ? data.name_child : data.form_type.includes('2') ? data.name_deceased : data.form_type.includes('3') ? data.groom_name : ''
+    const document_owner = data.form_type.includes('1')
+        ? data.name_child
+        : data.form_type.includes('2')
+          ? data.name_deceased
+          : data.form_type.includes('3')
+            ? data.groom_name
+            : ''
 
     const we_clerify_for_b = `We certify that this office has no record ${record_of} {{UNKNOWN NAME}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{UNKNOWN DATE}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
     const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`
@@ -642,6 +683,8 @@ function document_body_unavailable_destroyed(
     const add_blanks = addBlanks(we_certify_with_line_break)
     const distribute = distributeBlanks(add_blanks)
 
+    const ParagraphPositionX = Number(data.body_data.x)
+    const ParagraphPositionY = Number(data.body_data.y)
     // Start Typing
     let splitedwidth = 0
     let info_spacing = 0
@@ -651,7 +694,7 @@ function document_body_unavailable_destroyed(
         for (const item of items) {
             page.drawText(item.data, {
                 x: 72 + add_tab + splitedwidth,
-                y: 600 - info_spacing,
+                y: ParagraphPositionY - info_spacing,
                 size: fontSize,
                 font: item.isBold ? timesRomanFontBold : timesRomanFont,
                 lineHeight: 14
@@ -666,10 +709,10 @@ function document_body_unavailable_destroyed(
     const we_also_certify_records_of_b = data.form_type.includes('1')
         ? 'births'
         : data.form_type.includes('2')
-            ? 'deaths'
-            : data.form_type.includes('3')
-                ? 'marriage'
-                : ''
+          ? 'deaths'
+          : data.form_type.includes('3')
+            ? 'marriage'
+            : ''
     const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{2024}} are still intact in the archives of this office`
     const for_C = `We also certify that for every registered birth, this office submits a copy of the Certificate of Live Birth to the Office of the Civil Registrar General, Philippine Statistics Authority (PSA), East Avenue, Diliman, Quezon City, Metro Manila. In view of this, the interested party is hereby advised to make further verification in the archives of that office.`
 
@@ -692,13 +735,15 @@ function document_body_unavailable_destroyed(
     let we_also_spacing = 0
     let we_also_gap = 0
 
-    const we_also_certify_position_x = data.form_type.includes('B') ? 500 : 450
+    // const we_also_certify_position_x = data.form_type.includes('B') ? 500 : 450
+    const minustoCertify = data.form_type.includes('B') ? 100 : 150
+    const WeAlsoCertifyPositionY = Number(data.body_data.y) - Number(minustoCertify)
     for (const items of we_also_certify_distribute) {
         const add_tab = not_first_certify ? 0 : 36
         for (const item of items) {
             page.drawText(item.data, {
                 x: 72 + add_tab + we_also_gap,
-                y: we_also_certify_position_x - we_also_spacing,
+                y: WeAlsoCertifyPositionY - we_also_spacing,
                 size: fontSize,
                 font: item.isBold ? timesRomanFontBold : timesRomanFont,
                 lineHeight: 14
@@ -716,7 +761,10 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
     const FORM_TYPE = data.form_type
     const size_of_paper_by_type_x = FORM_TYPE.includes('A') ? 612 : 595.44
     const size_of_paper_by_type_y = FORM_TYPE.includes('A') ? 936 : 841.68
-    const page = pdfDoc.addPage([size_of_paper_by_type_x, size_of_paper_by_type_y])
+    const page = pdfDoc.addPage([
+        size_of_paper_by_type_x,
+        size_of_paper_by_type_y
+    ])
 
     // const page = pdfDoc.addPage([612, 936]) // 8.5 x 13 inches in points
     const height = page.getHeight()
@@ -835,12 +883,10 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
         color: rgb(0.12, 0.29, 0.49) // RGB color for #1F497D
     })
 
-
-
     // Draw Civil Registrar's Name (centered on page)
-    const mcrText = data.civil_registrar;
-    const mcrTextWidth = fonts.bold.widthOfTextAtSize(mcrText, fontSize);
-    const mcrTextX = setCenter(mcrText, fonts.bold); // Center of page
+    const mcrText = data.civil_registrar
+    const mcrTextWidth = fonts.bold.widthOfTextAtSize(mcrText, fontSize)
+    const mcrTextX = setCenter(mcrText, fonts.bold) // Center of page
 
     page.drawText(mcrText, {
         x: mcrTextX,
@@ -848,14 +894,16 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
         size: fontSize,
         font: fonts.bold,
         color: rgb(0.12, 0.29, 0.49)
-    });
-
+    })
 
     // Draw Civil Registrar's Position (centered under NAME)
 
-    const mcrPositionText = data.civil_registrar_position;
-    const mcrPositionWidth = fonts.regular.widthOfTextAtSize(mcrPositionText, fontSize);
-    const mcrPositionX = mcrTextX + mcrTextWidth / 2 - mcrPositionWidth / 2; // Center under name
+    const mcrPositionText = data.civil_registrar_position
+    const mcrPositionWidth = fonts.regular.widthOfTextAtSize(
+        mcrPositionText,
+        fontSize
+    )
+    const mcrPositionX = mcrTextX + mcrTextWidth / 2 - mcrPositionWidth / 2 // Center under name
 
     page.drawText(mcrPositionText, {
         x: mcrPositionX,
@@ -863,14 +911,18 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
         size: fontSize,
         font: fonts.regular,
         color: rgb(0.12, 0.29, 0.49)
-    });
+    })
 
     // For Absence Section
     if (data.for_and_in_the_absence) {
         // "For and in the absence of:" label
-        const absenceLabel = "For and in the absence of:";
-        const absenceLabelWidth = fonts.italic.widthOfTextAtSize(absenceLabel, fontSize);
-        const absenceLabelX = mcrTextX + mcrTextWidth / 2 - absenceLabelWidth / 2;
+        const absenceLabel = 'For and in the absence of:'
+        const absenceLabelWidth = fonts.italic.widthOfTextAtSize(
+            absenceLabel,
+            fontSize
+        )
+        const absenceLabelX =
+            mcrTextX + mcrTextWidth / 2 - absenceLabelWidth / 2
 
         page.drawText(absenceLabel, {
             x: absenceLabelX,
@@ -878,12 +930,16 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
             size: fontSize,
             font: fonts.italic,
             color: rgb(0.12, 0.29, 0.49)
-        });
+        })
 
         // Verified By Name
-        const verifiedByName = data.absence_verified_by;
-        const verifiedByNameWidth = fonts.bold.widthOfTextAtSize(verifiedByName, fontSize);
-        const verifiedByNameX = mcrTextX + mcrTextWidth / 2 - verifiedByNameWidth / 2;
+        const verifiedByName = data.absence_verified_by
+        const verifiedByNameWidth = fonts.bold.widthOfTextAtSize(
+            verifiedByName,
+            fontSize
+        )
+        const verifiedByNameX =
+            mcrTextX + mcrTextWidth / 2 - verifiedByNameWidth / 2
 
         page.drawText(verifiedByName, {
             x: verifiedByNameX,
@@ -891,12 +947,16 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
             size: fontSize,
             font: fonts.bold,
             color: rgb(0.12, 0.29, 0.49)
-        });
+        })
 
         // Verified By Position
-        const verifiedByPos = data.absence_verifier_position;
-        const verifiedByPosWidth = fonts.regular.widthOfTextAtSize(verifiedByPos, fontSize);
-        const verifiedByPosX = mcrTextX + mcrTextWidth / 2 - verifiedByPosWidth / 2;
+        const verifiedByPos = data.absence_verifier_position
+        const verifiedByPosWidth = fonts.regular.widthOfTextAtSize(
+            verifiedByPos,
+            fontSize
+        )
+        const verifiedByPosX =
+            mcrTextX + mcrTextWidth / 2 - verifiedByPosWidth / 2
 
         page.drawText(verifiedByPos, {
             x: verifiedByPosX,
@@ -904,156 +964,170 @@ async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
             size: fontSize,
             font: fonts.regular,
             color: rgb(0.12, 0.29, 0.49)
-        });
+        })
     }
-
-
 }
 
-
 async function createRemarks(pdfDoc, data, page, fonts, fontSize) {
-
-    page.drawText("REMARKS:", {
+    page.drawText('REMARKS:', {
         x: 72,
         y: 276,
         size: fontSize,
-        font: fonts.bold,
+        font: fonts.bold
     })
 
-
-    const remarksWidth = fonts.bold.widthOfTextAtSize("REMARKS:", fontSize)
-    if (data.is_reconstructed) (
-        page.drawText("Reconstructed Copy", {
-            x: (72 + remarksWidth) + 12,
+    const remarksWidth = fonts.bold.widthOfTextAtSize('REMARKS:', fontSize)
+    if (data.is_reconstructed)
+        page.drawText('Reconstructed Copy', {
+            x: 72 + remarksWidth + 12,
             y: 276,
             size: fontSize,
-            font: fonts.italic,
+            font: fonts.italic
         })
-    )
 
     if (data.is_other_remarks) {
         remark_annotation_maker(data.remarks, fonts, page, pdfDoc)
     }
 }
 
-
-
-
 /**
- * Remarks Maker 
+ * Remarks Maker
  * Hirap naman neto langya hahahaha
  */
 
 async function remark_annotation_maker(data, fonts, page, pdfDoc) {
-    let currentY = 260;
-    const lineHeight = 14;
-    const maxWidth = 595 - 144; // A4 width minus margins
+    let currentY = 260
+    const lineHeight = 14
+    const maxWidth = 595 - 144 // A4 width minus margins
 
-    const words = [];
+    const words = []
     for (const main_value of data.ops) {
-        const attributes = main_value.attributes || {};
-        const fontType = attributes.bold && attributes.italic ? fonts.boldItalic :
-            attributes.bold ? fonts.bold :
-                attributes.italic ? fonts.italic :
-                    fonts.regular;
+        const attributes = main_value.attributes || {}
+        const fontType =
+            attributes.bold && attributes.italic
+                ? fonts.boldItalic
+                : attributes.bold
+                  ? fonts.bold
+                  : attributes.italic
+                    ? fonts.italic
+                    : fonts.regular
 
-        const insertText = main_value.insert || '';
+        const insertText = main_value.insert || ''
         // Split text into paragraphs using newline characters
-        const lines = insertText.split('\n');
+        const lines = insertText.split('\n')
         for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-            const line = lines[lineIdx];
+            const line = lines[lineIdx]
             // Split paragraph into words
-            const splitWords = line.split(/\s+/).filter(word => word.length > 0);
+            const splitWords = line
+                .split(/\s+/)
+                .filter((word) => word.length > 0)
             for (const wordText of splitWords) {
-                words.push({ text: wordText, font: fontType });
+                words.push({ text: wordText, font: fontType })
             }
             // Add a forced newline marker after each line except the last one
             if (lineIdx < lines.length - 1) {
-                words.push({ isNewLine: true });
+                words.push({ isNewLine: true })
             }
         }
     }
 
-    let currentLine = [];
-    let currentLineWidth = 0;
+    let currentLine = []
+    let currentLineWidth = 0
 
     for (const word of words) {
         if (word.isNewLine) {
             // Force a new line for Enter key
             if (currentLine.length > 0) {
-                drawLine(currentLine, 90, currentY, maxWidth, page, true);
-                currentY -= lineHeight;
+                drawLine(currentLine, 90, currentY, maxWidth, page, true)
+                currentY -= lineHeight
                 if (currentY < 72) {
-                    page = pdfDoc.addPage();
-                    currentY = page.getHeight() - 72;
+                    page = pdfDoc.addPage()
+                    currentY = page.getHeight() - 72
                 }
             }
-            currentLine = [];
-            currentLineWidth = 0;
-            continue;
+            currentLine = []
+            currentLineWidth = 0
+            continue
         }
 
-        const wordWidth = word.font.widthOfTextAtSize(word.text, 12);
-        let tentativeWidth = currentLineWidth + (currentLine.length > 0 ? word.font.widthOfTextAtSize(' ', 12) : 0) + wordWidth;
+        const wordWidth = word.font.widthOfTextAtSize(word.text, 12)
+        let tentativeWidth =
+            currentLineWidth +
+            (currentLine.length > 0
+                ? word.font.widthOfTextAtSize(' ', 12)
+                : 0) +
+            wordWidth
 
         if (tentativeWidth > maxWidth) {
-            drawLine(currentLine, 90, currentY, maxWidth, page, false);
-            currentY -= lineHeight;
+            drawLine(currentLine, 90, currentY, maxWidth, page, false)
+            currentY -= lineHeight
             if (currentY < 72) {
-                page = pdfDoc.addPage();
-                currentY = page.getHeight() - 72;
+                page = pdfDoc.addPage()
+                currentY = page.getHeight() - 72
             }
-            currentLine = [word];
-            currentLineWidth = wordWidth;
+            currentLine = [word]
+            currentLineWidth = wordWidth
         } else {
             if (currentLine.length > 0) {
-                currentLineWidth += word.font.widthOfTextAtSize(' ', 12);
+                currentLineWidth += word.font.widthOfTextAtSize(' ', 12)
             }
-            currentLine.push(word);
-            currentLineWidth += wordWidth;
+            currentLine.push(word)
+            currentLineWidth += wordWidth
         }
     }
 
     if (currentLine.length > 0) {
-        drawLine(currentLine, 90, currentY, maxWidth, page, true);
+        drawLine(currentLine, 90, currentY, maxWidth, page, true)
     }
 }
 
 function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
-    if (lineWords.length === 0) return;
+    if (lineWords.length === 0) return
 
-    let totalWordsWidth = 0;
-    let totalSpacesWidth = 0;
-    const numberOfGaps = lineWords.length - 1;
+    let totalWordsWidth = 0
+    let totalSpacesWidth = 0
+    const numberOfGaps = lineWords.length - 1
 
     for (let i = 0; i < lineWords.length; i++) {
-        const word = lineWords[i];
-        totalWordsWidth += word.font.widthOfTextAtSize(word.text, 12);
+        const word = lineWords[i]
+        totalWordsWidth += word.font.widthOfTextAtSize(word.text, 12)
         if (i < numberOfGaps) {
-            const spaceWidth = word.font.widthOfTextAtSize(' ', 12);
-            totalSpacesWidth += spaceWidth;
+            const spaceWidth = word.font.widthOfTextAtSize(' ', 12)
+            totalSpacesWidth += spaceWidth
         }
     }
 
-    const totalWidth = totalWordsWidth + totalSpacesWidth;
-    let extraSpacePerGap = 0;
+    const totalWidth = totalWordsWidth + totalSpacesWidth
+    let extraSpacePerGap = 0
 
     if (!isLastLine && numberOfGaps > 0) {
-        extraSpacePerGap = (maxWidth - totalWidth) / numberOfGaps;
+        extraSpacePerGap = (maxWidth - totalWidth) / numberOfGaps
     }
 
-    let currentX = xStart;
+    let currentX = xStart
 
     for (let i = 0; i < lineWords.length; i++) {
-        const word = lineWords[i];
+        const word = lineWords[i]
         if (i === 0) {
-            page.drawText(word.text, { x: currentX, y, font: word.font, size: 12 });
-            currentX += word.font.widthOfTextAtSize(word.text, 12);
+            page.drawText(word.text, {
+                x: currentX,
+                y,
+                font: word.font,
+                size: 12
+            })
+            currentX += word.font.widthOfTextAtSize(word.text, 12)
         } else {
-            const spaceWidth = lineWords[i - 1].font.widthOfTextAtSize(' ', 12) + extraSpacePerGap;
-            currentX += spaceWidth;
-            page.drawText(word.text, { x: currentX, y, font: word.font, size: 12 });
-            currentX += word.font.widthOfTextAtSize(word.text, 12);
+            const spaceWidth =
+                lineWords[i - 1].font.widthOfTextAtSize(' ', 12) +
+                extraSpacePerGap
+            currentX += spaceWidth
+            page.drawText(word.text, {
+                x: currentX,
+                y,
+                font: word.font,
+                size: 12
+            })
+            currentX += word.font.widthOfTextAtSize(word.text, 12)
         }
     }
 }
@@ -1061,8 +1135,14 @@ function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
 /////////////////////////
 // Parangraph Function //
 /////////////////////////
-function add_line_break(data, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
-
+function add_line_break(
+    data,
+    page,
+    height,
+    fontSize,
+    timesRomanFont,
+    timesRomanFontBold
+) {
     const splitted = data.trim().split(' ')
     const filtered = []
     let currentArray = [] // Changeable kasi
@@ -1071,42 +1151,64 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
     let this_is_not_the_first = false
 
     for (const item of splitted) {
-
         const fontType = isBold ? timesRomanFontBold : timesRomanFont
-        const widthofText = fontType.widthOfTextAtSize(item.replace('{{', '').replace('}}', ''), fontSize) + 4;
+        const widthofText =
+            fontType.widthOfTextAtSize(
+                item.replace('{{', '').replace('}}', ''),
+                fontSize
+            ) + 4
 
-        item.includes('{{') && item.includes('}}') ? isBold = false : item.includes('{{') ? isBold = true : item.includes('}}') ? isBold = false : ''
+        item.includes('{{') && item.includes('}}')
+            ? (isBold = false)
+            : item.includes('{{')
+              ? (isBold = true)
+              : item.includes('}}')
+                ? (isBold = false)
+                : ''
 
-        const tell_the_max_space = this_is_not_the_first || item !== 'archives' ? 415 : 415
+        const tell_the_max_space =
+            this_is_not_the_first || item !== 'archives' ? 415 : 415
 
         if (totalWidthSoFar + widthofText > tell_the_max_space) {
-            filtered.push(currentArray);
-            currentArray = [];
+            filtered.push(currentArray)
+            currentArray = []
             this_is_not_the_first = true
-            totalWidthSoFar = 0; // Reset the width
+            totalWidthSoFar = 0 // Reset the width
         }
 
         if (item.includes('{{') && item.includes('}}')) {
-            currentArray.push({ data: item.replace('{{', '').replace('}}', ''), isBold: true, size: widthofText })
-            totalWidthSoFar += widthofText;
+            currentArray.push({
+                data: item.replace('{{', '').replace('}}', ''),
+                isBold: true,
+                size: widthofText
+            })
+            totalWidthSoFar += widthofText
             this_is_not_the_first = true
             continue
         }
 
         if (item.includes('}}')) {
-            currentArray.push({ data: item.replace('{{', '').replace('}}', ''), isBold: true, size: widthofText })
-            totalWidthSoFar += widthofText;
+            currentArray.push({
+                data: item.replace('{{', '').replace('}}', ''),
+                isBold: true,
+                size: widthofText
+            })
+            totalWidthSoFar += widthofText
             this_is_not_the_first = true
             continue
         }
 
-        currentArray.push({ data: item.replace('{{', '').replace('}}', ''), isBold: isBold, size: widthofText })
-        totalWidthSoFar += widthofText;
+        currentArray.push({
+            data: item.replace('{{', '').replace('}}', ''),
+            isBold: isBold,
+            size: widthofText
+        })
+        totalWidthSoFar += widthofText
         this_is_not_the_first = true
     }
 
     if (currentArray.length > 0) {
-        filtered.push(currentArray);
+        filtered.push(currentArray)
     }
 
     isBold = false
@@ -1116,34 +1218,33 @@ function add_line_break(data, page, height, fontSize, timesRomanFont, timesRoman
 }
 
 function addBlanks(data) {
-    const targetWidth = 451;
-    const minimumWidthToAddBlanks = 350;
+    const targetWidth = 451
+    const minimumWidthToAddBlanks = 350
 
     let newData = []
     let this_is_not_the_first = false
 
     for (const items of data) {
-        let totalWidth = items.reduce((acc, item) => acc + item.size, 0);
+        let totalWidth = items.reduce((acc, item) => acc + item.size, 0)
         const tell_the_max_space = this_is_not_the_first ? targetWidth : 415
         if (totalWidth <= minimumWidthToAddBlanks) {
-            newData.push([...items]);
+            newData.push([...items])
             this_is_not_the_first = true
-            continue;
+            continue
         }
         if (totalWidth <= tell_the_max_space) {
-
-            let newLine = [...items];
-            const remainingSpace = tell_the_max_space - totalWidth;
-            const blankItem = { data: ' ', isBold: false, size: 1 };
-            const numberOfBlanks = Math.ceil(remainingSpace);
+            let newLine = [...items]
+            const remainingSpace = tell_the_max_space - totalWidth
+            const blankItem = { data: ' ', isBold: false, size: 1 }
+            const numberOfBlanks = Math.ceil(remainingSpace)
 
             for (let i = 0; i < numberOfBlanks; i++) {
-                newLine.push(blankItem);
+                newLine.push(blankItem)
             }
-            newData.push(newLine);
+            newData.push(newLine)
             this_is_not_the_first = true
         } else {
-            newData.push([...items]);
+            newData.push([...items])
             this_is_not_the_first = true
         }
     }
@@ -1151,31 +1252,29 @@ function addBlanks(data) {
 }
 
 function distributeBlanks(data) {
-    return data.map(array => {
+    return data.map((array) => {
+        const nonBlanks = array.filter((item) => item.data.trim() !== '')
+        const blanks = array.filter((item) => item.data.trim() === '')
+        const totalNonBlanks = nonBlanks.length
+        const blanksPerGap = Math.floor(blanks.length / (totalNonBlanks - 1))
+        const extraBlanks = blanks.length % (totalNonBlanks - 1)
 
-        const nonBlanks = array.filter(item => item.data.trim() !== '');
-        const blanks = array.filter(item => item.data.trim() === '');
-        const totalNonBlanks = nonBlanks.length;
-        const blanksPerGap = Math.floor(blanks.length / (totalNonBlanks - 1));
-        const extraBlanks = blanks.length % (totalNonBlanks - 1);
-
-
-        let distributedArray = [];
-        let blankIndex = 0;
+        let distributedArray = []
+        let blankIndex = 0
 
         nonBlanks.forEach((item, index) => {
-            distributedArray.push(item);
+            distributedArray.push(item)
             if (index < totalNonBlanks - 1) {
                 for (let i = 0; i < blanksPerGap; i++) {
-                    distributedArray.push(blanks[blankIndex++]);
+                    distributedArray.push(blanks[blankIndex++])
                 }
 
                 if (index < extraBlanks) {
-                    distributedArray.push(blanks[blankIndex++]);
+                    distributedArray.push(blanks[blankIndex++])
                 }
             }
-        });
+        })
 
-        return distributedArray;
-    });
+        return distributedArray
+    })
 }
