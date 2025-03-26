@@ -2,7 +2,7 @@
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <div class="w-full gap-2 flex flex-row items-center justify-center">
-        <Button label="Create New" isActive :class="`rounded`" @click="open_modal()" />
+        <Button label="Create New Petition" isActive :class="`rounded`" @click="open_modal()" />
         <button @click="quick_settings = !quick_settings"
           class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
             icon="fa-solid fa-info" /></button>

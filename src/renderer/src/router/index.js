@@ -274,6 +274,12 @@ const router = createRouter({
                     beforeEnter: navGuard
                 },
                 {
+                    path: 'legitimation',
+                    name: 'legitimation',
+                    component: () => import('../views/pages/Legitimation.vue'),
+                    beforeEnter: navGuard
+                },
+                {
                     path: 'ausf',
                     name: 'page_ausf',
                     component: () => import('../views/pages/AUSF.vue'),

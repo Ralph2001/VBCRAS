@@ -1,5 +1,5 @@
 from ..extensions import db, jsonify, request, Blueprint
-from ..models.form import Form1A, Form2A, Form3A, Form1B, Form2B, Form3B, Form1C, Form2C, Form3C
+from ..models.form import BirthAvailable, DeathAvailable, MarriageAvailable, BirthIntact, DeathIntact, MarriageIntact, BirthDestroyed, DeathDestroyed, MarriageDestroyed
 from ..schemas.forms_schema import Form1ASchema, Form2ASchema, Form3ASchema, Form1BSchema, Form2BSchema, Form3BSchema, Form1CSchema, Form2CSchema, Form3CSchema
 
 forms = Blueprint("forms", __name__)
@@ -24,10 +24,10 @@ form2c_list_schema = Form2CSchema(many=True)
 form3c_schema = Form3CSchema()
 form3c_list_schema = Form3CSchema(many=True)
 
-# Routes for Form1A
+# Routes for BirthAvailable
 @forms.route("/form1a", methods=["GET"])
 def get_all_form1a():
-    records = Form1A.query.all()
+    records = BirthAvailable.query.all()
     result = form1a_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -42,23 +42,23 @@ def add_form1a():
 
 @forms.route("/form1a/<int:id>", methods=["GET"])
 def get_form1a(id):
-    record = Form1A.query.get_or_404(id)
+    record = BirthAvailable.query.get_or_404(id)
     result = form1a_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form1a/<int:id>", methods=["DELETE"])
 def delete_form1a(id):
-    record = Form1A.query.get_or_404(id)
+    record = BirthAvailable.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form1A record deleted successfully."}), 200
+    return jsonify({"message": "BirthAvailable record deleted successfully."}), 200
 
-# Repeat similar routes for Form2A, Form3A, Form1B, Form2B, Form3B, Form1C, Form2C, Form3C
+# Repeat similar routes for DeathAvailable, MarriageAvailable, BirthIntact, DeathIntact, MarriageIntact, BirthDestroyed, DeathDestroyed, MarriageDestroyed
 
-# Example for Form2A
+# Example for DeathAvailable
 @forms.route("/form2a", methods=["GET"])
 def get_all_form2a():
-    records = Form2A.query.all()
+    records = DeathAvailable.query.all()
     result = form2a_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -73,24 +73,24 @@ def add_form2a():
 
 @forms.route("/form2a/<int:id>", methods=["GET"])
 def get_form2a(id):
-    record = Form2A.query.get_or_404(id)
+    record = DeathAvailable.query.get_or_404(id)
     result = form2a_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form2a/<int:id>", methods=["DELETE"])
 def delete_form2a(id):
-    record = Form2A.query.get_or_404(id)
+    record = DeathAvailable.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form2A record deleted successfully."}), 200
+    return jsonify({"message": "DeathAvailable record deleted successfully."}), 200
 
 # 3A Routes
 
-# Add the following routes for Form3A
+# Add the following routes for MarriageAvailable
 
 @forms.route("/form3a", methods=["GET"])
 def get_all_form3a():
-    records = Form3A.query.all()
+    records = MarriageAvailable.query.all()
     result = form3a_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -105,25 +105,25 @@ def add_form3a():
 
 @forms.route("/form3a/<int:id>", methods=["GET"])
 def get_form3a(id):
-    record = Form3A.query.get_or_404(id)
+    record = MarriageAvailable.query.get_or_404(id)
     result = form3a_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form3a/<int:id>", methods=["DELETE"])
 def delete_form3a(id):
-    record = Form3A.query.get_or_404(id)
+    record = MarriageAvailable.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form3A record deleted successfully."}), 200
+    return jsonify({"message": "MarriageAvailable record deleted successfully."}), 200
 
 
 # -------------------------- Routes --------------------------------------------------------------------------------------------
 
 
-# Routes for Form1B
+# Routes for BirthIntact
 @forms.route("/form1b", methods=["GET"])
 def get_all_form1b():
-    records = Form1B.query.all()
+    records = BirthIntact.query.all()
     result = form1b_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -138,21 +138,21 @@ def add_form1b():
 
 @forms.route("/form1b/<int:id>", methods=["GET"])
 def get_form1b(id):
-    record = Form1B.query.get_or_404(id)
+    record = BirthIntact.query.get_or_404(id)
     result = form1b_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form1b/<int:id>", methods=["DELETE"])
 def delete_form1b(id):
-    record = Form1B.query.get_or_404(id)
+    record = BirthIntact.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form1B record deleted successfully."}), 200
+    return jsonify({"message": "BirthIntact record deleted successfully."}), 200
 
-# Routes for Form2B
+# Routes for DeathIntact
 @forms.route("/form2b", methods=["GET"])
 def get_all_form2b():
-    records = Form2B.query.all()
+    records = DeathIntact.query.all()
     result = form2b_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -167,21 +167,21 @@ def add_form2b():
 
 @forms.route("/form2b/<int:id>", methods=["GET"])
 def get_form2b(id):
-    record = Form2B.query.get_or_404(id)
+    record = DeathIntact.query.get_or_404(id)
     result = form2b_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form2b/<int:id>", methods=["DELETE"])
 def delete_form2b(id):
-    record = Form2B.query.get_or_404(id)
+    record = DeathIntact.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form2B record deleted successfully."}), 200
+    return jsonify({"message": "DeathIntact record deleted successfully."}), 200
 
-# Routes for Form3B
+# Routes for MarriageIntact
 @forms.route("/form3b", methods=["GET"])
 def get_all_form3b():
-    records = Form3B.query.all()
+    records = MarriageIntact.query.all()
     result = form3b_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -196,21 +196,21 @@ def add_form3b():
 
 @forms.route("/form3b/<int:id>", methods=["GET"])
 def get_form3b(id):
-    record = Form3B.query.get_or_404(id)
+    record = MarriageIntact.query.get_or_404(id)
     result = form3b_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form3b/<int:id>", methods=["DELETE"])
 def delete_form3b(id):
-    record = Form3B.query.get_or_404(id)
+    record = MarriageIntact.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form3B record deleted successfully."}), 200
+    return jsonify({"message": "MarriageIntact record deleted successfully."}), 200
 
-# Routes for Form1C
+# Routes for BirthDestroyed
 @forms.route("/form1c", methods=["GET"])
 def get_all_form1c():
-    records = Form1C.query.all()
+    records = BirthDestroyed.query.all()
     result = form1c_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -225,21 +225,21 @@ def add_form1c():
 
 @forms.route("/form1c/<int:id>", methods=["GET"])
 def get_form1c(id):
-    record = Form1C.query.get_or_404(id)
+    record = BirthDestroyed.query.get_or_404(id)
     result = form1c_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form1c/<int:id>", methods=["DELETE"])
 def delete_form1c(id):
-    record = Form1C.query.get_or_404(id)
+    record = BirthDestroyed.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form1C record deleted successfully."}), 200
+    return jsonify({"message": "BirthDestroyed record deleted successfully."}), 200
 
-# Routes for Form2C
+# Routes for DeathDestroyed
 @forms.route("/form2c", methods=["GET"])
 def get_all_form2c():
-    records = Form2C.query.all()
+    records = DeathDestroyed.query.all()
     result = form2c_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -254,21 +254,21 @@ def add_form2c():
 
 @forms.route("/form2c/<int:id>", methods=["GET"])
 def get_form2c(id):
-    record = Form2C.query.get_or_404(id)
+    record = DeathDestroyed.query.get_or_404(id)
     result = form2c_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form2c/<int:id>", methods=["DELETE"])
 def delete_form2c(id):
-    record = Form2C.query.get_or_404(id)
+    record = DeathDestroyed.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form2C record deleted successfully."}), 200
+    return jsonify({"message": "DeathDestroyed record deleted successfully."}), 200
 
-# Routes for Form3C
+# Routes for MarriageDestroyed
 @forms.route("/form3c", methods=["GET"])
 def get_all_form3c():
-    records = Form3C.query.all()
+    records = MarriageDestroyed.query.all()
     result = form3c_list_schema.dump(records)
     return jsonify(result), 200
 
@@ -283,13 +283,13 @@ def add_form3c():
 
 @forms.route("/form3c/<int:id>", methods=["GET"])
 def get_form3c(id):
-    record = Form3C.query.get_or_404(id)
+    record = MarriageDestroyed.query.get_or_404(id)
     result = form3c_schema.dump(record)
     return jsonify(result), 200
 
 @forms.route("/form3c/<int:id>", methods=["DELETE"])
 def delete_form3c(id):
-    record = Form3C.query.get_or_404(id)
+    record = MarriageDestroyed.query.get_or_404(id)
     db.session.delete(record)
     db.session.commit()
-    return jsonify({"message": "Form3C record deleted successfully."}), 200
+    return jsonify({"message": "MarriageDestroyed record deleted successfully."}), 200

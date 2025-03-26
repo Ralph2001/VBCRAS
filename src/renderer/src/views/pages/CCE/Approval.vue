@@ -94,7 +94,7 @@
                         'PPpp') }}
                     </p>
                 </div>
-                <div class="w-full bg-red-500 rounded-full text-white flex items-center  justify-center">
+                <div class="w-full bg-gray-700 rounded  text-white flex items-center  justify-center">
                     <p class="font-medium p-2">{{ petition_info.petition_type === "CCE" ? `Clerical Errors` : `Change of
                         First Name` }}</p>
                 </div>
@@ -136,7 +136,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="w-full bg-yellow-300 rounded-full  text-neutral-950 flex items-center  justify-center">
+                <div class="w-full bg-gray-700 rounded text-white  flex items-center  justify-center">
                     <p class="font-medium p-2"><font-awesome-icon icon="fa-solid fa-paperclip" /> Supporting Documents
                     </p>
                 </div>

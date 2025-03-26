@@ -6,7 +6,7 @@
 
         <Header label="APPLICATION FOR MARRIAGE LICENSE">
             <div class="w-full gap-2 flex flex-row items-center justify-center">
-                <Button label="Create New" isActive :class="`rounded`" @click="open_model" />
+                <Button label="Create New Application" isActive :class="`rounded`" @click="open_model" />
                 <button
                     class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
                         icon="fa-solid fa-info" /></button>

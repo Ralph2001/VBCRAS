@@ -98,7 +98,6 @@ let renderTimeout;
 // Function to render the PDF from base64 data at a specific scale
 const renderPDF = async () => {
     if (!props.pdfBytes64) {
-        errorMessage.value = 'The PDF could not be loaded. Please check the file and try again.';
         return;
     }
 

@@ -2,6 +2,9 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+
+
+
 export const useForms = defineStore('forms', {
     state: () => ({
         form1a: [],
@@ -24,6 +27,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form1a = response.data
+                console.log(response.data)
             } catch (error) {
                 console.error('Error fetching data:', error)
                 // this.router.push('/login')

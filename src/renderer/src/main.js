@@ -100,6 +100,9 @@ import {
     faTowerCell,
     faFileWord,
     faCaretRight,
+    faCopy,
+    faDatabase
+    
 
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -185,7 +188,11 @@ library.add(
     faArrowsRotate,
     faTowerCell,
     faFileWord,
-    faCaretRight
+    faCaretRight,
+    faCopy,
+    faDatabase
+    
+ 
 
 )
 

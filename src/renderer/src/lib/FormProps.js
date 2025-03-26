@@ -7,7 +7,7 @@ export const useTransactionDetails = {
     verifier_position: 'Registration Officer I',
     civil_registrar: 'ISMAEL D. MALICDEM, JR.',
     civil_registrar_position: 'Municipal Civil Registrar',
-    created_by: '',
+    created_by: 1,
     amount_paid: 'Php 130.00',
     or_number: '',
     date_paid: format(new Date(), "MMMM dd, yyyy"),

@@ -1,23 +1,27 @@
 <template>
     <div class="flex flex-col relative justify-center w-full p-10 ">
-        <!-- <Header label="Local Civil Registry Forms">
-            <BtnDrop label="Create" :options="options" @open-modal="OpenForms" />
-        </Header> -->
+
 
         <Header label="LOCAL CIVIL REGISTRY FORMS">
             <div class="w-full gap-2 flex flex-row items-center justify-center">
-                <BtnDrop label="Create New" :options="options" @open-modal="OpenForms" />
+                <BtnDrop label="Create New Form" :options="options" @open-modal="OpenForms" />
                 <button
                     class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
                         icon="fa-solid fa-info" /></button>
             </div>
         </Header>
 
+        <div v-if="isViewLocalOpen"
+            class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center p-10                  justify-center z-50 backdrop-blur-sm backdrop-brightness-50">
+            <div class=" bg-white rounded h-full w-full ">
+                <PDFViewerWorker :scale="1.5" :pdfBytes64="previewUrl" />
+            </div>
+        </div>
 
         <div class="h-[calc(100vh-200px)]">
             <div class="flex flex-row items-center justify-center">
-                <div class="flex flex-col w-full py-2.5 gap-1 mb-6">
-                    <p class="font-medium">Show Table </p>
+                <!-- <div class="flex flex-col w-full py-2.5 gap-1 mb-6">
+                   
                     <div class="flex flex-row gap-2 ml-5 items-center ">
                         <p class="text-xs text-neutral-600 font-medium w-32">Available Record</p>
                         <button
@@ -46,16 +50,15 @@
                             {{ destroyed }}
                         </button>
                     </div>
-                </div>
+                </div> -->
 
 
             </div>
             <!-- <p class="italic font-thin text-sm  font-mono">Table Here</p> -->
 
-            <!-- <div class="h-full">
-                <TableGrid :data="selectedFormData" :dataColumns="colDefs" :suppressRowTransform="true"
-                    v-if="selectedForm !== null" />
-            </div> -->
+            <div class="h-full">
+                <TableGrid :data="formsStore.form1a" :dataColumns="colDefs" :suppressRowTransform="true" />
+            </div>
 
         </div>
 
@@ -489,12 +492,12 @@
                                 </div>
 
                                 <div class="flex flex-row gap-1 items-center justify-center">
-                                    <p class="text-sm  ">x:</p>
+                                    <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                                     <InputforForm width="6rem" type="number" v-model="preference.logo.left_x" />
                                 </div>
 
                                 <div class="flex flex-row gap-1 items-center justify-center">
-                                    <p class="text-sm  ">y:</p>
+                                    <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                                     <InputforForm width="6rem" type="number" v-model="preference.logo.left_y" />
                                 </div>
 
@@ -509,12 +512,12 @@
                                 </div>
 
                                 <div class="flex flex-row gap-1 items-center justify-center">
-                                    <p class="text-sm  ">X:</p>
+                                    <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                                     <InputforForm width="6rem" type="number" v-model="preference.logo.right_x" />
                                 </div>
 
                                 <div class="flex flex-row gap-1 items-center justify-center">
-                                    <p class="text-sm  ">Y:</p>
+                                    <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                                     <InputforForm width="6rem" type="number" v-model="preference.logo.right_y" />
                                 </div>
 
@@ -531,68 +534,68 @@
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Header </p>
 
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.header.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Concern </p>
 
-                            x:
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                             <InputforForm width="6rem" type="number" v-model="preference.concern.x" />
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.concern.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Page/Book Number </p>
 
-                            x:
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                             <InputforForm width="6rem" type="number" v-model="preference.page_book_number.x" />
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.page_book_number.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Body/Data </p>
 
-                            x:
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                             <InputforForm width="6rem" type="number" v-model="preference.body_data.x" />
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.body_data.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Issued to </p>
 
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.issued_to.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Verifier</p>
 
-                            x:
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                             <InputforForm width="6rem" type="number" v-model="preference.verifier.x" />
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.verifier.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">C/MCR</p>
 
-                            x:
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                             <InputforForm width="6rem" type="number" v-model="preference.c_mcr.x" />
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.c_mcr.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Billing Info</p>
 
-                            x:
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
                             <InputforForm width="6rem" type="number" v-model="preference.billing_info.x" />
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.billing_info.y" />
                         </div>
 
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Authentication</p>
 
-                            y:
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.authentication.y" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
@@ -650,6 +653,10 @@ import ControlButton from '../../components/ControlButton.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import { useAvailableForm, useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
 import { dumb_maker } from '../../lib/lala.js'
+import ManageBtn from '../../components/Form/ManageBtn.vue'
+
+const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
+
 
 const settings = ref(false)
 const transactions = reactive(useTransactionDetails)
@@ -747,10 +754,19 @@ watch(isPreview, (newValue, oldValue) => {
 })
 
 watch(preference, (newPreferences, oldPreferences) => {
-    if (isPreview) {
+    if (isPreview.value === true) {
         previewForm();
     }
 }, { deep: true });
+
+watch(() => available.is_other_remarks, (newValue, oldValue) => {
+    if (available.is_other_remarks) {
+        preference.c_mcr.y = preference.c_mcr.y = 180
+    } else {
+        preference.c_mcr.y = preference.c_mcr.y = 216
+
+    }
+}, { deep: true })
 
 
 const createForm = async () => {
@@ -780,7 +796,16 @@ const createForm = async () => {
             ...(form_type.endsWith('A') ? available : {}),
             ...formAvailableMapping[form_type],
         });
+        const formData = reactive({
+            ...transactions,
+            ...(form_type.endsWith('A') ? available : {}),
+            ...formAvailableMapping[form_type],
+        });
         const preview = await window.FormApi.PreviewFormPDF(JSON.stringify(main_data));
+
+        // Save it to databse
+        const add = await formsStore.add_form1a(formData)
+        //    Print the document
         const print = await window.LocalCivilApi.printPDFBase64(preview.result.pdfbase64)
 
     } else {
@@ -882,7 +907,8 @@ const is_remarks_check = ref(false)
 
 
 onMounted(() => {
-    fetchFormData('Form 1A')
+    // fetchFormData('Form 1A')
+    formsStore.get_all_form1a()
 });
 
 
@@ -1053,6 +1079,10 @@ const toggleForm = (val) => {
 const nodateforparentsmarriage = ref(false)
 
 
+const isViewLocalOpen = ref(false)
+const handleViewLocal = (data) => {
+    isViewLocalOpen.value = true
+}
 
 
 
@@ -1062,6 +1092,7 @@ const colDefs = ref([
         headerName: "Document Owner",
         flex: 2,
         filter: true,
+        cellClass: 'font-medium',
         cellStyle: { border: "none" },
         pinned: "left",
         width: 200,
@@ -1084,7 +1115,6 @@ const colDefs = ref([
         headerName: "Date Registration",
         filter: true,
     },
-
     {
         field: "date_birth",
         headerName: "Date of Birth",
@@ -1101,16 +1131,19 @@ const colDefs = ref([
         filter: true,
     },
     {
-        field: "",
         headerName: "Action",
-        filter: false,
         cellStyle: { border: "none" },
         pinned: "right",
-        width: 200,
         flex: 2,
+        width: 150,
         lockPinned: true,
         resizable: true,
         sortable: false,
+        cellStyle: { overflow: "visible", border: "none" },
+        cellRenderer: ManageBtn,
+        cellRendererParams: {
+            onViewLocal: handleViewLocal,
+        },
     },
 
 

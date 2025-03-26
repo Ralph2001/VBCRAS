@@ -27,7 +27,7 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{get_database_path()}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=8)
-    app.config["JWT_SECRET_KEY"] = "VBCRAS_SECRET_KEY_IS_SECRET"
+    app.config["JWT_SECRET_KEY"] = "VBCRAS_SECRET_KEY_IS_THE_ONE_PIECE_IS_REAL"
     
     # Initialize SQLAlchemy with the app
     jwt.init_app(app)
@@ -48,13 +48,14 @@ def create_app():
     
     
     # Models
+    # Add Models Here to create it
     from .models.scanned import ScannedType, Scans
     from .models.user import Users, create_admin
     from .models.ausf import Ausf
     from .models.system import SystemSettings
     from .models.civil_registry_corrections import Petitions
     from .models.application_marriage_license import ApplicationMarriageLicense
-    from .models.form import Form1A, Form2A, Form3A, Form1B, Form2B, Form3B, Form1C, Form2C, Form3C
+    from .models.form import BirthAvailable, DeathAvailable, MarriageAvailable, BirthIntact, DeathIntact, MarriageIntact, BirthDestroyed, DeathDestroyed, MarriageDestroyed
      
     with app.app_context():
         db.create_all()

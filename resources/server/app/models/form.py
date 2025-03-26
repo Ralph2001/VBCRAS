@@ -3,9 +3,9 @@ from ..extensions import db
 class BaseCertificate(db.Model):
     __abstract__ = True  # Abstract base class won't create a table
 
-
+    # All Forms have this
     id = db.Column(db.Integer, primary_key=True)
-    date_filed = db.Column(db.Date, nullable=False)
+    date_filed = db.Column(db.String(50))
     certification_issued_to = db.Column(db.String(255))
     verified_by = db.Column(db.String(255))
     verifier_position = db.Column(db.String(255))
@@ -13,20 +13,25 @@ class BaseCertificate(db.Model):
     civil_registrar_position = db.Column(db.String(255))
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     is_with_authentication = db.Column(db.Boolean, default=False)
+    for_and_in_the_absence = db.Column(db.Boolean, default=False)
+    absence_verified_by= db.Column(db.String(255))
+    absence_verifier_position= db.Column(db.String(255))
 
 class AvailableMixin:
     """Fields for forms with available records"""
-    date_registration = db.Column(db.Date)
+    date_registration = db.Column(db.String(50))
     page_number = db.Column(db.String(20))
     book_number = db.Column(db.String(20))
-    registry_number = db.Column(db.String(50), unique=True)
+    registry_number = db.Column(db.String(50))
     remarks = db.Column(db.Text)
+    is_reconstructed= db.Column(db.Boolean, default=False)
+    is_other_remarks= db.Column(db.Boolean, default=False)
 
 class PaymentMixin:
     """Payment-related fields for forms with financial transactions"""
-    amount_paid = db.Column(db.Numeric(10, 2))
+    amount_paid = db.Column(db.String(50))
     or_number = db.Column(db.String(50))
-    date_paid = db.Column(db.Date)
+    date_paid = db.Column(db.String(50))
 
 class RegisteredPeriodMixin:
     """Fields for forms tracking registration periods"""
@@ -36,13 +41,13 @@ class RegisteredPeriodMixin:
     destroyed_by = db.Column(db.String(255))
 
 # -------------------- A-Series Forms --------------------
-class Form1A(BaseCertificate, PaymentMixin, AvailableMixin):
-    __tablename__ = 'form1a'
+class BirthAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
+    __tablename__ = 'birth_available'
     __table_args__ = (db.Index("idx_registry_number", "registry_number"),)
     # Child information
     name_child = db.Column(db.String(255), nullable=False)
     sex = db.Column(db.String(10), nullable=False)
-    date_birth = db.Column(db.Date, nullable=False)
+    date_birth = db.Column(db.String(100), nullable=False)
     place_birth = db.Column(db.String(255), nullable=False)
     
     # Parent information
@@ -52,11 +57,11 @@ class Form1A(BaseCertificate, PaymentMixin, AvailableMixin):
     citizenship_father = db.Column(db.String(100))
     
     # Parents' marriage details
-    date_marriage_parents = db.Column(db.Date)
+    date_marriage_parents = db.Column(db.String(100))
     place_marriage_parents = db.Column(db.String(255))
 
-class Form2A(BaseCertificate, PaymentMixin, AvailableMixin):
-    __tablename__ = 'form2a'
+class DeathAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
+    __tablename__ = 'death_available'
 
     # Deceased information
     name_deceased = db.Column(db.String(255), nullable=False)
@@ -70,9 +75,9 @@ class Form2A(BaseCertificate, PaymentMixin, AvailableMixin):
     place_of_death = db.Column(db.String(255))
     cause_of_death = db.Column(db.String(255))
 
-class Form3A(BaseCertificate, PaymentMixin, AvailableMixin):
+class MarriageAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
 
-    __tablename__ = 'form3a'
+    __tablename__ = 'marriage_available'
 
     # Groom information
     groom_name = db.Column(db.String(255), nullable=False)
@@ -98,39 +103,39 @@ class Form3A(BaseCertificate, PaymentMixin, AvailableMixin):
 
 
 # -------------------- B-Series Forms -------------------- 
-class Form1B(BaseCertificate, PaymentMixin):
-    __tablename__ = 'form1b'
+class BirthIntact(BaseCertificate, PaymentMixin):
+    __tablename__ = 'birth_intact'
     no_record_birth_of = db.Column(db.String(255))
     born_on = db.Column(db.Date)
     mother_name = db.Column(db.String(255))
     father_name = db.Column(db.String(255))
     intact_birth_year = db.Column(db.Integer)
 
-class Form2B(BaseCertificate, PaymentMixin):
-    __tablename__ = 'form2b'
+class DeathIntact(BaseCertificate, PaymentMixin):
+    __tablename__ = 'death_intact'
     no_record_death_of = db.Column(db.String(255))
     died_on = db.Column(db.Date)
     intact_death_year = db.Column(db.Integer)
 
-class Form3B(BaseCertificate, PaymentMixin):
-    __tablename__ = 'form3b'
+class MarriageIntact(BaseCertificate, PaymentMixin):
+    __tablename__ = 'marriage_intact'
     no_record_marriage_of = db.Column(db.String(255))
     married_on = db.Column(db.Date)
     intact_marriage_year = db.Column(db.Integer)
 
 
 # -------------------- C-Series Forms --------------------
-class Form1C(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
-    __tablename__ = 'form1c'
+class BirthDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
+    __tablename__ = 'birth_destroyed'
     birth_name = db.Column(db.String(255))
     born_on = db.Column(db.Date)
 
-class Form2C(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
-    __tablename__ = 'form2c'
+class DeathDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
+    __tablename__ = 'death_destroyed'
     death_name = db.Column(db.String(255))
     died_on = db.Column(db.Date)
 
-class Form3C(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
-    __tablename__ = 'form3c'
+class MarriageDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
+    __tablename__ = 'marriage_destroyed'
     marriage_name = db.Column(db.String(255))
     married_on = db.Column(db.Date)

@@ -1,10 +1,10 @@
 from ..extensions import ma
-from ..models.form import Form1A, Form2A, Form3A, Form1B, Form2B, Form3B, Form1C, Form2C, Form3C
+from ..models.form import BirthAvailable, DeathAvailable, MarriageAvailable, BirthIntact, DeathIntact, MarriageIntact, BirthDestroyed, DeathDestroyed, MarriageDestroyed
 from .user_schema import CreatedUserSchema  # Assuming you have a user schema
 
 class Form1ASchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form1A
+        model = BirthAvailable
         load_instance = True
         include_fk = True
 
@@ -12,7 +12,7 @@ class Form1ASchema(ma.SQLAlchemyAutoSchema):
 
 class Form2ASchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form2A
+        model = DeathAvailable
         load_instance = True
         include_fk = True
 
@@ -20,7 +20,7 @@ class Form2ASchema(ma.SQLAlchemyAutoSchema):
 
 class Form3ASchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form3A
+        model = MarriageAvailable
         load_instance = True
         include_fk = True
 
@@ -28,7 +28,7 @@ class Form3ASchema(ma.SQLAlchemyAutoSchema):
 
 class Form1BSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form1B
+        model = BirthIntact
         load_instance = True
         include_fk = True
 
@@ -36,7 +36,7 @@ class Form1BSchema(ma.SQLAlchemyAutoSchema):
 
 class Form2BSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form2B
+        model = DeathIntact
         load_instance = True
         include_fk = True
 
@@ -44,7 +44,7 @@ class Form2BSchema(ma.SQLAlchemyAutoSchema):
 
 class Form3BSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form3B
+        model = MarriageIntact
         load_instance = True
         include_fk = True
 
@@ -52,7 +52,7 @@ class Form3BSchema(ma.SQLAlchemyAutoSchema):
 
 class Form1CSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form1C
+        model = BirthDestroyed
         load_instance = True
         include_fk = True
 
@@ -60,7 +60,7 @@ class Form1CSchema(ma.SQLAlchemyAutoSchema):
 
 class Form2CSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form2C
+        model = DeathDestroyed
         load_instance = True
         include_fk = True
 
@@ -68,7 +68,7 @@ class Form2CSchema(ma.SQLAlchemyAutoSchema):
 
 class Form3CSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Form3C
+        model = MarriageDestroyed
         load_instance = True
         include_fk = True
 
