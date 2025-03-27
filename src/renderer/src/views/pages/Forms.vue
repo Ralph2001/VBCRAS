@@ -203,15 +203,19 @@
                             </InputLabel>
                             <InputLabel label="Sex">
                                 :
-                                <InputforForm width="100%" v-model="Form1A.sex" />
+                                <!-- <InputforForm width="100%" v-model="Form1A.sex" /> -->
+                                <InputforFormSuggestions width="100%" v-model="Form1A.sex"
+                                    :options="['Male', 'Female']" />
+                                <!-- <InputforFormSuggestions width="100%" v-model="Form1A.sex" /> -->
                             </InputLabel>
                             <InputLabel label="Date of birth">
                                 :
-                                <InputforForm width="100%" v-model="Form1A.date_birth" />
+                                <InputforForm width="100%" v-model="Form1A.date_birth" isDate />
                             </InputLabel>
                             <InputLabel label="Place of birth">
                                 :
-                                <InputforForm width="100%" v-model="Form1A.place_birth" />
+
+                                <InputforFormSuggestions width="100%" v-model="Form1A.place_birth" isPlace />
                             </InputLabel>
                             <InputLabel label="Name of Mother">
                                 :
@@ -219,7 +223,9 @@
                             </InputLabel>
                             <InputLabel label="Citizenship of Mother">
                                 :
-                                <InputforForm width="100%" v-model="Form1A.citizenship_mother" />
+                                <InputforFormSuggestions width="100%" v-model="Form1A.citizenship_mother"
+                                    :options="citizenshipOptions" />
+                                
                             </InputLabel>
                             <InputLabel label="Name of Father">
                                 :
@@ -227,7 +233,9 @@
                             </InputLabel>
                             <InputLabel label="Citizenship of Father">
                                 :
-                                <InputforForm width="100%" v-model="Form1A.citizenship_father" />
+                                
+                                    <InputforFormSuggestions width="100%" v-model="Form1A.citizenship_father"
+                                    :options="citizenshipOptions" />
                             </InputLabel>
                             <InputLabel label="Date of Marriage">
                                 :
@@ -235,7 +243,8 @@
                             </InputLabel>
                             <InputLabel label="Place of Marriage of parents">
                                 :
-                                <InputforForm width="100%" v-model="Form1A.place_marriage_parents" />
+                                <InputforFormSuggestions width="100%" v-model="Form1A.place_marriage_parents" isPlace />
+                                <!-- <InputforForm width="100%" v-model="Form1A.place_marriage_parents" /> -->
                             </InputLabel>
                         </div>
                         <!-- For Form 2A -->
@@ -646,6 +655,7 @@ import InputforForm from '../../components/Form/InputforForm.vue'
 import InputLabel from '../../components/Form/InputLabel.vue'
 import { format } from 'date-fns'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { citizenshipOptions } from '../../utils/nationality.js';
 
 import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
 import { useForms } from '../../stores/forms.js'
@@ -654,6 +664,8 @@ import { QuillEditor } from '@vueup/vue-quill'
 import { useAvailableForm, useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
 import { dumb_maker } from '../../lib/lala.js'
 import ManageBtn from '../../components/Form/ManageBtn.vue'
+import InputforFormSuggestions from '../../components/Form/InputforFormSuggestions.vue'
+import { formMunicipalityProvinceAddress, municipalityProvinceAddress } from '../../utils/Address/index.js'
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 
@@ -685,6 +697,7 @@ const for_and_in_the_absence = ref(false)
 
 
 const fact_of = ref('')
+
 
 const preference = reactive({
     logo: {
@@ -850,10 +863,6 @@ const previewForm = async () => {
         console.log('Invalid form type selected');
     }
 };
-
-
-
-
 
 
 

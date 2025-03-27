@@ -1,6 +1,6 @@
 <template>
-    <input :tabindex="skip ? '-1' : ''" type="text" :value="modelValue" @input="value_toUpperCase($event.target)"
-        :class="[
+    <input @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
+        :tabindex="skip ? '-1' : ''" type="text" :value="modelValue" @input="InputValueData($event.target)" :class="[
             baseClasses,
             {
                 'text-center': middle,
@@ -17,6 +17,7 @@
 </template>
 
 <script setup>
+import { format, isValid, parse } from 'date-fns';
 import { computed, nextTick } from 'vue';
 
 const emit = defineEmits(["update:modelValue"]);
@@ -64,6 +65,10 @@ const props = defineProps({
     isUpperCase: {
         type: Boolean,
         default: false
+    },
+    isDate: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -76,9 +81,17 @@ const baseClasses = computed(() => [
 ]);
 
 // Computed property for v-model handling uppercase transformation if needed
-const value_toUpperCase = (target) => {
+const InputValueData = (target) => {
     let value = target.value;
 
+
+    if (props.isDate) {
+        dateFormatter(value)
+        return
+    }
+
+
+    // If Props Uppercase the Result will be uppercase
     if (props.isUpperCase) {
         value = value.toUpperCase();
     }
@@ -94,8 +107,57 @@ const value_toUpperCase = (target) => {
         target.setSelectionRange(start, end);
     });
 }
-</script>
 
-<style lang="scss" scoped>
-/* Your scoped styles here */
-</style>
+
+function dateFormatter(data) {
+
+    const dateFormats = [
+        'MM/dd/',    // Format: 11/20/24
+        'MM-dd-',    // Format: 11-20-24  
+    ];
+
+    let parsedDate = null
+    for (let formatString of dateFormats) {
+        parsedDate = parse(data, formatString, new Date())
+        if (isValid(parsedDate)) {
+            const formattedDate = format(parsedDate, 'MMMM dd, ');
+            console.log(formattedDate)
+            emit('update:modelValue', formattedDate);
+            return
+        }
+        emit('update:modelValue', data);
+
+    }
+}
+
+
+const focusPreviousInput = (event) => {
+    event.preventDefault();
+
+    // Select only focusable elements (input, button, and elements with tabindex >= 0)
+    const inputs = Array.from(document.querySelectorAll('input, select, [tabindex]'))
+        .filter(input => input.tabIndex >= 0);
+
+    const index = inputs.indexOf(event.target);
+    if (index > 0) {
+        inputs[index - 1].focus();
+    }
+}
+
+const focusNextInput = (event) => {
+    if (props.skipnext) {
+        return;
+    }
+    event.preventDefault();
+
+    // Select only focusable elements (input, select, and elements with tabindex >= 0)
+    const inputs = Array.from(document.querySelectorAll('input, select, [tabindex]'))
+        .filter(input => input.tabIndex >= 0);
+
+    const index = inputs.indexOf(event.target);
+    if (index >= 0 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+    }
+}
+
+</script>

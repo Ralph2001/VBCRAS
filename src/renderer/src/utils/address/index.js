@@ -148,6 +148,41 @@ export function all_address() {
         );
 }
 
+// Roman numeral validation helper
+function isRomanNumeral(str) {
+    return /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(str);
+}
+
+export function formMunicipalityProvinceAddress() {
+    let address = [];
+
+    philippines.forEach(regions => {
+        Object.values(regions).forEach(region => {
+            Object.entries(region.province_list).forEach(([provinceName, province]) => {
+                Object.entries(province.municipality_list).forEach(([municipalityName]) => {
+                    address.push(`${municipalityName}, ${provinceName}`);
+                });
+            });
+        });
+    });
+
+    address.sort((a, b) => a.localeCompare(b));
+
+    return address.map(addr => {
+        return addr.split(/,\s*/).map(part => {
+            return part.trim()
+                      .split(' ')
+                      .map(word => {
+                          const upperWord = word.toUpperCase();
+                          return isRomanNumeral(upperWord) 
+                              ? upperWord 
+                              : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                      })
+                      .join(' ');
+        }).join(', ');
+    });
+}
+
 export function municipalityProvinceAddress() {
     let address = [];
 

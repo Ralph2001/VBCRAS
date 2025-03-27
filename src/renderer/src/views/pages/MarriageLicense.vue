@@ -205,7 +205,6 @@
                                     <div class="basis-[70%] flex flex-col  border-r border-gray-500 p-1">
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">Province</p>
-
                                             <FocusableButton isAddress :documentName="'Header Province'"
                                                 :field="'header_province'" :tabIndex="1" :formData="formData"
                                                 :activeInputField="active_input_field"
@@ -216,7 +215,6 @@
                                         <div class="flex flex-row gap-2">
                                             <p class="text-sm text-nowrap ">City/Municipality</p>
                                             <!-- <InputBottomBorderMarriage isBold v-model="formData.header_municipality" /> -->
-
                                             <FocusableButton isAddress :documentName="'City/Municipality'"
                                                 :field="'header_municipality'" :tabIndex="2" :formData="formData"
                                                 :activeInputField="active_input_field"
@@ -227,8 +225,6 @@
                                     <div class="grow  p-1 flex flex-col ">
                                         <p class="text-sm text-nowrap"> Registry No.</p>
                                         <div class="items-center flex  justify-center w-full ">
-
-
                                             <FocusableButton isCenter :documentName="'Registry No.'"
                                                 :field="'registry_number'" :tabIndex="3" :formData="formData"
                                                 :activeInputField="active_input_field"
