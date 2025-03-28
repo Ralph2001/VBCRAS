@@ -1,8 +1,8 @@
 <template>
     <div class="w-full relative" ref="focus_form_address">
         <input ref="input_field_form" :tabindex="skip ? '-1' : ''" type="text" :value="modelValue"
-            @keydown.enter="focusNextInput" @keydown.down="handleInputDown" @keydown.up="handleInputUp"
-            @input="InputValueData($event.target)" :class="[
+            @keydown.enter="(e) => { e.preventDefault(); focusNextInput(e.target) }" @keydown.down="handleInputDown"
+            @keydown.up="handleInputUp" @input="InputValueData($event.target)" :class="[
                 baseClasses,
                 {
                     'text-center': middle,
@@ -17,12 +17,13 @@
                 }
             ]" :readonly="isReadOnly" />
         <div v-if="suggestion_box && suggestion_data.length"
-            class="absolute  z-50 w-full mt-1 flex flex-col bg-white rounded-md shadow-lg border border-gray-300 max-h-[8rem] overflow-auto">
+            class="absolute  z-50 w-full mt-1 flex flex-col bg-white/90 rounded  listShadow border border-gray-400 max-h-[8rem] overflow-auto">
             <button ref="items" v-for="(option, index) in suggestion_data" :key="index"
-                @click="selectOption($event, option)" @keydown.down="handleSuggestionDown(index, $event)"
-                @keydown.up="handleSuggestionUp(index, $event)" @keydown.enter="selectOption($event, option)"
-                tabindex="-1"
-                class="px-3 py-1.5 text-start cursor-pointer transition-colors w-full hover:bg-gray-100 outline-none ring-0 focus:bg-gray-200 active:bg-gray-200">
+                @click="(e) => { e.preventDefault(); selectOption(e.target, option) }"
+                @keydown.down="handleSuggestionDown(index, $event)" @keydown.up="handleSuggestionUp(index, $event)"
+                @keydown.enter="(e) => { e.preventDefault(); selectOption(e.target, option) }"
+                @mouse.left="selectOption($event, option)" tabindex="-1"
+                class="px-3 py-1.5 text-start cursor-pointer transition-colors font-normal text-sm hover:bg-[#3D6C8E] hover:text-white focus:text-white active:text-white active:bg-[#3D6C8E]  w-full outline-none ring-0 focus:bg-[#3D6C8E] ">
                 {{ option }}
             </button>
         </div>
@@ -112,10 +113,8 @@ const props = defineProps({
 
 const selectOption = (e, value) => {
     emit('update:modelValue', props.isUpperCase ? value.toUpperCase() : value);
-    suggestion_box.value = false
-    setTimeout(() => {
-        focusNextInput(e)
-    }, 500);
+    suggestion_box.value = false;
+    focusNextInput(input_field_form.value);
 };
 
 const handleInputDown = (event) => {
@@ -127,7 +126,7 @@ const handleInputDown = (event) => {
             }
         })
     } else {
-        focusNextInput(event)
+        focusNextInput(event.target)
     }
 }
 
@@ -173,8 +172,7 @@ const focusPreviousInput = (event) => {
         inputs[index - 1].focus();
     }
 }
-const focusNextInput = (event) => {
-    event.preventDefault();
+const focusNextInput = (currentElement) => {
     if (props.skipnext) {
         return;
     }
@@ -182,7 +180,7 @@ const focusNextInput = (event) => {
     const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
         .filter(input => input.tabIndex >= 0);
 
-    const index = inputs.indexOf(event.target);
+    const index = inputs.indexOf(currentElement);
     if (index >= 0 && index < inputs.length - 1) {
         inputs[index + 1].focus();
     }
@@ -230,7 +228,7 @@ function filterPlaceSuggestions(placeBirth) {
     if (!placeBirth) {
         return;
     }
-    
+
 
 
     const searchTerm = placeBirth.trim().toLowerCase();
@@ -292,3 +290,9 @@ function isRomanNumeral(str) {
 
 
 </script>
+
+<style scoped>
+.listShadow {
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+</style>

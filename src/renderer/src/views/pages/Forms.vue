@@ -62,16 +62,17 @@
 
         </div>
 
+
+
         <Modal footerBG="bg-white" v-if="isFormOpen" :footer="false">
             <template v-slot:header>
                 <div class="flex flex-row w-full">
-                    <ControlButton :icon="['fas', 'arrow-left']" button-text="Exit" @action="closeModal()" />
+                    <ControlButton :icon="['fas', 'arrow-left']" button-text="Exit Form" @action="closeModal()" />
 
                     <div class="flex items-center flex-row gap-2 ml-auto" v-if="!isPreview">
-                        <p class="text-sm font-medium text-white pr-4">Selected Form: </p>
                         <button @click="toggleForm(`${type}`)" v-for="type in FormTypes" :key="type"
                             :class="[selectedType === type ? 'text-white bg-green-500 ' : '']"
-                            class="p-4 h-7 w-fit    hover:bg-green-600 transition-all duration-100 flex items-center text-sm justify-center  text-neutral-200 hover:text-neutral-300  rounded">
+                            class="p-2 h-7 w-fit    hover:bg-green-600 transition-all duration-100 flex items-center text-xs justify-center  text-neutral-200 hover:text-neutral-300  rounded">
                             Form {{ type }}
                         </button>
                     </div>
@@ -83,9 +84,31 @@
 
             <div v-if="!isPreview"
                 class="w-full h-full grid grid-cols-1 lg:grid-cols-[55%_45%]  py-1.5 bg-white overflow-y-auto">
-                <!-- <div class="absolute w-[20rem] right-0">
-                    {{ main_form }}
-                </div> -->
+
+
+                <div v-if="unsavedDataMessage"
+                    class="fixed top-0 flex items-center justify-center bottom-0 left-0 right-0 backdrop-blur-sm z-50 backdrop-brightness-75">
+                    <div class="w-[40rem]  bg-white rounded flex flex-col  p-4">
+                        <p class="font-bold text-red-400  text-lg">Are you sure you want to close the form?</p>
+                        <p class="text-justify text-pretty mt-4">It looks like you have unsaved changes in the form. If
+                            you
+                            close this
+                            window now, any data
+                            you've entered
+                            <span class="font-medium"> will be lost</span>. If you'd
+                            like to keep
+                            your information, please save before closing.
+                        </p>
+
+                        <div class="mt-6 ml-auto gap-2 flex">
+
+                            <button
+                                class="py-1 w-24 rounded border px-2 hover:bg-red-400 hover:text-white transition-colors">Exit</button>
+                            <button @click="unsavedDataMessage = false"
+                                class="py-1 w-24 rounded border px-2 hover:bg-gray-200">Cancel</button>
+                        </div>
+                    </div>
+                </div>
 
 
                 <!-- Page 1, Main Page -->
@@ -96,23 +119,12 @@
                         </div>
 
                     </div>
-                    <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN:</p>
+                    <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN: {{ hasValue }}</p>
 
                     <div class="flex flex-col gap-1 h-full " v-if="selectedType.includes('A')">
-                        <!-- <div class="flex flex-col gap-2 pl-10 w-[50%]">
-                            <InputLabel label="Page ">
-                                :
-                                <InputforForm width="10rem" v-model="available.page_number" />
-                            </InputLabel>
 
-                            <InputLabel label="Book ">
-                                :
-                                <InputforForm width="10rem" v-model="available.book_number" />
-                            </InputLabel>
-
-                        </div> -->
                         <div class="text-sm w-full px-10 my-auto">
-                            <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-gray-900">We
+                            <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-neutral-900">We
                                 certify that among others, the following facts of {{ fact_of }} appear in our Register
                                 of {{
                                     register_of }} on page
@@ -225,7 +237,7 @@
                                 :
                                 <InputforFormSuggestions width="100%" v-model="Form1A.citizenship_mother"
                                     :options="citizenshipOptions" />
-                                
+
                             </InputLabel>
                             <InputLabel label="Name of Father">
                                 :
@@ -233,8 +245,8 @@
                             </InputLabel>
                             <InputLabel label="Citizenship of Father">
                                 :
-                                
-                                    <InputforFormSuggestions width="100%" v-model="Form1A.citizenship_father"
+
+                                <InputforFormSuggestions width="100%" v-model="Form1A.citizenship_father"
                                     :options="citizenshipOptions" />
                             </InputLabel>
                             <InputLabel label="Date of Marriage">
@@ -376,7 +388,7 @@
 
                     <div class="flex flex-col gap-2 " v-if="is_with_remarks">
                         <div class="flex flex-row gap-2 items-center">
-                            <input type="checkbox" v-model="available.is_reconstructed"
+                            <input type="checkbox" v-model="transactions.is_reconstructed"
                                 class="border rounded-sm border-gray-400" id="is_reconstructed">
                             <label class="text-md font-medium text-neutral-800 text-sm"
                                 for="is_reconstructed">Reconstructed
@@ -384,20 +396,20 @@
                         </div>
 
                         <div class="flex flex-row gap-2 items-center">
-                            <input type="checkbox" v-model="available.is_other_remarks"
+                            <input type="checkbox" v-model="transactions.is_other_remarks"
                                 class="border rounded-sm border-gray-400" id="is_other_remarks">
                             <label class="text-md font-medium text-neutral-800 text-sm" for="is_other_remarks">Other
                                 Remarks</label>
                         </div>
                         <!-- <p class="font-medium text-xs">Add Remarks</p> -->
 
-                        <div class="flex  flex-col  py-2 w-full gap-2" v-if="available.is_other_remarks">
+                        <div class="flex  flex-col  py-2 w-full gap-2" v-if="transactions.is_other_remarks">
                             <div class="w-full flex flex-col gap-1 bg-white">
                                 <QuillEditor theme="snow" :toolbar="['bold', 'italic']"
                                     v-model:content="available.remarks" contentType="delta" content="delta" />
                             </div>
-
                         </div>
+                        {{ available.remarks }}
                     </div>
                     <div class="mt-auto grid grid-cols-2   mb-4">
                         <!-- <div class="absolute -right-[15rem]">
@@ -470,7 +482,7 @@
 
                         <div class="ml-auto flex items-center justify-center gap-2">
                             <button
-                                class="bg-blue-600 hover:bg-blue-700 text-white border px-10 font-medium  py-2.5 rounded-md "
+                                class="bg-blue-600 hover:bg-blue-700 text-white border focus:ring-2 focus:ring-blue-700 focus:bg-blue-700 focus:border-2 outline-none px-10 font-medium  py-2.5 rounded-md "
                                 @click="previewForm">Next</button>
 
 
@@ -482,6 +494,8 @@
 
                 </div>
             </div>
+
+
             <div v-else class="h-full w-full relative ">
 
                 <div v-if="settings"
@@ -694,7 +708,10 @@ const selectedType = ref(null)
 const isPreview = ref(false)
 const previewUrl = ref('')
 const for_and_in_the_absence = ref(false)
-
+const unsavedDataMessage = ref(false)
+const hasValue = computed(() => {
+    return Object.values(Form1A).some(value => value !== '');
+})
 
 const fact_of = ref('')
 
@@ -772,12 +789,12 @@ watch(preference, (newPreferences, oldPreferences) => {
     }
 }, { deep: true });
 
-watch(() => available.is_other_remarks, (newValue, oldValue) => {
-    if (available.is_other_remarks) {
+watch(() => transactions.is_other_remarks, (newValue, oldValue) => {
+    if (transactions.is_other_remarks) {
         preference.c_mcr.y = preference.c_mcr.y = 180
     } else {
+        available.remarks = ''
         preference.c_mcr.y = preference.c_mcr.y = 216
-
     }
 }, { deep: true })
 
@@ -1068,8 +1085,11 @@ const OpenForms = (e) => {
 
 }
 const closeModal = () => {
+    if (hasValue.value) {
+        unsavedDataMessage.value = true
+        return
+    }
     isFormOpen.value = false
-
     resetFormData()
     isPreview.value = false
 

@@ -15,6 +15,8 @@ export const useTransactionDetails = {
     for_and_in_the_absence: false,
     absence_verified_by: 'GLENN ALBERT R. MALICDEM',
     absence_verifier_position: 'Administrative Aide III',
+    is_reconstructed: false,
+    is_other_remarks: false,
 }
 export const useRegisteredPeriod = {
     registered_from: '',
@@ -27,8 +29,6 @@ export const useAvailableForm = {
     page_number: '',
     book_number: '',
     registry_number: '',
-    is_reconstructed: false,
-    is_other_remarks: false,
     remarks: '',
 }
 

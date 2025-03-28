@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen relative mainHTML scale-70 bg-[#FDFDFE]">
+  <div class="h-screen relative mainHTML scale-70 bg-[#F5F5F5]">
 
     <Noice />
     <NavBar />
