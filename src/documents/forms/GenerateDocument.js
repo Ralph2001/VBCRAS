@@ -218,16 +218,16 @@ function document_base(data, page, fonts, height, fontSize) {
         font: fonts.boldItalic
     })
 
-    // Certification text
+    const sanitizedIssuedTo = data.certification_issued_to
+        .replace(/"(.*?)"/g, '“$1”');
+
     const certificationParts = [
         { text: 'This certification is issued to', isBold: false },
-        {
-            text: ` ${data.certification_issued_to.replace(/"/g, '“')} `,
-            isBold: true
-        },
+        { text: ` ${sanitizedIssuedTo} `, isBold: true },
         { text: ' upon his/her request.', isBold: false }
-    ]
-    const fullCertification = `This certification is issued to ${data.certification_issued_to.replace(/"/g, '“')} upon his/her request.`
+    ];
+
+    const fullCertification = `This certification is issued to ${sanitizedIssuedTo} upon his/her request.`;
     const totalWidth = fonts.regular.widthOfTextAtSize(
         fullCertification,
         fontSize
@@ -410,18 +410,18 @@ function create_we_clerify(data, page, height, fontSize, fonts) {
         data.form_type === '1A'
             ? 'birth'
             : data.form_type === '2A'
-              ? 'death'
-              : data.form_type === '3A'
-                ? 'marriage'
-                : ''
+                ? 'death'
+                : data.form_type === '3A'
+                    ? 'marriage'
+                    : ''
     const typeofdocument =
         data.form_type === '1A'
             ? 'Births'
             : data.form_type === '2A'
-              ? 'Deaths'
-              : data.form_type === '3A'
-                ? 'Marriage'
-                : ''
+                ? 'Deaths'
+                : data.form_type === '3A'
+                    ? 'Marriage'
+                    : ''
 
     page.drawText(
         `We certify that among others the following facts of ${type} appear in our Register of`,
@@ -499,11 +499,6 @@ function document_body_available(data, page, height, fontSize, fonts) {
 
     const table_for_3 = [
         { title: 'Name', data: data.groom_name, another_data: data.bride_name },
-        {
-            title: 'Date of Birth',
-            data: data.groom_date_birth,
-            another_data: data.bride_date_birth
-        },
         { title: 'Age', data: data.groom_age, another_data: data.bride_age },
         {
             title: 'Citizenship',
@@ -534,10 +529,10 @@ function document_body_available(data, page, height, fontSize, fonts) {
     const table = data.form_type.includes('1A')
         ? table_for_1
         : data.form_type.includes('2A')
-          ? table_for_2
-          : data.form_type.includes('3A')
-            ? table_for_3
-            : []
+            ? table_for_2
+            : data.form_type.includes('3A')
+                ? table_for_3
+                : []
 
     let tableGap = 0
     const tablePositionX = Number(data.body_data.x)
@@ -545,7 +540,9 @@ function document_body_available(data, page, height, fontSize, fonts) {
 
     // Function to check and adjust the font size for long text
     function getFontSizeBasedOnLength(text) {
-        return text.length > 40 ? fontSize * 0.8 : fontSize // Reduce font size by 20% if text length exceeds 40
+        if (text.length > 50) return fontSize * 0.8;  // 20% reduction
+        if (text.length > 40) return fontSize * 0.9;  // 10% reduction
+        return fontSize;                              // Original size
     }
 
     for (const item of table) {
@@ -553,18 +550,18 @@ function document_body_available(data, page, height, fontSize, fonts) {
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 145
                 : data.form_type.includes('3A') && item.another_data
-                  ? 72
-                  : data.form_type.includes('3A')
-                    ? 107
-                    : 0
+                    ? 72
+                    : data.form_type.includes('3A')
+                        ? 107
+                        : 0
         const xAdderForData =
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 155
                 : data.form_type.includes('3A') && item.another_data
-                  ? 79
-                  : data.form_type.includes('3A')
-                    ? 127
-                    : 0
+                    ? 79
+                    : data.form_type.includes('3A')
+                        ? 127
+                        : 0
 
         // Get the appropriate font size for each piece of data
         const dataFontSize = getFontSizeBasedOnLength(item.data)
@@ -623,17 +620,17 @@ function document_body_intact_or_destroyed(
     const record_of = data.form_type.includes('1')
         ? 'of birth of '
         : data.form_type.includes('2')
-          ? 'of death of'
-          : data.form_type.includes('3')
-            ? 'of marriage between'
-            : ''
+            ? 'of death of'
+            : data.form_type.includes('3')
+                ? 'of marriage between'
+                : ''
     const have_b = data.form_type.includes('1')
         ? 'have been born'
         : data.form_type.includes('2')
-          ? 'have died'
-          : data.form_type.includes('3')
-            ? 'have been married'
-            : ''
+            ? 'have died'
+            : data.form_type.includes('3')
+                ? 'have been married'
+                : ''
     const is_for_1 = data.form_type.includes('1')
         ? ', of parents {{UNKNOWN PARENTS}} and {{UNKNOWN PARENTS}}'
         : '' // With Parents Name kasi
@@ -645,25 +642,25 @@ function document_body_intact_or_destroyed(
     const certificate_of = data.form_type.includes('1')
         ? 'Live Birth'
         : data.form_type.includes('2')
-          ? 'Death'
-          : data.form_type.includes('3')
-            ? 'Marriage'
-            : ''
+            ? 'Death'
+            : data.form_type.includes('3')
+                ? 'Marriage'
+                : ''
     const register_of = data.form_type.includes('1')
         ? 'Births'
         : data.form_type.includes('2')
-          ? 'Deaths'
-          : data.form_type.includes('3')
-            ? 'Marriages'
-            : ''
+            ? 'Deaths'
+            : data.form_type.includes('3')
+                ? 'Marriages'
+                : ''
 
     const document_owner = data.form_type.includes('1')
         ? data.name_child
         : data.form_type.includes('2')
-          ? data.name_deceased
-          : data.form_type.includes('3')
-            ? data.groom_name
-            : ''
+            ? data.name_deceased
+            : data.form_type.includes('3')
+                ? data.groom_name
+                : ''
 
     const we_clerify_for_b = `We certify that this office has no record ${record_of} {{UNKNOWN NAME}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{UNKNOWN DATE}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
     const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`
@@ -709,10 +706,10 @@ function document_body_intact_or_destroyed(
     const we_also_certify_records_of_b = data.form_type.includes('1')
         ? 'births'
         : data.form_type.includes('2')
-          ? 'deaths'
-          : data.form_type.includes('3')
-            ? 'marriage'
-            : ''
+            ? 'deaths'
+            : data.form_type.includes('3')
+                ? 'marriage'
+                : ''
     const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{2024}} are still intact in the archives of this office`
     const for_C = `We also certify that for every registered birth, this office submits a copy of the Certificate of Live Birth to the Office of the Civil Registrar General, Philippine Statistics Authority (PSA), East Avenue, Diliman, Quezon City, Metro Manila. In view of this, the interested party is hereby advised to make further verification in the archives of that office.`
 
@@ -985,8 +982,9 @@ async function createRemarks(pdfDoc, data, page, fonts, fontSize) {
             font: fonts.italic
         })
 
+
     if (data.is_other_remarks) {
-        remark_annotation_maker(data.remarks, fonts, page, pdfDoc)
+        remark_annotation_maker(data, data.remarks, fonts, page, pdfDoc)
     }
 }
 
@@ -995,141 +993,159 @@ async function createRemarks(pdfDoc, data, page, fonts, fontSize) {
  * Hirap naman neto langya hahahaha
  */
 
-async function remark_annotation_maker(data, fonts, page, pdfDoc) {
-    let currentY = 260
-    const lineHeight = 14
-    const maxWidth = 595 - 144 // A4 width minus margins
+async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
+    let currentY = Number(config.remarks_config.y);
+    const maxWidth = Number(config.remarks_config.width); // A4 width minus margins
 
-    const words = []
+    const words = [];
     for (const main_value of data.ops) {
-        const attributes = main_value.attributes || {}
+        const attributes = main_value.attributes || {};
         const fontType =
             attributes.bold && attributes.italic
                 ? fonts.boldItalic
                 : attributes.bold
-                  ? fonts.bold
-                  : attributes.italic
-                    ? fonts.italic
-                    : fonts.regular
+                    ? fonts.bold
+                    : attributes.italic
+                        ? fonts.italic
+                        : fonts.regular
 
-        const insertText = main_value.insert || ''
-        // Split text into paragraphs using newline characters
-        const lines = insertText.split('\n')
+        // Extract font size from attributes (example: default to 12 if unspecified)
+        const fontSize = Number(config.remarks_config.font); // Dynamic font size
+
+        const insertText = main_value.insert || '';
+        const lines = insertText.split('\n');
         for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-            const line = lines[lineIdx]
-            // Split paragraph into words
-            const splitWords = line
-                .split(/\s+/)
-                .filter((word) => word.length > 0)
+            const line = lines[lineIdx];
+            const splitWords = line.split(/\s+/).filter(word => word.length > 0);
             for (const wordText of splitWords) {
-                words.push({ text: wordText, font: fontType })
+                words.push({
+                    text: wordText,
+                    font: fontType,
+                    size: fontSize // Store font size with each word
+                });
             }
-            // Add a forced newline marker after each line except the last one
             if (lineIdx < lines.length - 1) {
-                words.push({ isNewLine: true })
+                words.push({ isNewLine: true });
             }
         }
     }
 
-    let currentLine = []
-    let currentLineWidth = 0
+    let currentLine = [];
+    let currentLineWidth = 0;
+    let currentLineMaxFontSize = 0; // Track tallest font size in current line
 
     for (const word of words) {
         if (word.isNewLine) {
-            // Force a new line for Enter key
+            // Draw current line (if any) and force new line
             if (currentLine.length > 0) {
-                drawLine(currentLine, 90, currentY, maxWidth, page, true)
-                currentY -= lineHeight
-                if (currentY < 72) {
-                    page = pdfDoc.addPage()
-                    currentY = page.getHeight() - 72
-                }
+                const lineHeight = calculateLineHeight(currentLineMaxFontSize);
+                drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, true);
+                currentY -= lineHeight;
+            } else {
+                // Empty line - use font size from previous content or default
+                const lineHeight = calculateLineHeight(currentLineMaxFontSize || 12);
+                currentY -= lineHeight;
             }
-            currentLine = []
-            currentLineWidth = 0
-            continue
+
+            // Reset for new line
+            currentLine = [];
+            currentLineWidth = 0;
+            currentLineMaxFontSize = 0;
+
+            // Page boundary check
+            if (currentY < 72) {
+                page = pdfDoc.addPage();
+                currentY = page.getHeight() - 72;
+            }
+            continue;
         }
 
-        const wordWidth = word.font.widthOfTextAtSize(word.text, 12)
-        let tentativeWidth =
-            currentLineWidth +
-            (currentLine.length > 0
-                ? word.font.widthOfTextAtSize(' ', 12)
-                : 0) +
-            wordWidth
+        const wordWidth = word.font.widthOfTextAtSize(word.text, word.size);
+        const spaceWidth = word.font.widthOfTextAtSize(' ', word.size);
+
+        // Calculate tentative width with dynamic font size
+        let tentativeWidth = currentLineWidth +
+            (currentLine.length > 0 ? spaceWidth : 0) +
+            wordWidth;
 
         if (tentativeWidth > maxWidth) {
-            drawLine(currentLine, 90, currentY, maxWidth, page, false)
-            currentY -= lineHeight
+            // Wrap text to new line
+            const lineHeight = calculateLineHeight(currentLineMaxFontSize);
+            drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, false);
+            currentY -= lineHeight;
+
             if (currentY < 72) {
-                page = pdfDoc.addPage()
-                currentY = page.getHeight() - 72
+                page = pdfDoc.addPage();
+                currentY = page.getHeight() - 72;
             }
-            currentLine = [word]
-            currentLineWidth = wordWidth
+
+            // Start new line with current word
+            currentLine = [word];
+            currentLineWidth = wordWidth;
+            currentLineMaxFontSize = word.size;
         } else {
-            if (currentLine.length > 0) {
-                currentLineWidth += word.font.widthOfTextAtSize(' ', 12)
+            // Add to current line
+            if (currentLine.length > 0) currentLineWidth += spaceWidth;
+            currentLine.push(word);
+            currentLineWidth += wordWidth;
+            if (word.size > currentLineMaxFontSize) {
+                currentLineMaxFontSize = word.size;
             }
-            currentLine.push(word)
-            currentLineWidth += wordWidth
         }
     }
 
+    // Draw remaining content
     if (currentLine.length > 0) {
-        drawLine(currentLine, 90, currentY, maxWidth, page, true)
+        const lineHeight = calculateLineHeight(currentLineMaxFontSize);
+        drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, true);
     }
 }
 
+// Helper function for dynamic line height
+function calculateLineHeight(fontSize) {
+    return fontSize * 1.2; // 120% of font size (adjust ratio as needed)
+}
+
 function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
-    if (lineWords.length === 0) return
+    if (lineWords.length === 0) return;
 
-    let totalWordsWidth = 0
-    let totalSpacesWidth = 0
-    const numberOfGaps = lineWords.length - 1
+    let totalWidth = 0;
+    const spaceWidths = [];
 
-    for (let i = 0; i < lineWords.length; i++) {
-        const word = lineWords[i]
-        totalWordsWidth += word.font.widthOfTextAtSize(word.text, 12)
-        if (i < numberOfGaps) {
-            const spaceWidth = word.font.widthOfTextAtSize(' ', 12)
-            totalSpacesWidth += spaceWidth
+    // Calculate widths with dynamic font sizes
+    lineWords.forEach((word, index) => {
+        const wordWidth = word.font.widthOfTextAtSize(word.text, word.size);
+        totalWidth += wordWidth;
+        if (index < lineWords.length - 1) {
+            const spaceWidth = word.font.widthOfTextAtSize(' ', word.size);
+            spaceWidths.push(spaceWidth);
+            totalWidth += spaceWidth;
         }
+    });
+
+    // Calculate justification
+    let extraSpace = 0;
+    if (!isLastLine && spaceWidths.length > 0) {
+        extraSpace = (maxWidth - totalWidth) / spaceWidths.length;
     }
 
-    const totalWidth = totalWordsWidth + totalSpacesWidth
-    let extraSpacePerGap = 0
-
-    if (!isLastLine && numberOfGaps > 0) {
-        extraSpacePerGap = (maxWidth - totalWidth) / numberOfGaps
-    }
-
-    let currentX = xStart
-
-    for (let i = 0; i < lineWords.length; i++) {
-        const word = lineWords[i]
-        if (i === 0) {
-            page.drawText(word.text, {
-                x: currentX,
-                y,
-                font: word.font,
-                size: 12
-            })
-            currentX += word.font.widthOfTextAtSize(word.text, 12)
-        } else {
-            const spaceWidth =
-                lineWords[i - 1].font.widthOfTextAtSize(' ', 12) +
-                extraSpacePerGap
-            currentX += spaceWidth
-            page.drawText(word.text, {
-                x: currentX,
-                y,
-                font: word.font,
-                size: 12
-            })
-            currentX += word.font.widthOfTextAtSize(word.text, 12)
+    // Draw words
+    let currentX = xStart;
+    lineWords.forEach((word, index) => {
+        if (index > 0) {
+            const spaceAdjustment = spaceWidths[index - 1] + extraSpace;
+            currentX += spaceAdjustment;
         }
-    }
+
+        page.drawText(word.text, {
+            x: currentX,
+            y: y - (calculateLineHeight(word.size) - word.size), // Vertical alignment
+            font: word.font,
+            size: word.size
+        });
+
+        currentX += word.font.widthOfTextAtSize(word.text, word.size);
+    });
 }
 
 /////////////////////////
@@ -1161,10 +1177,10 @@ function add_line_break(
         item.includes('{{') && item.includes('}}')
             ? (isBold = false)
             : item.includes('{{')
-              ? (isBold = true)
-              : item.includes('}}')
-                ? (isBold = false)
-                : ''
+                ? (isBold = true)
+                : item.includes('}}')
+                    ? (isBold = false)
+                    : ''
 
         const tell_the_max_space =
             this_is_not_the_first || item !== 'archives' ? 415 : 415

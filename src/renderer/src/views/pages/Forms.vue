@@ -119,14 +119,15 @@
                         </div>
 
                     </div>
-                    <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN: {{ hasValue }}</p>
+                    <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN: </p>
 
                     <div class="flex flex-col gap-1 h-full " v-if="selectedType.includes('A')">
 
-                        <div class="text-sm w-full px-10 my-auto">
+                        <div class="text-sm w-full px-10 my-auto flex justify-center">
                             <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-neutral-900">We
                                 certify that among others, the following facts of {{ fact_of }} appear in our Register
-                                of {{
+
+                                of <br>{{
                                     register_of }} on page
                                 <InputforForm middle width="6rem" bold v-model="available.page_number" />
                                 of book number
@@ -409,7 +410,7 @@
                                     v-model:content="available.remarks" contentType="delta" content="delta" />
                             </div>
                         </div>
-                        {{ available.remarks }}
+                        <!-- {{ available.remarks }} -->
                     </div>
                     <div class="mt-auto grid grid-cols-2   mb-4">
                         <!-- <div class="absolute -right-[15rem]">
@@ -499,7 +500,7 @@
             <div v-else class="h-full w-full relative ">
 
                 <div v-if="settings"
-                    class="absolute top-6 z-50 bg-white p-4 right-10 w-auto px-6 h-auto border border-gray-300 shadow-2xl rounded flex flex-col">
+                    class="absolute top-6 z-50 bg-white p-4 right-10 w-[40rem] px-6 h-auto border border-gray-300 shadow-2xl rounded flex flex-col">
                     <p class="text-sm font-medium text-blue-600">Form Adjustments</p>
 
                     <div class="flex flex-col gap-2 w-full mt-4">
@@ -589,6 +590,26 @@
 
                             <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
                             <InputforForm width="6rem" type="number" v-model="preference.issued_to.y" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Remarks/Annotation</p>
+
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.y" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.x" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Remarks/Annotation Font Size</p>
+
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.font" />
+                        </div>
+                        <div class="flex flex-row gap-2 items-center ">
+                            <p class="text-sm font-medium w-36">Remarks/Annotation Width Size</p>
+
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.width" />
                         </div>
                         <div class="flex flex-row gap-2 items-center ">
                             <p class="text-sm font-medium w-36">Verifier</p>
@@ -764,6 +785,12 @@ const preference = reactive({
     authentication: {
         x: 0,
         y: 280
+    },
+    remarks_config: {
+        x: 80,
+        y: 260,
+        font: 12,
+        width: 480,
     }
 })
 
