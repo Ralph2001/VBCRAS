@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
         <button type="button" @click="dropdown = !dropdown"
-        class="ml-auto text-white px-10 bg-blue-700 hover:bg-blue-800 focus:ring-0 active:scale-95 transition-all duration-200 focus:ring-blue-300 font-medium rounded-sm shadow text-sm  tracking-wider py-1.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+            class="ml-auto text-white px-10 bg-blue-700 hover:bg-blue-800 focus:ring-0 active:scale-95 transition-all duration-200 focus:ring-blue-300 font-medium rounded-sm shadow text-sm  tracking-wider py-1.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
             {{ label }}
         </button>
         <div v-if="dropdown"

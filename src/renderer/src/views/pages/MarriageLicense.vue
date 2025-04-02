@@ -54,7 +54,7 @@
                             License</button>
                         <div class="block border border-blue-600 h-6"></div>
                         <button class="hover:bg-blue-300 font-medium text-sm p-2 transition " @click="change_page(2)"
-                            :class="[page === 2 ? 'bg-blue-200' : 'text-gray-900']">Notice</button>
+                            :class="[page === 2 ? 'bg-blue-200' : 'text-gray-900']">Notice of Posting</button>
                     </div>
                     <div class="flex flex-row gap-3 ml-auto">
                         <button @click="submit()"

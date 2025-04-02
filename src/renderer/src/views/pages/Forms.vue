@@ -1112,10 +1112,6 @@ const OpenForms = (e) => {
 
 }
 const closeModal = () => {
-    if (hasValue.value) {
-        unsavedDataMessage.value = true
-        return
-    }
     isFormOpen.value = false
     resetFormData()
     isPreview.value = false

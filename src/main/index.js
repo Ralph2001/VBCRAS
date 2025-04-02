@@ -27,6 +27,7 @@ import {
 } from '../documents/marriage'
 import { generateFormPDF } from '../documents/forms/GenerateDocument'
 import { create_publication_letter } from '../documents/clerical/create_publication'
+import { generate_legitimation } from '../documents/legitimation/generatelegma'
 
 const log = require('electron-log')
 autoUpdater.logger = log
@@ -181,6 +182,21 @@ ipcMain.handle('previewFormPDF', async (event, formData) => {
 //         return false
 //     }
 // })
+/////////////
+/////////////
+// AUSF
+/////////////
+/////////////
+
+
+ipcMain.handle('createLegitimation', async (event, formData) => {
+    try {
+        const Legitimation = generate_legitimation(formData)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
 
 /////////////
 /////////////

@@ -27,6 +27,14 @@ contextBridge.exposeInMainWorld('getPathApi', {
         }
     }
 });
+contextBridge.exposeInMainWorld('LegitimationApi', {
+    createLegitimationDocument: async (formData) => {
+        const result = await ipcRenderer.invoke(
+            'createLegitimation', formData
+        )
+        return result
+    }
+});
 
 
 
