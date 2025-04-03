@@ -67,7 +67,7 @@
         <Modal footerBG="bg-white" v-if="isFormOpen" :footer="false">
             <template v-slot:header>
                 <div class="flex flex-row w-full">
-                    <ControlButton :icon="['fas', 'arrow-left']" button-text="Exit Form" @action="closeModal()" />
+                    <!-- <ControlButton :icon="['fas', 'arrow-left']" button-text="Exit Form" @action="closeModal()" /> -->
 
                     <div class="flex items-center flex-row gap-2 ml-auto" v-if="!isPreview">
                         <button @click="toggleForm(`${type}`)" v-for="type in FormTypes" :key="type"
@@ -373,8 +373,6 @@
                     </div>
                 </div>
 
-
-
                 <!-- Page 2,  Other Side -->
                 <!-- This is Required for all Forms -->
                 <div class="flex flex-col gap-2 px-4 py-4">
@@ -482,6 +480,9 @@
 
 
                         <div class="ml-auto flex items-center justify-center gap-2">
+                            <button tabindex="-1"
+                                class="border bg-white hover:bg-red-500 focus:bg-red-500 active:bg-red-500 hover:text-white px-10 font-medium  py-2.5 rounded-md "
+                                @click="closeModal">Exit</button>
                             <button
                                 class="bg-blue-600 hover:bg-blue-700 text-white border focus:ring-2 focus:ring-blue-700 focus:bg-blue-700 focus:border-2 outline-none px-10 font-medium  py-2.5 rounded-md "
                                 @click="previewForm">Next</button>

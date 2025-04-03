@@ -1,21 +1,21 @@
 <template>
 
-        <input @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
-            :tabindex="skip ? '-1' : ''" type="text" :value="modelValue" @input="InputValueData($event.target)" :class="[
-                baseClasses,
-                {
-                    'text-center': middle,
-                    'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
-                    'border  border-gray-300  focus:ring-blue-500 focus:border-blue-500': !unbordered,
-                    italic: italic,
-                    'font-bold': bold,
-                    'bg-transparent': isTransparent,
-                    'focus:ring-red-400 focus:border-red-400': she,
-                    'border-red-500 ring-0 focus:ring-red-500 focus:border-red-500 ': error,
-                    'cursor-help': isReadOnly
-                }
-            ]" :readonly="isReadOnly" />
-        <!-- <font-awesome-icon v-if="isTextShouldSmaller" icon="fa-solid fa-circle-exclamation"
+    <input @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
+        :tabindex="skip ? '-1' : ''" type="text" :value="modelValue" @input="InputValueData($event.target)" :class="[
+            baseClasses,
+            {
+                'text-center': middle,
+                'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
+                'border  border-gray-300  focus:ring-blue-500 focus:border-blue-500': !unbordered,
+                italic: italic,
+                'font-bold': bold,
+                'bg-transparent': isTransparent,
+                'focus:ring-red-400 focus:border-red-400': she,
+                'border-red-500 ring-0 focus:ring-red-500 focus:border-red-500 ': error,
+                'cursor-help': isReadOnly
+            }
+        ]" :readonly="isReadOnly" />
+    <!-- <font-awesome-icon v-if="isTextShouldSmaller" icon="fa-solid fa-circle-exclamation"
             class="absolute   top-2 bottom-0 right-2 text-yellow-300"
             title="The text is too long. The font will be reduced automatically, or you can change the position in the settings." />
   -->

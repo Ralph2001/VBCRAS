@@ -55,7 +55,7 @@
                     <div class="w-full bg-blue-300 px-2">
                         <p class="font-semibold text-sm text-gray-900">LEGAL INSTRUMENT</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-6 ">
+                    <div class="grid grid-cols-1 gap-2 ">
                         <InputLabel label="Date of Registration">
                             :
                             <InputforForm width="100%" v-model="formData.date_registration" />
