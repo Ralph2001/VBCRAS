@@ -79,12 +79,12 @@
                       {{ auth.user }}
                     </button>
                   </li>
-                  <!-- <li>
+                  <li>
                     <router-link to="/settings/dashboard"
                       class="w-full text-center  items-center px-4 block py-2 hover:bg-gray-100  font-medium">
-                      Settings
+                      System Overview
                     </router-link>
-                  </li> -->
+                  </li>
 
 
                 </ul>

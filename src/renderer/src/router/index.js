@@ -194,23 +194,30 @@ const router = createRouter({
                     beforeEnter: navGuard
                 },
                 {
-                    path: 'cce-date-counts',
-                    name: 'cce_date_counts',
-                    component: () => import('../views/pages/Settings/CCE/DateCount.vue'),
+                    path: 'correction-report',
+                    name: 'correction_report',
+                    component: () => import('../views/pages/Settings/pages/CorrectionReport.vue'),
                     beforeEnter: navGuard
                 },
                 {
-                    path: 'cce-holidays',
-                    name: 'cce_holidays',
-                    component: () => import('../views/pages/Settings/CCE/Holidays.vue'),
+                    path: 'form-report',
+                    name: 'form_report',
+                    component: () => import('../views/pages/Settings/pages/FormReport.vue'),
                     beforeEnter: navGuard
                 },
                 {
-                    path: 'cce-templates',
-                    name: 'cce_templates',
-                    component: () => import('../views/pages/Settings/CCE/Templates.vue'),
+                    path: 'marriage-report',
+                    name: 'marriage_report',
+                    component: () => import('../views/pages/Settings/pages/MarriageReport.vue'),
                     beforeEnter: navGuard
                 },
+                {
+                    path: 'legitimation-report',
+                    name: 'legitimation_report',
+                    component: () => import('../views/pages/Settings/pages/LegitimationReport.vue'),
+                    beforeEnter: navGuard
+                },
+                
             ],
         },
 

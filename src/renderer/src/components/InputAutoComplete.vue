@@ -3,8 +3,8 @@
         <label v-if="!nolabel" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
         </label>
         <input @focus="scrollToView" ref="suggestion_input_field" @keydown.up="focusPreviousInput"
-            @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @input="typing_input" :type="type"
-            :id="label" :value="modelValue" :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
+            @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @input="StartTyping" :type="type" :id="label"
+            :value="modelValue" :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
                 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
                 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
                 'text-center': center
@@ -12,12 +12,12 @@
             class="bg-gray-50 tracking-wide rounded read-only:bg-gray-100 read-only:text-gray-400 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200 border border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" />
 
         <div v-if="suggestions_ && result.length > 0" ref="suggestion_box"
-            class="absolute w-full z-[9999999999] bg-white    max-h-40 overflow-y-scroll scroll-m-0 flex flex-col border shadow-md">
-            <button @keydown="typing_input_button" :tabindex="suggestions_ ? '0' : '-1'"
+            class="absolute  z-[99999999999999] w-full mt-1 flex flex-col bg-white rounded  listShadow border border-gray-400 max-h-[8rem] overflow-auto">
+            <button @keydown="TypingInputButton" :tabindex="suggestions_ ? '0' : '-1'"
                 @keydown.down="focusNextInput($event, index)" @keydown.enter="selectSuggestion(value, index, $event)"
                 @keydown.up="focusPreviousInput" v-for="(value, index) in result" :key="value + '_unique'"
-                @click="i_choose_this(value, index, $event)"
-                class="w-full flex items-center hover:bg-gray-200  h-8 text-sm py-1 justify-start px-2 font-medium outline-none focus:bg-green-200">{{
+                @click="SelectOption(value, index, $event)"
+                class="px-3 py-1.5 text-start cursor-pointer transition-colors font-normal text-sm hover:bg-[#3D6C8E] hover:text-white focus:text-white active:text-white active:bg-[#3D6C8E]  w-full outline-none ring-0 focus:bg-[#3D6C8E] ">{{
                     value
                 }}</button>
         </div>
@@ -37,8 +37,8 @@ const { focused } = useFocusWithin(focushereonly)
 const scrollToView = (event) => {
     nextTick(() => {
         event.target.scrollIntoView({
-            behavior: "smooth",   
-            block: "center",      
+            behavior: "smooth",
+            block: "center",
             inline: "nearest"
         });
     });
@@ -110,6 +110,9 @@ const suggestions_ = ref(false)
 const result = ref()
 
 
+
+
+
 onStartTyping(() => {
 
     if (focused.value) {
@@ -118,27 +121,18 @@ onStartTyping(() => {
     return
 })
 
-// watch(focused, (focused) => {
-//     if (focused) {
-//         return
-//     }
-//     else {
-//         suggestions_.value = false
-//     }
-// })
 
-
-//Hide Suggestion Box when click outside
 onClickOutside(suggestion_box, event => suggestions_.value = false)
 
-const typing_input_button = (e) => {
+
+const TypingInputButton = (e) => {
     if (e.code === 'Tab' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
         return
     }
     suggestion_input_field.value.focus()
 }
 
-const typing_input = (e) => {
+const StartTyping = (e) => {
     const splitted = e.target.value.split(' ')
 
     // Capitalize only the first letter of the first word
@@ -156,7 +150,7 @@ const typing_input = (e) => {
     emit('update:modelValue', main_value)
     generate_suggestions(main_value)
 }
-function i_choose_this(value, index, e) {
+function SelectOption(value, index, e) {
     suggestions_.value = false; // Hide suggestions
     emit('update:modelValue', value);
     emit('change_value')
@@ -292,7 +286,8 @@ const focusNextInput = (event, index_num) => {
 
 </script>
 
-
-
-
-<style lang="scss" scoped></style>
+<style scoped>
+.listShadow {
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+</style>

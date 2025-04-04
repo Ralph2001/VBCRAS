@@ -1,104 +1,101 @@
 <template>
-    <div class="h-full w-full  ">
-        <div v-if="auth.user_role === 1" class=" flex h-full flex-col p-4 gap-4 relative">
-            <p class="font-medium text-3xl text-gray-700">System Setup</p>
+    <div class="w-full h-screen flex items-center justify-center ">
+        <div class="fixed top-0 left-0 right-0 justify-center items-center flex border w-full  h-12 bg-white z-50">
+            <p class=" text-lg font-bold text-gray-700 font-mono uppercase f">{{ auth.user_role === 1 ? 'SYSTEM SETUP' :
+                ':('}}</p>
+        </div>
+        <div v-if="auth.user_role === 1"
+            class="max-w-screen-xl  flex-1 w-full h-full flex flex-col p-4 gap-4 relative overflow-y-auto">
 
-            <div class="flex flex-col border rounded-md p-10  bg-gray-50  overflow-y-scroll ">
-                <div class="flex flex-col h-auto p-4 py-8  gap-4 ">
-                    <p class="font-medium text-2xl text-gray-800   md:lg:px-20">Default Saving Path</p>
-                    <div class="w-full flex flex-col md:lg:grid-cols-2 md:lg:px-20">
-                        <!-- <label for="path" class="font-medium mb-2 text-sm">File Path</label>
-                        <input id="path" readonly type="text"
-                            class="w-full border border-gray-300 rounded shadow-sm font-semibold text-gray-800 text-sm"
-                            @click="open" v-model="formData.file_path"> -->
+            <div class="mt-10 flex flex-col lg:px-20 h-full">
+                <div class="flex flex-col">
+                    <p class="font-bold text-xl text-gray-700 uppercase font-mono ">Default Saving Path
+                        for all files</p>
+                    <p class=" text-sm text-gray-700 mt-2">This will be the default saving path for all generated
+                        documents.
+                        Please
+                        ensure that the location is a shared drive if you plan to share your data with others so they
+                        can access and open the generated documents as well. Thank you!
 
-                        <div class="flex flex-row gap-2 w-full items-center justify-center">
-                            <Input label="Path" class="w-full" readonly :error="v$.file_path.$error"
+                    </p>
+
+                    <div class="w-full flex flex-col md:lg:grid-cols-2  mt-2  ">
+                        <div class="flex flex-row gap-2 w-full items-center justify-center mt-4">
+                            <input type="text"
+                                class="border border-gray-300 w-full focus:border-gray-400 pointer-events-none focus:ring-0 ring-0  p-2 read-only:bg-gray-50 rounded-md font-mono font-normal outline-none text-gray-700"
+                                placeholder="Select File Path" readonly :error="v$.file_path.$error"
                                 v-model="formData.file_path" />
+
                             <button class="border rounded p-2 mt-auto font-medium bg-blue-500 text-white px-4"
                                 v-if="!formData.file_path" @click="open">Select</button>
                             <button class="border rounded p-2 mt-auto font-medium bg-red-400 text-white px-4"
                                 v-if="formData.file_path" @click="formData.file_path = ''">Remove</button>
-
                         </div>
 
                     </div>
+                    <div class="flex flex-col mt-6 gap-2" v-if="formData.file_path">
+                        <p class="font-mono font-semibold text-gray-600 text-sm">Path Preview:</p>
 
-                    <div class="flex flex-col  md:lg:px-20 gap-5">
-                        <p class="font-medium text-2xl text-gray-800">Header for Correction of Clerical
-                            Error and Change of First Name</p>
-                        <div class="flex flex-col gap-2 w-full">
-                            <div class="grid grid-cols-2 gap-2">
-                                <InputAutoComplete label="Province" v-model="formData.header_province"
-                                    :suggestion_data="province" :error="v$.header_province.$error" />
-                                <InputAutoComplete label="City/Municipality" cap :error="v$.header_municipality.$error"
-                                    v-model="formData.header_municipality" :suggestion_data="municipality_with_word"  />
-                            </div>
-
+                        <div class="w-full py-1.5 px-2 rounded-sm bg-gray-50 flex items-center overflow-hidden ">
+                            <p class="text-gray-700 font-mono text-sm truncate"><span class="hover:text-blue-500"
+                                    :title="formData.file_path">...</span> > <span class="text-blue-500"
+                                    title="System Name">VBCRAS</span> > Corrections > Year >
+                                Month > Document
+                                Name</p>
                         </div>
-                    </div>
-                    <p class="font-medium text-2xl text-gray-800  md:lg:px-20 ">Correction of Clerical Error and Change
-                        of First
-                        Name
-                    </p>
-                    <div class="grid  gap-10 sm:grid-cols-1 md:lg:grid-cols-2 md:lg:px-20 w-full">
-
-
-
-                        <div class="flex flex-col gap-2">
-                            <p class="font-medium italic">Most Use</p>
-
-                            <Input label="Nationality" v-model="formData.nationality" />
-                            <Input label="Country" v-model="formData.country" />
+                        <div class="w-full py-1.5 px-2 rounded-sm bg-gray-50 flex items-center overflow-hidden ">
+                            <p class="text-gray-700 font-mono text-sm truncate"><span class="hover:text-blue-500"
+                                    :title="formData.file_path">...</span> > <span class="text-blue-500"
+                                    title="System Name">VBCRAS</span> > Forms > Form Type >
+                                Year
+                                > Month >
+                                Document
+                                Name</p>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <p class="font-medium italic">Filling This petition at</p>
-                            <InputAutoComplete label="Province" v-model="formData.filing_province"
-                                :suggestion_data="province" :error="v$.filing_province.$error" />
-                            <InputAutoComplete label="City/Municipality" v-model="formData.filing_municipality"
-                                :suggestion_data="municipality" :error="v$.filing_municipality.$error" />
-
+                        <div class="w-full py-1.5 px-2 rounded-sm bg-gray-50 flex items-center overflow-hidden ">
+                            <p class="text-gray-700 font-mono text-sm truncate"><span class="hover:text-blue-500"
+                                    :title="formData.file_path">...</span> > <span class="text-blue-500"
+                                    title="System Name">VBCRAS</span> > Application for
+                                Marriage
+                                License > Year > Month > Document
+                                Name</p>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <p class="font-medium italic">Administering Officer</p>
-                            <Input label="Name" cap v-model="formData.administering_officer_name" />
-                            <Input label="Position" v-model="formData.administering_officer_position" />
+                        <div class="w-full py-1.5 px-2 rounded-sm bg-gray-50 flex items-center overflow-hidden ">
+                            <p class="text-gray-700 font-mono text-sm truncate"><span class="hover:text-blue-500"
+                                    :title="formData.file_path">...</span> > <span class="text-blue-500"
+                                    title="System Name">VBCRAS</span> > Type > Legitimation >
+                                Year >
+                                Month > Document
+                                Name</p>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <p class="font-medium italic">Subscribe and Sworn</p>
-                            <InputAutoComplete label="City/Municipality"
-                                v-model="formData.subscribe_sworn_city_municipality"
-                                :suggestion_data="municipality_province" />
-                            <InputAutoComplete label="Issued At" v-model="formData.issued_at"
-                                :suggestion_data="municipality_province" />
-
-                        </div>
-
-                    </div>
-                    <div class="flex flex-col gap-4">
-                        <p class="font-medium text-2xl text-gray-800   md:lg:px-20">Municipality</p>
-                        <div class="grid  w-full gap-10 items-center sm:grid-cols-1 md:lg:grid-cols-2 md:lg:px-20">
-                            <Input label="Municipal Civil Registrar" :error="v$.municipal_civil_registrar.$error" cap
-                                v-model="formData.municipal_civil_registrar" />
-                            <Input label="Municipal Mayor" :error="v$.mayor.$error" cap v-model="formData.mayor" />
-
-                        </div>
-                    </div>
-                    <div class="flex flex-col  md:lg:px-20 gap-5">
-                        <p class="font-medium text-2xl text-gray-800">Default Date Configuration</p>
-                        <DateChangerClearical />
                     </div>
                 </div>
-            </div>
 
-            <div class="flex flex-row gap-4 justify-end">
-                <button @click="auth.logout" tabindex="-1"
-                    class="border px-4 py-1.5 hover:bg-red-400 rounded shadow-sm hover:text-white">Logout</button>
-                <button :disabled="is_submitting"
-                    class="w-max  border px-4 py-1.5 disabled:cursor-progress rounded disabled:bg-blue-200  bg-blue-500 text-white font-medium bottom-2 right-2"
-                    @click="submit_setup">Submit</button>
-            </div>
 
+                <div class="w-full flex flex-col ">
+                    <p class="font-bold text-xl text-gray-700 uppercase font-mono mt-10 mb-4">Default Value</p>
+
+                    <div class="grid lg:grid-cols-2 gap-2">
+                        <InputAutoComplete label="Province" v-model="formData.filing_province"
+                            :suggestion_data="province" :error="v$.filing_province.$error" />
+                        <InputAutoComplete label="City/Municipality" :error="v$.filing_municipality.$error"
+                            v-model="formData.filing_municipality" :suggestion_data="municipality" />
+                        <Input label="Municipal Civil Registrar" :error="v$.municipal_civil_registrar.$error" cap
+                            v-model="formData.municipal_civil_registrar" />
+                        <Input label="Municipal Mayor" :error="v$.mayor.$error" cap v-model="formData.mayor" />
+
+                    </div>
+                </div>
+
+
+                <div class="flex flex-row gap-2 justify-end mt-auto">
+                    <button @click="auth.logout" tabindex="-1"
+                        class="border px-4 py-1.5 hover:bg-red-400 rounded shadow-sm hover:text-white">Logout</button>
+                    <button :disabled="is_submitting"
+                        class="w-max  border px-4 py-1.5 disabled:cursor-progress rounded disabled:bg-blue-200  bg-blue-500 hover:bg-blue-600 text-white font-medium bottom-2 right-2"
+                        @click="submit_setup">Submit</button>
+                </div>
+            </div>
         </div>
         <div v-if="auth.user_role === 2"
             class="h-full w-full flex flex-row flex-wrap gap-5 items-center justify-center relative">

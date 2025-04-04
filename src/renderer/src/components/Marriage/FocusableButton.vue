@@ -1,9 +1,9 @@
 <template>
     <div class="relative w-full h-full ">
         <button :tabindex="tabIndex" @focus="onFocus" @click="onClick" :class="buttonClass"
-            class="w-full relative p-0 outline-none hover:border-blue-400  hover:border  h-full bg-blue-100 ring-0 active:bg-blue-200 focus:bg-blue-200 py-0 text-ellipsis">
+            class="w-full relative p-0 outline-none h-full  ring-0 py-0 text-ellipsis">
             <p @focus="onFocus" @click="onClick" :class="[isCenter ? 'justify-center' : 'pl-2']"
-                class="font-semibold text-xs flex items-center text-gray-900 absolute top-0 bottom-0 text-nowrap truncate right-0 left-0 w-full overflow-x-hidden "
+                class="font-semibold text-xs flex items-center text-gray-800  absolute top-0 bottom-0 text-nowrap truncate right-0 left-0 w-full overflow-x-hidden "
                 v-if="!props.isSeparated">
                 {{ formData[field] }}
             </p>
@@ -32,7 +32,7 @@
 
 <script setup>
 import { defineProps, computed, defineEmits, ref, watch, nextTick } from 'vue';
-import { parse, format, isValid } from 'date-fns'; // You can install date-fns if needed for date formatting
+import { parse, format, isValid } from 'date-fns';
 
 
 
@@ -50,6 +50,7 @@ const props = defineProps({
     isCenter: { type: Boolean, default: false }, // new prop to control separation of date
     isAddress: { type: Boolean, default: false }, // new prop to control separation of date
     error: { type: Boolean, default: false }, // new prop to control separation of date
+    isDashedBorder: { type: Boolean, default: false }, // new prop to control separation of date
 });
 
 const show_required_dialog = ref(false)
@@ -106,10 +107,10 @@ const onClick = () => {
 const buttonClass = computed(() => {
     return [
         props.activeInputField === props.field
-            ? 'bg-blue-400'
+            ? 'bg-blue-300'
             : props.formData[props.field] !== ''
-                ? 'bg-yellow-50/80'
-                : 'bg-blue-100',
+                ? ''
+                : 'bg-blue-100', props.isDashedBorder ? 'border-b border-gray-400 border-dashed' : ''
     ];
 });
 </script>
