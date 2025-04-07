@@ -14,43 +14,28 @@
         <div v-if="isViewLocalOpen"
             class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center p-10                  justify-center z-50 backdrop-blur-sm backdrop-brightness-50">
             <div class=" bg-white rounded h-full w-full ">
-                <PDFViewerWorker :scale="1.5" :pdfBytes64="previewUrl" />
+                <PDFViewerWorker :scale="1.5" :pdfBytes64="previewUrl" @update:pdfBytes64="previewUrl = $event" />
             </div>
         </div>
 
-        <div class="h-[calc(100vh-200px)]">
-            <div class="flex flex-row items-center justify-center">
-                <!-- <div class="flex flex-col w-full py-2.5 gap-1 mb-6">
-                   
-                    <div class="flex flex-row gap-2 ml-5 items-center ">
-                        <p class="text-xs text-neutral-600 font-medium w-32">Available Record</p>
-                        <button
-                            :class="[selectedForm === available ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
-                            class="rounded hover:bg-yellow-300  transition-all duration-300 px-2.5 text-xs font-medium"
-                            v-for="available in available_forms" :key="available" @click="fetchFormData(available)">
-                            {{ available }}
-                        </button>
-                    </div>
-                    <div class="flex flex-row gap-2 ml-5 items-center ">
-                        <p class="text-xs text-neutral-600 font-medium w-32">No Record</p>
-                        <button
-                            :class="[selectedForm === not_available ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
-                            class="rounded hover:bg-yellow-300  transition-all duration-300 px-2.5 text-xs font-medium"
-                            v-for="not_available in no_record_forms" :key="not_available"
-                            @click="fetchFormData(not_available)">
-                            {{ not_available }}
-                        </button>
-                    </div>
-                    <div class="flex flex-row gap-2 ml-5 items-center ">
-                        <p class="text-xs text-neutral-600 font-medium w-32">Destroyed Record</p>
-                        <button
-                            :class="[selectedForm === destroyed ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700']"
-                            class="rounded hover:bg-yellow-300  transition-all duration-300 px-2.5 text-xs font-medium"
-                            v-for="destroyed in destroyed_forms" :key="destroyed" @click="fetchFormData(destroyed)">
-                            {{ destroyed }}
-                        </button>
-                    </div>
-                </div> -->
+        <div class="h-[calc(100vh-200px)] flex flex-col gap-4">
+            <div class="relative">
+                <div @click="openMenu"
+                    class="flex flex-row w-44 border border-gray-200 shadow items-center hover:cursor-pointer hover:bg-green-200 bg-white p-2 rounded-md">
+                    <p class="font-medium text-sm pl-2">{{ menu }}</p>
+                    <font-awesome-icon icon="fa-solid fa-chevron-down" class="ml-auto text-xs" />
+                </div>
+                <div v-if="isMenuOpen"
+                    class="absolute top-10 border shadow-md rounded-md w-60 min-h-44 max-h-[21rem] overflow-y-auto bg-white z-50">
+                    <ul class="flex p-2 flex-col  ">
+                        <div v-for="(category, index) in menuItems" :key="index">
+                            <!-- <div class="w-full bg-gray-100 px-1 text-center">{{ category.label }}</div> -->
+                            <li v-for="(item, i) in category.items" :key="i" @click="changeMenu(item)"
+                                class="hover:bg-gray-200 px-2 hover:cursor-pointer">{{ item }}</li>
+                        </div>
+                    </ul>
+                </div>
+
 
 
             </div>
@@ -69,14 +54,15 @@
                 <div class="flex flex-row w-full">
                     <!-- <ControlButton :icon="['fas', 'arrow-left']" button-text="Exit Form" @action="closeModal()" /> -->
 
-                    <div class="flex items-center flex-row gap-2 ml-auto" v-if="!isPreview">
+                    <div class="flex items-center flex-row gap-2 ml-auto"
+                        v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook">
                         <button @click="toggleForm(`${type}`)" v-for="type in FormTypes" :key="type"
                             :class="[selectedType === type ? 'text-white bg-green-500 ' : '']"
                             class="p-2 h-7 w-fit    hover:bg-green-600 transition-all duration-100 flex items-center text-xs justify-center  text-neutral-200 hover:text-neutral-300  rounded">
                             Form {{ type }}
                         </button>
                     </div>
-                    <div v-else class="ml-auto px-2">
+                    <div v-else-if="isPreview" class="ml-auto px-2">
                         <button class="text-white hover:underline" @click="settings = !settings">Settings</button>
                     </div>
                 </div>
@@ -402,12 +388,13 @@
                         </div>
                         <!-- <p class="font-medium text-xs">Add Remarks</p> -->
 
-                        <div class="flex  flex-col  py-2 w-full gap-2" v-if="transactions.is_other_remarks">
+                        <div class="flex flex-col py-2 w-full gap-2" v-show="transactions.is_other_remarks">
                             <div class="w-full flex flex-col gap-1 bg-white">
-                                <QuillEditor theme="snow" :toolbar="['bold', 'italic']"
+                                <QuillEditor @ready="handleEditorReady" theme="snow" :toolbar="['bold', 'italic']"
                                     v-model:content="available.remarks" contentType="delta" content="delta" />
                             </div>
                         </div>
+
                         <!-- {{ available.remarks }} -->
                     </div>
                     <div class="mt-auto grid grid-cols-2   mb-4">
@@ -655,20 +642,24 @@
                     class="fixed bottom-0 bg-gray-900 h-14  gap-2 w-full shadow-3xl z-40 flex items-center justify-end px-4">
                     <button @click="isPreview = false"
                         class="bg-white hover:bg-gray-200 text-gray-700  shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center">
-                        Return</button>
+                        Edit Form</button>
+
 
                     <button
                         class="text-white hover:text-white hover:bg-green-600 gap-3  text-sm bg-green-500  shadow-sm rounded-sm  outline-none font-medium px-4  py-2 tracking-wide flex flex-row  items-center"
                         @click="createForm">
                         <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
                         <div class="flex flex-col  items-start  ">
-                            <p>Print
+                            <p>Save & Print
                                 Document</p>
 
 
                         </div>
 
                     </button>
+                    <button @click="closeModal" v-if="formID !== null && isUpdateHook"
+                        class="bg-red-500 hover:bg-red-400 text-white shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center">
+                        Exit</button>
 
                     <!-- <button @click="createForm()"
                         class="bg-yellow-300 hover:bg-yellow-400 text-gray-800 px-4 font-medium  py-1.5 rounded "> Print
@@ -705,25 +696,50 @@ import { formMunicipalityProvinceAddress, municipalityProvinceAddress } from '..
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 
+const isMenuOpen = ref(false)
+const menu = ref("Birth Available")
+const openMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value
+}
+
+const menuItems = ref([
+    {
+        label: 'Birth',
+        items: ['Birth Available', 'Birth Intact', 'Birth Destroyed'],
+    },
+    {
+        label: 'Death',
+        items: ['Death Available', 'Death Intact', 'Death Destroyed'],
+    },
+    {
+        label: 'Marriage',
+        items: ['Marriage Available', 'Marriage Intact', 'Marriage Destroyed'],
+    }
+])
+const changeMenu = (item) => {
+    menu.value = item
+    isMenuOpen.value = false // Optionally close the menu after selecting an item
+}
 
 const settings = ref(false)
-const transactions = reactive(useTransactionDetails)
-const available = reactive(useAvailableForm)
+let transactions = reactive({ ...useTransactionDetails });
+let available = reactive({ ...useAvailableForm });
 
 // Form A's
-const Form1A = reactive(useForm1A)
-const Form2A = reactive(useForm2A)
-const Form3A = reactive(useForm3A)
+let Form1A = reactive({ ...useForm1A });
+
+let Form2A = reactive(useForm2A)
+let Form3A = reactive(useForm3A)
 
 // Form B's
-const Form1B = reactive(useForm1B)
-const Form2B = reactive(useForm2B)
-const Form3B = reactive(useForm3B)
+let Form1B = reactive(useForm1B)
+let Form2B = reactive(useForm2B)
+let Form3B = reactive(useForm3B)
 
 // Form C's
-const Form1C = reactive(useForm1C)
-const Form2C = reactive(useForm2C)
-const Form3C = reactive(useForm3C)
+let Form1C = reactive(useForm1C)
+let Form2C = reactive(useForm2C)
+let Form3C = reactive(useForm3C)
 
 
 const selectedType = ref(null)
@@ -737,8 +753,7 @@ const hasValue = computed(() => {
 
 const fact_of = ref('')
 
-
-const preference = reactive({
+const initialPref = {
     logo: {
         left_scale: 0.35,
         right_scale: 0.35,
@@ -747,12 +762,8 @@ const preference = reactive({
         right_x: 110,
         right_y: 790
     },
-
-
-
-    // Add Postition of logos
     header: {
-        x: 0, // Not Needed
+        x: 0,
         y: 6.5
     },
     concern: {
@@ -764,7 +775,7 @@ const preference = reactive({
         y: 163
     },
     body_data: {
-        x: 110, // 110 for 1A, 2A, 54 for 3A
+        x: 110,
         y: 205
     },
     issued_to: {
@@ -793,6 +804,9 @@ const preference = reactive({
         font: 12,
         width: 480,
     }
+}
+const preference = reactive({
+    ...initialPref
 })
 
 watch(isPreview, (newValue, oldValue) => {
@@ -827,6 +841,20 @@ watch(() => transactions.is_other_remarks, (newValue, oldValue) => {
 }, { deep: true })
 
 
+
+
+const remarksNotDelta = ref()
+
+function handleEditorReady(editor) {
+    editor.on('text-change', () => {
+        remarksNotDelta.value = editor.getText()
+    });
+}
+
+// Hooks for Updates
+const formID = ref(null)
+const isUpdateHook = ref(false)
+
 const createForm = async () => {
     const form_type = selectedType.value;
     const formAvailableMapping = {
@@ -854,6 +882,12 @@ const createForm = async () => {
             ...(form_type.endsWith('A') ? available : {}),
             ...formAvailableMapping[form_type],
         });
+
+        available.remarks = ''
+
+        available.remarks = remarksNotDelta.value
+
+
         const formData = reactive({
             ...transactions,
             ...(form_type.endsWith('A') ? available : {}),
@@ -861,10 +895,26 @@ const createForm = async () => {
         });
         const preview = await window.FormApi.PreviewFormPDF(JSON.stringify(main_data));
 
-        // Save it to databse
-        const add = await formsStore.add_form1a(formData)
+        if (formID.value !== null && isUpdateHook.value) {
+            await formsStore.edit_form1a(formID.value, formData)
+        }
+        else {
+            // Save it to databse
+            const add = await formsStore.add_form1a(formData)
+            if (add.status) {
+                formID.value = add.id
+                isUpdateHook.value = true
+            }
+        }
+
         //    Print the document
         const print = await window.LocalCivilApi.printPDFBase64(preview.result.pdfbase64)
+
+        // if (print) {
+        //     setTimeout(() => {
+        //         closeModal()
+        //     }, 300);
+        // }
 
     } else {
         console.log('Invalid form type selected');
@@ -872,7 +922,6 @@ const createForm = async () => {
 };
 
 const previewForm = async () => {
-    console.log('Previewing form')
     const form_type = selectedType.value;
 
     const formAvailableMapping = {
@@ -1103,6 +1152,17 @@ const formData = reactive({ ...initialFormData })
 
 function resetFormData() {
     Object.assign(formData, initialFormData);
+    Object.assign(preference, initialPref)
+
+    Object.assign(transactions, useTransactionDetails);
+    Object.assign(available, useAvailableForm);
+    Object.assign(Form1A, useForm1A);
+    Object.assign(Form2A, useForm2A);
+    Object.assign(Form3A, useForm3A);
+    Object.assign(preference, initialPref);
+
+    formID.value = null
+    isUpdateHook.value = false
 }
 
 
@@ -1132,9 +1192,81 @@ const toggleForm = (val) => {
 const nodateforparentsmarriage = ref(false)
 
 
+const EditMap = (data) => {
+    transactions.date_filed = data.date_filed
+    transactions.certification_issued_to = data.certification_issued_to
+    transactions.verified_by = data.verified_by
+    transactions.verifier_position = data.verifier_position
+    transactions.civil_registrar = data.civil_registrar
+    transactions.civil_registrar_position = data.civil_registrar_position
+    transactions.created_by = data.created_by
+    transactions.amount_paid = data.amount_paid
+    transactions.or_number = data.or_number
+    transactions.date_paid = data.date_paid
+    transactions.is_with_authentication = data.is_with_authentication
+    transactions.for_and_in_the_absence = data.for_and_in_the_absence
+    transactions.absence_verified_by = data.absence_verified_by
+    transactions.absence_verifier_position = data.absence_verifier_position
+    transactions.is_reconstructed = data.is_reconstructed
+    transactions.is_other_remarks = data.is_other_remarks
+
+    available.date_registration = data.date_registration
+    available.page_number = data.page_number
+    available.book_number = data.book_number
+    available.registry_number = data.registry_number
+    available.remarks = data.remarks
+
+    Form1A.name_child = data.name_child
+    Form1A.sex = data.sex
+    Form1A.date_birth = data.date_birth
+    Form1A.place_birth = data.place_birth
+    Form1A.name_mother = data.name_mother
+    Form1A.citizenship_mother = data.citizenship_mother
+    Form1A.name_father = data.name_father
+    Form1A.citizenship_father = data.citizenship_father
+    Form1A.date_marriage_parents = data.date_marriage_parents
+    Form1A.place_marriage_parents = data.place_marriage_parents
+}
+
 const isViewLocalOpen = ref(false)
+const isOnEdit = ref(false)
 const handleViewLocal = (data) => {
     isViewLocalOpen.value = true
+}
+const handleRemove = async (id) => {
+    try {
+        await formsStore.delete_form1a(id)
+    } catch (error) {
+        console.log('Error removing record:', error)
+    }
+}
+const handleEdit = async (data) => {
+    formID.value = data.id
+    isUpdateHook.value = true
+    EditMap(data)
+    isFormOpen.value = true
+    selectedForm.value = 'Form 1A'
+    selectedType.value = "1A"
+    formData.form_type = '1A'
+    isPreview.value = false
+}
+const handleCopy = async (data) => {
+    EditMap(data)
+
+
+    transactions.date_filed = format(new Date(), "MMMM dd, yyyy"),
+        transactions.or_number = '',
+        transactions.date_paid = format(new Date(), "MMMM dd, yyyy"),
+
+        // Optional Value per event
+        transactions.for_and_in_the_absence = false
+    transactions.absence_verified_by = ''
+    transactions.absence_verifier_position = ''
+    isFormOpen.value = true
+    selectedForm.value = 'Form 1A'
+    selectedType.value = "1A"
+    formData.form_type = '1A'
+    isPreview.value = false
 }
 
 
@@ -1148,13 +1280,14 @@ const colDefs = ref([
         cellClass: 'font-medium',
         cellStyle: { border: "none" },
         pinned: "left",
-        width: 200,
+        width: 300,
         lockPinned: true,
         resizable: true,
         sortable: false,
     },
     {
         field: "date_filed",
+        flex: 1,
         headerName: "Date Filed",
         filter: true,
     },
@@ -1179,11 +1312,6 @@ const colDefs = ref([
         filter: true,
     },
     {
-        field: "created_by",
-        headerName: "Created By",
-        filter: true,
-    },
-    {
         headerName: "Action",
         cellStyle: { border: "none" },
         pinned: "right",
@@ -1196,6 +1324,9 @@ const colDefs = ref([
         cellRenderer: ManageBtn,
         cellRendererParams: {
             onViewLocal: handleViewLocal,
+            onRemove: handleRemove,
+            onEdit: handleEdit,
+            onCopy: handleCopy
         },
     },
 

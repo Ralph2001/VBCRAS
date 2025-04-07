@@ -45,13 +45,19 @@
                         <span class="flex-1 ms-3 text-left">Legitimation</span>
                     </router-link>
                 </li>
+                <!-- <li>
+                    <router-link to="system-settings-report" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
+                        class="flex items-center p-2 text-gray-900 rounded ">
+                        <span class="flex-1 ms-3 text-left">System Settings</span>
+                    </router-link>
+                </li> -->
 
 
 
             </ul>
             <div class="w-full flex items-center justify-center">
                 <router-link to="/pages/welcome"
-                    class="border w-full p-2 font-medium text-md justify-center items-center flex text-gray-600 hover:bg-red-400 hover:text-white bg-white shadow-md">
+                    class="border w-full p-2 font-medium  rounded-2xl bg-gray-50 text-md justify-center items-center flex text-gray-600 hover:bg-red-400 hover:text-white  shadow-md">
                     Return
                 </router-link>
 

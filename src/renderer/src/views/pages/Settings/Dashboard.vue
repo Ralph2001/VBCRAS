@@ -15,7 +15,7 @@
                 class=" shadow-md  flex flex-col bg-white  p-2 rounded-lg hover:bg-gray-100  transition-all hover:shadow-md">
                 <div class="flex flex-row w-full items-center px-1.5">
                     <p class="text-sm font-medium">Total Petitions</p>
-        
+
                 </div>
                 <div class="py-4 flex flex-row gap-2 items-center px-4 justify-end">
                     <p class="text-lg font-bold text-gray-700">{{ petitions.petitions.length }}</p>
@@ -27,8 +27,18 @@
             <div
                 class=" shadow-md  flex flex-col bg-white  p-2 rounded-lg hover:bg-gray-100  transition-all hover:shadow-md">
                 <div class="flex flex-row w-full items-center px-1.5">
-                    <p class="text-sm font-medium">Total Forms</p>
-        
+                    <p class="text-sm font-medium">Local Copy (Forms)</p>
+
+                </div>
+                <div class="py-4 flex flex-row gap-2 items-center px-4 justify-end">
+                </div>
+                <button class="text-xs hover:text-blue-500 ">Enter</button>
+            </div>
+            <div
+                class=" shadow-md  flex flex-col bg-white  p-2 rounded-lg hover:bg-gray-100  transition-all hover:shadow-md">
+                <div class="flex flex-row w-full items-center px-1.5">
+                    <p class="text-sm font-medium">Total Marriage License</p>
+
                 </div>
                 <div class="py-4 flex flex-row gap-2 items-center px-4 justify-end">
 
@@ -39,8 +49,8 @@
             <div
                 class=" shadow-md  flex flex-col bg-white  p-2 rounded-lg hover:bg-gray-100  transition-all hover:shadow-md">
                 <div class="flex flex-row w-full items-center px-1.5">
-                    <p class="text-sm font-medium">Total Marriage License</p>
-        
+                    <p class="text-sm font-medium">Legitimation</p>
+
                 </div>
                 <div class="py-4 flex flex-row gap-2 items-center px-4 justify-end">
 
@@ -52,7 +62,7 @@
                 class=" shadow-md  flex flex-col bg-white  p-2 rounded-lg hover:bg-gray-100  transition-all hover:shadow-md">
                 <div class="flex flex-row w-full items-center px-1.5">
                     <p class="text-sm font-medium">Total Scanned Documents</p>
-        
+
                 </div>
                 <div class="py-4 flex flex-row gap-2 items-center px-4 justify-end">
 

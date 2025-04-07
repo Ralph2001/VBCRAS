@@ -217,6 +217,12 @@ const router = createRouter({
                     component: () => import('../views/pages/Settings/pages/LegitimationReport.vue'),
                     beforeEnter: navGuard
                 },
+                {
+                    path: 'system-settings-report',
+                    name: 'system_settings_report',
+                    component: () => import('../views/pages/Settings/pages/SystemSettings.vue'),
+                    beforeEnter: navGuard
+                },
                 
             ],
         },

@@ -17,7 +17,7 @@
 
                 </div>
                 <div class="flex-1  flex text-start px-1">
-                    View as Local File
+                    Local Local
                 </div>
             </button>
             <button type="button"
@@ -28,10 +28,10 @@
 
                 </div>
                 <div class="flex-1  flex text-start px-1">
-                    View as Data
+                 Load Data
                 </div>
             </button>
-            <button type="button"
+            <button type="button" @click="props.params.onCopy(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
                     <font-awesome-icon icon="fa-solid fa-copy" />
@@ -39,10 +39,10 @@
 
                 </div>
                 <div class="flex-1  flex text-start px-1">
-                  New Copy
+                   Copy
                 </div>
             </button>
-            <button type="button"
+            <button type="button" @click="props.params.onEdit(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
                     <font-awesome-icon icon="fa-solid fa-pen-to-square" />
@@ -53,7 +53,7 @@
                     Edit Information
                 </div>
             </button>
-            <button type="button"
+            <button type="button" @click="props.params.onRemove(props.params.data.id)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
                     <font-awesome-icon icon="fa-solid fa-trash" />
@@ -63,7 +63,7 @@
                     Remove
                 </div>
             </button>
-            
+
 
 
         </div>

@@ -31,7 +31,8 @@ const isLoading = ref(false);
 // Props
 const props = defineProps({
     pdfBytes64: {
-        required: true
+        required: true,
+        default: null
     },
     scale: {
         type: Number,
@@ -48,9 +49,9 @@ const percent = computed(() => {
     const calculation = (scale.value / maxScale) * 100
     return `${calculation.toFixed(2)}%`
 })
-
+const emit = defineEmits(['update:pdfBytes64']);
 onBeforeUnmount(() => {
-    props.pdfBytes64 = null
+    emit('update:pdfBytes64', null);
     clearTimeout(renderTimeout);
     window.removeEventListener('wheel', handleWheel);
 });

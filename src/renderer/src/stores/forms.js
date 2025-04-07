@@ -3,8 +3,6 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 
-
-
 export const useForms = defineStore('forms', {
     state: () => ({
         form1a: [],
@@ -16,8 +14,38 @@ export const useForms = defineStore('forms', {
         form1c: [],
         form2c: [],
         form3c: [],
+        allForms: [],
     }),
     actions: {
+        // async get_all_forms() {
+        //     // wait all to finish
+        //     try {
+        //         await Promise.all([
+        //             this.get_all_form1a(),
+        //             this.get_all_form2a(),
+        //             this.get_all_form3a(),
+        //             this.get_all_form1b(),
+        //             this.get_all_form2b(),
+        //             this.get_all_form3b(),
+        //             this.get_all_form1c(),
+        //             this.get_all_form2c(),
+        //             this.get_all_form3c()
+        //         ]);
+        //         this.allForms = [
+        //             ...this.form1a,
+        //             ...this.form2a,
+        //             ...this.form3a,
+        //             ...this.form1b,
+        //             ...this.form2b,
+        //             ...this.form3b,
+        //             ...this.form1c,
+        //             ...this.form2c,
+        //             ...this.form3c
+        //         ];
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error)
+        //     }
+        // },
         async get_all_form1a() {
             try {
                 const hostAdd = localStorage.getItem('host')
@@ -27,10 +55,9 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form1a = response.data
-                console.log(response.data)
             } catch (error) {
                 console.error('Error fetching data:', error)
-                // this.router.push('/login')
+
             }
         },
         async get_form1a_by_id(id) {
@@ -61,6 +88,8 @@ export const useForms = defineStore('forms', {
                     }
                 )
                 this.get_all_form1a()
+                return { status:true, id: response.data.id }
+                
             } catch (error) {
                 console.error('Error inserting data:', error)
             }

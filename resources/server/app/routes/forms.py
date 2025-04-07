@@ -46,6 +46,19 @@ def get_form1a(id):
     result = form1a_schema.dump(record)
     return jsonify(result), 200
 
+
+@forms.route("/form1a/<int:id>", methods=["PUT"])
+def update_form1a(id):
+    record = BirthAvailable.query.get_or_404(id)
+    data = request.get_json()
+  
+    # Update the fields of the record
+    updated_record = form1a_schema.load(data, instance=record, session=db.session)
+    db.session.commit()
+    result = form1a_schema.dump(updated_record)
+    return jsonify(result), 200
+
+
 @forms.route("/form1a/<int:id>", methods=["DELETE"])
 def delete_form1a(id):
     record = BirthAvailable.query.get_or_404(id)
