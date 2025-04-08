@@ -20,5 +20,4 @@ class Scans(db.Model):
     month = db.Column(db.String, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     uploaded_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    
     scanned_type = db.relationship(ScannedType, backref='scans', lazy=True)

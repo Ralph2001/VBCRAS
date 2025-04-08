@@ -6,7 +6,12 @@ from .extensions import db, jwt, ma, CORS, timedelta
 from .routes.user import user
 from .routes.ausf import ausf
 from .routes.config_route import configuration
-from .routes.forms import forms
+
+# from .routes.forms import forms
+from .routes.forms.AvailableRecords import formAvailableRoute
+from .routes.forms.IntactRecords import formItactRecords
+from .routes.forms.DestroyedRecords import formDestroyedRecords
+
 from .routes.scanned import scans
 from .routes.petition import petitions
 from .routes.application_marriage_license import application_marriage_license
@@ -44,7 +49,11 @@ def create_app():
     app.register_blueprint(scans)
     app.register_blueprint(petitions)
     app.register_blueprint(application_marriage_license)
-    app.register_blueprint(forms)
+    
+    #  Register Forms Routes
+    app.register_blueprint(formAvailableRoute)
+    app.register_blueprint(formItactRecords)
+    app.register_blueprint(formDestroyedRecords)
     
     
     # Models

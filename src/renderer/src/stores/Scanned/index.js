@@ -98,6 +98,7 @@ export const useScannedDocuments = defineStore('scanned', {
 
         async multipleAdd(data) {
             try {
+                console.log("Adding Scan: " + data)
                 const hostAdd = localStorage.getItem('host')
                 let tokenStr = localStorage.getItem('token')
                 await axios.post(`http://${hostAdd}:1216/scanned`, data, {

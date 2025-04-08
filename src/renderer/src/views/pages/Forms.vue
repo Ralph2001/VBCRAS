@@ -19,30 +19,35 @@
         </div>
 
         <div class="h-[calc(100vh-200px)] flex flex-col gap-4">
-            <div class="relative">
-                <div @click="openMenu"
-                    class="flex flex-row w-44 border border-gray-200 shadow items-center hover:cursor-pointer hover:bg-green-200 bg-white p-2 rounded-md">
-                    <p class="font-medium text-sm pl-2">{{ menu }}</p>
-                    <font-awesome-icon icon="fa-solid fa-chevron-down" class="ml-auto text-xs" />
+            <div class="flex flex-row items-center">
+                <div class="relative ">
+                    <div @click="openMenu"
+                        class="flex flex-row w-60 border  border-gray-200 shadow items-center hover:cursor-pointer hover:bg-green-200 bg-white p-2 rounded-md">
+                        <p class="font-medium text-sm pl-2">{{ menu }}</p>
+                        <font-awesome-icon icon="fa-solid fa-chevron-down" class="ml-auto text-xs" />
+                    </div>
+                    <div v-if="isMenuOpen" ref="MenuBox"
+                        class="absolute top-10 border shadow-md rounded-md w-60 min-h-44 max-h-[21rem] overflow-y-auto bg-white z-50">
+                        <ul class="flex p-2 flex-col  ">
+                            <div v-for="(category, index) in menuItems" :key="index">
+                                <!-- <div class="w-full bg-gray-100 px-1 text-center">{{ category.label }}</div> -->
+                                <li v-for="(item, i) in category.items" :key="i" @click="changeMenu(item)"
+                                    :class="[menu === item ? 'bg-gray-200' : '']"
+                                    class="hover:bg-gray-200 px-2 hover:cursor-pointer flex items-center flex-row gap-2">
+                                    <font-awesome-icon icon="fa-solid fa-info" class="text-xs" /> {{ item }}
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
                 </div>
-                <div v-if="isMenuOpen"
-                    class="absolute top-10 border shadow-md rounded-md w-60 min-h-44 max-h-[21rem] overflow-y-auto bg-white z-50">
-                    <ul class="flex p-2 flex-col  ">
-                        <div v-for="(category, index) in menuItems" :key="index">
-                            <!-- <div class="w-full bg-gray-100 px-1 text-center">{{ category.label }}</div> -->
-                            <li v-for="(item, i) in category.items" :key="i" @click="changeMenu(item)"
-                                class="hover:bg-gray-200 px-2 hover:cursor-pointer">{{ item }}</li>
-                        </div>
-                    </ul>
+                <div class="ml-auto w-80">
+                    <Input label="Search" v-model="search" />
                 </div>
-
-
-
             </div>
             <!-- <p class="italic font-thin text-sm  font-mono">Table Here</p> -->
 
             <div class="h-full">
-                <TableGrid :data="formsStore.form1a" :dataColumns="colDefs" :suppressRowTransform="true" />
+                <TableGrid :data="filteredRowData" :dataColumns="colDefs" :suppressRowTransform="true" />
             </div>
 
         </div>
@@ -650,20 +655,15 @@
                         @click="createForm">
                         <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
                         <div class="flex flex-col  items-start  ">
-                            <p>Save & Print
+                            <p> Print
                                 Document</p>
-
-
                         </div>
 
+                        <button @click="closeModal" v-if="formID !== null && isUpdateHook"
+                            class="bg-red-500 hover:bg-red-400 text-white shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center">
+                            Exit</button>
                     </button>
-                    <button @click="closeModal" v-if="formID !== null && isUpdateHook"
-                        class="bg-red-500 hover:bg-red-400 text-white shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center">
-                        Exit</button>
 
-                    <!-- <button @click="createForm()"
-                        class="bg-yellow-300 hover:bg-yellow-400 text-gray-800 px-4 font-medium  py-1.5 rounded "> Print
-                        Form {{ selectedType }}</button> -->
 
                 </div>
 
@@ -693,32 +693,88 @@ import { dumb_maker } from '../../lib/lala.js'
 import ManageBtn from '../../components/Form/ManageBtn.vue'
 import InputforFormSuggestions from '../../components/Form/InputforFormSuggestions.vue'
 import { formMunicipalityProvinceAddress, municipalityProvinceAddress } from '../../utils/Address/index.js'
+import Input from '../../components/essentials/inputs/Input.vue'
+import { onClickOutside } from '@vueuse/core'
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 
-const isMenuOpen = ref(false)
+const search = ref(null)
+
+const formToRender = computed(() => {
+    let render
+    switch (menu.value) {
+        case 'Birth Available':
+            render = "form1a"
+            break
+        case 'Birth Not Available':
+            render = "form1b"
+            break
+        case 'Birth Destroyed':
+            render = "form1c"
+            break
+        case 'Death Available':
+            render = "form2a"
+            break
+        case 'Death Not Available':
+            render = "form2b"
+            break
+        case 'Death Destroyed':
+            render = "form2c"
+            break
+        case 'Marriage Available':
+            render = "form3a"
+            break
+        case 'Marriage Not Available':
+            render = "form3b"
+            break
+        default:
+            console.log('Unknown form type:', item)
+            return
+    }
+
+    return render
+})
+
+const filteredRowData = computed(() => {
+    if (!search.value) return formsStore[formToRender.value]; // Use formToRender.value here
+    return formsStore[formToRender.value].filter(row =>
+        Object.values(row).some(value =>
+            String(value).toLowerCase().includes(search.value.toLowerCase())
+        )
+    );
+});
+
+
 const menu = ref("Birth Available")
+const isMenuOpen = ref(false)
+const MenuBox = ref(null)
+onClickOutside(isMenuOpen, event => isMenuOpen.value = false)
 const openMenu = () => {
     isMenuOpen.value = !isMenuOpen.value
 }
 
+
 const menuItems = ref([
     {
         label: 'Birth',
-        items: ['Birth Available', 'Birth Intact', 'Birth Destroyed'],
+        items: ['Birth Available', 'Birth Not Available', 'Birth Destroyed'],
     },
     {
         label: 'Death',
-        items: ['Death Available', 'Death Intact', 'Death Destroyed'],
+        items: ['Death Available', 'Death Not Available', 'Death Destroyed'],
     },
     {
         label: 'Marriage',
-        items: ['Marriage Available', 'Marriage Intact', 'Marriage Destroyed'],
+        items: ['Marriage Available', 'Marriage Not Available', 'Marriage Destroyed'],
     }
 ])
 const changeMenu = (item) => {
     menu.value = item
-    isMenuOpen.value = false // Optionally close the menu after selecting an item
+    isMenuOpen.value = false
+    // Changing Menu will change the data rendered
+    // Fetch Data
+    fetchFormData(item)
+
 }
 
 const settings = ref(false)
@@ -899,8 +955,18 @@ const createForm = async () => {
             await formsStore.edit_form1a(formID.value, formData)
         }
         else {
+            const formFunctions = {
+                "1A": formsStore.add_form1a,
+                "1B": formsStore.add_form1b,
+                "1C": formsStore.add_form1c,
+                "2A": formsStore.add_form2a,
+                "2B": formsStore.add_form2b,
+                "2C": formsStore.add_form2b,
+                "3A": formsStore.add_form3a,
+                "3B": formsStore.add_form3b,
+            };
             // Save it to databse
-            const add = await formsStore.add_form1a(formData)
+            const add = formFunctions[selectedType.value] ? formFunctions[selectedType.value](formData) : "";
             if (add.status) {
                 formID.value = add.id
                 isUpdateHook.value = true
@@ -1010,7 +1076,6 @@ const is_remarks_check = ref(false)
 
 
 onMounted(() => {
-    // fetchFormData('Form 1A')
     formsStore.get_all_form1a()
 });
 
@@ -1023,43 +1088,42 @@ const selectedForm = ref(null)
 const selectedFormData = ref(null)
 const formsStore = useForms()
 
-const fetchFormData = async (formType) => {
-    selectedForm.value = formType
+const fetchFormData = async (item) => {
     let fetchAction
 
-    switch (formType) {
-        case 'Form 1A':
+    switch (item) {
+        case 'Birth Available':
             fetchAction = formsStore.get_all_form1a
             break
-        case 'Form 2A':
+        case 'Birth Not Available':
             fetchAction = formsStore.get_all_form2a
             break
-        case 'Form 3A':
+        case 'Birth Destroyed':
             fetchAction = formsStore.get_all_form3a
             break
-        case 'Form 1B':
+        case 'Death Available':
             fetchAction = formsStore.get_all_form1b
             break
-        case 'Form 2B':
+        case 'Death Not Available':
             fetchAction = formsStore.get_all_form2b
             break
-        case 'Form 3B':
+        case 'Death Destroyed':
             fetchAction = formsStore.get_all_form3b
             break
-        case 'Form 1C':
+        case 'Marriage Available':
             fetchAction = formsStore.get_all_form1c
             break
-        case 'Form 2C':
+        case 'Marriage Not Available':
             fetchAction = formsStore.get_all_form2c
             break
         default:
-            console.log('Unknown form type:', formType)
+            console.log('Unknown form type:', item)
             return
     }
 
     try {
-        await fetchAction()
-        selectedFormData.value = formsStore[formType.toLowerCase().replace(' ', '')]
+        const data = await fetchAction()
+
     } catch (error) {
         console.log(' fetching data:', error)
     }
@@ -1329,9 +1393,6 @@ const colDefs = ref([
             onCopy: handleCopy
         },
     },
-
-
-
 ]);
 
 </script>

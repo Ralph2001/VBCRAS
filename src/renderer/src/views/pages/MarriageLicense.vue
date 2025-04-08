@@ -55,7 +55,7 @@
                     <div class="flex flex-col w-[30rem] gap-2 h-full justify-center">
                         <label for="" class="text-xs uppercase font-medium text-nowrap">Please enter {{
                             active_document_form
-                        }}:</label>
+                            }}:</label>
                         <input type="text" v-model="input_form_value" ref="input_form_field" tabindex="-1"
                             @keydown="handleTabNavigation"
                             @keydown.enter="submit_input_data($event, active_input_field)"
@@ -101,10 +101,10 @@
 
                                         </div>
                                     </div>
-                                    <div class="grow  p-1 flex flex-col ">
+                                    <div class="grow  p-1 flex flex-row ">
                                         <p class="text-sm text-nowrap"> Registry No.</p>
                                         <div class="items-center flex  justify-center w-full ">
-                                            <FocusableButton isCenter :documentName="'Registry No.'"
+                                            <FocusableButton  isLarge :documentName="'Registry No.'"
                                                 :field="'registry_number'" :tabIndex="3" :formData="formData"
                                                 :activeInputField="active_input_field"
                                                 :openFormInput="open_form_input" />

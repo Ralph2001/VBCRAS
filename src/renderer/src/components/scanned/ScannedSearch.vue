@@ -1,17 +1,19 @@
 <template>
-    <!-- Clear Icon -->
-    <font-awesome-icon v-if="modelValue" @click="clearInput" icon="fa-solid fa-xmark"
-        class="absolute right-3 text-gray-500 hover:text-gray-700 cursor-pointer top-[0.80rem]" />
+    <div class="w-full flex relative flex-row h-12 items-center">
+        <!-- Clear Icon -->
+        <font-awesome-icon v-if="modelValue" @click="clearInput" icon="fa-solid fa-xmark"
+            class="absolute right-3 text-gray-500 hover:text-gray-700 cursor-pointer " />
 
-    <!-- Search Icon -->
-    <font-awesome-icon @click="focusInput" icon="fa-solid fa-magnifying-glass"
-        class="text-gray-300 pointer-events-none absolute mt-[0.80rem] ml-2" />
+        <!-- Search Icon -->
+        <font-awesome-icon @click="focusInput" icon="fa-solid fa-magnifying-glass"
+            class="text-gray-300 pointer-events-none absolute ml-2" />
 
-    <!-- Search Input -->
-    <input  :value="props.modelValue"
-        @input="emit('update:modelValue', $event.target.value);" type="text" ref="input"
-        class="placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-full select-none"
-        placeholder="Search" />
+        <!-- Search Input -->
+        <input :value="props.modelValue" @input="emit('update:modelValue', $event.target.value);" type="text"
+            ref="input"
+            class="placeholder:text-gray-300 placeholder:text-sm placeholder:font-normal pl-8 rounded-lg border border-gray-300 font-semibold w-full select-none"
+            placeholder="Search" />
+    </div>
 </template>
 
 <script setup>

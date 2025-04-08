@@ -4,9 +4,14 @@
     <ScannedHeader>
       <template #content>
         <ScannedSearch v-model="searchQuery" />
-
+        <div class="ml-auto w-32 flex items-center justify-center">
+          <button @click="emits('openNewTypeModal')"
+            class="rounded-md w-fit px-2.5 h-fit bg-blue-600 text-white  py-1.5 text-xs font-medium">Add
+            Type</button>
+        </div>
       </template>
     </ScannedHeader>
+
     <ScannedNavbar :type="selected_type" :year="selected_year" :month="selected_month" @navigate="navigate" />
     <div class="h-full overflow-y-auto relative p-4 flex flex-col">
       <!-- Render Directory -->
@@ -25,7 +30,7 @@
       <div v-if="selected_type === null && !documents.loading && !documents.isError"
         class="grid grid-cols-6 lg:grid-cols-12 gap-1">
         <button @click="handleSelect(type.id)"
-          class="hover:border-gray-400 border-white flex flex-col items-center justify-center p-2 rounded-md hover:bg-gray-200 transition-all duration-200"
+          class="hover:border-gray-400 border-white  overflow-hidden flex flex-col items-center justify-center p-2 rounded-md hover:bg-gray-200 transition-all duration-200"
           v-for="type in props.types" :key="type.id">
           <div class="relative ">
             <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400 z-50 text-4xl me-2 ms-3" />
@@ -33,7 +38,7 @@
               class="text-yellow-300 -left-0.5 z-20 right-0 top-0.5 absolute text-4xl me-2 ms-3" />
 
           </div>
-          <p class="font-semibold text-sm text-gray-700"> {{ type.name }}</p>
+          <p class="font-semibold text-sm text-gray-700 truncate "> {{ type.name }} </p>
         </button>
       </div>
 
@@ -58,6 +63,7 @@ import { useScannedDocuments } from "../../stores/Scanned";
 import { useDebounceFn, useEventListener } from '@vueuse/core'
 
 
+
 const documents = useScannedDocuments()
 // Reactive references for selected filters
 const selected_type = ref(null)
@@ -67,7 +73,7 @@ const isLoading = ref(false)
 
 const searchQuery = ref("");
 
-const emits = defineEmits(['open-details'])
+const emits = defineEmits(['open-details', 'openNewTypeModal'])
 
 const debouncedFn = useDebounceFn(() => {
   SearchFile();

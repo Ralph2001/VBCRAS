@@ -1,10 +1,11 @@
 from ..extensions import db
 
-class BaseCertificate(db.Model):
-    __abstract__ = True  # Abstract base class won't create a table
+class TransactionDetails(db.Model):
+    __abstract__ = True 
 
     # All Forms have this
     id = db.Column(db.Integer, primary_key=True)
+    form_type = db.Column(db.String, nullable=False) #Birth, Death, Marriage
     date_filed = db.Column(db.String(50))
     certification_issued_to = db.Column(db.String(255))
     verified_by = db.Column(db.String(255))
@@ -17,7 +18,13 @@ class BaseCertificate(db.Model):
     absence_verified_by= db.Column(db.String(255))
     absence_verifier_position= db.Column(db.String(255))
 
-class AvailableMixin:
+class PaymentMixin:
+    """Payment-related fields for forms with financial transactions"""
+    amount_paid = db.Column(db.String(50))
+    or_number = db.Column(db.String(50))
+    date_paid = db.Column(db.String(50))
+
+class AvailableRecordMixin:
     """Fields for forms with available records"""
     date_registration = db.Column(db.String(50))
     page_number = db.Column(db.String(20))
@@ -27,23 +34,10 @@ class AvailableMixin:
     is_reconstructed= db.Column(db.Boolean, default=False)
     is_other_remarks= db.Column(db.Boolean, default=False)
 
-class PaymentMixin:
-    """Payment-related fields for forms with financial transactions"""
-    amount_paid = db.Column(db.String(50))
-    or_number = db.Column(db.String(50))
-    date_paid = db.Column(db.String(50))
-
-class RegisteredPeriodMixin:
-    """Fields for forms tracking registration periods"""
-    registered_from = db.Column(db.String(255))
-    from_year = db.Column(db.Integer)
-    to_year = db.Column(db.Integer)
-    destroyed_by = db.Column(db.String(255))
-
-# -------------------- A-Series Forms --------------------
-class BirthAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
-    __tablename__ = 'birth_available'
-    __table_args__ = (db.Index("idx_registry_number", "registry_number"),)
+# Available Records
+class AvailableBirthRecord(TransactionDetails, PaymentMixin, AvailableRecordMixin):
+    __tablename__ = 'available_birth_records'
+    # Fields specific to Birth records
     # Child information
     name_child = db.Column(db.String(255), nullable=False)
     sex = db.Column(db.String(10), nullable=False)
@@ -60,9 +54,8 @@ class BirthAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
     date_marriage_parents = db.Column(db.String(100))
     place_marriage_parents = db.Column(db.String(255))
 
-class DeathAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
-    __tablename__ = 'death_available'
-
+class AvailableDeathRecord(TransactionDetails, PaymentMixin, AvailableRecordMixin):
+    __tablename__ = 'available_death_records'
     # Deceased information
     name_deceased = db.Column(db.String(255), nullable=False)
     sex = db.Column(db.String(10))
@@ -75,10 +68,8 @@ class DeathAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
     place_of_death = db.Column(db.String(255))
     cause_of_death = db.Column(db.String(255))
 
-class MarriageAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
-
-    __tablename__ = 'marriage_available'
-
+class AvailableMarriageRecord(TransactionDetails, PaymentMixin, AvailableRecordMixin):
+    __tablename__ = 'available_marriage_records'
     # Groom information
     groom_name = db.Column(db.String(255), nullable=False)
     groom_date_birth = db.Column(db.Date)
@@ -101,41 +92,26 @@ class MarriageAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
     date_marriage = db.Column(db.Date, nullable=False)
     place_marriage = db.Column(db.String(255))
 
+# Intact/Not Available Records
+class IntactRecords(TransactionDetails, PaymentMixin):
+    __tablename__ = 'intact_records'
+    document_owner = db.Column(db.String(255))
+    event_on = db.Column(db.Date)  # Born on, Died on, Married on
+    intact_event_year = db.Column(db.Integer)  # Intact: Birth, Death, Marriage
 
-# -------------------- B-Series Forms -------------------- 
-class BirthIntact(BaseCertificate, PaymentMixin):
-    __tablename__ = 'birth_intact'
-    no_record_birth_of = db.Column(db.String(255))
-    born_on = db.Column(db.Date)
-    mother_name = db.Column(db.String(255))
-    father_name = db.Column(db.String(255))
-    intact_birth_year = db.Column(db.Integer)
+    # Column for Intact Birth
+    mother_name = db.Column(db.String(255), nullable=True)
+    father_name = db.Column(db.String(255), nullable=True)
 
-class DeathIntact(BaseCertificate, PaymentMixin):
-    __tablename__ = 'death_intact'
-    no_record_death_of = db.Column(db.String(255))
-    died_on = db.Column(db.Date)
-    intact_death_year = db.Column(db.Integer)
+# Destroyed Records
+class DestroyedRecords(TransactionDetails, PaymentMixin):
+    __tablename__ = 'destroyed_records'
 
-class MarriageIntact(BaseCertificate, PaymentMixin):
-    __tablename__ = 'marriage_intact'
-    no_record_marriage_of = db.Column(db.String(255))
-    married_on = db.Column(db.Date)
-    intact_marriage_year = db.Column(db.Integer)
+    document_owner = db.Column(db.String(400)) # Child Name, Deceased Name, Groom and Bride name
+    event_on = db.Column(db.Date) # Born on, Died on, Married on
 
+    registered_from = db.Column(db.String(255)) # Year Registered of Event but
+    from_year = db.Column(db.Integer) # This year
+    to_year = db.Column(db.Integer) # And this year
+    destroyed_by = db.Column(db.String(255)) # Are Destroyed by
 
-# -------------------- C-Series Forms --------------------
-class BirthDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
-    __tablename__ = 'birth_destroyed'
-    birth_name = db.Column(db.String(255))
-    born_on = db.Column(db.Date)
-
-class DeathDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
-    __tablename__ = 'death_destroyed'
-    death_name = db.Column(db.String(255))
-    died_on = db.Column(db.Date)
-
-class MarriageDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
-    __tablename__ = 'marriage_destroyed'
-    marriage_name = db.Column(db.String(255))
-    married_on = db.Column(db.Date)

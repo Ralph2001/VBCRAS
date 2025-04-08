@@ -1,7 +1,7 @@
 
 import { defineStore } from 'pinia'
 import axios from 'axios'
-
+import makeRequest from '../axios';
 
 export const useForms = defineStore('forms', {
     state: () => ({
@@ -14,122 +14,71 @@ export const useForms = defineStore('forms', {
         form1c: [],
         form2c: [],
         form3c: [],
-        allForms: [],
+        errorMessage: null
     }),
     actions: {
-        // async get_all_forms() {
-        //     // wait all to finish
-        //     try {
-        //         await Promise.all([
-        //             this.get_all_form1a(),
-        //             this.get_all_form2a(),
-        //             this.get_all_form3a(),
-        //             this.get_all_form1b(),
-        //             this.get_all_form2b(),
-        //             this.get_all_form3b(),
-        //             this.get_all_form1c(),
-        //             this.get_all_form2c(),
-        //             this.get_all_form3c()
-        //         ]);
-        //         this.allForms = [
-        //             ...this.form1a,
-        //             ...this.form2a,
-        //             ...this.form3a,
-        //             ...this.form1b,
-        //             ...this.form2b,
-        //             ...this.form3b,
-        //             ...this.form1c,
-        //             ...this.form2c,
-        //             ...this.form3c
-        //         ];
-        //     } catch (error) {
-        //         console.error('Error fetching data:', error)
-        //     }
-        // },
         async get_all_form1a() {
             try {
-                const hostAdd = localStorage.getItem('host')
-                let tokenStr = localStorage.getItem('token')
-                const response = await axios.get(
-                    `http://${hostAdd}:1216/form1a`,
-                    { headers: { Authorization: `Bearer ${tokenStr}` } }
-                )
-                this.form1a = response.data
+                this.form1a = await makeRequest('GET', 'form1a');
+                this.errorMessage = null; // Clear previous errors on success
             } catch (error) {
-                console.error('Error fetching data:', error)
-
+                console.error('Error fetching form1a:', error);
+                this.errorMessage = 'Failed to load Form1a data. Please try again later.';
             }
         },
+
         async get_form1a_by_id(id) {
             try {
-                const hostAdd = localStorage.getItem('host')
-                let tokenStr = localStorage.getItem('token')
-                const response = await axios.get(
-                    `http://${hostAdd}:1216/form1a/${id}`,
-                    { headers: { Authorization: `Bearer ${tokenStr}` } }
-                )
-                return response.data
+                return await makeRequest('GET', `form1a/${id}`);
             } catch (error) {
-                console.error('Error fetching data:', error)
-            }
-        },
-        async add_form1a(data) {
-            try {
-                const hostAdd = localStorage.getItem('host')
-                let tokenStr = localStorage.getItem('token')
-                const response = await axios.post(
-                    `http://${hostAdd}:1216/form1a`,
-                    data,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${tokenStr}`
-                        }
-                    }
-                )
-                this.get_all_form1a()
-                return { status:true, id: response.data.id }
-                
-            } catch (error) {
-                console.error('Error inserting data:', error)
-            }
-        },
-        async edit_form1a(id, data) {
-            try {
-                const hostAdd = localStorage.getItem('host')
-                let tokenStr = localStorage.getItem('token')
-                const response = await axios.put(
-                    `http://${hostAdd}:1216/form1a/${id}`,
-                    data,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${tokenStr}`
-                        }
-                    }
-                )
-                this.get_all_form1a()
-            } catch (error) {
-                console.error('Error updating data:', error)
-            }
-        },
-        async delete_form1a(id) {
-            try {
-                const hostAdd = localStorage.getItem('host')
-                let tokenStr = localStorage.getItem('token')
-                const response = await axios.delete(
-                    `http://${hostAdd}:1216/form1a/${id}`,
-                    { headers: { Authorization: `Bearer ${tokenStr}` } }
-                )
-                this.get_all_form1a()
-                return true
-            } catch (error) {
-                console.error('Error deleting data:', error)
-                return false
+                console.error('Error fetching form1a by ID:', error);
+                this.errorMessage = 'Failed to fetch the form details. Please try again later.';
             }
         },
 
-        // Repeat similar actions for Form2A, Form3A, Form1B, Form2B, Form3B, Form1C, Form2C, Form3C
+        async add_form1a(data) {
+            try {
+                const response = await makeRequest('POST', 'form1a', data);
+                this.form1a.push(response);
+                this.errorMessage = null;
+                return { status: true, id: response.id };
+            } catch (error) {
+                console.error('Error inserting data:', error);
+                this.errorMessage = 'Failed to add the form. Please try again later.';
+            }
+        },
+
+        async edit_form1a(id, data) {
+            try {
+                const updatedForm = await makeRequest('PUT', `form1a/${id}`, data);
+
+                const index = this.form1a.findIndex(form => form.id === id);
+                if (index !== -1) {
+                    this.form1a[index] = updatedForm;
+                }
+
+                this.errorMessage = null;
+            } catch (error) {
+                console.error('Error updating data:', error);
+                this.errorMessage = 'Failed to update the form. Please try again later.';
+            }
+        },
+
+        async delete_form1a(id) {
+            try {
+                await makeRequest('DELETE', `form1a/${id}`);
+                this.form1a = this.form1a.filter(form => form.id !== id);
+
+                this.errorMessage = null;
+                return true;
+            } catch (error) {
+                console.error('Error deleting data:', error);
+                this.errorMessage = 'Failed to delete the form. Please try again later.';
+                return false;
+            }
+        },
+
+        
 
         async get_all_form2a() {
             try {
@@ -140,6 +89,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form2a = response.data
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -223,6 +173,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form3a = response.data
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -306,6 +257,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form1b = response.data
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -389,6 +341,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form2b = response.data
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -472,6 +425,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form3b = response.data
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -555,6 +509,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form1c = response.data
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -637,6 +592,7 @@ export const useForms = defineStore('forms', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.form2c = response.data
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')

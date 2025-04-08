@@ -33,6 +33,126 @@ def get_petition_by_id(id):
     result = petition_schema.dump(petition_record)
     return jsonify(result), 200
 
+
+# Get Latest Petitions
+@petitions.route("/petitions/latest-cce", methods=["GET"])
+def get_latest_cce_petition():
+    latest_petition = (
+        Petitions.query.filter_by(petition_type="CCE")
+        .order_by(Petitions.created_at.desc())
+        .first()
+    )
+    if latest_petition:
+        result = {"petition_number": latest_petition.petition_number}
+        return jsonify(result), 200
+    else:
+        return jsonify({"message": "No CCE petition found"}), 404
+
+
+@petitions.route("/petitions/latest-cfn", methods=["GET"])
+def get_latest_cfn_petition():
+    latest_petition = (
+        Petitions.query.filter_by(petition_type="CFN")
+        .order_by(Petitions.created_at.desc())
+        .first()
+    )
+    if latest_petition:
+        result = {"petition_number": latest_petition.petition_number}
+        return jsonify(result), 200
+    else:
+        return jsonify({"message": "No CFN petition found"}), 404
+
+
+#########
+# Additionals
+#########
+
+@petitions.route("/petitions/supporting-documents", methods=["GET"])
+def get_all_supporting_documents():
+    supporting_documents = (
+        PetitionSupportingDocuments.query
+        .with_entities(PetitionSupportingDocuments.document_name)
+        .distinct()
+        .all()
+    )
+
+    # Extract document names from the result
+    document_names = [doc.document_name for doc in supporting_documents]
+
+    return jsonify({"supporting_documents": document_names}), 200
+
+
+@petitions.route("/petitions/clerical-errors", methods=["GET"])
+def get_all_clerical_errors():
+    clerical_errors = (
+        PetitionClericalErrors.query
+        .with_entities(PetitionClericalErrors.description)
+        .distinct()
+        .all()
+    )
+
+    # Extract descriptions from the result
+    error_descriptions = [error.description for error in clerical_errors]
+
+    return jsonify({"clerical_errors": error_descriptions}), 200
+
+
+#########
+# Insert
+#########
+
+
+@petitions.route("/petitions/add-petition", methods=["POST"])
+def add_petition():
+    data = request.get_json()
+
+    # Validate petition_number uniqueness
+    existing_petition = Petitions.query.filter_by(
+        petition_number=data["petition_number"]
+    ).first()
+    if existing_petition:
+        return jsonify({"error": "Petition number already exists"}), 400
+
+    new_petition = petition_schema.load(data, session=db.session)
+    db.session.add(new_petition)
+    db.session.commit()
+    result = petition_schema.dump(new_petition)
+    return jsonify(result), 201
+
+
+#########
+# Delete
+#########
+
+
+@petitions.route("/petition/<int:id>", methods=["DELETE"])
+def delete_petition(id):
+    petition = Petitions.query.get(id)
+    if petition:
+        # Delete related data (optional)
+        for clerical_error in petition.clerical_errors:
+            db.session.delete(clerical_error)
+
+        for supporting_document in petition.supporting_documents:
+            db.session.delete(supporting_document)
+
+        for petition_action in petition.petition_actions:
+            db.session.delete(petition_action)
+
+        for reason in petition.reasons:
+            db.session.delete(reason)
+
+        # Delete the petition itself
+        db.session.delete(petition)
+        db.session.commit()
+
+        return jsonify({"message": "Petition record deleted successfully."}), 200
+    else:
+        return jsonify({"message": "Petition record not found."}), 404
+    # return jsonify({"message": "Petition record deleted successfully."}), 200
+
+
+
 #########
 # Update
 #########
@@ -183,120 +303,3 @@ def edit_petition(id):
         db.session.rollback()
         print(e)
         return jsonify({"error": "An error occurred while updating the petition."}), 500
-
-# Get Latest Petitions
-@petitions.route("/petitions/latest-cce", methods=["GET"])
-def get_latest_cce_petition():
-    latest_petition = (
-        Petitions.query.filter_by(petition_type="CCE")
-        .order_by(Petitions.created_at.desc())
-        .first()
-    )
-    if latest_petition:
-        result = {"petition_number": latest_petition.petition_number}
-        return jsonify(result), 200
-    else:
-        return jsonify({"message": "No CCE petition found"}), 404
-
-
-@petitions.route("/petitions/latest-cfn", methods=["GET"])
-def get_latest_cfn_petition():
-    latest_petition = (
-        Petitions.query.filter_by(petition_type="CFN")
-        .order_by(Petitions.created_at.desc())
-        .first()
-    )
-    if latest_petition:
-        result = {"petition_number": latest_petition.petition_number}
-        return jsonify(result), 200
-    else:
-        return jsonify({"message": "No CFN petition found"}), 404
-
-
-#########
-# Additionals
-#########
-
-@petitions.route("/petitions/supporting-documents", methods=["GET"])
-def get_all_supporting_documents():
-    supporting_documents = (
-        PetitionSupportingDocuments.query
-        .with_entities(PetitionSupportingDocuments.document_name)
-        .distinct()
-        .all()
-    )
-
-    # Extract document names from the result
-    document_names = [doc.document_name for doc in supporting_documents]
-
-    return jsonify({"supporting_documents": document_names}), 200
-
-
-@petitions.route("/petitions/clerical-errors", methods=["GET"])
-def get_all_clerical_errors():
-    clerical_errors = (
-        PetitionClericalErrors.query
-        .with_entities(PetitionClericalErrors.description)
-        .distinct()
-        .all()
-    )
-
-    # Extract descriptions from the result
-    error_descriptions = [error.description for error in clerical_errors]
-
-    return jsonify({"clerical_errors": error_descriptions}), 200
-
-
-#########
-# Insert
-#########
-
-
-@petitions.route("/petitions/add-petition", methods=["POST"])
-def add_petition():
-    data = request.get_json()
-
-    # Validate petition_number uniqueness
-    existing_petition = Petitions.query.filter_by(
-        petition_number=data["petition_number"]
-    ).first()
-    if existing_petition:
-        return jsonify({"error": "Petition number already exists"}), 400
-
-    new_petition = petition_schema.load(data, session=db.session)
-    db.session.add(new_petition)
-    db.session.commit()
-    result = petition_schema.dump(new_petition)
-    return jsonify(result), 201
-
-
-#########
-# Delete
-#########
-
-
-@petitions.route("/petition/<int:id>", methods=["DELETE"])
-def delete_petition(id):
-    petition = Petitions.query.get(id)
-    if petition:
-        # Delete related data (optional)
-        for clerical_error in petition.clerical_errors:
-            db.session.delete(clerical_error)
-
-        for supporting_document in petition.supporting_documents:
-            db.session.delete(supporting_document)
-
-        for petition_action in petition.petition_actions:
-            db.session.delete(petition_action)
-
-        for reason in petition.reasons:
-            db.session.delete(reason)
-
-        # Delete the petition itself
-        db.session.delete(petition)
-        db.session.commit()
-
-        return jsonify({"message": "Petition record deleted successfully."}), 200
-    else:
-        return jsonify({"message": "Petition record not found."}), 404
-    # return jsonify({"message": "Petition record deleted successfully."}), 200

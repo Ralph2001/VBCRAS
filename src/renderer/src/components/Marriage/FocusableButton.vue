@@ -1,9 +1,10 @@
 <template>
-    <div class="relative w-full h-full ">
+    <div class="relative w-full h-full rounded">
         <button :tabindex="tabIndex" @focus="onFocus" @click="onClick" :class="buttonClass"
-            class="w-full relative p-0 outline-none h-full  ring-0 py-0 text-ellipsis">
-            <p @focus="onFocus" @click="onClick" :class="[isCenter ? 'justify-center' : 'pl-2']"
-                class="font-semibold text-xs flex items-center text-gray-800  absolute top-0 bottom-0 text-nowrap truncate right-0 left-0 w-full overflow-x-hidden "
+            class="w-full relative p-0 outline-none  h-full  ring-0 py-0 text-ellipsis">
+            <p @focus="onFocus" @click="onClick"
+                :class="[isCenter ? 'justify-center' : 'pl-2', isLarge ? 'text-lg ' : 'text-xs']"
+                class="font-semibold flex items-center text-gray-800  absolute top-0 bottom-0 text-nowrap truncate right-0 left-0 w-full overflow-x-hidden "
                 v-if="!props.isSeparated">
                 {{ formData[field] }}
             </p>
@@ -51,6 +52,7 @@ const props = defineProps({
     isAddress: { type: Boolean, default: false }, // new prop to control separation of date
     error: { type: Boolean, default: false }, // new prop to control separation of date
     isDashedBorder: { type: Boolean, default: false }, // new prop to control separation of date
+    isLarge: { type: Boolean, default: false }, // new prop to control separation of date
 });
 
 const show_required_dialog = ref(false)
@@ -109,8 +111,8 @@ const buttonClass = computed(() => {
         props.activeInputField === props.field
             ? 'bg-blue-300'
             : props.formData[props.field] !== ''
-                ? ''
-                : 'bg-blue-100', props.isDashedBorder ? 'border-b border-gray-400 border-dashed' : ''
+                ? 'bg-yellow-50 bg-opacity-30'
+                : 'bg-blue-100 bg-opacity-30', props.isDashedBorder ? 'border-b border-gray-400 border-dashed' : ''
     ];
 });
 </script>

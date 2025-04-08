@@ -1,9 +1,24 @@
 <template>
     <div class="flex flex-col relative justify-center w-full p-10" @dragenter="isDropzoneOpen = true">
+        <div tabindex="-1" v-if="newTypeModal"
+            class="fixed top-0 left-0 right-0 bottom-0 flex items-center backdrop-blur-sm backdrop-brightness-50 justify-center z-50">
+            <div class="max-w-screen-sm w-full h-[20rem] bg-white rounded border shadow-md p-4 flex flex-col">
+                <div class="mb-auto flex flex-row w-full">
+                    <p class="font-medium text-lg ">Create New Type</p>
+                    <button @click="newTypeModal = false"
+                        class="rounded-full ml-auto border bg-red-400 text-white px-2.5 py-2 flex items-center justify-center"><font-awesome-icon
+                            icon="fa-solid fa-xmark" /></button>
+                </div>
+                <Input label="Type Name" v-model="scannedData.name" />
+                <button @click="addNewType"
+                    class="w-full rounded-xl border py-2.5 mt-auto bg-green-400 text-white font-medium hover:bg-green-500">Create</button>
+            </div>
+        </div>
         <div class="h-[calc(100vh-180px)] relative">
             <ScannedDetails v-if="isDetailsOpen" @close-details="isDetailsOpen = false" />
             <DropZone v-if="isDropzoneOpen" @dragleave="isDropzoneOpen = false" @drop="handleDrop" @dragover.prevent />
-            <ExplorerView v-if="isExplorerVisible" :types="documents.scanned_types" @open-details="isDetailsOpen = true"/>
+            <ExplorerView @openNewTypeModal="openNewTypeModal" v-if="isExplorerVisible" :types="documents.scanned_types"
+                @open-details="isDetailsOpen = true" />
             <Transition mode="out-in" name="zoom_in">
                 <div tabindex="-1" v-if="IsModalOpen"
                     class="fixed top-0 p-2 bottom-0 left-0 right-0 flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-75">
@@ -98,6 +113,32 @@ import { useScannedDocuments } from '../../stores/Scanned';
 import { AuthStore } from '../../stores/Authentication';
 import ExplorerView from '../../components/client/ExplorerView.vue';
 import ScannedDetails from '../../components/scanned/ScannedDetails.vue';
+import Input from '../../components/essentials/inputs/Input.vue';
+import { useSetup } from '../../stores/Setting/setup';
+
+/**
+ * @NewTypeModal
+ */
+
+const newTypeModal = ref(false)
+const openNewTypeModal = () => {
+    newTypeModal.value = true
+}
+
+const scanned = useSetup()
+const scannedData = reactive({
+    name: ''
+})
+const addNewType = async () => {
+    try {
+        const add = await scanned.addScannedType(scannedData)
+        if (add) {
+            newTypeModal.value = false
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 const isDropzoneOpen = ref(false)
@@ -132,6 +173,7 @@ onMounted(() => {
 
 
 onUnmounted(() => {
+    authUser.isAuthenticated()
     mainData.Files = []
     isDropzoneOpen.value = false
 })
@@ -240,17 +282,16 @@ const submit = async () => {
             month: formData.month,
             year: formData.year,
             uploaded_by: uploaded_by,
-
         };
     }
 
 
     const add = await documents.multipleAdd(mainData.Files);
-    if (add.status === 201) {
-        isSubmitting.value = false
-        IsModalOpen.value = false
-        mainData.Files = []
-    }
+
+    isSubmitting.value = false
+    IsModalOpen.value = false
+    mainData.Files = []
+
 
 }
 </script>

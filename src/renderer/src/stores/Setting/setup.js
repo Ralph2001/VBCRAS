@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useScannedDocuments } from '../Scanned'
 
 export const useSetup = defineStore('useSetup', {
     state: () => ({
@@ -62,9 +63,10 @@ export const useSetup = defineStore('useSetup', {
                     }
                 )
                 this.refreshScannedTypes()
+                return true
             } catch (error) {
                 console.error('Error fetching data:', error)
-                this.router.push('/login')
+                return false
             }
         },
         async getScannedType() {
@@ -88,7 +90,9 @@ export const useSetup = defineStore('useSetup', {
         },
 
         async refreshScannedTypes() {
+            const scanned = useScannedDocuments()
             this.getScannedType()
+            scanned.getScannedType()
         },
 
         async getHolidays() {
