@@ -2,14 +2,14 @@
   <div class="w-full">
     <label v-if="!nolabel" :for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
       <span v-if="error" class="text-red-600">*</span></label>
-    <input  @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" :type="type"
-      :id="label" :value="modelValue" @input="value_toUpperCase($event.target)" :tabindex="skip ? '-1' : ''"
-      :readonly="readonly" :class="{
+    <input :placeholder="props.holder" @keydown.enter="focusNextInput" @keydown.down="focusNextInput"
+      @keydown.up="focusPreviousInput" :type="type" :id="label" :value="modelValue"
+      @input="value_toUpperCase($event.target)" :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
         'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
         'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
         'flex items-center text-center': center
       }"
-      class="bg-gray-50 tracking-wide rounded read-only:bg-gray-100 read-only:text-gray-400 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200 border border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+      class="bg-gray-50 placeholder:italic placeholder:font-normal placeholder:text-xs tracking-wide rounded read-only:bg-gray-100 read-only:text-gray-400 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200 border border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm  block w-full p-2.5 ="
       @focus="scrollToView" />
   </div>
 </template>
@@ -59,6 +59,12 @@ const props = defineProps({
   center: {
     type: Boolean,
     default: false,
+  }
+  ,
+  holder: {
+    type: String,
+    required: false,
+    default: "",
   }
 });
 

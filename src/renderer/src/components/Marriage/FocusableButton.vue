@@ -111,7 +111,7 @@ const buttonClass = computed(() => {
         props.activeInputField === props.field
             ? 'bg-blue-300'
             : props.formData[props.field] !== ''
-                ? 'bg-yellow-50 bg-opacity-30'
+                ? 'bg-yellow-100 bg-opacity-40'
                 : 'bg-blue-100 bg-opacity-30', props.isDashedBorder ? 'border-b border-gray-400 border-dashed' : ''
     ];
 });

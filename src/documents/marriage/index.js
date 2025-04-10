@@ -416,10 +416,9 @@ async function generate_marriage_license(formData) {
             'bride_person_who_gave_consent_residence',
         ]
 
-        // Iterate over each field and adjust its size and fit
         fields.forEach((fieldName) => {
             const field = form.getTextField(fieldName)
-            const fieldValue = data[fieldName] || '' // Fallback to empty string if no value provided
+            const fieldValue = data[fieldName] || ''
 
             if (fields_to_avoid.includes(fieldName)) {
                 adjustTextFieldSizeAndFit(
@@ -690,18 +689,16 @@ async function print_decided_license(formData, params) {
         const embeddedPage = await newPdfDoc.embedPage(firstDonorPage)
 
         // Optional: Adjust positioning with given x and y offsets
-        const x_axis_adjustments = !isNaN(Number(adjustments.x))
+        const x_axis_adjustments = (Number(adjustments.x))
             ? Number(adjustments.x)
             : 0
-        const y_axis_adjustments = !isNaN(Number(adjustments.y))
+        const y_axis_adjustments = (Number(adjustments.y))
             ? Number(adjustments.y)
             : 0
 
         newPage.drawPage(embeddedPage, {
-            // x: 12,
-            // y: -27
-            x: 0,
-            y: 0
+            x: x_axis_adjustments,
+            y: y_axis_adjustments
         })
 
         // Save the new PDF
@@ -827,7 +824,6 @@ async function save_marriage_license_and_notice(formData, image) {
         console.error('Error saving marriage license, notice, or images:', error.message);
     }
 }
-
 
 
 export {
