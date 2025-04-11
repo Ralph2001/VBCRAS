@@ -2,9 +2,10 @@
     <div class="relative" ref="focushereonly">
         <label v-if="!nolabel" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
         </label>
-        <input :placeholder="props.holder" @focus="scrollToView" ref="suggestion_input_field" @keydown.up="focusPreviousInput"
-            @keydown.enter="focusNextInput" @keydown.down="focusNextInput" @input="StartTyping" :type="type" :id="label"
-            :value="modelValue" :tabindex="skip ? '-1' : ''" :readonly="readonly" :class="{
+        <input :placeholder="props.holder" @focus="scrollToView" ref="suggestion_input_field"
+            @keydown.up="focusPreviousInput" @keydown.enter="focusNextInput" @keydown.down="focusNextInput"
+            @input="StartTyping" :type="type" :id="label" :value="modelValue" :tabindex="skip ? '-1' : ''"
+            :readonly="readonly" :class="{
                 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
                 'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
                 'text-center': center
@@ -18,7 +19,7 @@
                 @keydown.up="focusPreviousInput" v-for="(value, index) in result" :key="value + '_unique'"
                 @click="SelectOption(value, index, $event)"
                 class="px-3 py-1.5 text-start cursor-pointer transition-colors font-normal text-sm hover:bg-[#3D6C8E] hover:text-white focus:text-white active:text-white active:bg-[#3D6C8E]  w-full outline-none ring-0 focus:bg-[#3D6C8E] ">{{
-                    value
+                    value.toUpperCase()
                 }}</button>
         </div>
 
@@ -157,7 +158,7 @@ const StartTyping = (e) => {
 }
 function SelectOption(value, index, e) {
     suggestions_.value = false; // Hide suggestions
-    emit('update:modelValue', value);
+    emit('update:modelValue', value.toUpperCase());
     emit('change_value')
 
     const to_minus = index + 1
@@ -197,7 +198,7 @@ const stay_count_result = (event, to_minus) => {
 const selectSuggestion = (value, index, e) => {
     suggestions_.value = false; // Hide suggestions
 
-    emit('update:modelValue', value);
+    emit('update:modelValue', value.toUpperCase());
     emit('change_value')
 
     const to_minus = index + 1

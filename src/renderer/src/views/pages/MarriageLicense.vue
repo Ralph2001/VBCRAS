@@ -13,19 +13,18 @@
             <TableGrid :data="apl.application_marriage_license" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
-        <div class="fixed top-0 bottom-0 left-0 p-4 right-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-50"
+        <div v-if="modal"
+            class="fixed top-0 bottom-0 left-0 p-4  right-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-50"
             tabindex="-1" role="dialog">
-            <div class="w-full max-w-screen-lg h-[40rem] flex flex-col bg-white rounded-lg p-4">
+            <div class="w-full max-w-screen-lg h-[42rem] flex flex-col bg-white rounded-lg p-2 relative">
+                <button @click="close_modal"
+                    class="absolute right-0 top-0 rounded-bl-full w-10 h-10  bg-red-400 hover:bg-red-500 flex items-center justify-end px-2 text-white"><font-awesome-icon
+                        icon="fa-solid fa-xmark" />
+                </button>
                 <div class="flex items-center justify-center mb-5">
                     <h2 class="font-medium text-lg uppercase text-gray-800">Application for Marriage License</h2>
                 </div>
-                <!-- <div class="flex flex-row gap-1 items-center justify-center">
-                    <button class="bg-gray-300 text-xs font-medium border text-white rounded-sm px-2 py-1.5"
-                        v-for="(step, index) in steps" :key="index" @click="currentStep = index"
-                        :class="{ active: currentStep === index }">
-                        {{ step }}
-                    </button>
-                </div> -->
+
 
                 <div class="flex flex-row gap-0 mb-4 px-2">
                     <div class="flex flex-col gap-0">
@@ -43,207 +42,274 @@
                     </div>
                 </div>
 
-                <div v-if="currentStep === 0" class="flex flex-col px-10 mt-auto justify-center">
-                    <div class="grid grid-cols-1 gap-2">
+                <div class="flex-1 overflow-y-auto py-2 ">
+                    <div v-if="currentStep === 0" class="flex flex-col px-10 mt-auto justify-center">
 
-                        <Input type="date" label="Date of Application" />
-                        <Input type="date" label="Date of Issuance of Marriage License" />
-                        <Input type="date" label="Date of Marriage" />
-                        <Input label="Place of Marriage" />
+                        <div class="grid grid-cols-1 gap-2 ">
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <InputMarriage type="date" label="Date of Application"
+                                    v-model="formData.date_of_application" />
+                                <InputMarriage type="date" label="Date of Marriage"
+                                    v-model="formData.date_of_receipt" />
+                                <InputMarriage type="date" label="Date of Issuance of Marriage License"
+                                    v-model="formData.date_issuance_marriage_license" />
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <InputMarriage label="Marriage License No" v-model="formData.marriage_license_number" />
+                                <InputMarriage label="Place of Marriage" v-model="formData.place_of_marriage" />
+                            </div>
+                        </div>
+
+
 
 
                     </div>
-                </div>
 
-                <div v-if="currentStep === 1" class="flex flex-col px-10 justify-center">
-                    <div class="grid grid-cols-1 gap-2">
+                    <div v-if="currentStep === 1" class="flex flex-col px-10 justify-center  ">
+                        <div class="grid grid-cols-1 gap-2">
 
+                            <div class="grid grid-cols-3 gap-1 items-end">
+                                <InputMarriage cap label="Full Name" holder="First Name"
+                                    v-model="formData.groom_first_name" />
+                                <InputMarriage cap holder="Middle Name" v-model="formData.groom_middle_name" />
+                                <InputMarriage cap holder="Last Name" v-model="formData.groom_last_name" />
+                            </div>
+
+                            <div class="flex flex-row items-center gap-2">
+
+                                <div class="w-full">
+                                    <InputMarriage type="date" label="Date of Birth" holder="MMMM/DD/YYYY"
+                                        v-model="formData.groom_date_birth" @change="calculateAge('groom')" />
+
+
+                                </div>
+                                <div class="w-[70%]">
+                                    <InputMarriage label="Age" skip type="number" v-model="formData.groom_age" />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-1 items-end">
+                                <InputMarriage cap label="Place of Birth" holder="City/Municipality"
+                                    v-model="formData.groom_municipality" />
+                                <InputMarriageSuggestion cap holder="Province" v-model="formData.groom_province"
+                                    :suggestion_data="province" />
+                                <InputMarriage cap holder="Country" skip v-model="formData.groom_country" />
+                            </div>
+                            <div class="flex flex-row gap-1 items-end">
+                                <InputMarriage cap label="Residence"
+                                    holder="(House No., St., Barangay, City/Municipality, Province)"
+                                    v-model="formData.groom_residence" />
+                                <div class="w-[50%]">
+                                    <InputMarriage cap holder="Country" skip
+                                        v-model="formData.groom_residence_country" />
+                                </div>
+                            </div>
+                            <div class="flex flex-row items-center gap-2">
+
+                                <div class="w-full">
+                                    <InputMarriage cap label="Sex" v-model="formData.groom_sex" />
+
+                                </div>
+                                <div class="w-full">
+                                    <InputMarriage cap label="Citizenship" v-model="formData.groom_citizenship" />
+
+                                </div>
+                                <div class="w-[70%]">
+                                    <InputMarriage cap label="Civil Status" v-model="formData.groom_civil_status" />
+                                </div>
+                            </div>
+                            <div class="flex flex-row items-center gap-2"
+                                v-if="formData.groom_civil_status !== 'SINGLE' && formData.groom_civil_status !== ''">
+                                <InputMarriage cap label="IF PREVIOUSLY MARRIED: How was it dissolved?" />
+                                <div class="w-[70%]">
+                                    <InputMarriage cap type="date" label="Date when dissolved" />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 items-end"
+                                v-if="formData.groom_civil_status !== 'SINGLE' && formData.groom_civil_status !== ''">
+                                <InputMarriage cap label="Place where dissolved" holder="City/Municipality"
+                                    v-model="formData.groom_first_name" />
+                                <InputMarriage cap holder="Province" />
+                                <InputMarriage cap holder="Country" />
+
+                            </div>
+
+
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <InputMarriage cap label="Religion" v-model="formData.groom_religion" />
+                                <InputMarriage cap label="Degree of relationship of contradicting parties"
+                                    v-model="formData.groom_degree_relation" />
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div v-if="currentStep === 2" class="flex flex-col gap-2 px-10 justify-center">
                         <div class="grid grid-cols-3 gap-1 items-end">
-                            <Input label="Full Name" holder="First Name" />
-                            <Input holder="Middle Name" />
-                            <Input holder="Last Name" />
+                            <InputMarriage cap label="Name of Father" holder="First Name"
+                                v-model="formData.groom_father_first_name" />
+                            <InputMarriage cap holder="Middle Name" v-model="formData.groom_father_middle_name" />
+                            <InputMarriage cap holder="Last Name" v-model="formData.groom_father_last_name" />
                         </div>
-
-                        <div class="flex flex-row items-center gap-2">
-
-                            <div class="w-full">
-                                <Input type="date" label="Date of Birth" holder="MMMM/DD/YYYY" />
-
+                        <div class="flex flex-row gap-1 items-end">
+                            <div class="w-[50%]">
+                                <InputMarriage cap label="Citizenship" v-model="formData.groom_father_citizenship" />
                             </div>
-                            <div class="w-[70%]">
-                                <Input label="Age" />
+                            <InputMarriage cap label="Residence"
+                                holder="(House No., St., Barangay, City/Municipality, Province)"
+                                v-model="formData.groom_father_residence" />
+                            <div class="w-[50%]">
+                                <InputMarriage cap holder="Country" v-model="formData.groom_father_residence_country" />
                             </div>
                         </div>
-
                         <div class="grid grid-cols-3 gap-1 items-end">
-                            <Input label="Place of Birth" holder="City/Municipality" />
-                            <Input holder="Province" />
-                            <Input holder="Country" />
+                            <InputMarriage cap label="Maiden Name of Mother" holder="First Name"
+                                v-model="formData.groom_mother_first_name" />
+                            <InputMarriage cap holder="Middle Name" v-model="formData.groom_mother_middle_name" />
+                            <InputMarriage cap holder="Last Name" v-model="formData.groom_mother_last_name" />
                         </div>
-                        <div class="flex flex-row items-center gap-2">
-
-                            <div class="w-full">
-                                <Input label="Citizenship" />
-
+                        <div class="flex flex-row gap-1 items-end">
+                            <div class="w-[50%]">
+                                <InputMarriage cap label="Citizenship" v-model="formData.groom_mother_citizenship" />
                             </div>
-                            <div class="w-[70%]">
-                                <Input label="Civil Status" />
+                            <InputMarriage cap label="Residence"
+                                holder="(House No., St., Barangay, City/Municipality, Province)"
+                                v-model="formData.groom_mother_residence" />
+                            <div class="w-[50%]">
+                                <InputMarriage cap holder="Country" v-model="formData.groom_mother_residence_country" />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-row gap-1">
+                            <InputMarriage cap label="Person who gave consent"
+                                v-model="formData.groom_person_who_gave_consent" />
+                            <div class="w-[50%]">
+                                <InputMarriage cap label="Relationship"
+                                    v-model="formData.groom_person_who_gave_consent_relation" />
                             </div>
                         </div>
                         <div class="flex flex-row gap-1 items-end">
-                            <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
                             <div class="w-[50%]">
-                                <Input holder="Country" />
+                                <InputMarriage cap label="Citizenship"
+                                    v-model="formData.groom_person_who_gave_consent_citizenship" />
                             </div>
+                            <InputMarriage cap label="Residence"
+                                holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                v-model="formData.groom_person_who_gave_consent_residence" />
+
                         </div>
-                        <Input label="Religion" />
-
 
                     </div>
-                </div>
 
-                <!-- Step 2 -->
+                    <div v-if="currentStep === 3" class="flex flex-col px-10 justify-center">
+                        <div class="grid grid-cols-1 gap-2">
 
-                <div v-if="currentStep === 2" class="flex flex-col gap-2 px-10 justify-center">
-                    <div class="grid grid-cols-3 gap-1 items-end">
-                        <Input label="Name of Father" holder="First Name" />
-                        <Input holder="Middle Name" />
-                        <Input holder="Last Name" />
-                    </div>
-                    <div class="flex flex-row gap-1 items-end">
-                        <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
-                        <div class="w-[50%]">
-                            <Input holder="Country" />
+                            <div class="grid grid-cols-3 gap-1 items-end">
+                                <InputMarriage cap label="Full Name" holder="First Name" />
+                                <InputMarriage cap holder="Middle Name" />
+                                <InputMarriage cap holder="Last Name" />
+                            </div>
+
+                            <div class="flex flex-row items-center gap-2">
+
+                                <div class="w-full">
+                                    <InputMarriage cap type="date" label="Date of Birth" holder="MMMM/DD/YYYY"
+                                        v-model="formData.bride_date_birth" @change="calculateAge('bride')" />
+
+                                </div>
+                                <div class="w-[70%]">
+                                    <InputMarriage cap label="Age" skip type="number" v-model="formData.bride_age" />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-1 items-end">
+                                <InputMarriage cap label="Place of Birth" holder="City/Municipality" />
+                                <InputMarriage cap holder="Province" />
+                                <InputMarriage cap holder="Country" />
+                            </div>
+                            <div class="flex flex-row items-center gap-2">
+
+                                <div class="w-full">
+                                    <InputMarriage cap label="Citizenship" />
+
+                                </div>
+                                <div class="w-[70%]">
+                                    <InputMarriage cap label="Civil Status" />
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-1 items-end">
+                                <InputMarriage cap label="Residence"
+                                    holder="(House No., St., Barangay, City/Municipality, Province)" />
+                                <div class="w-[50%]">
+                                    <InputMarriage cap holder="Country" />
+                                </div>
+                            </div>
+                            <InputMarriage cap label="Religion" />
+
+
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-1 items-end">
-                        <Input label="Maiden Name of Mother" holder="First Name" />
-                        <Input holder="Middle Name" />
-                        <Input holder="Last Name" />
-                    </div>
-                    <div class="flex flex-row gap-1 items-end">
-                        <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
-                        <div class="w-[50%]">
-                            <Input holder="Country" />
-                        </div>
-                    </div>
 
-                    <div class="flex flex-row gap-1">
-                        <Input label="Person who gave consent" />
-                        <div class="w-[50%]">
-                            <Input label="Relationship" />
-                        </div>
-                    </div>
-                    <div class="flex flex-row gap-1 items-end">
-                        <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
-                        <div class="w-[50%]">
-                            <Input holder="Country" />
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Step 3 -->
-                <div v-if="currentStep === 3" class="flex flex-col px-10 justify-center">
-                    <div class="grid grid-cols-1 gap-2">
-
+                    <div v-if="currentStep === 4" class="flex flex-col gap-2 px-10 justify-center">
                         <div class="grid grid-cols-3 gap-1 items-end">
-                            <Input label="Full Name" holder="First Name" />
-                            <Input holder="Middle Name" />
-                            <Input holder="Last Name" />
+                            <InputMarriage cap label="Name of Father" holder="First Name" />
+                            <InputMarriage cap holder="Middle Name" />
+                            <InputMarriage cap holder="Last Name" />
                         </div>
-
-                        <div class="flex flex-row items-center gap-2">
-
-                            <div class="w-full">
-                                <Input type="date" label="Date of Birth" holder="MMMM/DD/YYYY" />
-
-                            </div>
-                            <div class="w-[70%]">
-                                <Input label="Age" />
+                        <div class="flex flex-row gap-1 items-end">
+                            <InputMarriage cap label="Residence"
+                                holder="(House No., St., Barangay, City/Municipality, Province)" />
+                            <div class="w-[50%]">
+                                <InputMarriage cap holder="Country" />
                             </div>
                         </div>
-
                         <div class="grid grid-cols-3 gap-1 items-end">
-                            <Input label="Place of Birth" holder="City/Municipality" />
-                            <Input holder="Province" />
-                            <Input holder="Country" />
+                            <InputMarriage cap label="Maiden Name of Mother" holder="First Name" />
+                            <InputMarriage cap holder="Middle Name" />
+                            <InputMarriage cap holder="Last Name" />
                         </div>
-                        <div class="flex flex-row items-center gap-2">
-
-                            <div class="w-full">
-                                <Input label="Citizenship" />
-
+                        <div class="flex flex-row gap-1 items-end">
+                            <InputMarriage cap label="Residence"
+                                holder="(House No., St., Barangay, City/Municipality, Province)" />
+                            <div class="w-[50%]">
+                                <InputMarriage cap holder="Country" />
                             </div>
-                            <div class="w-[70%]">
-                                <Input label="Civil Status" />
+                        </div>
+
+                        <div class="flex flex-row gap-1">
+                            <InputMarriage cap label="Person who gave consent" />
+                            <div class="w-[50%]">
+                                <InputMarriage cap label="Relationship" />
                             </div>
                         </div>
                         <div class="flex flex-row gap-1 items-end">
-                            <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
+                            <InputMarriage cap label="Residence"
+                                holder="(House No., St., Barangay, City/Municipality, Province)" />
                             <div class="w-[50%]">
-                                <Input holder="Country" />
+                                <InputMarriage cap holder="Country" />
                             </div>
                         </div>
-                        <Input label="Religion" />
-
 
                     </div>
-                </div>
 
-                <!-- Step 4 -->
-
-                <div v-if="currentStep === 4" class="flex flex-col gap-2 px-10 justify-center">
-                    <div class="grid grid-cols-3 gap-1 items-end">
-                        <Input label="Name of Father" holder="First Name" />
-                        <Input holder="Middle Name" />
-                        <Input holder="Last Name" />
-                    </div>
-                    <div class="flex flex-row gap-1 items-end">
-                        <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
-                        <div class="w-[50%]">
-                            <Input holder="Country" />
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-3 gap-1 items-end">
-                        <Input label="Maiden Name of Mother" holder="First Name" />
-                        <Input holder="Middle Name" />
-                        <Input holder="Last Name" />
-                    </div>
-                    <div class="flex flex-row gap-1 items-end">
-                        <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
-                        <div class="w-[50%]">
-                            <Input holder="Country" />
-                        </div>
-                    </div>
-
-                    <div class="flex flex-row gap-1">
-                        <Input label="Person who gave consent" />
-                        <div class="w-[50%]">
-                            <Input label="Relationship" />
-                        </div>
-                    </div>
-                    <div class="flex flex-row gap-1 items-end">
-                        <Input label="Residence" holder="(House No., St., Barangay, City/Municipality, Province)" />
-                        <div class="w-[50%]">
-                            <Input holder="Country" />
-                        </div>
+                    <div v-if="currentStep === 5" class="px-10">
+                        <h3>Review & Submit</h3>
+                        <p>Applicant: </p>
+                        <p>Spouse: </p>
+                        <p>Consent Giver: </p>
                     </div>
 
                 </div>
-
-                <div v-if="currentStep === 5" class="px-10">
-                    <h3>Review & Submit</h3>
-                    <p>Applicant: </p>
-                    <p>Spouse: </p>
-                    <p>Consent Giver: </p>
-                </div>
-
                 <div class="mt-auto flex flex-row gap-2 items-end justify-end">
                     <button @click="currentStep--" v-if="currentStep !== 0"
-                        class="bg-blue-400 text-white py-1.5 w-24  rounded">Back</button>
+                        class="bg-blue-400 hover:bg-blue-500 text-white py-1.5 w-24  rounded">Back</button>
                     <button @click="currentStep++" v-if="currentStep + 1 < steps.length"
-                        class="bg-blue-400 text-white py-1.5 w-24  rounded">Next</button>
+                        class="bg-blue-400 hover:bg-blue-500 text-white py-1.5 w-24  rounded">Next</button>
                     <button @click="currentStep++" v-if="currentStep + 1 === steps.length"
                         class="bg-blue-400 text-white py-1.5 w-24  rounded">Save</button>
                 </div>
@@ -272,7 +338,14 @@ import FocusableButton from '../../components/Marriage/FocusableButton.vue';
 import ActionBtn from '../../components/Marriage/ActionBtn.vue';
 import { AuthStore } from "../../stores/Authentication.js";
 import Input from "../../components/essentials/inputs/Input.vue";
+import { differenceInYears, isValid, parseISO } from 'date-fns';
+import InputAutoComplete from '../../components/InputAutoComplete.vue';
+import { complete_province } from '../../utils/Address/index.js';
+import InputMarriage from '../../components/Marriage/InputMarriage.vue';
+import InputMarriageSuggestion from '../../components/Marriage/InputMarriageSuggestion.vue';
 
+
+const province = ref(complete_province())
 /**
  * Authentication
  * @IMPORTANT
@@ -340,7 +413,7 @@ const focusNextInput = (event) => {
 
     current_tab.value += 1;
 
-    const nextButton = Array.from(document.querySelectorAll('button[tabindex]:not([tabindex="-1"])'))
+    const nextButton = Array.from(document.querySelectorAll('input, button[tabindex]:not([tabindex="-1"])'))
         .find(button => button.tabIndex === current_tab.value);
 
     if (nextButton) {
@@ -439,22 +512,41 @@ const modal = ref(false);
 const open_model = () => {
     modal.value = true;
 
-    const date = new Date()
+    // const date = new Date()
 
-    formData.groom_civil_status = 'SINGLE'
-    formData.bride_civil_status = 'SINGLE'
+    // formData.groom_civil_status = 'SINGLE'
+    // formData.bride_civil_status = 'SINGLE'
 
-    formData.civil_registrar = 'ISMAEL D. MALICDEM, JR.'
-    formData.received_by = 'ISMAEL D. MALICDEM, JR.'
-    formData.groom_sex = "MALE"
-    formData.bride_sex = "FEMALE"
-    formData.header_province = "PANGASINAN"
-    formData.header_municipality = "BAYAMBANG"
+    // formData.civil_registrar = 'ISMAEL D. MALICDEM, JR.'
+    // formData.received_by = 'ISMAEL D. MALICDEM, JR.'
+    // formData.groom_sex = "MALE"
+    // formData.bride_sex = "FEMALE"
+    // formData.header_province = "PANGASINAN"
+    // formData.header_municipality = "BAYAMBANG"
 
-    formData.date_of_receipt = format(date, 'MMMM dd, yyyy').toUpperCase()
-    formData.registry_number = format(date, 'yyyy') + '-'
+    // formData.date_of_receipt = format(date, 'MMMM dd, yyyy').toUpperCase()
+    // formData.registry_number = format(date, 'yyyy') + '-'
 
 };
+
+function calculateAge(data) {
+    const date = data === 'groom' ? formData.groom_date_birth : data === 'bride' ? formData.bride_date_birth : null
+
+    const parsedDate = parseISO(date)
+    if (isValid(parsedDate)) {
+        if (data === 'groom') {
+            formData.groom_age = differenceInYears(new Date(), parsedDate)
+        }
+        else if (data === 'bride') {
+            formData.bride_age = differenceInYears(new Date(), parsedDate)
+        }
+        else return
+
+    } else {
+        return
+    }
+}
+
 
 
 
@@ -469,11 +561,16 @@ const initialForm = {
     groom_contract_marriage_with: '',
     bride_contract_marriage_with: '',
 
+    place_of_marriage: '', // ADD
+    date_of_application: '', // ADD
+
     civil_registrar: '',
 
     groom_first_name: '',
     groom_middle_name: '',
     groom_last_name: '',
+
+    groom_date_birth: '', // ADD
 
     groom_day: '',
     groom_month: '',
@@ -483,22 +580,24 @@ const initialForm = {
 
     groom_municipality: '',
     groom_province: '',
-    groom_country: '',
+    groom_country: 'PHILIPPINES',
 
-    groom_sex: '',
+    groom_sex: 'MALE',
     groom_citizenship: '',
     groom_residence: '',
-    groom_residence_country: '', // 
+    groom_residence_country: 'PHILIPPINES', // 
     groom_religion: '',
-    groom_civil_status: '',
+    groom_civil_status: 'SINGLE',
 
-    groom_degree_relation: '',
+    groom_degree_relation: 'NOT RELATED',
+
     groom_father_first_name: '',
     groom_father_middle_name: '',
     groom_father_last_name: '',
     groom_father_citizenship: '',
     groom_father_residence: '',
     groom_father_residence_country: '',
+
     groom_mother_first_name: '',
     groom_mother_middle_name: '',
     groom_mother_last_name: '',
@@ -528,6 +627,7 @@ const initialForm = {
     bride_month: '',
     bride_year: '',
 
+    bride_date_birth: '', // ADD
 
     bride_age: '',
     bride_municipality: '',
@@ -693,12 +793,12 @@ const blank = () => {
 }
 // Close Form Editor
 const close_modal = () => {
-    Object.assign(formData, { ...initialForm });
-    groom_picture.value = null;
-    bride_picture.value = null;
+    // Object.assign(formData, { ...initialForm });
+    // groom_picture.value = null;
+    // bride_picture.value = null;
     modal.value = false;
-    page.value = 1
-    preview.value = false
+    // page.value = 1
+    // preview.value = false
 };
 
 
