@@ -156,7 +156,7 @@
                     <div class="flex flex-col w-[30rem] gap-2 h-full justify-center">
                         <label for="" class="text-xs uppercase font-medium text-nowrap">Please enter {{
                             active_document_form
-                        }}:</label>
+                            }}:</label>
                         <input type="text" v-model="input_form_value" ref="input_form_field" tabindex="-1"
                             @keydown="handleTabNavigation"
                             @keydown.enter="submit_input_data($event, active_input_field)"
@@ -2229,11 +2229,11 @@ const add_details_to_notice = (field) => {
     };
 
     formData[`notice_${field}_residence`] = formData[`${field}_residence`]
-        .split(',') // Split into parts by comma
-        .map(part => part.trim()) // Trim whitespace
-        .filter(part => !part.toUpperCase().includes('PHILIPPINES')) // Remove "PHILIPPINES"
-        .map(part => capitalizeFirstLetter(part)) // Capitalize first letter of each word
-        .join(', '); // Join back into a single string with commas
+        .split(',') 
+        .map(part => part.trim()) 
+        .filter(part => !part.toUpperCase().includes('PHILIPPINES')) 
+        .map(part => capitalizeFirstLetter(part))
+        .join(', '); 
 
     // formData[`notice_${field}_residence`] = formData[`${field}_residence`];
 

@@ -3,7 +3,7 @@
         <label v-if="!nolabel" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ label }}
         </label>
         <input :placeholder="props.holder" @focus="scrollToView" ref="suggestion_input_field"
-            @keydown.up="focusPreviousInput" @keydown.enter="focusNextInput" @keydown.down="focusNextInput"
+            @keydown.up="focusPreviousInput" @keydown.enter="focusNextInputEnter" @keydown.down="focusNextInput"
             @input="StartTyping" :type="type" :id="label" :value="modelValue" :tabindex="skip ? '-1' : ''"
             :readonly="readonly" :class="{
                 'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
@@ -113,7 +113,7 @@ const props = defineProps({
 
 const suggestion_box = ref(null)
 const suggestions_ = ref(false)
-const result = ref()
+const result = ref([])
 
 
 
@@ -276,10 +276,6 @@ const how_many_downs = ref(1)
 const focusNextInput = (event, index_num) => {
     event.preventDefault();
 
-
-
-
-
     // Select only focusable elements (input, button, and elements with tabindex >= 0)
     const inputs = Array.from(document.querySelectorAll('input, button, [tabindex]'))
         .filter(input => input.tabIndex >= 0);
@@ -288,6 +284,24 @@ const focusNextInput = (event, index_num) => {
     if (index >= 0 && index < inputs.length - 1) {
         inputs[index + 1].focus();
     }
+}
+const focusNextInputEnter = (event, index_num) => {
+    if (result.value.length > 0) {
+        result.value = ''
+        suggestions_.value = false
+    }
+
+    event.preventDefault();
+
+
+    const inputs = Array.from(document.querySelectorAll('input'))
+        .filter(input => input.tabIndex >= 0);
+
+    const index = inputs.indexOf(event.target);
+    if (index >= 0 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+    }
+
 }
 
 </script>

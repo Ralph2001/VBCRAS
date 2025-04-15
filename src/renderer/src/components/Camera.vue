@@ -3,59 +3,71 @@
         <teleport to="body" v-if="isFullScreen">
             <div
                 class="fixed top-0 bottom-0 left-0 right-0 h-full w-full backdrop-blur-sm z-[9999999999999999] bg-gray-800 justify-center items-center flex">
-                <div class="h-full w-full relative flex items-center justify-center">
+                <div class="h-full w-full  gap-2 flex-col relative flex items-center justify-center">
 
                     <!-- Countdown Timer -->
                     <div v-if="countdown > 0" class="absolute z-[999999999] text-white text-5xl">
                         {{ countdown }}
                     </div>
 
-                    <div class="absolute top-0 p-2 gap-1 flex w-full items-end">
+                    <div class="h-16 p-2 gap-1  flex w-full items-center bg-black/20 ">
                         <button @click="closeCamera"
-                            class=" p-2 bg-red-400 text-white hover:bg-red-500 outline-none text-xs rounded-sm font-medium">
+                            class=" p-2 ] flex flex-row gap-2 items-center bg-red-600 hover:bg-red-500  text-white outline-none text-xs rounded-sm font-medium">
+                            <font-awesome-icon icon="fa-solid fa-arrow-left" />
                             Cancel Operation
                         </button>
-                        <div class="w-14 flex ml-auto flex-col">
+                        <div class="w-14 flex ml-auto flex-col gap-1">
                             <p class="font-mono text-xs text-white">Timer:</p>
                             <input v-model="timer" type="number"
-                                class="rounded-sm border bg-gray-200 border-gray-300 py-1">
+                                class="rounded-xl border text-center font-medium bg-gray-200 border-gray-300 py-1">
                         </div>
-                        <select class=" text-sm rounded-sm  w-[12rem] h-[2.2rem] bg-gray-200 outline-none ring-0"
-                            v-model="selectedDeviceId" @change="startCamera">
-                            <option v-for="device in videoDevices" :key="device.deviceId" :value="device.deviceId">
-                                {{ device.label || `Camera ${device.deviceId}` }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div v-if="capturedImage === null" class="video h-[85%] relative">
-                        <video class="h-full" ref="videoElement" autoplay playsinline></video>
-                        <div class="overlay absolute inset-0 flex items-center justify-center pointer-events-none">
-
-                            <div class="border border-gray-50 rounded-sm  h-64 w-64"></div>
+                        <div class="flex flex-col gap-1 ">
+                            <p class="font-mono text-xs text-white">Camera:</p>
+                            <select
+                                class=" text-sm rounded-xl font-medium w-[12rem] h-[2.2rem] bg-gray-200 outline-none ring-0"
+                                v-model="selectedDeviceId" @change="startCamera">
+                                <option v-for="device in videoDevices" :key="device.deviceId" :value="device.deviceId">
+                                    {{ device.label || `Camera ${device.deviceId}` }}
+                                </option>
+                            </select>
                         </div>
                     </div>
 
-                    <div v-if="capturedImage" class="flex flex-col items-center">
-                        <img :src="capturedImage" alt="Captured photo" class="max-w-full max-h-full mb-4"
-                            ref="capturedImageElement" />
-                        <div class="flex gap-2 items-center">
-                            <label for="brightness" class="text-white text-sm">Brightness:</label>
-                            <input id="brightness" type="range" min="0" max="200" @change="applyBrightness()"
-                                v-model="brightness" class="w-40">
-                            <button @click="resetBrightness" class="text-white p-2 bg-red-400 text-sm rounded-sm">
-                                Reset Brightness
-                            </button>
+                    <div class="flex-1 h-full  w-full  flex justify-center items-center">
+                        <div v-if="capturedImage === null" class="video h-full relative">
+                            <video class="h-full" ref="videoElement" autoplay playsinline></video>
+                            <div class="overlay absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div class="border border-gray-100   h-44 w-44"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="absolute bottom-0 p-10 w-full flex gap-2 justify-end">
+                        <div v-if="capturedImage" class="flex flex-col items-center">
+                            <img :src="capturedImage" alt="Captured photo" class="max-w-full max-h-full mb-4"
+                                ref="capturedImageElement" />
+                            <div class="flex flex-row gap-2 items-center justify-center ">
+                                <label for="brightness" class="text-white text-xs font-medium">Brightness:</label>
+                                <input id="brightness" type="range" min="0" max="200" @change="applyBrightness()"
+                                    v-model="brightness" class="w-40">
+                                <div class="w-10 h-10">
+                                    <button @click="resetBrightness" v-if="brightness !== 100"
+                                        class="text-white  bg-red-500 hover:bg-red-600 text-sm flex items-center justify-center rounded-full w-8 h-8">
+                                        <font-awesome-icon icon="fa-solid fa-xmark" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="h-20 p-2   w-full flex gap-2 justify-end px-4 ">
                         <button @click="captureImage" v-if="!capturedImage"
-                            class="text-white p-2 bg-green-400 text-sm rounded-sm">Capture</button>
+                            class="text-white  p-2 w-14 h-14 bg-green-500 outline-none shadow-lg hover:bg-green-600 rounded-full transition-all duration-300  text-sm flex flex-row gap-2 items-center justify-center active:scale-95 font-medium"><font-awesome-icon
+                                icon="fa-solid fa-camera" /> </button>
                         <button @click="save_image" v-if="capturedImage"
-                            class="text-white p-2 bg-green-400 text-sm rounded-sm">Save</button>
+                            class="text-white h-12 p-2 w-24 bg-green-500 hover:bg-green-600 transition-all duration-300 text-sm rounded-sm flex flex-row gap-2 items-center justify-center active:scale-95 font-medium"><font-awesome-icon
+                                icon="fa-solid fa-share" /> Save</button>
                         <button @click="removeImage" v-if="capturedImage"
-                            class="text-white p-2 bg-red-400 text-sm rounded-sm">Remove</button>
+                            class="text-white h-12 p-2 w-24 bg-red-500 hover:bg-red-600 transition-all duration-300 text-sm rounded-sm flex flex-row gap-2 items-center justify-center active:scale-95 font-medium"><font-awesome-icon
+                                icon="fa-solid fa-trash" /> Reset</button>
                     </div>
                 </div>
             </div>
@@ -161,8 +173,8 @@ const captureImage = () => {
 
 const resetBrightness = () => {
     brightness.value = 100
-    capturedImage.value  = originalImage.value;
-   
+    capturedImage.value = originalImage.value;
+
 }
 
 const applyBrightness = () => {

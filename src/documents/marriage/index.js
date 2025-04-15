@@ -1,6 +1,7 @@
-import { exec } from 'child_process'
+
 import { PageSizes, PDFDocument, StandardFonts, TextAlignment } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
+import { format } from 'date-fns'
 const path = require('path')
 const fs = require('fs')
 
@@ -258,7 +259,8 @@ async function generate_marriage_notice(formData, image) {
         bride_mother.setText(data.notice_bride_mother)
         bride_mother.updateAppearances(ArialFont)
 
-        date_posting.setText(data.notice_date_posting)
+        const parsedDate = new Date(data.notice_date_posting);
+        date_posting.setText(format(parsedDate, 'MMMM dd, yyyy'))
         date_posting.updateAppearances(ArialFont)
         civil_registrar.setText(data.civil_registrar)
         civil_registrar.updateAppearances(ArialBoldFont)
@@ -284,6 +286,7 @@ async function generate_marriage_notice(formData, image) {
     }
 }
 
+
 async function generate_marriage_license(formData) {
     try {
         // Check if the necessary files exist
@@ -302,6 +305,46 @@ async function generate_marriage_license(formData) {
         // Parse the form data
         const data = JSON.parse(formData)
 
+
+        const updateBirthDateField = (birthDate, prefix) => {
+            // Add validation
+            if (!birthDate || isNaN(new Date(birthDate).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, birthDate);
+                return;
+            }
+
+            // Parse date using ISO format
+            const parsedDate = new Date(birthDate);
+
+            // Validate parsed date
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, birthDate);
+                return;
+            }
+
+            const dayField = form.getTextField(`${prefix}_day`);
+            const monthField = form.getTextField(`${prefix}_month`);
+            const yearField = form.getTextField(`${prefix}_year`);
+
+            try {
+                dayField.setText(format(parsedDate, 'dd'));
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
+                yearField.setText(format(parsedDate, 'yyyy'));
+
+                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+        };
+
+        // Groom
+        updateBirthDateField(data.groom_date_birth, 'groom');
+
+        // Bride
+        updateBirthDateField(data.bride_date_birth, 'bride');
+
+
+
         // Define the fields in the form
         const fields = [
             'header_province',
@@ -317,9 +360,7 @@ async function generate_marriage_license(formData) {
             'groom_first_name',
             'groom_middle_name',
             'groom_last_name',
-            'groom_day',
-            'groom_month',
-            'groom_year',
+
             'groom_age',
             'groom_municipality',
             'groom_province',
@@ -357,9 +398,7 @@ async function generate_marriage_license(formData) {
             'bride_first_name',
             'bride_middle_name',
             'bride_last_name',
-            'bride_day',
-            'bride_month',
-            'bride_year',
+
             'bride_age',
             'bride_municipality',
             'bride_province',

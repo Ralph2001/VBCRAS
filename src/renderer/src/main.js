@@ -101,7 +101,9 @@ import {
     faFileWord,
     faCaretRight,
     faCopy,
-    faDatabase
+    faDatabase,
+    faRetweet,
+    faShare
     
 
 
@@ -190,7 +192,9 @@ library.add(
     faFileWord,
     faCaretRight,
     faCopy,
-    faDatabase
+    faDatabase,
+    faRetweet,
+    faShare
     
  
 
