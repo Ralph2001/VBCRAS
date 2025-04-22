@@ -1,12 +1,12 @@
 <template>
-  <div class="h-screen relative mainHTML scale-70 bg-[#F5F5F5]">
+  <div class="h-screen relative mainHTML scale-70 bg-[#F7FAFC]">
 
     <Noice />
     <NavBar />
     <Menu />
-
+    <ToastContainer />
     <router-view v-slot="{ Component }">
-      <transition mode="out-in">
+      <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
     </router-view>
@@ -19,7 +19,7 @@ import { onMounted } from "vue";
 import NavBar from "../components/client/NavBar.vue";
 import Menu from "../components/Menu.vue";
 import Noice from "./Noice.vue";
-
+import ToastContainer from "../components/ToastContainer.vue";
 
 onMounted(() => {
   window.UpdateApi.onUpdateCheck((event, info) => {
@@ -45,3 +45,30 @@ onMounted(() => {
   });
 })
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+
+}
+
+.fade-enter-to {
+  opacity: 1;
+
+}
+
+.fade-leave-from {
+  opacity: 1;
+
+}
+
+.fade-leave-to {
+  opacity: 0;
+
+}
+</style>

@@ -99,7 +99,7 @@
         class="fixed top-16 bg-red-500 rounded shadow-2xl right-10 z-[9999] h-auto px-4 py-2.5 flex flex-col items-center justify-center">
         <p class="font-semibold tracking-wider text-white text-sm font-mono"> Required Field/s
         </p>
-         <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
+        <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
           <p v-for="error in v$.$errors" >
             {{ error.$propertyPath.replace('_', ' ') }}
 
@@ -799,6 +799,7 @@ import Selector from "../../components/Selector.vue";
 import DocumentStatus from "../../components/essentials/buttons/table/DocumentStatus.vue";
 import EditForm from "../../components/Correction/EditForm.vue";
 import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue";
+import { MarriageRules } from "../../lib/marriage/rules.js";
 // import { useRouter } from "vue-router";
 
 // const router = useRouter();
@@ -1653,9 +1654,7 @@ const resetForm = () => {
 };
 
 
-const v$ = useVuelidate(rules, formData);
-
-
+const v$ = useVuelidate(MarriageRules, formData);
 
 
 const submitForm = async () => {

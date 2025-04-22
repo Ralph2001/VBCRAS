@@ -1029,45 +1029,6 @@ const previewForm = async () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const is_with_remarks = computed(() => {
     return formData.form_type.includes('A') ? true : false
 })
@@ -1316,7 +1277,6 @@ const handleEdit = async (data) => {
 }
 const handleCopy = async (data) => {
     EditMap(data)
-
 
     transactions.date_filed = format(new Date(), "MMMM dd, yyyy"),
         transactions.or_number = '',
