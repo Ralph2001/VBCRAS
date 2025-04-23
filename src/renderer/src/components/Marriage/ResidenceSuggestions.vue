@@ -13,7 +13,7 @@
             class="bg-gray-50 placeholder:italic placeholder:font-normal placeholder:text-xs tracking-wide rounded read-only:bg-gray-100 read-only:text-gray-400 read-only:focus-within:bg-gray-100 read-only:focus-within:ring-gray-300 read-only:focus-within:border-gray-200 border border-gray-300 font-bold focus:ring-green-500 focus:border-green-500 focus:bg-green-50 text-gray-900 text-sm  block w-full p-2.5  " />
 
         <div v-if="suggestions_ && result.length > 0" ref="suggestion_box"
-            class="absolute  z-[99999999999999] w-full mt-1 flex flex-col bg-white rounded  listShadow border border-gray-400 max-h-[8rem] overflow-y-auto ">
+            class="absolute  z-[99999999999999] w-full mt-1 flex flex-col bg-white rounded  listShadow border border-gray-400 max-h-[8rem] overflow-auto">
             <button @keydown="TypingInputButton" :tabindex="suggestions_ ? '0' : '-1'"
                 @keydown.down="focusNextInput($event, index)" @keydown.enter="selectSuggestion(value, index, $event)"
                 @keydown.up="focusPreviousInput" v-for="(value, index) in result" :key="value + '_unique'"
@@ -243,9 +243,7 @@ function generate_suggestions(e) {
         }
 
         // Filter and set results
-        result.value = props.suggestion_data.filter(suggestion_item =>
-            suggestion_item.toLowerCase().includes(input)
-        );
+        result.value = props.suggestion_data
 
         suggestions_.value = result.value.length > 0;
 

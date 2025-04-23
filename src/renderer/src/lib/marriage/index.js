@@ -1,6 +1,14 @@
 import { differenceInYears, isValid, parseISO } from "date-fns"
 
-export const MarriageSteps = ['Marriage Details', 'Groom Info', 'Groom Parents', 'Bride Info', 'Bride Parents', 'CTC', 'Notice of Posting', 'Preview & Save']
+export const MarriageSteps =
+    ['Marriage Details',
+        'Groom Info',
+        'Groom Parents',
+        'Bride Info',
+        'Bride Parents',
+        'Community Tax Certificate',
+        'Notice of Posting',
+        'Preview & Save']
 
 export const CivilStatus = [
     'SINGLE',

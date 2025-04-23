@@ -2,20 +2,12 @@ import { useVuelidate } from "@vuelidate/core";
 import { helpers, minLength, numeric, required, requiredIf } from "@vuelidate/validators";
 
 export const MarriageRules = {
-    header_province: { required },
-    header_municipality: { required },
-    received_by: { required },
-    date_of_receipt: { required },
-    marriage_license_number: { required },
-    date_issuance_marriage_license: { required },
 
     groom_contract_marriage_with: { required },
     bride_contract_marriage_with: { required },
 
-    place_of_marriage: { required },
-    date_of_application: { required },
-    civil_registrar: { required },
 
+    // Groom Details
     groom_first_name: { required, minLength: minLength(2) },
     groom_last_name: { required, minLength: minLength(2) },
     groom_date_birth: { required },
@@ -31,33 +23,36 @@ export const MarriageRules = {
     groom_civil_status: { required },
     groom_degree_relation: { required },
 
+    // Groom Father Details
     groom_father_first_name: { required, minLength: minLength(2) },
-
     groom_father_last_name: { required, minLength: minLength(2) },
     groom_father_citizenship: { required },
     groom_father_residence: { required },
     groom_father_residence_country: { required },
+
+    // Groom Mother Details
     groom_mother_first_name: { required, minLength: minLength(2) },
- 
     groom_mother_last_name: { required, minLength: minLength(2) },
     groom_mother_citizenship: { required },
     groom_mother_residence: { required },
     groom_mother_residence_country: { required },
+
+    // Groom Consent
     groom_person_who_gave_consent: { required },
     groom_person_who_gave_consent_relation: { required },
     groom_person_who_gave_consent_citizenship: { required },
     groom_person_who_gave_consent_residence: { required },
 
-    groom_ss_day: { required, numeric },
-    groom_ss_month: { required, numeric },
-    groom_ss_year: { required, numeric },
-    groom_ss_at: { required },
-    groom_ctc_number: { required, numeric },
+    // Groom Subscribe Sworn and CTC
+
+    groom_ctc_number: { required },
     groom_ctc_on: { required },
     groom_ctc_at: { required },
 
+
+
+    // Bride Details
     bride_first_name: { required, minLength: minLength(2) },
-   
     bride_last_name: { required, minLength: minLength(2) },
     bride_date_birth: { required },
     bride_age: { required, numeric },
@@ -71,51 +66,49 @@ export const MarriageRules = {
     bride_religion: { required },
     bride_civil_status: { required },
     bride_degree_relation: { required },
-
+    // Bride Father Details
     bride_father_first_name: { required, minLength: minLength(2) },
-   
     bride_father_last_name: { required, minLength: minLength(2) },
     bride_father_citizenship: { required },
     bride_father_residence: { required },
     bride_father_residence_country: { required },
+    // Bride Mother Details
     bride_mother_first_name: { required, minLength: minLength(2) },
-   
     bride_mother_last_name: { required, minLength: minLength(2) },
     bride_mother_citizenship: { required },
     bride_mother_residence: { required },
     bride_mother_residence_country: { required },
+
+    // Bride Consent
     bride_person_who_gave_consent: { required },
     bride_person_who_gave_consent_relation: { required },
     bride_person_who_gave_consent_citizenship: { required },
     bride_person_who_gave_consent_residence: { required },
 
-    bride_ss_day: { required, numeric },
-    bride_ss_month: { required, numeric },
-    bride_ss_year: { required, numeric },
-    bride_ss_at: { required },
-    bride_ctc_number: { required, numeric },
+    // Bride Subscribe Sworn and CTC
+
+    bride_ctc_number: { required },
     bride_ctc_on: { required },
     bride_ctc_at: { required },
 
-    // notice_province: { required },
-    // notice_municipality: { required },
-    // notice_office: { required },
+
+    // All Notice Fields
     notice_groom_name: { required },
     notice_bride_name: { required },
-    notice_groom_age: { required, numeric },
+    notice_groom_age: { required },
     notice_groom_birthplace: { required },
     notice_groom_residence: { required },
     notice_groom_father: { required },
     notice_groom_mother: { required },
-    notice_bride_age: { required, numeric },
+    notice_bride_age: { required },
     notice_bride_birthplace: { required },
     notice_bride_residence: { required },
     notice_bride_father: { required },
     notice_bride_mother: { required },
     notice_date_posting: { required },
-    // notice_position: { required },
-  
 
+
+    // notice_position: { required },
     // groom_place_dissolved: { required },
     // groom_date_dissolved: { required },
     // bride_place_dissolved: { required },
