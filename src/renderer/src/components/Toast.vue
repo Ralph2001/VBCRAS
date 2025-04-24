@@ -1,9 +1,15 @@
+
 <template>
-    <transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0 translate-y-2"
-        enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-200"
-        leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
+    <transition 
+        enter-active-class="transition ease-out duration-300" 
+        enter-from-class="opacity-0 translate-y-2 scale-95"
+        enter-to-class="opacity-100 translate-y-0 scale-100"
+        leave-active-class="transition ease-in duration-250"
+        leave-from-class="opacity-100 translate-y-0 scale-100"
+        leave-to-class="opacity-0 translate-y-2 scale-95"
+    >
         <div v-if="visible"
-            class="fixed top-5 right-5 z-50 flex items-center p-4 max-w-sm w-auto rounded-lg shadow-2xl text-white bg-gray-800"
+            class="fixed top-5 right-5 z-50 flex items-center p-4 max-w-sm w-auto rounded-lg shadow-2xl text-white bg-gray-800 transform"
             :class="toastType" @mouseenter="pauseTimer" @mouseleave="resumeTimer">
             <div class="mr-3">
                 <span v-if="icon === 'success'">✅</span>
@@ -18,6 +24,7 @@
         </div>
     </transition>
 </template>
+
 
 
 <script setup>

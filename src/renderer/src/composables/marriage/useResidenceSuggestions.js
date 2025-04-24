@@ -48,41 +48,61 @@ function filterMunicipalitySuggestions(searchTerm) {
 }
 
 export function useGroomResidenceSuggestions(formData) {
+    function formatCombinedResidence(residence, country) {
+        if (!residence || !country) return null;
+        const formatted = residence.replace(/,\s*/g, ' | ');
+        return `${formatted} | ${country}`;
+    }
 
     const groomSuggestions = computed(() => {
         return filterMunicipalitySuggestions(formData.groom_residence);
     });
+
     const groomfatherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.groom_father_residence);
+        
+        // Add groom's residence
+        const groomCombined = formatCombinedResidence(
+            formData.groom_residence,
+            formData.groom_residence_country
+        );
+        if (groomCombined) suggestions.push(groomCombined);
 
-        const formattedResidence = formData.groom_residence.replace(/,\s*/g, ' | ');
-        const combinedResidence = `${formattedResidence} | ${formData.groom_residence_country}`;
-        if (!suggestions.includes(combinedResidence)) {
-            suggestions.push(combinedResidence);
-        }
-        return suggestions;
+        return [...new Set(suggestions)];
     });
 
     const groommotherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.groom_mother_residence);
+        
+        // Add groom's residence
+        const groomCombined = formatCombinedResidence(
+            formData.groom_residence,
+            formData.groom_residence_country
+        );
+        if (groomCombined) suggestions.push(groomCombined);
+        
+        // Add father's residence
+        const fatherCombined = formatCombinedResidence(
+            formData.groom_father_residence,
+            formData.groom_father_residence_country
+        );
+        if (fatherCombined) suggestions.push(fatherCombined);
 
-        const formattedResidence = formData.groom_residence.replace(/,\s*/g, ' | ');
-        const combinedResidence = `${formattedResidence} | ${formData.groom_residence_country}`;
-        if (!suggestions.includes(combinedResidence)) {
-            suggestions.push(combinedResidence);
-        }
-        return suggestions;
+        return [...new Set(suggestions)];
     });
 
     const groomconsentSuggestions = computed(() => {
-        const suggestions = filterMunicipalitySuggestions(formData.groom_person_who_gave_consent_residence);
-
-        const formattedResidence = formData.groom_residence.replace(/,\s*/g, ' | ');
-        const combinedResidence = `${formattedResidence} | ${formData.groom_residence_country}`;
-        if (!suggestions.includes(combinedResidence)) {
-            suggestions.push(combinedResidence);
-        }
-
+        const suggestions = filterMunicipalitySuggestions(
+            formData.groom_person_who_gave_consent_residence
+        );
+        
+        // Add all relevant residences
+        [   formatCombinedResidence(formData.groom_residence, formData.groom_residence_country),
+            formatCombinedResidence(formData.groom_father_residence, formData.groom_father_residence_country),
+            formatCombinedResidence(formData.groom_mother_residence, formData.groom_mother_residence_country)
+        ].forEach(combined => {
+            if (combined) suggestions.push(combined);
+        });
 
         return [...new Set(suggestions)];
     });
@@ -95,42 +115,63 @@ export function useGroomResidenceSuggestions(formData) {
     };
 }
 
+
 export function useBrideResidenceSuggestions(formData) {
+    function formatCombinedResidence(residence, country) {
+        if (!residence || !country) return null;
+        const formatted = residence.replace(/,\s*/g, ' | ');
+        return `${formatted} | ${country}`;
+    }
 
     const brideSuggestions = computed(() => {
         return filterMunicipalitySuggestions(formData.bride_residence);
     });
+
     const bridefatherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.bride_father_residence);
+        
+        // Add bride's residence
+        const brideCombined = formatCombinedResidence(
+            formData.bride_residence,
+            formData.bride_residence_country
+        );
+        if (brideCombined) suggestions.push(brideCombined);
 
-        const formattedResidence = formData.bride_residence.replace(/,\s*/g, ' | ');
-        const combinedResidence = `${formattedResidence} | ${formData.bride_residence_country}`;
-        if (!suggestions.includes(combinedResidence)) {
-            suggestions.push(combinedResidence);
-        }
-        return suggestions;
+        return [...new Set(suggestions)];
     });
 
     const bridemotherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.bride_mother_residence);
+        
+        // Add bride's residence
+        const brideCombined = formatCombinedResidence(
+            formData.bride_residence,
+            formData.bride_residence_country
+        );
+        if (brideCombined) suggestions.push(brideCombined);
+        
+        // Add father's residence
+        const fatherCombined = formatCombinedResidence(
+            formData.bride_father_residence,
+            formData.bride_father_residence_country
+        );
+        if (fatherCombined) suggestions.push(fatherCombined);
 
-        const formattedResidence = formData.bride_residence.replace(/,\s*/g, ' | ');
-        const combinedResidence = `${formattedResidence} | ${formData.bride_residence_country}`;
-        if (!suggestions.includes(combinedResidence)) {
-            suggestions.push(combinedResidence);
-        }
-        return suggestions;
+        return [...new Set(suggestions)];
     });
 
     const brideconsentSuggestions = computed(() => {
-        const suggestions = filterMunicipalitySuggestions(formData.bride_person_who_gave_consent_residence);
-
-        const formattedResidence = formData.bride_residence.replace(/,\s*/g, ' | ');
-        const combinedResidence = `${formattedResidence} | ${formData.bride_residence_country}`;
-        if (!suggestions.includes(combinedResidence)) {
-            suggestions.push(combinedResidence);
-        }
-
+        const suggestions = filterMunicipalitySuggestions(
+            formData.bride_person_who_gave_consent_residence
+        );
+        
+        // Add all relevant residences
+        [   formatCombinedResidence(formData.bride_residence, formData.bride_residence_country),
+            formatCombinedResidence(formData.bride_father_residence, formData.bride_father_residence_country),
+            formatCombinedResidence(formData.bride_mother_residence, formData.bride_mother_residence_country)
+        ].forEach(combined => {
+            if (combined) suggestions.push(combined);
+        });
 
         return [...new Set(suggestions)];
     });

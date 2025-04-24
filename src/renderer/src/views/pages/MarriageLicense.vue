@@ -69,9 +69,11 @@
                                     <InputMarriage type="date" label="Date of Issuance of Marriage License"
                                         v-model="formData.date_issuance_marriage_license" />
                                 </div>
-                                <div class="grid grid-cols-2 gap-2">
+                                <div class="grid grid-cols-3 gap-2">
                                     <InputMarriage label="Marriage License No"
                                         v-model="formData.marriage_license_number" />
+                                    <InputMarriage label="Registry Number"
+                                        v-model="formData.registry_number" />
                                     <InputMarriage label="Place of Marriage" v-model="formData.place_of_marriage" />
                                 </div>
                             </div>
@@ -129,8 +131,7 @@
 
                                     </div>
                                     <div class="w-[50%]">
-                                        <InputMarriage cap holder="Country" skip
-                                            v-model="formData.groom_residence_country"
+                                        <InputMarriage cap holder="Country" v-model="formData.groom_residence_country"
                                             :error="v$.groom_residence_country.$error" />
                                     </div>
                                 </div>
@@ -263,25 +264,30 @@
                                     <InputMarriageSuggestion cap label="Person who gave consent or advince"
                                         v-model="formData.groom_person_who_gave_consent"
                                         :error="v$.groom_person_who_gave_consent.$error"
+                                        :skip="skip_groom_consent"
                                         :suggestion_data="person_gave_consent_groom_suggestion" />
                                 </div>
                                 <div class="w-[50%]">
-                                    <InputMarriage cap label="Relationship"
+                                    <InputMarriageSuggestion cap label="Relationship"
                                         v-model="formData.groom_person_who_gave_consent_relation"
-                                        :error="v$.groom_person_who_gave_consent_relation.$error" />
+                                        :error="v$.groom_person_who_gave_consent_relation.$error"
+                                        :skip="skip_groom_consent"
+                                        :suggestion_data="consent_advised_relationship" />
                                 </div>
                             </div>
                             <div class="flex flex-row gap-1 items-end">
                                 <div class="w-[50%]">
                                     <InputMarriageSuggestion cap label="Citizenship"
                                         v-model="formData.groom_person_who_gave_consent_citizenship"
+                                        :skip="skip_groom_consent"
                                         :error="v$.groom_person_who_gave_consent_citizenship.$error"
-                                        :suggestion_date="citizenshipOptions" />
+                                        :suggestion_data="citizenshipOptions" />
                                 </div>
                                 <div class="w-full">
                                     <ResidenceSuggestions cap label="Residence"
                                         holder="(House No., St., Barangay, City/Municipality, Province, Country)"
                                         v-model="formData.groom_person_who_gave_consent_residence"
+                                        :skip="skip_groom_consent"
                                         :error="v$.groom_person_who_gave_consent_residence.$error"
                                         :suggestion_data="groomconsentSuggestions" />
                                 </div>
@@ -321,7 +327,7 @@
 
                                     </div>
                                     <div class="w-[70%]">
-                                        <InputMarriage label="Age" skip v-model="formData.bride_age"
+                                        <InputMarriage label="Age" readonly skip v-model="formData.bride_age"
                                             :error="v$.bride_age.$error" />
                                     </div>
                                 </div>
@@ -426,10 +432,10 @@
                             </div>
                             <div class="flex flex-row gap-1 items-end">
                                 <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship" v-model="formData.bride_father_citizenship"
-                                        :error="v$.bride_father_citizenship.$error" 
-                                        :suggestion_data="citizenshipOptions"
-                                        />
+                                    <InputMarriageSuggestion cap label="Citizenship"
+                                        v-model="formData.bride_father_citizenship"
+                                        :error="v$.bride_father_citizenship.$error"
+                                        :suggestion_data="citizenshipOptions" />
                                 </div>
                                 <div class="w-full">
                                     <ResidenceSuggestions cap label="Residence"
@@ -455,9 +461,10 @@
                             </div>
                             <div class="flex flex-row gap-1 items-end">
                                 <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship" v-model="formData.bride_mother_citizenship"
-                                        :error="v$.bride_mother_citizenship.$error" 
-                                        :suggestion_data="citizenshipOptions"/>
+                                    <InputMarriageSuggestion cap label="Citizenship"
+                                        v-model="formData.bride_mother_citizenship"
+                                        :error="v$.bride_mother_citizenship.$error"
+                                        :suggestion_data="citizenshipOptions" />
                                 </div>
                                 <div class="w-full">
                                     <ResidenceSuggestions cap label="Residence"
@@ -477,13 +484,14 @@
                                 <div class="w-full">
                                     <InputMarriageSuggestion cap label="Person who gave consent or advince"
                                         v-model="formData.bride_person_who_gave_consent"
-                                        :error="v$.bride_person_who_gave_consent.$error"
+                                        :error="v$.bride_person_who_gave_consent.$error" :skip="skip_bride_consent"
                                         :suggestion_data="person_gave_consent_bride_suggestion" />
                                 </div>
                                 <div class="w-[50%]">
-                                    <InputMarriage cap label="Relationship"
+                                    <InputMarriageSuggestion cap label="Relationship"
                                         v-model="formData.bride_person_who_gave_consent_relation"
-                                        :error="v$.bride_person_who_gave_consent_relation.$error" />
+                                        :error="v$.bride_person_who_gave_consent_relation.$error"
+                                        :skip="skip_bride_consent" :suggestion_data="consent_advised_relationship" />
                                 </div>
                             </div>
                             <div class="flex flex-row gap-1 items-end">
@@ -491,14 +499,14 @@
                                     <InputMarriageSuggestion cap label="Citizenship"
                                         v-model="formData.bride_person_who_gave_consent_citizenship"
                                         :error="v$.bride_person_who_gave_consent_citizenship.$error"
-                                        :suggestion_data="citizenshipOptions" />
+                                        :skip="skip_bride_consent" :suggestion_data="citizenshipOptions" />
                                 </div>
                                 <div class="w-full">
                                     <ResidenceSuggestions cap label="Residence"
                                         holder="(House No., St., Barangay, City/Municipality, Province, Country)"
                                         v-model="formData.bride_person_who_gave_consent_residence"
                                         :error="v$.bride_person_who_gave_consent_residence.$error"
-                                        :suggestion_data="brideconsentSuggestions" />
+                                        :skip="skip_bride_consent" :suggestion_data="brideconsentSuggestions" />
                                 </div>
 
                             </div>
@@ -633,7 +641,8 @@
 
                         </div>
 
-                        <div v-if="currentStep === 7 || form_mode === 1" class="px-4 h-full gap-2 flex flex-col pt-8">
+                        <div v-if="currentStep === 7 || form_mode === 1"
+                            class="px-4 h-full gap-2 flex flex-col pt-8 mb-2">
                             <div class="flex flex-col gap-1 ">
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-red-500 leading-3">{{ steps[7] }}</p>
@@ -1015,19 +1024,74 @@ const add_details_to_notice = () => {
     formData.notice_bride_mother = formatPerson(formData.bride_mother_first_name, formData.bride_mother_middle_name, formData.bride_mother_last_name);
 };
 
+const consent_advised_relationship = [
+    'PARENTS',
+    'MOTHER',
+    'FATHER',
+    'N/A',
+]
 
 const person_gave_consent_groom_suggestion = computed(() => [
+    `${formData.groom_mother_first_name} ${formData.groom_mother_last_name} ${formData.groom_father_last_name} and ${formData.groom_father_first_name} ${formData.groom_father_middle_name} ${formData.groom_father_last_name}`,
     `${formData.groom_mother_first_name} ${formData.groom_mother_last_name} ${formData.groom_father_last_name}`,
     `${formData.groom_father_first_name} ${formData.groom_father_middle_name} ${formData.groom_father_last_name}`,
 ])
+const person_gave_consent_bride_suggestion = computed(() => [
+    `${formData.bride_mother_first_name} ${formData.bride_mother_last_name} ${formData.bride_father_last_name} and ${formData.bride_father_first_name} ${formData.bride_father_middle_name} ${formData.bride_father_last_name}`,
+    `${formData.bride_father_first_name} ${formData.bride_father_middle_name} ${formData.bride_father_last_name}`,
+    `${formData.bride_mother_first_name} ${formData.bride_mother_last_name} ${formData.bride_father_last_name}`,
+
+])
+
+
 
 watch(() => formData.groom_date_birth, (val) => {
     formData.groom_age = calculateAge(val) || ''
 })
+const skip_groom_consent = ref(false)
+watch(() => formData.groom_age, (val) => {
+    if (!val) return;
+
+    console.log(val > 25)
+    if (val > 25) {
+        formData.groom_person_who_gave_consent = "N/A"
+        formData.groom_person_who_gave_consent_relation = "N/A"
+        formData.groom_person_who_gave_consent_citizenship = "N/A"
+        formData.groom_person_who_gave_consent_residence = "N/A"
+        skip_groom_consent.value = true
+    }
+    else {
+        formData.groom_person_who_gave_consent = ''
+        formData.groom_person_who_gave_consent_relation = ''
+        formData.groom_person_who_gave_consent_citizenship = ''
+        formData.groom_person_who_gave_consent_residence = ''
+        skip_groom_consent.value = false
+    }
+    
+}, { deep: true })
 watch(() => formData.bride_date_birth, (val) => {
     formData.bride_age = calculateAge(val) || ''
 })
+const skip_bride_consent = ref(false)
 
+watch(() => formData.bride_age, (val) => {
+    if (!val) return;
+
+    if (val > 25) {
+        formData.bride_person_who_gave_consent = "N/A"
+        formData.bride_person_who_gave_consent_relation = "N/A"
+        formData.bride_person_who_gave_consent_citizenship = "N/A"
+        formData.bride_person_who_gave_consent_residence = "N/A"
+        skip_bride_consent.value = true
+    } else {
+        formData.bride_person_who_gave_consent = ''
+        formData.bride_person_who_gave_consent_relation = ''
+        formData.bride_person_who_gave_consent_citizenship = ''
+        formData.bride_person_who_gave_consent_residence = ''
+        skip_bride_consent.value = false
+    }
+   
+}, { deep: true })
 
 watch(
     () => [

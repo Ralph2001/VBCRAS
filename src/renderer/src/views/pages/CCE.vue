@@ -1654,7 +1654,8 @@ const resetForm = () => {
 };
 
 
-const v$ = useVuelidate(MarriageRules, formData);
+const v$ = useVuelidate(rules, formData);
+
 
 
 const submitForm = async () => {

@@ -83,8 +83,16 @@ const value_toUpperCase = (target) => {
 
   // Restore cursor position after DOM update
   nextTick(() => {
-    target.setSelectionRange(start, end);
+    const selectableTypes = ['text', 'search', 'tel', 'url', 'password', 'email'];
+    if (selectableTypes.includes(props.type)) {
+      try {
+        target.setSelectionRange(start, end);
+      } catch (err) {
+        console.warn('setSelectionRange failed:', err);
+      }
+    }
   });
+
 }
 
 const focusPreviousInput = (event) => {
