@@ -345,15 +345,124 @@ async function generate_marriage_license(formData) {
 
 
 
+        const updateDateFormat = (date, prefix) => {
+            // Add validation
+            if (!date || isNaN(new Date(date).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, date);
+                return;
+            }
+
+            const parsedDate = new Date(date);
+
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, date);
+                return;
+            }
+            const dateField = form.getTextField(`${prefix}`);
+            try {
+                dateField.setText(format(parsedDate, 'MMMM dd, yyyy').toUpperCase());
+                dateField.updateAppearances(helveticaFont)
+            }
+            catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+
+        }
+
+
+        updateDateFormat(data.date_of_receipt, 'date_of_receipt')
+        updateDateFormat(data.date_issuance_marriage_license, 'date_issuance_marriage_license')
+
+        // Helper function to add ordinal suffix
+        const getOrdinalSuffix = (day) => {
+            const j = day % 10,
+                k = day % 100;
+            if (j === 1 && k !== 11) return 'ST';
+            if (j === 2 && k !== 12) return 'ND';
+            if (j === 3 && k !== 13) return 'RD';
+            return 'TH';
+        };
+
+        const updateSSDateField = (date, prefix) => {
+            if (!date || isNaN(new Date(date).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, date);
+                return;
+            }
+
+            const parsedDate = new Date(date);
+
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, date);
+                return;
+            }
+
+            const dayField = form.getTextField(`${prefix}_ss_day`);
+            const monthField = form.getTextField(`${prefix}_ss_month`);
+            const yearField = form.getTextField(`${prefix}_ss_year`);
+
+            try {
+                const day = parsedDate.getDate();
+                const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
+
+                dayField.setText(dayWithSuffix);
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
+                yearField.setText(format(parsedDate, 'yyyy'));
+
+                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+        };
+
+
+
+        // Subscribe and Sworn
+
+        updateSSDateField(data.date_of_receipt, 'groom')
+        updateSSDateField(data.date_of_receipt, 'bride')
+
+
+        const updateCTCDate = (date, prefix) => {
+            if (!date || isNaN(new Date(date).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, date);
+                return;
+            }
+            // Parse date using ISO format
+            const parsedDate = new Date(date);
+
+            // Validate parsed date
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, date);
+                return;
+            }
+
+            const dateField = form.getTextField(`${prefix}_ctc_on`);
+            try {
+                const date = format(parsedDate, 'dd MMMM yyyy').toUpperCase()
+                dateField.setText(date);
+
+                [dateField].forEach(field => field.updateAppearances(helveticaFont));
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+
+
+        }
+
+        // Community Tax Certificate
+
+        updateCTCDate(data.groom_ctc_on, 'groom')
+        updateCTCDate(data.bride_ctc_on, 'bride')
+
+
         // Define the fields in the form
         const fields = [
             'header_province',
             'header_municipality',
             'registry_number',
             'received_by',
-            'date_of_receipt',
+
             'marriage_license_number',
-            'date_issuance_marriage_license',
             'groom_contract_marriage_with',
             'bride_contract_marriage_with',
             'civil_registrar',
@@ -388,12 +497,10 @@ async function generate_marriage_license(formData) {
             'groom_person_who_gave_consent_relation',
             'groom_person_who_gave_consent_citizenship',
             'groom_person_who_gave_consent_residence',
-            'groom_ss_day',
-            'groom_ss_month',
-            'groom_ss_year',
+
             'groom_ss_at',
             'groom_ctc_number',
-            'groom_ctc_on',
+
             'groom_ctc_at',
             'bride_first_name',
             'bride_middle_name',
@@ -426,12 +533,10 @@ async function generate_marriage_license(formData) {
             'bride_person_who_gave_consent_relation',
             'bride_person_who_gave_consent_citizenship',
             'bride_person_who_gave_consent_residence',
-            'bride_ss_day',
-            'bride_ss_month',
-            'bride_ss_year',
+
             'bride_ss_at',
             'bride_ctc_number',
-            'bride_ctc_on',
+
             'bride_ctc_at'
         ]
 
@@ -444,6 +549,7 @@ async function generate_marriage_license(formData) {
             'groom_residence',
             'groom_father_residence',
             'groom_mother_residence',
+            'groom_person_who_gave_consent',
             'groom_person_who_gave_consent_residence',
 
             'bride_municipality',
@@ -452,6 +558,7 @@ async function generate_marriage_license(formData) {
             'bride_residence',
             'groom_father_residence',
             'bride_mother_residence',
+            'bride_person_who_gave_consent',
             'bride_person_who_gave_consent_residence',
         ]
 

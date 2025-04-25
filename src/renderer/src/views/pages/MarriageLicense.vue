@@ -63,17 +63,16 @@
 
                                 <div class="grid grid-cols-3 gap-2">
                                     <InputMarriage type="date" label="Date of Application/Reciept"
-                                        v-model="formData.date_of_application" />
-                                    <InputMarriage type="date" label="Date of Marriage"
                                         v-model="formData.date_of_receipt" />
+                                    <InputMarriage type="date" label="Date of Marriage"
+                                        v-model="formData.date_of_marriage" />
                                     <InputMarriage type="date" label="Date of Issuance of Marriage License"
                                         v-model="formData.date_issuance_marriage_license" />
                                 </div>
                                 <div class="grid grid-cols-3 gap-2">
                                     <InputMarriage label="Marriage License No"
                                         v-model="formData.marriage_license_number" />
-                                    <InputMarriage label="Registry Number"
-                                        v-model="formData.registry_number" />
+                                    <InputMarriage label="Registry Number" v-model="formData.registry_number" />
                                     <InputMarriage label="Place of Marriage" v-model="formData.place_of_marriage" />
                                 </div>
                             </div>
@@ -263,16 +262,14 @@
                                 <div class="w-full">
                                     <InputMarriageSuggestion cap label="Person who gave consent or advince"
                                         v-model="formData.groom_person_who_gave_consent"
-                                        :error="v$.groom_person_who_gave_consent.$error"
-                                        :skip="skip_groom_consent"
+                                        :error="v$.groom_person_who_gave_consent.$error" :skip="skip_groom_consent"
                                         :suggestion_data="person_gave_consent_groom_suggestion" />
                                 </div>
                                 <div class="w-[50%]">
                                     <InputMarriageSuggestion cap label="Relationship"
                                         v-model="formData.groom_person_who_gave_consent_relation"
                                         :error="v$.groom_person_who_gave_consent_relation.$error"
-                                        :skip="skip_groom_consent"
-                                        :suggestion_data="consent_advised_relationship" />
+                                        :skip="skip_groom_consent" :suggestion_data="consent_advised_relationship" />
                                 </div>
                             </div>
                             <div class="flex flex-row gap-1 items-end">
@@ -528,9 +525,9 @@
                                     v-model="formData.groom_ctc_number" :error="v$.groom_ctc_number.$error" />
                                 <InputMarriage cap label="Bride Community Tax Cert. Number"
                                     v-model="formData.bride_ctc_number" :error="v$.bride_ctc_number.$error" />
-                                <InputMarriage holder="Date" cap label="on" v-model="formData.groom_ctc_on"
+                                <InputMarriage type="date" holder="Date" cap label="on" v-model="formData.groom_ctc_on"
                                     :error="v$.groom_ctc_on.$error" />
-                                <InputMarriage holder="Date" cap label="on" v-model="formData.bride_ctc_on"
+                                <InputMarriage type="date" holder="Date" cap label="on" v-model="formData.bride_ctc_on"
                                     :error="v$.bride_ctc_on.$error" />
                                 <InputMarriage holder="Place" cap label="at" v-model="formData.groom_ctc_at"
                                     :error="v$.groom_ctc_at.$error" />
@@ -825,20 +822,22 @@ const open_model = () => {
 
 
 const initialForm = {
-    header_province: '',
-    header_municipality: '',
+    header_province: 'PANGASINAN',
+    header_municipality: 'BAYAMBANG',
     registry_number: '',
-    received_by: '',
-    date_of_receipt: '',
+    received_by: 'ISMAEL D. MALICDEM, JR.',
+    date_of_marriage: '', //ADD
+    date_of_receipt: new Date().toISOString().split('T')[0],
+
     marriage_license_number: '',
     date_issuance_marriage_license: '',
     groom_contract_marriage_with: '',
     bride_contract_marriage_with: '',
 
     place_of_marriage: '', // ADD
-    date_of_application: '', // ADD
+    // date_of_application: '', // ADD
 
-    civil_registrar: '',
+    civil_registrar: 'ISMAEL D. MALICDEM, JR.',
 
     groom_first_name: '',
     groom_middle_name: '',
@@ -883,7 +882,7 @@ const initialForm = {
     groom_ss_day: '',
     groom_ss_month: '',
     groom_ss_year: '',
-    groom_ss_at: '',
+    groom_ss_at: 'BAYAMBANG, PANGASINAN',
     groom_ctc_number: '',
     groom_ctc_on: '',
     groom_ctc_at: '',
@@ -930,7 +929,7 @@ const initialForm = {
     bride_ss_day: '',
     bride_ss_month: '',
     bride_ss_year: '',
-    bride_ss_at: '',
+    bride_ss_at: 'BAYAMBANG, PANGASINAN',
     bride_ctc_number: '',
     bride_ctc_on: '',
     bride_ctc_at: '',
@@ -942,9 +941,9 @@ const initialForm = {
      */
 
 
-    notice_province: '',
-    notice_municipality: '',
-    notice_office: '',
+    notice_province: 'PANGASINAN',
+    notice_municipality: 'BAYAMBANG',
+    notice_office: 'LOCAL CIVIL REGISTRY OFFICE',
 
     notice_groom_name: '',
     notice_bride_name: '',
@@ -1067,7 +1066,7 @@ watch(() => formData.groom_age, (val) => {
         formData.groom_person_who_gave_consent_residence = ''
         skip_groom_consent.value = false
     }
-    
+
 }, { deep: true })
 watch(() => formData.bride_date_birth, (val) => {
     formData.bride_age = calculateAge(val) || ''
@@ -1090,7 +1089,7 @@ watch(() => formData.bride_age, (val) => {
         formData.bride_person_who_gave_consent_residence = ''
         skip_bride_consent.value = false
     }
-   
+
 }, { deep: true })
 
 watch(
@@ -1212,7 +1211,7 @@ const validateForm = async () => {
             title: 'Please fill in all required fields to proceed.',
             duration: 5000,
         })
-        return false
+        return true
     }
     return true
 }
