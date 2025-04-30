@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col w-full min-h-screen  flex-grow justify-center p-4 items-center relative bg-gray-50">
+    <div class="flex flex-col w-full min-h-screen  flex-grow justify-center p-4 items-center relative bg-gray-100">
         <ConnectModal @close-connect-modal="connect_modal = false" v-if="connect_modal">
             <template v-slot:body>
                 <div class="w-full mb-5">
@@ -37,7 +37,7 @@
 
         <div class="absolute top-0 right-0 p-4">
             <button @click="more_option = !more_option" title="Connect">
-                <font-awesome-icon icon="fa-solid fa-tower-cell" class="text-2xl text-gray-700 hover:text-gray-600 " />
+                <font-awesome-icon icon="fa-solid fa-tower-cell" class="text-lg text-gray-700 hover:text-gray-600 " />
             </button>
 
         </div>

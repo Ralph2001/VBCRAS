@@ -10,7 +10,7 @@
     </Header>
 
     <div v-if="quick_settings"
-      class="fixed top-0 left-0 right-0 bottom-0 z-50 h-full w-full flex items-center justify-center  backdrop-blur-sm backdrop-brightness-95 p-2">
+      class="fixed top-0 left-0 right-0 bottom-0 z-50 h-full w-full flex items-center justify-center  backdrop-blur-sm backdrop-brightness-50 p-2">
       <div class="h-[20rem] w-full  max-w-screen-md p-4 rounded-md bg-white shadow flex flex-col gap-2">
         <div class="flex flex-row items-center h-8 ">
           <p class="text-lg font-medium text-gray-800"><font-awesome-icon icon="fa-solid fa-info" /> </p>
@@ -22,7 +22,7 @@
         <div class="flex-1 p-1 gap-2 flex flex-col">
           <p class="font-medium text-xs text-gray-700">Default Filepath</p>
           <div class="p-4 bg-gray-100 shadow-inner rounded-md  ">
-            <p class="text-wrap text-sm">{{ system_setting.defaults[0].petition_default_file_path }}</p>
+            <p class="text-wrap text-sm">{{ system_setting.defaults[0].file_path }}</p>
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@
 
       <!-- Input Fields -->
       <div
-        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll  bg-gray-300 ">
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll  bg-slate-300 ">
         <div :class="[backround_per_event]" class="h-full flex flex-col py-4 gap-2 ">
 
           <!-- 1st  Document Selector-->
@@ -262,10 +262,10 @@
                 <div class="grid sm:grid-cols-1 lg:grid-cols-2 w-full gap-2">
                   <InputAutoComplete skip :error="v$.event_country.$error" label="Country"
                     v-model="formData.event_country" :suggestion_data="countryList.countryList" />
-                  <InputAutoComplete :error="v$.event_province.$error" label="Province"
+                  <InputAutoComplete :skip="!formData.is_migrant" :error="v$.event_province.$error" label="Province"
                     @change="formData.event_municipality = ''" v-model="formData.event_province"
                     :suggestion_data="province" />
-                  <InputAutoComplete :error="v$.event_municipality.$error" label="Municipality"
+                  <InputAutoComplete skip="!formData.is_migrant" :error="v$.event_municipality.$error" label="Municipality"
                     v-model="formData.event_municipality" :suggestion_data="municipality" />
                   <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
                   <!-- <Input label="Province" v-model="formData.event_province" /> -->
@@ -1351,8 +1351,8 @@ const initialForm = {
   created_by: auth.user_id,
 
 
-  header_province: system_setting.defaults[0].header_province || '',
-  header_municipality: system_setting.defaults[0].header_municipality || '',
+  header_province: system_setting.defaults.province.toUpperCase() || '',
+  header_municipality: 'MUNICIPALITY OF ' + system_setting.defaults.municipality.toUpperCase() || '',
   // header_ss: system_setting.defaults[0].header_ss || '',
 
 
@@ -1382,16 +1382,16 @@ const initialForm = {
   relation_owner: '',
   event_date: '',// Testing 
   event_country: 'Philippines',
-  event_province: system_setting.defaults[0].petition_default_filling_province || '',// Testing 
-  event_municipality: system_setting.defaults[0].petition_default_filling_municipality || '',// Testing 
+  event_province: system_setting.defaults.province || '',// Testing 
+  event_municipality: system_setting.defaults.municipality || '',// Testing 
   registry_number: '',// Testing 
-  filing_city_municipality: system_setting.defaults[0].petition_default_filling_municipality || '',
-  filing_province: system_setting.defaults[0].petition_default_filling_province || '',
+  filing_city_municipality: system_setting.defaults.municipality || '',
+  filing_province: system_setting.defaults.province || '',
 
-  administering_officer_name: system_setting.defaults[0].municipal_civil_registrar || '', // Testing 
+  administering_officer_name: system_setting.defaults.civil_registrar || '', // Testing 
   administering_officer_position: 'Municipal Civil Registrar', // Testing
   subscribe_sworn_date: new Date().toISOString().split('T')[0],
-  subscribe_sworn_city_municipality: system_setting.defaults[0].petition_default_subscribe_sworn_municipality || '',
+  subscribe_sworn_city_municipality: system_setting.defaults.municipality + ', ' + system_setting.defaults.province || '',
 
   // Community Tax Certificate or Other ID
   exhibiting_his_her: 'Community Tax Certificate No.',
@@ -1399,15 +1399,15 @@ const initialForm = {
 
 
   // community_tax_certificate: '',// Testing
-  issued_at: system_setting.defaults[0].petition_default_issued_at || '',
+  issued_at: system_setting.defaults.municipality + ', ' + system_setting.defaults.province || '',
 
   issued_on: new Date().toISOString().split('T')[0],
   action_taken_date: '',// Testing
-  municipal_civil_registrar: system_setting.defaults[0].municipal_civil_registrar || '',
+  municipal_civil_registrar: system_setting.defaults.civil_registrar || '',
   // Payment
   is_indigent: false,
   o_r_number: '',// Testing
-  amount_paid: '',// Testing
+  amount_paid: '₱1,200.00',// Testing
   date_paid: new Date().toISOString().split('T')[0],
 
   // Change of First Name. Nullable Data
@@ -1810,7 +1810,7 @@ const create_validated_document = async () => {
   const settings = {
     orignal_path: last_saved_filepath.value,
     petition_number: formData.petition_number,
-    path_where_to_save: system_setting.defaults[0].petition_default_file_path,
+    path_where_to_save: system_setting.defaults.file_path,
     republic_act_number: formData.republic_act_number,
     petition_type: formData.petition_type,
     petitioner_name: formData.petitioner_name,

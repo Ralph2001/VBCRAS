@@ -68,7 +68,7 @@
       <div class="flex md:flex-row lg:flex-row sm:flex-col sm:gap-2 md:gap-[5rem]">
         <div>
           <p class="text-sm text-slate-800 font-bold text-nowrap antialiased tracking-widest">
-            {{ system_setting.defaults[0].municipal_civil_registrar }}
+            {{ system_setting.defaults.civil_registrar }}
           </p>
           <p class="text-xs text-gray-500 font-semibold antialiased tracking-widest">
             MUNICIPAL CIVIL REGISTRAR
@@ -76,7 +76,7 @@
         </div>
         <div>
           <p class="text-sm text-slate-800 font-bold text-nowrap antialiased">
-            {{ system_setting.defaults[0].mayor }}
+            {{ system_setting.defaults.mayor }}
           </p>
           <p class="text-xs text-yellow-400 font-semibold antialiased">MUNICIPAL MAYOR</p>
         </div>
@@ -85,11 +85,11 @@
         <!-- <img src="../../assets/bayambang_logo.png" class="h-14 animate__animated animate__tada" alt="" srcset="" /> -->
         <div class="flex-col items-center">
           <p class="text-md text-slate-800 font-bold text-nowrap tracking-widest">
-            Civil Registry
+            <!-- Civil Registry -->
           </p>
           <p class="text-sm text-gray-600 font-semibold antialiased text-nowrap tracking-widest">
-            {{ system_setting.defaults[0].petition_default_filling_municipality + ', ' +
-              system_setting.defaults[0].petition_default_filling_province }}
+            {{ system_setting.defaults.municipality + ', ' +
+              system_setting.defaults.province }}
           </p>
         </div>
       </div>

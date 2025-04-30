@@ -18,7 +18,7 @@
                 class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-50 p-4"
                 tabindex="-1">
                 <div
-                    class="w-full max-w-[1200px] h-[45rem] flex flex-col bg-white rounded-sm p-2 relative overflow-hidden">
+                    class="w-full max-w-[1200px] h-[42rem] max-h-screen flex flex-col bg-white rounded-sm p-2 relative overflow-hidden">
                     <button @click="close_modal"
                         class="absolute right-0 top-0 rounded-bl-full w-10 h-10  bg-red-400 hover:bg-red-500 flex items-center justify-end px-2 text-white"><font-awesome-icon
                             icon="fa-solid fa-xmark" />

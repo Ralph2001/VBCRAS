@@ -1,11 +1,13 @@
 from ..extensions import db
 
-
 class ScannedType(db.Model):
+    __tablename__ = 'scanned_type'   
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    
+
 class Scans(db.Model):
+    __tablename__ = 'scans'          
     
     __table_args__ = (
         db.Index('idx_scans_type_year_month', 'type_id', 'year', 'month'),  
@@ -20,4 +22,5 @@ class Scans(db.Model):
     month = db.Column(db.String, nullable=False)
     year = db.Column(db.Integer, nullable=False)
     uploaded_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    
     scanned_type = db.relationship(ScannedType, backref='scans', lazy=True)

@@ -24,7 +24,8 @@ export const useSetup = defineStore('useSetup', {
                     this.isSetupDone = false
                     return false
                 }
-                this.defaults = response.data
+                this.defaults = response.data[0]
+                console.log(response.data[0])
                 this.isSetupDone = true
                 return true
             } catch (error) {

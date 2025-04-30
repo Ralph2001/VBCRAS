@@ -2,7 +2,7 @@
     <div class="w-full h-screen flex items-center justify-center ">
         <div class="fixed top-0 left-0 right-0 justify-center items-center flex border w-full  h-12 bg-white z-50">
             <p class=" text-lg font-bold text-gray-700 font-mono uppercase f">{{ auth.user_role === 1 ? 'SYSTEM SETUP' :
-                ':('}}</p>
+                ':(' }}</p>
         </div>
         <div v-if="auth.user_role === 1"
             class="max-w-screen-xl  flex-1 w-full h-full flex flex-col p-4 gap-4 relative overflow-y-auto">
@@ -60,14 +60,14 @@
                                 License > Year > Month > Document
                                 Name</p>
                         </div>
-                        <div class="w-full py-1.5 px-2 rounded-sm bg-gray-50 flex items-center overflow-hidden ">
+                        <!-- <div class="w-full py-1.5 px-2 rounded-sm bg-gray-50 flex items-center overflow-hidden ">
                             <p class="text-gray-700 font-mono text-sm truncate"><span class="hover:text-blue-500"
                                     :title="formData.file_path">...</span> > <span class="text-blue-500"
                                     title="System Name">VBCRAS</span> > Type > Legitimation >
                                 Year >
                                 Month > Document
                                 Name</p>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -76,25 +76,33 @@
                     <p class="font-bold text-xl text-gray-700 uppercase font-mono mt-10 mb-4">Default Value</p>
 
                     <div class="grid lg:grid-cols-2 gap-2">
-                        <InputAutoComplete label="Province" v-model="formData.filing_province"
-                            :suggestion_data="province" :error="v$.filing_province.$error" />
-                        <InputAutoComplete label="City/Municipality" :error="v$.filing_municipality.$error"
-                            v-model="formData.filing_municipality" :suggestion_data="municipality" />
-                        <Input label="Municipal Civil Registrar" :error="v$.municipal_civil_registrar.$error" cap
-                            v-model="formData.municipal_civil_registrar" />
+                        <InputAutoComplete label="Province" v-model="formData.province" :suggestion_data="province"
+                            :error="v$.province.$error" />
+                        <InputAutoComplete label="City/Municipality" :error="v$.municipality.$error"
+                            v-model="formData.municipality" :suggestion_data="municipality" />
+                        <Input label="Municipal Civil Registrar" :error="v$.civil_registrar.$error" cap
+                            v-model="formData.civil_registrar" />
                         <Input label="Municipal Mayor" :error="v$.mayor.$error" cap v-model="formData.mayor" />
 
                     </div>
                 </div>
 
 
-                <div class="flex flex-row gap-2 justify-end mt-auto">
+                <div class="flex flex-row gap-4 justify-end mt-auto">
+                    <!-- Logout Button -->
                     <button @click="auth.logout" tabindex="-1"
-                        class="border px-4 py-1.5 hover:bg-red-400 rounded shadow-sm hover:text-white">Logout</button>
+                        class="border border-gray-400 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 hover:text-black transition-colors">
+                        Logout
+                    </button>
+
+                    <!-- Submit Button -->
                     <button :disabled="is_submitting"
-                        class="w-max  border px-4 py-1.5 disabled:cursor-progress rounded disabled:bg-blue-200  bg-blue-500 hover:bg-blue-600 text-white font-medium bottom-2 right-2"
-                        @click="submit_setup">Submit</button>
+                        class="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 disabled:bg-blue-200 disabled:text-blue-500 disabled:cursor-not-allowed transition-all"
+                        @click="submit_setup">
+                        Submit
+                    </button>
                 </div>
+
             </div>
         </div>
         <div v-if="auth.user_role === 2"
@@ -124,10 +132,10 @@ import { useRouter } from 'vue-router';
 import { AuthStore } from '../stores/Authentication';
 import SetupSVG from '../components/svg/setupSVG.vue';
 import { useVuelidate } from "@vuelidate/core";
-import { required, requiredIf, numeric } from "@vuelidate/validators";
+import { required } from "@vuelidate/validators";
 import InputAutoComplete from '../components/InputAutoComplete.vue';
-import { complete_municipality, complete_municipality_with_province, complete_municipality_with_province_with_words, complete_province } from '../utils/Address';
-import DateChangerClearical from '../components/settings/DateChangerClearical.vue';
+import { complete_municipality, complete_province } from '../utils/Address';
+
 import { useDate } from '../stores/Date';
 
 const router = useRouter()
@@ -138,14 +146,7 @@ const system_setting = useSetup()
 
 const province = ref(complete_province())
 const municipality = computed(() => {
-    return complete_municipality(formData.filing_province)
-})
-const municipality_province = computed(() => {
-    return complete_municipality_with_province(formData.filing_province)
-})
-
-const municipality_with_word = computed(() => {
-    return complete_municipality_with_province_with_words(formData.header_province)
+    return complete_municipality(formData.province)
 })
 
 const is_submitting = ref(false)
@@ -165,33 +166,20 @@ const open = async () => {
 }
 
 const formData = reactive({
-    header_province: '',
-    header_municipality: 'MUNICIPALITY OF ',
-
-
-    file_path: '',
-    nationality: 'Filipino',
-    country: 'Philippines',
-    filing_province: '',
-    filing_municipality: '',
-    administering_officer_name: '',
-    administering_officer_position: '',
-    subscribe_sworn_city_municipality: '',
-    issued_at: '',
-    municipal_civil_registrar: '',
+    province: '',
+    municipality: '',
+    civil_registrar: '',
     mayor: '',
+    file_path: ''
 })
 
 
 const rules = computed(() => ({
-    header_province: { required },
-    header_municipality: { required },
-
-    file_path: { required },
-    municipal_civil_registrar: { required },
-    filing_province: { required },
-    filing_municipality: { required },
+    province: { required },
+    municipality: { required },
+    civil_registrar: { required },
     mayor: { required },
+    file_path: { required }
 }))
 
 const v$ = useVuelidate(rules, formData);
@@ -206,21 +194,11 @@ const submit_setup = async () => {
     }
 
     const data = {
-        header_province: formData.header_province,
-        header_municipality: formData.header_municipality,
-
-
-        municipal_civil_registrar: formData.municipal_civil_registrar,
+        province: formData.province,
+        municipality: formData.municipality,
+        civil_registrar: formData.civil_registrar,
         mayor: formData.mayor,
-        petition_default_file_path: formData.file_path,
-        petition_default_nationality: formData.nationality,
-        petition_default_country: formData.country,
-        petition_default_filling_province: formData.filing_province,
-        petition_default_filling_municipality: formData.filing_municipality,
-        petition_default_administering_officer_name: formData.administering_officer_name,
-        petition_default_administering_officer_position: formData.administering_officer_position,
-        petition_default_subscribe_sworn_municipality: formData.subscribe_sworn_city_municipality,
-        petition_default_issued_at: formData.issued_at,
+        file_path: formData.file_path,
     }
 
     const change_setting = await system_setting.setSystemSetting(data)
