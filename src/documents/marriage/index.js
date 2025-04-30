@@ -1,7 +1,7 @@
 
 import { PageSizes, PDFDocument, StandardFonts, TextAlignment } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
-import { format } from 'date-fns'
+import { format, parse } from 'date-fns'
 const path = require('path')
 const fs = require('fs')
 
@@ -455,13 +455,77 @@ async function generate_marriage_license(formData) {
         updateCTCDate(data.bride_ctc_on, 'bride')
 
 
+
+        const setDissolvedPlace = (prefix) => {
+            const municipality = data[`${prefix}_place_dissolved_municipality`];
+            const province = data[`${prefix}_place_dissolved_province`];
+            const country = data[`${prefix}_place_dissolved_country`];
+
+            const allAreNA = [municipality, province, country].every(value => value === 'N/A');
+
+            if (allAreNA) {
+                const fullPlaceField = form.getTextField(`${prefix}_place_dissolved`);
+                fullPlaceField.setText('N/A');
+                fullPlaceField.updateAppearances(helveticaFont);
+            } else {
+                const municipalityField = form.getTextField(`${prefix}_place_dissolved_municipality`);
+                const provinceField = form.getTextField(`${prefix}_place_dissolved_province`);
+                const countryField = form.getTextField(`${prefix}_place_dissolved_country`);
+
+                municipalityField.setText(municipality || '');
+                provinceField.setText(province || '');
+                countryField.setText(country || '');
+
+                [municipalityField, provinceField, countryField].forEach(field => field.updateAppearances(helveticaFont));
+            }
+        };
+
+
+        setDissolvedPlace('groom')
+        setDissolvedPlace('bride')
+
+
+
+        const setDissolvedDate = (dateStr, prefix) => {
+            if (!dateStr || dateStr === 'N/A') {
+                const fullDateField = form.getTextField(`${prefix}_date_dissolved`);
+                fullDateField.setText('N/A');
+                fullDateField.updateAppearances(helveticaFont);
+            } else {
+                const monthField = form.getTextField(`${prefix}_date_dissolved_month`);
+                const dayField = form.getTextField(`${prefix}_date_dissolved_day`);
+                const yearField = form.getTextField(`${prefix}_date_dissolved_year`);
+
+                try {
+                    const parsedDate = parse(dateStr, 'yyyy-MM-dd', new Date());
+
+                    const month = format(parsedDate, 'MMMM').toUpperCase();
+                    const day = format(parsedDate, 'dd');
+                    const year = format(parsedDate, 'yyyy');
+
+                    monthField.setText(month);
+                    dayField.setText(day);
+                    yearField.setText(year);
+                } catch (error) {
+
+                    monthField.setText('');
+                    dayField.setText('');
+                    yearField.setText('');
+                }
+
+                [monthField, dayField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+            }
+        };
+
+        setDissolvedDate(data.groom_date_dissolved, 'groom')
+        setDissolvedDate(data.bride_date_dissolved, 'bride')
+
         // Define the fields in the form
         const fields = [
             'header_province',
             'header_municipality',
             'registry_number',
             'received_by',
-
             'marriage_license_number',
             'groom_contract_marriage_with',
             'bride_contract_marriage_with',
@@ -469,7 +533,6 @@ async function generate_marriage_license(formData) {
             'groom_first_name',
             'groom_middle_name',
             'groom_last_name',
-
             'groom_age',
             'groom_municipality',
             'groom_province',
@@ -480,8 +543,6 @@ async function generate_marriage_license(formData) {
             'groom_religion',
             'groom_civil_status',
             'groom_previously_married_dissolved',
-            'groom_place_dissolved',
-            'groom_date_dissolved',
             'groom_degree_relation',
             'groom_father_first_name',
             'groom_father_middle_name',
@@ -497,15 +558,12 @@ async function generate_marriage_license(formData) {
             'groom_person_who_gave_consent_relation',
             'groom_person_who_gave_consent_citizenship',
             'groom_person_who_gave_consent_residence',
-
             'groom_ss_at',
             'groom_ctc_number',
-
             'groom_ctc_at',
             'bride_first_name',
             'bride_middle_name',
             'bride_last_name',
-
             'bride_age',
             'bride_municipality',
             'bride_province',
@@ -516,8 +574,6 @@ async function generate_marriage_license(formData) {
             'bride_religion',
             'bride_civil_status',
             'bride_previously_married_dissolved',
-            'bride_place_dissolved',
-            'bride_date_dissolved',
             'bride_degree_relation',
             'bride_father_first_name',
             'bride_father_middle_name',
@@ -533,10 +589,8 @@ async function generate_marriage_license(formData) {
             'bride_person_who_gave_consent_relation',
             'bride_person_who_gave_consent_citizenship',
             'bride_person_who_gave_consent_residence',
-
             'bride_ss_at',
             'bride_ctc_number',
-
             'bride_ctc_at'
         ]
 
@@ -579,10 +633,7 @@ async function generate_marriage_license(formData) {
             }
         })
 
-        // Flatten the form (turn fields into static text)
         form.flatten()
-
-        // Save the PDF as base64
         const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
 
         return { status: true, pdfbase64: pdfBytes }
@@ -678,27 +729,240 @@ async function print_decided_license(formData, params) {
         // Embed Helvetica font
         const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
+        // Parse the form data
         const data = JSON.parse(formData)
+
+        // 
         const adjustments = JSON.parse(params)
 
-        // List of form fields to update
+
+        const updateBirthDateField = (birthDate, prefix) => {
+            // Add validation
+            if (!birthDate || isNaN(new Date(birthDate).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, birthDate);
+                return;
+            }
+
+            // Parse date using ISO format
+            const parsedDate = new Date(birthDate);
+
+            // Validate parsed date
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, birthDate);
+                return;
+            }
+
+            const dayField = form.getTextField(`${prefix}_day`);
+            const monthField = form.getTextField(`${prefix}_month`);
+            const yearField = form.getTextField(`${prefix}_year`);
+
+            try {
+                dayField.setText(format(parsedDate, 'dd'));
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
+                yearField.setText(format(parsedDate, 'yyyy'));
+
+                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+        };
+
+        // Groom
+        updateBirthDateField(data.groom_date_birth, 'groom');
+
+        // Bride
+        updateBirthDateField(data.bride_date_birth, 'bride');
+
+
+
+        const updateDateFormat = (date, prefix) => {
+            // Add validation
+            if (!date || isNaN(new Date(date).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, date);
+                return;
+            }
+
+            const parsedDate = new Date(date);
+
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, date);
+                return;
+            }
+            const dateField = form.getTextField(`${prefix}`);
+            try {
+                dateField.setText(format(parsedDate, 'MMMM dd, yyyy').toUpperCase());
+                dateField.updateAppearances(helveticaFont)
+            }
+            catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+
+        }
+
+
+        updateDateFormat(data.date_of_receipt, 'date_of_receipt')
+        updateDateFormat(data.date_issuance_marriage_license, 'date_issuance_marriage_license')
+
+        // Helper function to add ordinal suffix
+        const getOrdinalSuffix = (day) => {
+            const j = day % 10,
+                k = day % 100;
+            if (j === 1 && k !== 11) return 'ST';
+            if (j === 2 && k !== 12) return 'ND';
+            if (j === 3 && k !== 13) return 'RD';
+            return 'TH';
+        };
+
+        const updateSSDateField = (date, prefix) => {
+            if (!date || isNaN(new Date(date).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, date);
+                return;
+            }
+
+            const parsedDate = new Date(date);
+
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, date);
+                return;
+            }
+
+            const dayField = form.getTextField(`${prefix}_ss_day`);
+            const monthField = form.getTextField(`${prefix}_ss_month`);
+            const yearField = form.getTextField(`${prefix}_ss_year`);
+
+            try {
+                const day = parsedDate.getDate();
+                const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
+
+                dayField.setText(dayWithSuffix);
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
+                yearField.setText(format(parsedDate, 'yyyy'));
+
+                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+        };
+
+
+
+        // Subscribe and Sworn
+
+        updateSSDateField(data.date_of_receipt, 'groom')
+        updateSSDateField(data.date_of_receipt, 'bride')
+
+
+        const updateCTCDate = (date, prefix) => {
+            if (!date || isNaN(new Date(date).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, date);
+                return;
+            }
+            // Parse date using ISO format
+            const parsedDate = new Date(date);
+
+            // Validate parsed date
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, date);
+                return;
+            }
+
+            const dateField = form.getTextField(`${prefix}_ctc_on`);
+            try {
+                const date = format(parsedDate, 'dd MMMM yyyy').toUpperCase()
+                dateField.setText(date);
+
+                [dateField].forEach(field => field.updateAppearances(helveticaFont));
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error);
+            }
+
+
+        }
+
+        // Community Tax Certificate
+
+        updateCTCDate(data.groom_ctc_on, 'groom')
+        updateCTCDate(data.bride_ctc_on, 'bride')
+
+
+
+        const setDissolvedPlace = (prefix) => {
+            const municipality = data[`${prefix}_place_dissolved_municipality`];
+            const province = data[`${prefix}_place_dissolved_province`];
+            const country = data[`${prefix}_place_dissolved_country`];
+
+            const allAreNA = [municipality, province, country].every(value => value === 'N/A');
+
+            if (allAreNA) {
+                const fullPlaceField = form.getTextField(`${prefix}_place_dissolved`);
+                fullPlaceField.setText('N/A');
+                fullPlaceField.updateAppearances(helveticaFont);
+            } else {
+                const municipalityField = form.getTextField(`${prefix}_place_dissolved_municipality`);
+                const provinceField = form.getTextField(`${prefix}_place_dissolved_province`);
+                const countryField = form.getTextField(`${prefix}_place_dissolved_country`);
+
+                municipalityField.setText(municipality || '');
+                provinceField.setText(province || '');
+                countryField.setText(country || '');
+
+                [municipalityField, provinceField, countryField].forEach(field => field.updateAppearances(helveticaFont));
+            }
+        };
+
+
+        setDissolvedPlace('groom')
+        setDissolvedPlace('bride')
+
+
+
+        const setDissolvedDate = (dateStr, prefix) => {
+            if (!dateStr || dateStr === 'N/A') {
+                const fullDateField = form.getTextField(`${prefix}_date_dissolved`);
+                fullDateField.setText('N/A');
+                fullDateField.updateAppearances(helveticaFont);
+            } else {
+                const monthField = form.getTextField(`${prefix}_date_dissolved_month`);
+                const dayField = form.getTextField(`${prefix}_date_dissolved_day`);
+                const yearField = form.getTextField(`${prefix}_date_dissolved_year`);
+
+                try {
+                    const parsedDate = parse(dateStr, 'yyyy-MM-dd', new Date());
+
+                    const month = format(parsedDate, 'MMMM').toUpperCase();
+                    const day = format(parsedDate, 'dd');
+                    const year = format(parsedDate, 'yyyy');
+
+                    monthField.setText(month);
+                    dayField.setText(day);
+                    yearField.setText(year);
+                } catch (error) {
+
+                    monthField.setText('');
+                    dayField.setText('');
+                    yearField.setText('');
+                }
+
+                [monthField, dayField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+            }
+        };
+
+        setDissolvedDate(data.groom_date_dissolved, 'groom')
+        setDissolvedDate(data.bride_date_dissolved, 'bride')
+
+        // Define the fields in the form
         const fields = [
             'header_province',
             'header_municipality',
             'registry_number',
             'received_by',
-            'date_of_receipt',
             'marriage_license_number',
-            'date_issuance_marriage_license',
             'groom_contract_marriage_with',
             'bride_contract_marriage_with',
             'civil_registrar',
             'groom_first_name',
             'groom_middle_name',
             'groom_last_name',
-            'groom_day',
-            'groom_month',
-            'groom_year',
             'groom_age',
             'groom_municipality',
             'groom_province',
@@ -709,8 +973,6 @@ async function print_decided_license(formData, params) {
             'groom_religion',
             'groom_civil_status',
             'groom_previously_married_dissolved',
-            'groom_place_dissolved',
-            'groom_date_dissolved',
             'groom_degree_relation',
             'groom_father_first_name',
             'groom_father_middle_name',
@@ -726,19 +988,12 @@ async function print_decided_license(formData, params) {
             'groom_person_who_gave_consent_relation',
             'groom_person_who_gave_consent_citizenship',
             'groom_person_who_gave_consent_residence',
-            'groom_ss_day',
-            'groom_ss_month',
-            'groom_ss_year',
             'groom_ss_at',
             'groom_ctc_number',
-            'groom_ctc_on',
             'groom_ctc_at',
             'bride_first_name',
             'bride_middle_name',
             'bride_last_name',
-            'bride_day',
-            'bride_month',
-            'bride_year',
             'bride_age',
             'bride_municipality',
             'bride_province',
@@ -749,8 +1004,6 @@ async function print_decided_license(formData, params) {
             'bride_religion',
             'bride_civil_status',
             'bride_previously_married_dissolved',
-            'bride_place_dissolved',
-            'bride_date_dissolved',
             'bride_degree_relation',
             'bride_father_first_name',
             'bride_father_middle_name',
@@ -766,35 +1019,44 @@ async function print_decided_license(formData, params) {
             'bride_person_who_gave_consent_relation',
             'bride_person_who_gave_consent_citizenship',
             'bride_person_who_gave_consent_residence',
-            'bride_ss_day',
-            'bride_ss_month',
-            'bride_ss_year',
             'bride_ss_at',
             'bride_ctc_number',
-            'bride_ctc_on',
             'bride_ctc_at'
+        ]
+
+        const fields_to_avoid = [
+            'groom_contract_marriage_with',
+            'bride_contract_marriage_with',
+            'groom_municipality',
+            'groom_province',
+            'groom_country',
+            'groom_residence',
+            'groom_father_residence',
+            'groom_mother_residence',
+            'groom_person_who_gave_consent',
+            'groom_person_who_gave_consent_residence',
+
+            'bride_municipality',
+            'bride_province',
+            'bride_country',
+            'bride_residence',
+            'groom_father_residence',
+            'bride_mother_residence',
+            'bride_person_who_gave_consent',
+            'bride_person_who_gave_consent_residence',
         ]
 
         fields.forEach((fieldName) => {
             const field = form.getTextField(fieldName)
             const fieldValue = data[fieldName] || ''
 
-            if (
-                fieldName === 'groom_mother_residence' ||
-                fieldName === 'bride_mother_residence'
-            ) {
-                if (fieldValue.length >= 40) {
-                    field.setText(fieldValue)
-                    field.updateAppearances(helveticaFont)
-                    field.setAlignment(TextAlignment.Left)
-                    field.setFontSize(7.8)
-                    field.enableMultiline()
-                } else {
-                    field.setText(fieldValue)
-                    field.updateAppearances(helveticaFont)
-                    field.setAlignment(TextAlignment.Center)
-                    field.setFontSize(9)
-                }
+            if (fields_to_avoid.includes(fieldName)) {
+                adjustTextFieldSizeAndFit(
+                    pdfDoc,
+                    field,
+                    fieldValue,
+                    helveticaFont
+                )
             } else {
                 field.setText(fieldValue)
                 field.updateAppearances(helveticaFont)
@@ -802,7 +1064,6 @@ async function print_decided_license(formData, params) {
         })
 
         form.flatten()
-
         // Form to be copied
         const pdfBytes = await pdfDoc.save()
 

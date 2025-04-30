@@ -15,26 +15,31 @@
 
         <transition name="fade-scale">
             <div v-if="modal"
-                class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-50 p-4"
+                class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-50 p-4 py-8"
                 tabindex="-1">
                 <div
-                    class="w-full max-w-[1200px] h-[42rem] max-h-screen flex flex-col bg-white rounded-sm p-2 relative overflow-hidden">
-                    <button @click="close_modal"
-                        class="absolute right-0 top-0 rounded-bl-full w-10 h-10  bg-red-400 hover:bg-red-500 flex items-center justify-end px-2 text-white"><font-awesome-icon
-                            icon="fa-solid fa-xmark" />
-                    </button>
-                    <div class="flex items-center justify-center mb-5  flex-col gap-0">
-                        <h2 class="font-bold text-lg uppercase text-gray-800 leading-tight">Application for Marriage
-                            License
-                        </h2>
-                        <h2 class="font-semibold text-xs  text-gray-800 ">Municipal Form No. 90 (Form No. 2)</h2>
+                    class="w-full max-w-[1200px] h-full max-h-screen flex flex-col bg-white rounded-sm p-2 relative overflow-hidden">
+
+                    <div class="flex items-center  mb-5  flex-row gap-0">
+                        <div class="flex flex-col ml-auto justify-center items-center">
+                            <h2 class="font-bold text-lg uppercase text-gray-800 leading-tight">Application for Marriage
+                                License
+                            </h2>
+                            <h2 class="font-semibold text-xs  text-gray-800 ">Municipal Form No. 90 (Form No. 2)</h2>
+                        </div>
+
+                        <button @click="close_modal"
+                            class="ml-auto border w-16 hover:bg-red-500 bg-red-400 text-white"><font-awesome-icon
+                                icon="fa-solid fa-xmark" /></button>
+
+
                     </div>
 
 
                     <div class="flex flex-row gap-0 mb-4 px-2" v-if="form_mode === 0">
                         <div class="flex flex-col gap-0">
-                            <p class="font-bold text-lg uppercase  text-blue-500 leading-3">{{ steps[currentStep] }}</p>
-                            <p class=" text-xs text-gray-400 text-semibold uppercase">Please provide {{
+                            <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[currentStep] }}</p>
+                            <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                 steps[currentStep]
                                 }}
                             </p>
@@ -53,8 +58,8 @@
                         <div v-if="currentStep === 0 || form_mode === 1"
                             class="flex flex-col px-10  gap-2 justify-center">
                             <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-500 leading-3">{{ steps[0] }}</p>
-                                <p class=" text-xs text-gray-400 text-semibold uppercase">Please provide {{
+                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
+                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[0]
                                     }}
                                 </p>
@@ -82,8 +87,8 @@
                             <div class="grid grid-cols-1 gap-2">
 
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-lg uppercase  text-blue-500 leading-3">{{ steps[1] }}</p>
-                                    <p class=" text-xs text-gray-400 text-semibold uppercase">Please provide {{
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}</p>
+                                    <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[1]
                                         }}
                                     </p>
@@ -159,14 +164,16 @@
                                     <InputMarriage cap label="IF PREVIOUSLY MARRIED: How was it dissolved?"
                                         v-model="formData.groom_previously_married_dissolved" />
                                     <div class="w-[70%]">
-                                        <InputMarriage cap type="date" label="Date when dissolved" />
+                                        <InputMarriage cap type="date" label="Date when dissolved"
+                                            v-model="formData.groom_date_dissolved" />
+
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-2 items-end"
                                     v-if="formData.groom_civil_status !== 'SINGLE' && formData.groom_civil_status !== ''">
-                                    <InputMarriage cap label="Place where dissolved" holder="City/Municipality"
-                                        v-model="formData.groom_place_dissolved_municipality" />
+                                    <InputMarriageSuggestion cap label="Place where dissolved" holder="City/Municipality"
+                                        v-model="formData.groom_place_dissolved_municipality" :suggestion_data="municipality_with_province" />
                                     <InputMarriage cap holder="Province"
                                         v-model="formData.groom_place_dissolved_province" />
                                     <InputMarriage cap holder="Country"
@@ -193,8 +200,8 @@
 
 
                             <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-500 leading-3">{{ steps[2] }}</p>
-                                <p class=" text-xs text-gray-400 text-semibold uppercase">Please provide {{
+                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
+                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[2]
                                     }}
                                 </p>
@@ -301,8 +308,8 @@
                             <div class="grid grid-cols-1 gap-2">
 
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-lg uppercase  text-blue-500 leading-3">{{ steps[3] }}</p>
-                                    <p class=" text-xs text-gray-400 text-semibold uppercase">Please provide {{
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}</p>
+                                    <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[3]
                                         }}
                                     </p>
@@ -378,14 +385,15 @@
                                     <InputMarriage cap label="IF PREVIOUSLY MARRIED: How was it dissolved?"
                                         v-model="formData.bride_previously_married_dissolved" />
                                     <div class="w-[70%]">
-                                        <InputMarriage cap type="date" label="Date when dissolved" />
+                                        <InputMarriage cap type="date" v-model="formData.bride_date_dissolved"
+                                            label="Date when dissolved" />
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-2 items-end"
                                     v-if="formData.bride_civil_status !== 'SINGLE' && formData.bride_civil_status !== ''">
-                                    <InputMarriage cap label="Place where dissolved" holder="City/Municipality"
-                                        v-model="formData.bride_place_dissolved_municipality" />
+                                    <InputMarriageSuggestion cap label="Place where dissolved" holder="City/Municipality"
+                                        v-model="formData.bride_place_dissolved_municipality" :suggestion_data="municipality_with_province"/>
                                     <InputMarriage cap holder="Province"
                                         v-model="formData.bride_place_dissolved_province" />
                                     <InputMarriage cap holder="Country"
@@ -411,8 +419,8 @@
                             class="flex flex-col gap-2 px-10 justify-center">
 
                             <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-500 leading-3">{{ steps[4] }}</p>
-                                <p class=" text-xs text-gray-400 text-semibold uppercase">Please provide {{
+                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
+                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[4]
                                     }}
                                 </p>
@@ -513,8 +521,8 @@
                             class="flex flex-col gap-2 px-10 justify-center">
 
                             <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-500 leading-3">{{ steps[5] }}</p>
-                                <p class=" text-xs text-gray-400 text-semibold uppercase">Please provide {{
+                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
+                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[5]
                                     }}
                                 </p>
@@ -545,7 +553,7 @@
                                 <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
                                     }}
                                 </p>
-                                <p class=" text-xs text-gray-400 text-semibold uppercase mt-2">Please provide {{
+                                <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                                     steps[6]
                                     }} Details
                                 </p>
@@ -642,11 +650,8 @@
                             class="px-4 h-full gap-2 flex flex-col pt-8 mb-2">
                             <div class="flex flex-col gap-1 ">
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-lg uppercase  text-red-500 leading-3">{{ steps[7] }}</p>
-                                    <p class=" text-xs text-gray-400 text-semibold uppercase">Please preview the
-                                        document
-                                        first before saving it to database
-                                    </p>
+                                    <p class="font-bold text-xl mb-4 uppercase  text-gray-900 leading-3">{{ steps[7] }}</p>
+                                   
                                 </div>
                                 <div class="flex flex-row gap-2 mt-2 items-center">
                                     <button @click="preview_document"
@@ -690,11 +695,7 @@
                     <div class="mt-auto flex flex-row gap-2 items-center justify-center py-0.5 ">
 
                         <div class="flex flex-row gap-2 ml-auto">
-                            <!-- <button @click="currentStep--" v-if="currentStep !== 0 && form_mode === 0" tabindex="-1"
-                            class="bg-blue-500 focus:bg-blue-600 hover:bg-blue-600 text-white py-1 w-20  rounded">Back</button>
-                        <button @click="currentStep++" v-if="currentStep + 1 < steps.length && form_mode === 0"
-                            class="bg-blue-600 focus:bg-blue-700 hover:bg-blue-700 font-medium text-white py-1.5 w-24  rounded">Next</button> -->
-                            <button @click="submit()" v-if="currentStep + 1 === steps.length || form_mode === 1"
+                                            <button @click="submit()" v-if="currentStep + 1 === steps.length || form_mode === 1"
                                 class="bg-green-500 hover:bg-green-600 text-white py-1.5 w-24  rounded">Save</button>
 
                         </div>
@@ -835,7 +836,6 @@ const initialForm = {
     bride_contract_marriage_with: '',
 
     place_of_marriage: '', // ADD
-    // date_of_application: '', // ADD
 
     civil_registrar: 'ISMAEL D. MALICDEM, JR.',
 
@@ -978,24 +978,21 @@ const initialForm = {
 
     //  FOR DISSOLVED WITH VALUE
 
-    groom_previously_married_dissolved: '',
-    bride_previously_married_dissolved: '',
+    groom_previously_married_dissolved: 'N/A',
+    bride_previously_married_dissolved: 'N/A',
 
-    groom_place_dissolved_municipality: '',
-    groom_place_dissolved_province: '',
-    groom_place_dissolved_country: '',
+    groom_date_dissolved: 'N/A',
+    bride_date_dissolved: 'N/A',
 
-    groom_date_dissolved_day: '',
-    groom_date_dissolved_month: '',
-    groom_date_dissolved_year: '',
 
-    bride_place_dissolved_municipality: '',
-    bride_place_dissolved_province: '',
-    bride_place_dissolved_country: '',
+    groom_place_dissolved_municipality: 'N/A',
+    groom_place_dissolved_province: 'N/A',
+    groom_place_dissolved_country: 'N/A',
 
-    bride_date_dissolved_day: '',
-    bride_date_dissolved_month: '',
-    bride_date_dissolved_year: '',
+    bride_place_dissolved_municipality: 'N/A',
+    bride_place_dissolved_province: 'N/A',
+    bride_place_dissolved_country: 'N/A',
+
 
 }
 
@@ -1116,23 +1113,54 @@ watch(
 
 watch(() => formData.groom_civil_status, (val) => {
     const isSingle = val === 'SINGLE'
-    formData.groom_place_dissolved = isSingle ? 'N/A' : ''
-    formData.groom_date_dissolved = isSingle ? 'N/A' : ''
     formData.groom_previously_married_dissolved = isSingle ? 'N/A' : ''
+    formData.groom_date_dissolved = isSingle ? 'N/A' : ''
+    formData.groom_place_dissolved_municipality = isSingle ? 'N/A' : ''
+    formData.groom_place_dissolved_province = isSingle ? 'N/A' : ''
+    formData.groom_place_dissolved_country = isSingle ? 'N/A' : ''
 })
 
 watch(() => formData.bride_civil_status, (val) => {
     const isSingle = val === 'SINGLE'
-    formData.bride_place_dissolved = isSingle ? 'N/A' : ''
-    formData.bride_date_dissolved = isSingle ? 'N/A' : ''
     formData.bride_previously_married_dissolved = isSingle ? 'N/A' : ''
+    formData.bride_date_dissolved = isSingle ? 'N/A' : ''
+    formData.bride_place_dissolved_municipality = isSingle ? 'N/A' : ''
+    formData.bride_place_dissolved_province = isSingle ? 'N/A' : ''
+    formData.bride_place_dissolved_country = isSingle ? 'N/A' : ''
 })
 
 watch(
-    () => [formData.groom_religion, formData.bride_religion], // or others involved
-    () => {
-        add_details_to_notice()
-    }
+  () => [
+    formData.groom_first_name,
+    formData.groom_middle_name,
+    formData.groom_last_name,
+    formData.bride_first_name,
+    formData.bride_middle_name,
+    formData.bride_last_name,
+    formData.groom_age,
+    formData.groom_municipality,
+    formData.groom_province,
+    formData.groom_residence,
+    formData.groom_father_first_name,
+    formData.groom_father_middle_name,
+    formData.groom_father_last_name,
+    formData.groom_mother_first_name,
+    formData.groom_mother_middle_name,
+    formData.groom_mother_last_name,
+    formData.bride_age,
+    formData.bride_municipality,
+    formData.bride_province,
+    formData.bride_residence,
+    formData.bride_father_first_name,
+    formData.bride_father_middle_name,
+    formData.bride_father_last_name,
+    formData.bride_mother_first_name,
+    formData.bride_mother_middle_name,
+    formData.bride_mother_last_name,
+  ],
+  () => {
+    add_details_to_notice()
+  }
 )
 
 

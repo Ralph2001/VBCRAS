@@ -3,6 +3,32 @@ import { watch } from 'vue';
 
 export function useMarriageWatcher(formData) {
 
+
+    watch(() => formData.groom_place_dissolved_municipality, (newVal) => {
+        if (!newVal) return;
+
+        const parts = newVal.split('|').map(p => p.trim());
+
+        if (parts.length === 3) {
+            formData.groom_place_dissolved_municipality = parts[0];
+            formData.groom_place_dissolved_province = parts[1];
+            formData.groom_place_dissolved_country = parts[2];
+        }
+    });
+
+    watch(() => formData.bride_place_dissolved_municipality, (newVal) => {
+        if (!newVal) return;
+
+        const parts = newVal.split('|').map(p => p.trim());
+
+        if (parts.length === 3) {
+            formData.bride_place_dissolved_municipality = parts[0];
+            formData.bride_place_dissolved_province = parts[1];
+            formData.bride_place_dissolved_country = parts[2];
+        }
+    });
+
+
     /**
      * Groom Residence Wathcer
      */
