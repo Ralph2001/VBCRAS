@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <label v-if="!nolabel" :for="label" class="block mb-1.5 text-sm  text-gray-800 dark:text-white">{{ label }}
+    <label v-if="!nolabel" :for="label" class="block mb-1.5 text-sm font-medium text-gray-800 dark:text-white">{{ label }}
       <span v-if="error" class="text-red-600">*</span></label>
     <input @keydown.tab="handleTab" :placeholder="props.holder" @keydown.enter="focusNextInput"
       @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" :type="type" :id="label" :value="modelValue"

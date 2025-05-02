@@ -1,8 +1,32 @@
 // src/composables/useResidenceWatchers.js
+import { useDebounceFn } from '@vueuse/core';
 import { watch } from 'vue';
 
 export function useMarriageWatcher(formData) {
 
+    // Watch Middle Name and Last Name 
+
+    watch(() => formData.groom_last_name, (newVal) => {
+        if (!newVal) return;
+        formData.groom_father_last_name = newVal
+    });
+    watch(() => formData.groom_middle_name, (newVal) => {
+        if (!newVal) return;
+        formData.groom_mother_last_name = newVal
+    });
+
+    watch(() => formData.bride_last_name, (newVal) => {
+        if (!newVal) return;
+        formData.bride_father_last_name = newVal
+    });
+    watch(() => formData.bride_middle_name, (newVal) => {
+        if (!newVal) return;
+        formData.bride_mother_last_name = newVal
+    });
+
+
+
+    // If dissolved
 
     watch(() => formData.groom_place_dissolved_municipality, (newVal) => {
         if (!newVal) return;
@@ -45,32 +69,17 @@ export function useMarriageWatcher(formData) {
         }
     });
 
-    watch(() => formData.groom_residence, (newVal) => {
-        if (!newVal) return;
-        const parts = newVal.split('|').map(p => p.trim());
-        if (parts.length >= 3) {
-            formData.groom_residence = parts.slice(0, -1).join(', ');
-            formData.groom_residence_country = parts[parts.length - 1];
-        }
-    });
 
-    watch(() => formData.groom_father_residence, (newVal) => {
-        if (!newVal) return;
-        const parts = newVal.split('|').map(p => p.trim());
-        if (parts.length >= 3) {
-            formData.groom_father_residence = parts.slice(0, -1).join(', ');
-            formData.groom_father_residence_country = parts[parts.length - 1];
-        }
-    });
+    const formatResidence = useDebounceFn((key) => {
+        const val = formData[key];
+        if (!val.includes('|')) return; // Only transform if there's a pipe
+        formData[key] = val.split('|').map(p => p.trim()).join(', ');
+    }, 50); // waits 500ms after user stops typing
 
-    watch(() => formData.groom_mother_residence, (newVal) => {
-        if (!newVal) return;
-        const parts = newVal.split('|').map(p => p.trim());
-        if (parts.length >= 3) {
-            formData.groom_mother_residence = parts.slice(0, -1).join(', ');
-            formData.groom_mother_residence_country = parts[parts.length - 1];
-        }
-    });
+    watch(() => formData.groom_residence, () => formatResidence('groom_residence'));
+    watch(() => formData.groom_father_residence, () => formatResidence('groom_father_residence'));
+    watch(() => formData.groom_mother_residence, () => formatResidence('groom_mother_residence'));
+
 
     watch(() => formData.groom_person_who_gave_consent_residence, (newVal) => {
         if (!newVal) return;
@@ -98,32 +107,17 @@ export function useMarriageWatcher(formData) {
         }
     });
 
-    watch(() => formData.bride_residence, (newVal) => {
-        if (!newVal) return;
-        const parts = newVal.split('|').map(p => p.trim());
-        if (parts.length >= 3) {
-            formData.bride_residence = parts.slice(0, -1).join(', ');
-            formData.bride_residence_country = parts[parts.length - 1];
-        }
-    });
+    const formatBrideResidence = useDebounceFn((key) => {
+        const val = formData[key];
+        if (!val.includes('|')) return; // Only transform if there's a pipe
+        formData[key] = val.split('|').map(p => p.trim()).join(', ');
+    }, 50); // waits 500ms after user stops typing
 
-    watch(() => formData.bride_father_residence, (newVal) => {
-        if (!newVal) return;
-        const parts = newVal.split('|').map(p => p.trim());
-        if (parts.length >= 3) {
-            formData.bride_father_residence = parts.slice(0, -1).join(', ');
-            formData.bride_father_residence_country = parts[parts.length - 1];
-        }
-    });
+    watch(() => formData.bride_residence, () => formatBrideResidence('bride_residence'));
+    watch(() => formData.bride_father_residence, () => formatBrideResidence('bride_father_residence'));
+    watch(() => formData.bride_mother_residence, () => formatBrideResidence('bride_mother_residence'));
 
-    watch(() => formData.bride_mother_residence, (newVal) => {
-        if (!newVal) return;
-        const parts = newVal.split('|').map(p => p.trim());
-        if (parts.length >= 3) {
-            formData.bride_mother_residence = parts.slice(0, -1).join(', ');
-            formData.bride_mother_residence_country = parts[parts.length - 1];
-        }
-    });
+
 
     watch(() => formData.bride_person_who_gave_consent_residence, (newVal) => {
         if (!newVal) return;

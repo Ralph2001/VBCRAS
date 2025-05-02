@@ -360,7 +360,7 @@ async function generate_marriage_license(formData) {
             }
             const dateField = form.getTextField(`${prefix}`);
             try {
-                dateField.setText(format(parsedDate, 'MMMM dd, yyyy').toUpperCase());
+                dateField.setText(format(parsedDate, 'MMMM dd, yyyy'));
                 dateField.updateAppearances(helveticaFont)
             }
             catch (error) {
@@ -693,19 +693,27 @@ async function adjustTextFieldSizeAndFit(
         field.setFontSize(fontSize)
         field.enableMultiline()
 
-        console.log(field.getName() + 'Does it Printe? ' + field.setText(fieldValue))
+        console.log(field.getName() + 'Does it Print? ' + field.setText(fieldValue))
 
         if (field.getName() === 'groom_contract_marriage_with' || field.getName() === 'bride_contract_marriage_with'
         ) {
             field.setAlignment(TextAlignment.Right)
             return
         }
-        // Adjust alignment based on text length (optional)
-        if (fieldValue.length > 40) {
-            field.setAlignment(TextAlignment.Left)
+
+        if (
+            fieldValue.length > 40 ||
+            field.getName() === 'groom_person_who_gave_consent' ||
+            field.getName() === 'groom_person_who_gave_consent_residence' ||
+            field.getName() === 'bride_person_who_gave_consent' ||
+            field.getName() === 'bride_person_who_gave_consent_residence'
+        ) {
+            field.setAlignment(TextAlignment.Left);
         } else {
-            field.setAlignment(TextAlignment.Center)
+            field.setAlignment(TextAlignment.Center);
         }
+
+
     } catch (error) {
         console.error(
             `Error adjusting text field size for "${field.getName()}":`,
@@ -790,7 +798,7 @@ async function print_decided_license(formData, params) {
             }
             const dateField = form.getTextField(`${prefix}`);
             try {
-                dateField.setText(format(parsedDate, 'MMMM dd, yyyy').toUpperCase());
+                dateField.setText(format(parsedDate, 'MMMM dd, yyyy'));
                 dateField.updateAppearances(helveticaFont)
             }
             catch (error) {

@@ -47204,7 +47204,7 @@ const philippines = [
         'NCR': {
             region_name: 'NCR',
             province_list: {
-                'NATIONAL CAPITAL REGION - FOURTH DISTRICT': {
+                'FOURTH DISTRICT': {
                     municipality_list: {
                         'CITY OF LAS PIÑAS': {
                             barangay_list: [
@@ -47507,7 +47507,7 @@ const philippines = [
                         },
                     },
                 },
-                'NATIONAL CAPITAL REGION - MANILA': {
+                'MANILA': {
                     municipality_list: {
                         BINONDO: {
                             barangay_list: [
@@ -48463,7 +48463,7 @@ const philippines = [
                         },
                     },
                 },
-                'NATIONAL CAPITAL REGION - SECOND DISTRICT': {
+                'SECOND DISTRICT': {
                     municipality_list: {
                         'CITY OF MANDALUYONG': {
                             barangay_list: [
@@ -48723,7 +48723,7 @@ const philippines = [
                         },
                     },
                 },
-                'NATIONAL CAPITAL REGION - THIRD DISTRICT': {
+                'THIRD DISTRICT': {
                     municipality_list: {
                         'CALOOCAN CITY': {
                             barangay_list: [

@@ -49,9 +49,9 @@ function filterMunicipalitySuggestions(searchTerm) {
 
 export function useGroomResidenceSuggestions(formData) {
     function formatCombinedResidence(residence, country) {
-        if (!residence || !country) return null;
+        if (!residence) return null;
         const formatted = residence.replace(/,\s*/g, ' | ');
-        return `${formatted} | ${country}`;
+        return `${formatted}`;
     }
 
     const groomSuggestions = computed(() => {
@@ -60,11 +60,10 @@ export function useGroomResidenceSuggestions(formData) {
 
     const groomfatherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.groom_father_residence);
-        
+
         // Add groom's residence
         const groomCombined = formatCombinedResidence(
-            formData.groom_residence,
-            formData.groom_residence_country
+            formData.groom_residence
         );
         if (groomCombined) suggestions.push(groomCombined);
 
@@ -73,18 +72,16 @@ export function useGroomResidenceSuggestions(formData) {
 
     const groommotherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.groom_mother_residence);
-        
+
         // Add groom's residence
         const groomCombined = formatCombinedResidence(
-            formData.groom_residence,
-            formData.groom_residence_country
+            formData.groom_residence
         );
         if (groomCombined) suggestions.push(groomCombined);
-        
+
         // Add father's residence
         const fatherCombined = formatCombinedResidence(
-            formData.groom_father_residence,
-            formData.groom_father_residence_country
+            formData.groom_father_residence
         );
         if (fatherCombined) suggestions.push(fatherCombined);
 
@@ -95,11 +92,11 @@ export function useGroomResidenceSuggestions(formData) {
         const suggestions = filterMunicipalitySuggestions(
             formData.groom_person_who_gave_consent_residence
         );
-        
+
         // Add all relevant residences
-        [   formatCombinedResidence(formData.groom_residence, formData.groom_residence_country),
-            formatCombinedResidence(formData.groom_father_residence, formData.groom_father_residence_country),
-            formatCombinedResidence(formData.groom_mother_residence, formData.groom_mother_residence_country)
+        [formatCombinedResidence(formData.groom_residence),
+        formatCombinedResidence(formData.groom_father_residence),
+        formatCombinedResidence(formData.groom_mother_residence)
         ].forEach(combined => {
             if (combined) suggestions.push(combined);
         });
@@ -118,9 +115,9 @@ export function useGroomResidenceSuggestions(formData) {
 
 export function useBrideResidenceSuggestions(formData) {
     function formatCombinedResidence(residence, country) {
-        if (!residence || !country) return null;
+        if (!residence) return null;
         const formatted = residence.replace(/,\s*/g, ' | ');
-        return `${formatted} | ${country}`;
+        return `${formatted}`;
     }
 
     const brideSuggestions = computed(() => {
@@ -129,11 +126,10 @@ export function useBrideResidenceSuggestions(formData) {
 
     const bridefatherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.bride_father_residence);
-        
+
         // Add bride's residence
         const brideCombined = formatCombinedResidence(
-            formData.bride_residence,
-            formData.bride_residence_country
+            formData.bride_residence
         );
         if (brideCombined) suggestions.push(brideCombined);
 
@@ -142,18 +138,16 @@ export function useBrideResidenceSuggestions(formData) {
 
     const bridemotherSuggestions = computed(() => {
         const suggestions = filterMunicipalitySuggestions(formData.bride_mother_residence);
-        
+
         // Add bride's residence
         const brideCombined = formatCombinedResidence(
-            formData.bride_residence,
-            formData.bride_residence_country
+            formData.bride_residence
         );
         if (brideCombined) suggestions.push(brideCombined);
-        
+
         // Add father's residence
         const fatherCombined = formatCombinedResidence(
-            formData.bride_father_residence,
-            formData.bride_father_residence_country
+            formData.bride_father_residence
         );
         if (fatherCombined) suggestions.push(fatherCombined);
 
@@ -164,11 +158,11 @@ export function useBrideResidenceSuggestions(formData) {
         const suggestions = filterMunicipalitySuggestions(
             formData.bride_person_who_gave_consent_residence
         );
-        
+
         // Add all relevant residences
-        [   formatCombinedResidence(formData.bride_residence, formData.bride_residence_country),
-            formatCombinedResidence(formData.bride_father_residence, formData.bride_father_residence_country),
-            formatCombinedResidence(formData.bride_mother_residence, formData.bride_mother_residence_country)
+        [formatCombinedResidence(formData.bride_residence),
+        formatCombinedResidence(formData.bride_father_residence),
+        formatCombinedResidence(formData.bride_mother_residence)
         ].forEach(combined => {
             if (combined) suggestions.push(combined);
         });

@@ -1,7 +1,7 @@
 <template>
     <div
         class="fixed flex items-center justify-center h-full backdrop-blur-sm backdrop-brightness-50   w-full top-0 z-[999999999] bottom-0 right-0 left-0 ">
-        <div class="flex flex-col w-[40rem]  h-[20rem] bg-white border p-4 rounded-lg">
+        <div class="flex flex-col w-[40rem] relative h-[20rem] bg-white border p-4 rounded-lg">
             <div class="flex flex-row items-center justify-center p-2 px-5 gap-4">
 
                 <p class="text-md text-gray-800 font-medium">Are you sure you want to delete this record?
@@ -28,12 +28,19 @@
                 </div>
             </div>
             <div class="mt-auto ml-auto flex flex-row gap-2 text-gray-700 font-medium">
-                <button @click="proceed_job"
-                    class="border bg-white shadow-sm hover:shadow-md transition-all rounded-sm px-2.5 hover:bg-red-400 hover:text-white py-1 active:scale-95">Yes,
-                    Delete
-                    it.</button>
-                <button @click="cancel_job"
-                    class="border bg-white shadow-sm hover:shadow-md transition-all rounded-sm px-2.5 hover:bg-gray-50 py-1 active:scale-95">Cancel</button>
+
+                <div class="flex justify-end space-x-3 absolute bottom-6 right-6">
+                    <button @click="cancel_job"
+                        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition">
+                        Cancel
+                    </button>
+                    <button @click="proceed_job"
+                        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition">
+                        Delete
+                    </button>
+                </div>
+
+
             </div>
         </div>
     </div>

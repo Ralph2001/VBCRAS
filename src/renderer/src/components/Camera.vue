@@ -73,8 +73,9 @@
             </div>
         </teleport>
 
-        <div class="w-[170px] h-[166px] bg-gray-200 hover:bg-gray-300 transition-all duration-300 cursor-pointer  flex items-center justify-center">
-            <button @click="openCamera">
+        <div @click="openCamera" tabindex="0"
+            class="w-[170px] h-[166px] bg-gray-200 active:ring-2 focus:ring-2 outline-1 hover:bg-gray-300 transition-all duration-300 cursor-pointer  flex items-center justify-center">
+            <button  @click="openCamera" tabindex="-1">
                 <font-awesome-icon icon="fa-solid fa-camera" class="text-2xl text-gray-600 hover:text-gray-800" />
             </button>
             <!-- <p v-else class="text-xs text-gray-700 font-mono">No Camera Detected</p> -->

@@ -18,7 +18,7 @@
                 @keydown.down="focusNextInput($event, index)" @keydown.enter="selectSuggestion(value, index, $event)"
                 @keydown.up="focusPreviousInput" v-for="(value, index) in result" :key="value + '_unique'"
                 @click="SelectOption(value, index, $event)"
-                class="px-3 py-1.5 text-start cursor-pointer transition-colors font-normal text-sm hover:bg-[#3D6C8E] hover:text-white focus:text-white active:text-white active:bg-[#3D6C8E]  w-full outline-none ring-0 focus:bg-[#3D6C8E] ">{{
+                class="px-3 py-1.5 text-start cursor-pointer transition-colors font-normal text-sm hover:bg-[#3D6C8E]/90 hover:text-white focus:text-white active:text-white active:bg-[#3D6C8E]  w-full outline-none ring-0 focus:bg-[#3D6C8E] ">{{
                     value.toUpperCase()
                 }}</button>
         </div>

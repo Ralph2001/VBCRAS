@@ -39,20 +39,51 @@
         </button>
 
 
-        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-fit "
+        <div class="h-auto flex flex-col items-start justify-center bg-white z-50  absolute top-[95%] right-0 border shadow-md w-52 "
             v-if="dropdown">
+
+
             <button type="button" @click="openPreview(props.params.data.id)"
-                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-end text-md font-medium hover:bg-gray-100 px-5 w-full">View
-                Mun. Form No. 90 (Form No.2)
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-expand" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>View Document</p>
+                </div>
+            </button>
+
+            <button type="button" @click="props.params.onEdit(props.params.data)"
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-pen-to-square" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>Edit Document</p>
+                </div>
             </button>
             <button type="button" @click="openFolder(props.params.data.file_path)"
-                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-end text-md font-medium hover:bg-gray-100 px-5 w-full">Open
-                Folder
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-folder" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>Open Folder</p>
+                </div>
             </button>
-            <button type="button" @click="removeAPL(props.params.data.id)"
-                class=" disabled:bg-gray-100 disabled:hover:cursor-not-allowed bg-red-400 text-white flex items-end text-md font-medium hover:bg-red-500 px-5 w-full">Delete
-                Record
+
+            <button type="button" @click="props.params.onRemove(props.params.data)"
+                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-red-500  hover:text-white w-full">
+                <div class="w-10 ">
+                    <font-awesome-icon icon="fa-solid fa-trash" />
+                </div>
+                <div class="flex-1  flex text-start px-1">
+                    <p>Delete Record</p>
+                </div>
             </button>
+
+
+
         </div>
     </div>
 </template>
@@ -80,18 +111,6 @@ const props = defineProps({
 
 const close_modal = () => {
     preview.value = false
-}
-const removeAPL = async (id) => {
-    try {
-        const remove = await marriage.removeApplicationMarriageLicense(id)
-        if (remove) {
-            return
-        }
-        console.log(remove)
-
-    } catch (error) {
-        console.log(error)
-    }
 }
 
 const openPreview = async (id) => {
@@ -132,6 +151,5 @@ const print = async (id) => {
     }
 
 }
-
 
 </script>
