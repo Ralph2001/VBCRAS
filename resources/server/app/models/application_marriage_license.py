@@ -1,5 +1,6 @@
 from ..extensions import db
 from ..models.user import Users
+from datetime import datetime, timezone
 
 
 class ApplicationMarriageLicense(db.Model):
@@ -8,6 +9,8 @@ class ApplicationMarriageLicense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
+    created_at = db.Column(db.DateTime(timezone=True), default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     user = db.relationship("Users", backref="marriage_records")
     file_path = db.Column(db.String(455))

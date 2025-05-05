@@ -43,7 +43,7 @@
             v-if="dropdown">
 
 
-            <button type="button" @click="openPreview(props.params.data.id)"
+            <button type="button" @click="props.params.onPreview(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
                     <font-awesome-icon icon="fa-solid fa-expand" />

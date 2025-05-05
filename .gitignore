@@ -3,5 +3,7 @@ dist
 out
 resources/server/env
 resources/server/app/__pycache__/
+resources/server/migrations/
+resources/server/.venv
 *.pyc
 *.log*

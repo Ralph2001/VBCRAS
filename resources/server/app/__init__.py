@@ -15,6 +15,7 @@ from .routes.forms.DestroyedRecords import formDestroyedRecords
 from .routes.scanned import scans
 from .routes.petition import petitions
 from .routes.application_marriage_license import application_marriage_license
+from .extensions import migrate
 
 def get_database_path():
   
@@ -38,6 +39,7 @@ def create_app():
     jwt.init_app(app)
     db.init_app(app)
     ma.init_app(app)
+    migrate.init_app(app, db)
     CORS(app)
     
     

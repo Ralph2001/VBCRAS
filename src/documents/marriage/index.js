@@ -1104,12 +1104,11 @@ async function print_decided_license(formData, params) {
         const embeddedPage = await newPdfDoc.embedPage(firstDonorPage)
 
         // Optional: Adjust positioning with given x and y offsets
-        const x_axis_adjustments = (Number(adjustments.x))
-            ? Number(adjustments.x)
-            : 0
-        const y_axis_adjustments = (Number(adjustments.y))
-            ? Number(adjustments.y)
-            : 0
+        const x_axis_adjustments = (Number(adjustments.x)) ? Number(adjustments.x) : 0;
+        const y_axis_adjustments = (Number(adjustments.y)) ? Number(adjustments.y) : 0;
+        
+        console.log(`Drawing page with adjustments - X: ${x_axis_adjustments}, Y: ${y_axis_adjustments}`);
+        
 
         newPage.drawPage(embeddedPage, {
             x: x_axis_adjustments,
@@ -1164,8 +1163,13 @@ async function save_marriage_license_and_notice(formData, image) {
         const brideLastName = data.bride_last_name ? data.bride_last_name : '(nolastname)';
 
         // Define folder paths
-        const folderName = `${data.groom_first_name} ${groomLastName} & ${data.bride_first_name} ${brideLastName}`;
+        const sanitize = (str) => str.replace(/[<>:"/\\|?*]/g, '');
 
+        const folderName = sanitize(`${data.groom_first_name} ${groomLastName} & ${data.bride_first_name} ${brideLastName}`);
+
+        if (folderName.length > 100) {
+            folderName = folderName.slice(0, 100);
+        }
 
         // Get current year and month for dynamic folder creation
         const currentDate = new Date();

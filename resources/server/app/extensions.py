@@ -15,7 +15,10 @@ from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
 from marshmallow import fields
 from sqlalchemy import desc
+from flask_migrate import Migrate
 
+
+migrate = Migrate()
 ma = Marshmallow()
 jwt = JWTManager()
 db = SQLAlchemy()

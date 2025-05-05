@@ -1,6 +1,7 @@
 from ..extensions import db, jsonify, request, create_access_token, Blueprint
 from ..models.application_marriage_license import ApplicationMarriageLicense
 from ..schemas.application_marriage_license_schema import ApplicationMarriageLicenseSchema
+from marshmallow import ValidationError
 
 
 application_marriage_license = Blueprint("application_marriage_license", __name__)
@@ -49,6 +50,38 @@ def get_application_marriage_license(id):
     application_marriage_license_record = ApplicationMarriageLicense.query.get_or_404(id)
     result = application_mariage_license_schema.dump(application_marriage_license_record)
     return jsonify(result), 200
+
+
+#########
+# Update
+#########
+
+
+@application_marriage_license.route("/application-marriage-license/<int:id>", methods=["PUT"])
+def update_application_marriage_license(id):
+    record = ApplicationMarriageLicense.query.get_or_404(id)
+
+    try:
+        data = request.get_json()
+
+        # Optional: validate data but don't load as instance
+        schema = ApplicationMarriageLicenseSchema(partial=True)
+        schema.load(data)  # only for validation
+
+        for key, value in data.items():
+            setattr(record, key, value)
+
+        db.session.commit()
+
+        return jsonify({"message": "Record updated successfully"}), 200
+
+    except ValidationError as err:
+        return jsonify({"errors": err.messages}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 
 #########

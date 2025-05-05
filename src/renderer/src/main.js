@@ -103,7 +103,9 @@ import {
     faCopy,
     faDatabase,
     faRetweet,
-    faShare
+    faShare,
+    faX,
+    faY
     
 
 
@@ -194,7 +196,9 @@ library.add(
     faCopy,
     faDatabase,
     faRetweet,
-    faShare
+    faShare,
+    faX,
+    faY
     
  
 

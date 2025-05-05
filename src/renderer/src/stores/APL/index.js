@@ -69,6 +69,27 @@ export const useApplicationMarriageLicense = defineStore('useApplicationMarriage
                 return false
             }
         },
+        async UpdateRecord(id, formData) {
+            try {
+                const hostAdd = localStorage.getItem('host');
+                const tokenStr = localStorage.getItem('token');
+
+                const update = await axios.put(`http://${hostAdd}:1216/application-marriage-license/${id}`, formData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${tokenStr}`,
+                    },
+                });
+
+
+                this.refresh();
+                return true
+            } catch (error) {
+                console.error('Update failed:', error);
+                return false
+            }
+        },
+
 
         async refresh() {
             this.getApplicationMarriageLicense()

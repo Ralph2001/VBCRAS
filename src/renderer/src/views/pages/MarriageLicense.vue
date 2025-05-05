@@ -36,8 +36,8 @@
 
                     <!-- Optional: Default Filepath or Template Path -->
                     <div class="mt-4">
-                        <InputMarriage label="Default Filepath for Saved Forms (AFML & Notice of Posting)" v-model="formData.default_filepath"
-                            placeholder="/documents/marriage-licenses/" />
+                        <InputMarriage label="Default Filepath for Saved Forms (AFML & Notice of Posting)"
+                            v-model="formData.default_filepath" placeholder="/documents/marriage-licenses/" />
                         <p class="text-xs text-gray-500 mt-1">This is where generated documents will be saved by
                             default.</p>
                     </div>
@@ -86,7 +86,7 @@
                             class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition">
                             Cancel
                         </button>
-                        <button @click="proceedRemoveRecord(idToRemove.value)"
+                        <button @click="proceedRemoveRecord(idToRemove)"
                             class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition">
                             Delete
                         </button>
@@ -184,7 +184,7 @@
 
                                 <div class="grid grid-cols-3 gap-1 items-end">
                                     <InputMarriage cap label="Full Name" holder="First Name"
-                                        v-model="formData.groom_fairst_name" :error="v$.groom_first_name.$error" />
+                                        v-model="formData.groom_first_name" :error="v$.groom_first_name.$error" />
                                     <InputMarriage cap holder="Middle Name" v-model="formData.groom_middle_name" />
                                     <InputMarriage cap holder="Last Name" v-model="formData.groom_last_name"
                                         :error="v$.groom_last_name.$error" />
@@ -734,58 +734,100 @@
 
                         </div>
 
+
                         <div v-if="currentStep === 7 || form_mode === 1"
-                            class="px-4 h-full gap-2 flex flex-col pt-8 mb-2">
-                            <div class="flex flex-col gap-1 ">
-                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-xl mb-4 uppercase  text-gray-900 leading-3">{{ steps[7] }}
+                            class="px-4 h-full gap-4 flex flex-col pt-8 mb-2">
+
+                            <!-- Section Header -->
+                            <div v-if="form_mode === 1">
+                                <p class="font-bold text-xl mb-4 uppercase text-gray-900">{{ steps[7] }}</p>
+                            </div>
+
+                            <!-- Step 1: Select Document -->
+                            <div>
+                                <label for="documentType" class="font-semibold flex items-center gap-1">
+                                    <label class="font-semibold">1. What document do you want to preview and
+                                        print?</label>
+
+                                    <font-awesome-icon icon="fa-solid fa-circle-question"
+                                        class="text-gray-400 cursor-pointer"
+                                        title="Select the document you want to preview and print." />
+                                </label>
+                                <select id="documentType" @change="change_page()" v-model="select_page"
+                                    class="w-full bg-white border border-gray-300 rounded-md text-gray-700 focus:ring-2 focus:ring-blue-300 px-3 py-2 mt-1">
+                                    <option :value="0" selected disabled></option>
+                                    <option :value="1">Application for Marriage License</option>
+                                    <option :value="2">Notice of Posting</option>
+                                </select>
+                            </div>
+
+
+                            <!-- Step 2: Print -->
+                            <div>
+                                <label class="font-semibold">2. Print</label>
+                                <div class="flex flex-col gap-2 mt-1">
+                                    <div v-if="select_page === 1" class="flex flex-row gap-2 relative">
+                                        <button @click="printAFML()"
+                                            class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
+                                            <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print
+                                            Application
+                                            for Marriage License
+                                        </button>
+                                        <!-- Settings Button -->
+                                        <button @click="openAFMLSetting()"
+                                            class="flex gap-2 px-3 py-2 rounded-md  bg-indigo-500 hover:bg-indigo-600 w-52 items-center justify-center text-white text-sm transition-colors">
+                                            <font-awesome-icon icon="fa-solid fa-gear" />
+                                            Adjust Position
+                                        </button>
+
+
+                                        <!-- Settings Panel -->
+                                        <div v-if="afml_setting"
+                                            class="absolute right-0 top-14 shadow-lg border p-2 w-56 h-auto bg-white rounded-md z-10">
+                                            <p class="text-center font-medium">Print Position Adjustment</p>
+                                            <div class="flex flex-col mt-2">
+                                                <div class="flex flex-row items-center gap-4">
+                                                    <font-awesome-icon icon="fa-solid fa-x" class="text-xs w-10" />
+                                                    <InputMarriage v-model="pdf_settings.x" type="number" />
+                                                </div>
+                                                <div class="flex flex-row items-center gap-4">
+                                                    <font-awesome-icon icon="fa-solid fa-y" class="text-xs w-10" />
+                                                    <InputMarriage v-model="pdf_settings.y" type="number" />
+                                                </div>
+                                                <button class="w-full rounded-md mt-4 bg-blue-500 h-10 text-white"
+                                                    @click="saveAFMLSetting()">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button v-if="select_page === 2" @click="printNoticePosting()"
+                                        class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
+                                        <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print Notice of
+                                        Posting
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: Document Preview -->
+                            <div>
+                                <label class="font-semibold">3. Document Preview</label>
+                                <div
+                                    class="mt-2 bg-gray-50 h-[33rem] border border-gray-300 shadow-inner flex items-center justify-center">
+                                    <p v-if="isLoadingPrev" class="italic text-gray-600">Loading preview...</p>
+                                    <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
+                                    <p v-if="!pdf_content && !isLoadingPrev"
+                                        class="italic text-gray-500 flex items-center gap-2">
+                                        <font-awesome-icon icon="fa-regular fa-file-pdf" class="text-xl" />
+                                        Select a document above to see a preview.
                                     </p>
 
                                 </div>
-                                <div class="flex flex-row gap-2 mt-2 items-center">
-                                    <button @click="preview_document"
-                                        class="bg-blue-100 hover:bg-blue-50 transition-colors duration-200 py-0.5 h-8 border border-blue-300 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded px-2.5">
-                                        <font-awesome-icon icon="fa-solid fa-file" /> Generate Preview
-                                    </button>
-
-
-
-                                    <button @click="printAFML()" title="Print Application for Marriage License"
-                                        class="bg-gray-100 hover:bg-gray-200 transition-colors duration-200 py-0.5 h-8 border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded px-2.5">
-                                        <font-awesome-icon icon="fa-solid fa-print" /> Print AFML
-                                    </button>
-                                    <button @click="printNoticePosting()" title="Print Notice of Posting"
-                                        class="bg-gray-100 hover:bg-gray-200 transition-colors duration-200 py-0.5 h-8 border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded px-2.5">
-                                        <font-awesome-icon icon="fa-solid fa-print" /> Print Notice of Posting
-                                    </button>
-                                    <div class="ml-auto">
-
-                                        <!-- <div class="flex flex-row gap-1">
-                                            <div class="h-8 w-8  rounded-md flex items-center justify-center bg-blue-100 hover:bg-blue-50  border border-blue-300 text-blue-700">1
-                                            </div>
-                                            <div class="h-8 w-8  rounded-md flex items-center justify-center bg-blue-100 hover:bg-blue-50  border border-blue-300 text-blue-700">2
-                                            </div>
-                                        </div> -->
-                                        <div class="ml-auto">
-                                            <select name="" id="" @change="change_page()" v-model="select_page"
-                                                class="bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-all duration-200 cursor-pointer py-1 px-3 shadow-sm">
-
-                                                <option :value="1" class="hover:bg-gray-100" selected>Application for
-                                                    Marriage
-                                                    License</option>
-                                                <option :value="2" class="hover:bg-gray-100">Notice of Posting</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    class=" bg-gray-50 h-[33rem] border border-gray-300 shadow-inner items-center flex justify-center">
-                                    <!-- <p v-if="!pdf_content && isLoadingPrev === false" class="italic">Click Generate Preview</p> -->
-                                    <p v-if="isLoadingPrev" class="italic">Loading...</p>
-                                    <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
-                                </div>
+                                <p v-if="pdf_content && !isLoadingPrev" class="text-green-600 text-sm mt-2">Preview
+                                    loaded successfully.</p>
                             </div>
+
                         </div>
+
+
 
                     </div>
                     <div class="mt-auto flex flex-row gap-2  items-center justify-center py-2 ">
@@ -806,6 +848,74 @@
                 </div>
             </div>
         </transition>
+
+
+        <!-- Full Page PDF Preview Modal -->
+        <div v-if="isPreview" class="fixed inset-0 bg-white z-50 flex flex-col h-screen">
+
+            <!-- Header / Toolbar -->
+            <div class="p-4 border-b flex items-center justify-between bg-gray-100 shadow-sm">
+                <h2 class="font-bold text-lg text-gray-800">
+                    {{ previewPage === 1 ? 'Application for Marriage License' : 'Notice of Posting' }}
+                </h2>
+                <button @click="closePreviewModal()" class="text-gray-500 hover:text-gray-700">
+                    <font-awesome-icon icon="fa-solid fa-xmark" class="text-xl" />
+                </button>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="flex items-center gap-4 px-4 py-3 bg-gray-100 border-b shadow">
+                <label class="font-semibold">Document:</label>
+                <select v-model="previewPage" class="bg-white border border-gray-300 rounded px-3 py-2">
+                    <option :value="1">Application for Marriage License</option>
+                    <option :value="2">Notice of Posting</option>
+                </select>
+
+
+                <!-- Print Buttons -->
+                <div v-if="previewPage === 1" class="flex items-center gap-2 ml-auto">
+                    <button @click="handlePreviewPrint()" class="bg-green-500 text-white px-4 py-2 rounded">
+                        <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
+                        Print Application
+                    </button>
+                    <button @click="openAFMLSetting()"
+                        class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded flex items-center gap-2">
+                        <font-awesome-icon icon="fa-solid fa-gear" />
+                        Adjust Position
+                    </button>
+                </div>
+
+                <button v-if="previewPage === 2" @click="printNoticePosting()"
+                    class="bg-green-500 text-white px-4 py-2 rounded ml-auto">
+                    <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
+                    Print Notice
+                </button>
+            </div>
+
+            <!-- Settings Panel -->
+            <div v-if="afml_setting" class="absolute right-4 top-20 bg-white border shadow-md rounded-md p-4 w-64 z-50">
+                <h3 class="text-center font-semibold mb-2">Print Position Adjustment</h3>
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-3">
+                        <font-awesome-icon icon="fa-solid fa-x" class="w-5 text-gray-600" />
+                        <InputMarriage v-model="pdf_settings.x" type="number" />
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <font-awesome-icon icon="fa-solid fa-y" class="w-5 text-gray-600" />
+                        <InputMarriage v-model="pdf_settings.y" type="number" />
+                    </div>
+                    <button class="bg-blue-600 text-white rounded mt-3 py-2" @click="saveAFMLSetting()">Save</button>
+                </div>
+            </div>
+
+            <!-- PDF Preview -->
+            <div class="flex-1 overflow-auto bg-gray-50 flex items-center justify-center relative">
+                <p v-if="!isDocReady" class="italic text-gray-600">Loading preview...</p>
+                <PDFViewerWorker :pdfBytes64="previewPdfContent" v-if="previewPdfContent" />
+
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -895,13 +1005,20 @@ const openPrint = () => {
 }
 
 
-const page = ref(1)
+const page = ref(0)
 const paper_size = computed(() => {
     return page.value === 1 ? 13 : 8
 })
 
-const select_page = ref(1)
-const change_page = () => {
+const select_page = ref(0)
+const change_page = async () => {
+    if (!(await validateForm())) {
+
+        page.value = 0
+        select_page.value = 0
+        return
+    }
+
     page.value = select_page.value
     preview_document()
 }
@@ -916,7 +1033,18 @@ const pdf_settings = reactive({
     x: 0,
     y: 0,
 })
-
+onMounted(() => {
+    const saved = localStorage.getItem('afml_pdf_settings')
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved)
+            pdf_settings.x = parsed.x ?? 0
+            pdf_settings.y = parsed.y ?? 0
+        } catch (e) {
+            console.error('Invalid saved settings in localStorage')
+        }
+    }
+})
 
 const apl = useApplicationMarriageLicense()
 
@@ -1300,6 +1428,16 @@ const blank = () => {
     Object.assign(formData, { ...initialForm });
 }
 const close_modal = async () => {
+
+    /**
+     * Reset all the value
+     */
+
+    pdf_content.value = null
+
+    page.value = 0
+    select_page.value = 0
+
     modal.value = false;
     blank();
     await nextTick();
@@ -1428,6 +1566,21 @@ const preview_document = async () => {
     }
 }
 
+const afml_setting = ref(false)
+const openAFMLSetting = () => {
+    afml_setting.value = true
+}
+
+const saveAFMLSetting = () => {
+    afml_setting.value = false
+    localStorage.setItem('afml_pdf_settings', JSON.stringify({
+        x: pdf_settings.x,
+        y: pdf_settings.y
+    }))
+
+}
+
+
 const printAFML = async () => {
     if (!(await validateForm())) return
 
@@ -1457,21 +1610,28 @@ const printNoticePosting = async () => {
 const submit = async () => {
     if (!(await validateForm())) return
 
-    const images = getBrideGroomImages
+    const images = getBrideGroomImages();
     const main_data = JSON.stringify({ ...formData })
 
-    // const save_local = await window.MarriageApi.saveMarriageApplicationEntry(main_data, images)
+    const save_local = await window.MarriageApi.saveMarriageApplicationEntry(main_data, images)
 
-    // if (save_local?.status) {
-    const dataToSave = {
-        ...formData,
-        file_path: '',
-        created_by: auth.user_id
+    if (save_local?.status) {
+        const dataToSave = {
+            ...formData,
+            file_path: '',
+            created_by: auth.user_id
+        }
+
+        await apl.addApplicationMarriageLicense(dataToSave)
+        close_modal()
+        toast.fire({
+            icon: 'success',
+            title: 'Marriage license application has been successfully added.',
+            duration: 5000,
+        })
+
+
     }
-
-    await apl.addApplicationMarriageLicense(dataToSave)
-    close_modal()
-    // }
 
 }
 
@@ -1486,7 +1646,11 @@ const dataMapper = (data) => {
 }
 
 
-// Editing Record Section
+
+/**
+ * Handle Update 
+ */
+
 const isUpdating = ref(false)
 const idToEdit = ref(null)
 const handleEdit = (data) => {
@@ -1499,20 +1663,44 @@ const handleEdit = (data) => {
 const updateRecord = async () => {
     if (!idToEdit.value) return;
     try {
-        const response = await api.updateRecord(idToEdit.value, formData);
-        if (response) {
+        const update_record = await apl.UpdateRecord(idToEdit.value, formData);
+        if (update_record) {
             isUpdating.value = false
             idToEdit.value = null
+            close_modal()
+
+            toast.fire({
+                icon: 'success',
+                title: 'Record Successfully Updated.',
+                duration: 5000,
+            })
+        }
+        else {
+            isUpdating.value = false
+            idToEdit.value = null
+            close_modal()
+
+            toast.fire({
+                icon: 'error',
+                title: 'Something went wrong. Pleas try again',
+                duration: 5000,
+            })
         }
     } catch (error) {
         console.error("Failed to update:", error);
     }
 }
-// Removing Record Section
+
+
+/**
+ * Handle Remove 
+ */
+
 const isToRemove = ref(false)
 const handleDelete = (data) => {
     isToRemove.value = true
     idToRemove.value = data.id
+    console.log(idToRemove.value)
 }
 const cancelRemove = () => {
     isToRemove.value = false;
@@ -1521,9 +1709,22 @@ const cancelRemove = () => {
 
 const idToRemove = ref(null)
 const proceedRemoveRecord = async (id) => {
-    if (!id) return;
+
+    if (!id) {
+        console.log('No ID')
+        return
+
+    }
     try {
         const removed = await apl.removeApplicationMarriageLicense(id);
+
+        toast.fire({
+            icon: 'success',
+            title: 'Record removed.',
+            duration: 5000,
+        })
+
+
         if (removed) {
             isToRemove.value = false;
             idToRemove.value = null;
@@ -1534,10 +1735,94 @@ const proceedRemoveRecord = async (id) => {
 }
 
 
+/**
+ * Handle Preview 
+ */
+
+const isPreview = ref(false)
+const previewPage = ref(1)
+const previewPdfContent = ref(null)
+const isDocReady = ref(false)
+const selectedRecord = ref(null)
+
+const handlePreviewModal = () => {
+    isPreview.value = true
+}
+
+const closePreviewModal = () => {
+    isPreview.value = false
+    previewPdfContent.value = null
+    selectedRecord.value = null
+    isDocReady.value = false
+}
+
+const loadPreview = async () => {
+    if (!selectedRecord.value) return
+
+    isDocReady.value = false
+    previewPdfContent.value = null
+
+    try {
+        const response = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id)
+        if (response.status === 200) {
+            const data = response.data
+            const main_data = JSON.stringify({ ...data })
+
+            // 👇 Pass document type to backend to determine what to generate
+            const previewData = await window.MarriageApi.previewMarriage(main_data, previewPage.value)
+
+            if (previewData.status) {
+                previewPdfContent.value = previewData.pdfbase64
+                isDocReady.value = true
+            }
+        }
+    } catch (error) {
+        console.error('Preview Error:', error)
+    }
+
+
+}
+
+const handlePreview = async (record_data) => {
+    selectedRecord.value = record_data
+    handlePreviewModal()
+    await loadPreview()
+}
+
+watch(previewPage, () => {
+    loadPreview()
+})
+
+
+const handlePreviewPrint = async () => {
+    if (!selectedRecord.value || !selectedRecord.value.id) {
+        console.warn("No selected record to print.");
+        return;
+    }
+    try {
+        const getDetails = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id)
+        if (getDetails.status === 200) {
+            const data = getDetails.data
+            const main_data = JSON.stringify({ ...data })
+            const settings = JSON.stringify({ ...pdf_settings })
+            const preview = await window.MarriageApi.printMarriage(main_data, settings);
+
+            console.log(preview)
+
+        }
+    } catch (error) {
+
+        console.log(error)
+    }
+}
+
+
+
 
 /**
  * Define Column
  */
+
 const colDefs = ref([
     {
 
@@ -1604,6 +1889,14 @@ const colDefs = ref([
 
     },
     {
+        field: "created_at",
+        headerName: "Created At",
+        hide: true, // hides the column from the UI
+        sort: "desc", // initial sort order
+        comparator: (a, b) => new Date(a) - new Date(b),
+    },
+
+    {
 
         cellStyle: { border: "none" },
         pinned: "right",
@@ -1614,6 +1907,7 @@ const colDefs = ref([
         cellStyle: { overflow: "visible", border: "none" },
         cellRenderer: ActionBtn,
         cellRendererParams: {
+            onPreview: handlePreview,
             onRemove: handleDelete,
             onEdit: handleEdit,
         },

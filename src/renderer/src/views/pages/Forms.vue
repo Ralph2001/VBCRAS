@@ -493,7 +493,7 @@
             <div v-else class="h-full w-full relative ">
 
                 <div v-if="settings"
-                    class="absolute top-6 z-50 bg-white p-4 right-10 w-[40rem] px-6 h-auto border border-gray-300 shadow-2xl rounded flex flex-col">
+                    class="absolute top-6 z-50 bg-white p-4 right-10  w-[40rem] px-6 h-[40rem] overflow-y-scroll border border-gray-300 shadow-2xl rounded flex flex-col">
                     <p class="text-sm font-medium text-blue-600">Form Adjustments</p>
 
                     <div class="flex flex-col gap-2 w-full mt-4">
