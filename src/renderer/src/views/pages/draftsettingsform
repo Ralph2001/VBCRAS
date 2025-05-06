@@ -1,0 +1,177 @@
+         <div v-if="settings"
+                    class="absolute top-6 z-50 bg-white p-4 right-10 w-[50rem] px-6 h-[40rem] overflow-y-scroll border border-gray-300 shadow-2xl rounded flex flex-col">
+
+                    <!-- Title Section -->
+                    <p class="text-sm font-medium text-blue-600">Form Adjustments</p>
+
+                    <!-- Guide Text -->
+                    <p class="text-xs text-gray-500 mt-2">Adjust the settings below to control the positioning and
+                        scaling of
+                        various form elements.</p>
+
+                    <div class="flex flex-col gap-2 w-full mt-4">
+
+                        <!-- Right Logo Section -->
+                        <div class="w-full flex flex-col">
+                            <p class="text-sm font-medium">Right Logo</p>
+                            <p class="text-xs text-gray-500 mb-2">Adjust the scale and position of the right logo on the
+                                form.</p>
+
+                            <div class="grid grid-cols-3 items-center justify-center mt-1">
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm">Scale</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.left_scale" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.left_x" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.left_y" />
+                                </div>
+                            </div>
+
+                            <p class="text-sm font-medium mt-2">Left Logo</p>
+                            <p class="text-xs text-gray-500 mb-2">Adjust the scale and position of the left logo on the
+                                form.</p>
+
+                            <div class="grid grid-cols-3 items-center justify-center mt-1">
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <p class="text-sm">Scale</p>
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.right_scale" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.right_x" />
+                                </div>
+
+                                <div class="flex flex-row gap-1 items-center justify-center">
+                                    <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                                    <InputforForm width="6rem" type="number" v-model="preference.logo.right_y" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Header Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Header</p>
+                            <p class="text-xs text-gray-500">Adjust the vertical position of the header on the form.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.header.y" />
+                        </div>
+
+                        <!-- Concern Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Concern</p>
+                            <p class="text-xs text-gray-500">Adjust the position of the concern label.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.concern.x" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.concern.y" />
+                        </div>
+
+                        <!-- Page/Book Number Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Page/Book Number</p>
+                            <p class="text-xs text-gray-500">Adjust the position of the page/book number field.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.page_book_number.x" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.page_book_number.y" />
+                        </div>
+
+                        <!-- Body/Data Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Body/Data</p>
+                            <p class="text-xs text-gray-500">Adjust the position of the body/data field.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.body_data.x" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.body_data.y" />
+                        </div>
+
+                        <!-- Issued to Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Issued to</p>
+                            <p class="text-xs text-gray-500">Adjust the vertical position of the issued-to label.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.issued_to.y" />
+                        </div>
+
+                        <!-- Remarks/Annotation Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Remarks/Annotation</p>
+                            <p class="text-xs text-gray-500">Adjust the position of the remarks/annotation field.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.y" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.x" />
+                        </div>
+
+                        <!-- Remarks/Annotation Font Size Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Remarks/Annotation Font Size</p>
+                            <p class="text-xs text-gray-500">Adjust the font size of remarks and annotations.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.font" />
+                        </div>
+
+                        <!-- Remarks/Annotation Width Size Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Remarks/Annotation Width Size</p>
+                            <p class="text-xs text-gray-500">Adjust the width size of remarks and annotations.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.remarks_config.width" />
+                        </div>
+
+                        <!-- Verifier Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Verifier</p>
+                            <p class="text-xs text-gray-500">Adjust the position of the verifier field.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.verifier.x" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.verifier.y" />
+                        </div>
+
+                        <!-- C/MCR Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">C/MCR</p>
+                            <p class="text-xs text-gray-500">Adjust the position of the C/MCR field.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.c_mcr.x" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.c_mcr.y" />
+                        </div>
+
+                        <!-- Billing Info Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Billing Info</p>
+                            <p class="text-xs text-gray-500">Adjust the position of the billing information field.</p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                            <InputforForm width="6rem" type="number" v-model="preference.billing_info.x" />
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.billing_info.y" />
+                        </div>
+
+                        <!-- Authentication Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <p class="text-sm font-medium w-36">Authentication</p>
+                            <p class="text-xs text-gray-500">Adjust the vertical position of the authentication field.
+                            </p>
+                            <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                            <InputforForm width="6rem" type="number" v-model="preference.authentication.y" />
+                        </div>
+
+                        <!-- Okay Button Section -->
+                        <div class="flex flex-row gap-2 items-center">
+                            <button @click="settings = false"
+                                class="text-sm font-medium ml-auto bg-blue-600 text-white rounded py-2 border px-2.5">Okay</button>
+                        </div>
+
+                    </div>
+                </div>

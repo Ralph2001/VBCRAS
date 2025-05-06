@@ -28,6 +28,7 @@
       </div>
     </div>
 
+    <HowTo />
 
     <AlertPath v-if="alertmodal" :title="alertmodal_title" :body="alertmodal_body" />
     <!-- v-if="is_validating" -->
@@ -265,8 +266,8 @@
                   <InputAutoComplete :skip="!formData.is_migrant" :error="v$.event_province.$error" label="Province"
                     @change="formData.event_municipality = ''" v-model="formData.event_province"
                     :suggestion_data="province" />
-                  <InputAutoComplete skip="!formData.is_migrant" :error="v$.event_municipality.$error" label="Municipality"
-                    v-model="formData.event_municipality" :suggestion_data="municipality" />
+                  <InputAutoComplete skip="!formData.is_migrant" :error="v$.event_municipality.$error"
+                    label="Municipality" v-model="formData.event_municipality" :suggestion_data="municipality" />
                   <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
                   <!-- <Input label="Province" v-model="formData.event_province" /> -->
                   <!-- <Input label="Municipalty" v-model="formData.event_municipality" /> -->
@@ -800,6 +801,7 @@ import DocumentStatus from "../../components/essentials/buttons/table/DocumentSt
 import EditForm from "../../components/Correction/EditForm.vue";
 import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue";
 import { MarriageRules } from "../../lib/marriage/rules.js";
+import HowTo from "../../components/Form/HowTo.vue";
 // import { useRouter } from "vue-router";
 
 // const router = useRouter();

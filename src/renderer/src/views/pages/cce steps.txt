@@ -1,0 +1,17 @@
+1. Start by clicking the 'Create New Petition' button
+2. In document type section you can select what republic act, petition type and document type you want to create and also if the petitoner is migrant
+3. In document header, you can specify the provice and municipality, see the picture below for reference 
+4. You can now start putting the petition details starts at petition number, petition number is depend what you select in republic act, petition type and document type, example of petition number is "CCE-0001-2025"
+5. And you can add more petitioner info like nationality, address
+6. You can select here if the petitioner document is needed to correct or the document by others, theres a option "My Certificate" and "The Certificate"
+7. Depends what you select in step 6. if my is selected it is automatically N/A since it's his/her document but when 'the' is selected provide the document owner name and the relationship to the document owner
+8. provide more details about the certificate of live birth, death and marriage
+9. provide the clerical errors to be corrected; item number, description, from and to4
+10. in this section you can provide the facts/reasons for filing this petition and the following
+11. Provide the supporting documents that supports this petition
+12. Enter the petition origin and petition document details, for example where the filing petition lcro municipality and province, administering officer, subsribe and sworn, exhibiting his/her, exhibiting his/her number, issued at, issued on
+13. Action Taken by c/mcr, if granted or denied and the details and when it's granted and the civil registrar
+14. Payment of filing fee info like O.R. number, Amount Paid, Date Paid
+15. Here you can manage the date configuration for all dates
+16. After entering all the needed info you may now click the submit button, Note that it will open MSWord Document of the Petition File, There you can edit and enhance the layout, Like Making some text bold, since the system has limitation some modification in layout is limited so you may manually changing the layout and design. Note if there is wrong details, spelling or data do not change it in MSWord document, you need to close the document without saving and you can click the Return to form Editor at the system so you can change the data and correct it. and need to submit again and edit the design again
+17. If layout and design is met you may print the document in MSWord or you can save it first since it will show again after saving but not in MSword it will show as pdf and you can print again. and other attachment are automatically created like record sheet.pdf, endorsement.pdf, notice and certificate of posting.pdf
