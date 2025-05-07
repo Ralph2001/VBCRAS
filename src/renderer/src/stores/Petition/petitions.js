@@ -20,7 +20,7 @@ export const usePetitions = defineStore('petitions', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.petitions = response.data
-                console.log(response.data)
+            
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -53,7 +53,7 @@ export const usePetitions = defineStore('petitions', {
                         }
                     }
                 )
-                console.log(response)
+            
                 this.refresh()
             } catch (error) {
                 console.error('Error inserting data:', error)
@@ -119,7 +119,7 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petition/${id}`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-                console.log(response)
+          
                 this.refresh()
                 return true
             } catch (error) {
@@ -146,7 +146,7 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petitions/supporting-documents`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-                console.log(response)
+             
                 this.saved_supporting = response.data.supporting_documents
                 return true
             } catch (error) {
@@ -161,7 +161,7 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petitions/clerical-errors`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-                console.log(response)
+       
                 this.saved_clerical = response.data.clerical_errors
                 return true
             } catch (error) {

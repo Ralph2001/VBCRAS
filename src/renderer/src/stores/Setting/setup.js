@@ -25,7 +25,7 @@ export const useSetup = defineStore('useSetup', {
                     return false
                 }
                 this.defaults = response.data[0]
-                console.log(response.data[0])
+              
                 this.isSetupDone = true
                 return true
             } catch (error) {
@@ -80,9 +80,9 @@ export const useSetup = defineStore('useSetup', {
                         { headers: { Authorization: `Bearer ${tokenStr}` } }
                     )
                     this.scanned_types = response.data
-                    console.log(response)
+                  
                 } else {
-                    console.log('Error')
+                    console.log('Error Getting Scanned Type')
                 }
             } catch (error) {
                 console.error('Error fetching data:', error)
@@ -106,7 +106,7 @@ export const useSetup = defineStore('useSetup', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.holidays = response.data
-                console.log(response)
+             
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')

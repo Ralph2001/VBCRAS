@@ -1,90 +1,67 @@
-<style></style>
-
 <template>
-
   <div v-if="isMenuVisible"
-    class="fixed top-0 bottom-0 right-0 left-0 w-full  h-full flex flex-col justify-center items-center z-[99999] backdrop-blur-sm backdrop-brightness-50">
-    <div class="absolute top-0 right-0 p-10 font-mono text-gray-200">
-      Crtl + F to close
+    class="fixed inset-0 z-[99999] backdrop-blur-md bg-black/40 flex items-center justify-center px-6 py-10">
+    <!-- Shortcut Info -->
+    <div class="absolute top-6 right-6 text-xs text-white/70 font-mono">
+      Press <kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">F</kbd> to close
     </div>
-    <p class="text-2xl uppercase font-mono text-white px-2 rounded-sm font-medium">
-      All Links
-    </p>
-    <div class="sm:w-full md:lg:w-[45%] h-auto flex flex-wrap  items-center p-4 gap-2" @click="isMenuVisible = false">
-      <router-link active-class="border-green-400 border-2" inactive-class="bg-blue-400" v-for="item in data"
-        :to="item.link"
-        class=" grow duration-300 text-start shadow-lg border text-sm grid grid-rows-2 font-medium text-wrap tracking-wider p-4 rounded-sm h-[9em]  hover:bg-gray-200 bg-white">
-        <p class="text-gray-800 text-md "> {{ item.title }}</p>
-        <div>
-          <p v-for="list in item.text" @click="isMenuVisible = false"
-            class="text-gray-600 font-normal font-mono text-xs text-start">
-            {{ list }}
+
+    <!-- Modal Box -->
+    <div class="w-full max-w-5xl  p-8 transition-all">
+      <h2 class="text-center text-2xl sm:text-3xl font-semibold text-gray-900 tracking-wide mb-8">
+        Navigation Menu
+      </h2>
+
+      <!-- Menu Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" @click="isMenuVisible = false">
+        <router-link v-for="item in data" :key="item.title" :to="item.link"
+          class="group bg-white rounded-2xl h-32 border border-gray-200 hover:border-blue-500 shadow-sm hover:shadow-md transition duration-200 p-6 flex items-center justify-center text-center">
+          <p class="text-base sm:text-lg font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+            {{ item.title }}
           </p>
-        </div>
-      </router-link>
+        </router-link>
+      </div>
     </div>
   </div>
-
 </template>
-
 <script setup>
-import { onKeyStroke } from "@vueuse/core";
 import { ref } from "vue";
-import MenuButton from "./essentials/menu/MenuButton.vue";
+import { onKeyStroke } from "@vueuse/core";
+
 const isMenuVisible = ref(false);
 
 const isCtrlF = (event) => event.ctrlKey && (event.key === "f" || event.key === "F");
 onKeyStroke(isCtrlF, (event) => {
   event.preventDefault();
   isMenuVisible.value = !isMenuVisible.value;
-  console.log(isMenuVisible.value);
 });
 
 const data = ref([
   {
-    title: "Home", text: [
-      'Return Home',
-    ], link: "/pages/welcome"
+    title: "Home",
+    link: "/pages/welcome",
   },
   {
-    title: "CCE & CFN",
-    text: [
-      'Republic Act. 10172 & Republic Act. 9048',
-      'Correction of Clerical Error',
-      'Change of First Name',
-
-    ],
+    title: "Correction",
     link: "/pages/cce",
   },
   {
-    title: "Forms", text:
-      [
-        'Form 1 (Birth Available, Birth-not-available, Birth Destroyed)',
-        'Form 2 (Death Available, Death-not-available, Death Destroyed)',
-        'Form 3 (Marriage Available, Marriage-not-available, Marriage Destroyed)'
-      ],
-    link: "/pages/forms"
+    title: "Local Copy / Forms",
+    link: "/pages/forms",
   },
   {
-    title: "AFFIDAVIT TO USE THE SURNAME OF THE FATHER", text:
-      [
-        'AUSF',
-      ],
-    link: "/pages/ausf"
+    title: "Application for Marriage License",
+    link: "/pages/marriage-license",
   },
   {
-    title: "Registry Record",
-    text: [
-      'All Registry Records',
-    ],
-    link: "/pages/data_record",
-  },
-  {
-    title: "Scanned Documents", text: [
-      'All Scanned Documents',
-    ], link: "/pages/scanned"
+    title: "Scanned Documents",
+    link: "/pages/scanned",
   },
 ]);
 </script>
 
-<style lang="scss" scoped></style>
+<style>
+.kbd {
+  @apply inline-block px-1.5 py-0.5 bg-gray-800 text-white text-xs rounded shadow-sm;
+}
+</style>

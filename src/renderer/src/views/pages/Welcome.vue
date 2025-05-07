@@ -8,9 +8,9 @@
 <template>
   <div class="flex flex-col h-[calc(100vh-100px)] relative w-full">
     <!-- Crtl + F -->
-    <Menu />
+    
     <div
-      class="bg-transparent border h-full rounded-sm flex md:flex-row sm:flex-col p-4 sm:px-10 md:lg:px-40 items-center flex-wrap">
+      class="bg-transparent border h-full flex-1 rounded-sm flex md:flex-row sm:flex-col p-4 sm:px-10 md:lg:px-40 items-center flex-wrap">
       <div class="flex flex-col grow items-center h-full justify-center px-10">
         <!-- <div class="w-full flex justify-center">
           <p class="font-semibold p-4 text-gray-700 text-2xl">System</p>
@@ -65,7 +65,7 @@
 
     <div class="fixed flex flex-row sm:gap-5 md:gap-[5rem] bottom-0 right-0 left-0 px-10 py-2 bg-gray-100 shadow-lg border border-t">
 
-      <div class="flex md:flex-row lg:flex-row sm:flex-col sm:gap-2 md:gap-[5rem]">
+      <div class="md:flex hidden md:flex-row lg:flex-row sm:flex-col sm:gap-2 md:gap-[5rem]">
         <div>
           <p class="text-sm text-slate-800 font-bold text-nowrap antialiased tracking-widest">
             {{ system_setting.defaults.civil_registrar }}

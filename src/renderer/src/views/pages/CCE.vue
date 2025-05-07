@@ -6,6 +6,7 @@
         <button @click="quick_settings = !quick_settings"
           class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
             icon="fa-solid fa-info" /></button>
+        <HowTo />
       </div>
     </Header>
 
@@ -28,7 +29,8 @@
       </div>
     </div>
 
-    <HowTo />
+
+
 
     <AlertPath v-if="alertmodal" :title="alertmodal_title" :body="alertmodal_body" />
     <!-- v-if="is_validating" -->

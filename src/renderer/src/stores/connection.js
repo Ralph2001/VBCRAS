@@ -10,7 +10,7 @@ export const useHostStore = defineStore('host', {
     }),
     actions: {
         async isConnected() {
-            console.log(this.host)
+          
             if (!this.host || !localStorage.getItem('host')) {
                 console.log('No Host Waah, He needs some milk');
                 return false;
@@ -74,7 +74,7 @@ export const useHostStore = defineStore('host', {
         },
         async isServerRunning() {
             const server = await window.LocalCivilApi.IsServerRunning()
-            console.log(server)
+        
             if (server) {
                 localStorage.setItem('host', '127.0.0.1')
                 this.host = '127.0.0.1'

@@ -56,52 +56,67 @@
 
         <FormModal title="Create New Form" v-if="isFormOpen" @exit-modal="closeModal()">
             <template v-slot:control>
-                <div class="flex flex-row items-center w-full gap-3  p-4 rounded-md shadow-sm"
-                    v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook">
-                    <label class="font-semibold text-sm text-gray-700">Document:</label>
+  <div
+    class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm"
+    v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook"
+  >
+    <label class="font-semibold text-sm text-gray-700">Document:</label>
 
-                    <div class="flex flex-row gap-2">
-                        <button v-for="type in FormTypes" :key="type" @click="toggleForm(`${type}`)" :class="[
-                            selectedType === type
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-200',
-                            'h-8 px-4 text-sm rounded-md shadow-sm font-medium transition duration-150 ease-in-out'
-                        ]">
-                            Form {{ type }}
-                        </button>
-                    </div>
+    <div class="flex flex-row gap-2">
+      <button
+        v-for="type in FormTypes"
+        :key="type"
+        @click="toggleForm(`${type}`)"
+        :class="[
+          selectedType === type
+            ? 'bg-blue-600 text-white'
+            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-200',
+          'h-8 px-4 text-sm rounded-md shadow-sm font-medium transition duration-150 ease-in-out flex items-center justify-center'
+        ]"
+      >
+        Form {{ type }}
+      </button>
+    </div>
 
-                    <div class="ml-auto text-sm text-gray-500 italic">
-                        Please click 'Next' to preview the document.
-                    </div>
-                </div>
+    <div class="ml-auto text-sm text-gray-500 italic"></div>
+  </div>
 
-                <div v-else class="flex flex-row items-center gap-3  p-4 rounded-md shadow-sm w-full">
-                    <button @click="isPreview = false"
-                        class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md px-4 py-2 shadow-sm transition duration-150 flex items-center">
-                        <font-awesome-icon icon="fa-solid fa-edit" class="mr-2 text-base" />
-                        Edit Form
-                    </button>
+  <div
+    v-else
+    class="flex flex-row items-center gap-3 p-2 rounded-md shadow-sm w-full"
+  >
+    <button
+      @click="isPreview = false"
+      class="h-8 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center"
+    >
+      <font-awesome-icon icon="fa-solid fa-edit" class="mr-2 text-base" />
+      Edit Form
+    </button>
 
-                    <div class="ml-auto flex gap-2">
-                        <button @click="createForm"
-                            class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md px-4 py-2 shadow-sm transition duration-150 flex items-center">
-                            <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
-                            <span>Print Document</span>
-                        </button>
+    <div class="ml-auto flex gap-2">
+      <button
+        @click="createForm"
+        class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center"
+      >
+        <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
+        Print Document
+      </button>
 
-                        <button @click="createForm"
-                            class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md px-4 py-2 shadow-sm transition duration-150 flex items-center">
-                            <font-awesome-icon icon="fa-solid fa-save" class="mr-2 text-base" />
-                            <span>Save</span>
-                        </button>
-                    </div>
-                </div>
-            </template>
+      <button
+        @click="createForm"
+        class="h-8 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center"
+      >
+        <font-awesome-icon icon="fa-solid fa-save" class="mr-2 text-base" />
+        Save
+      </button>
+    </div>
+  </div>
+</template>
+
 
             <template v-slot:content>
                 <div v-if="!isPreview"
-                    class="w-full h-full grid grid-cols-1 lg:grid-cols-[55%_45%]  py-1.5 bg-white overflow-y-auto">
+                    class="w-full h-full grid grid-cols-1 max-w-screen-lg  py-1.5 bg-white ">
 
 
                     <div v-if="unsavedDataMessage"
@@ -142,7 +157,7 @@
 
                         <div class="flex flex-col gap-1 h-full " v-if="selectedType.includes('A')">
 
-                            <div class="text-sm w-full px-10 my-auto flex justify-center">
+                            <div class="text-sm w-full  my-auto  mb-6 flex justify-center">
                                 <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-neutral-900">We
                                     certify that among others, the following facts of {{ fact_of }} appear in our
                                     Register
@@ -399,7 +414,7 @@
                     <!-- This is Required for all Forms -->
                     <div class="flex flex-col gap-2 px-4 py-4">
                         <div
-                            class="flex items-center justify-center relative text-sm font-sans flex-row text-nowrap lg:text-wrap lg:flex-col">
+                            class="flex items-center justify-center relative text-sm font-sans flex-row text-nowrap lg:text-wrap  py-6">
                             This certification is issued to <div class="px-2">
                                 <InputforForm width="30rem" middle bold
                                     v-model="transactions.certification_issued_to" />

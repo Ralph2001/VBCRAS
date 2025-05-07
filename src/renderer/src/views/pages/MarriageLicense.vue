@@ -102,10 +102,11 @@
             <div v-if="modal"
                 class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-50 bg-black/20 p-4 py-8"
                 tabindex="-1">
-                <div
-                    class="w-full max-w-[1200px] h-full max-h-screen flex flex-col bg-white rounded-sm p-2 gap-2 relative overflow-hidden">
 
-                    <div class="flex items-center  mb-5  flex-row gap-0">
+                <div
+                    class="w-full max-w-[1200px] h-full max-h-screen flex flex-col outline-none ring-0 bg-white rounded-md  relative overflow-hidden">
+
+                    <div class="flex items-center   flex-row gap-0 border py-2 px-4">
                         <div class="flex flex-col ml-auto justify-center items-center">
                             <h2 class="font-bold text-lg uppercase text-gray-800 leading-tight">Application for Marriage
                                 License
@@ -121,12 +122,12 @@
                     </div>
 
 
-                    <div class="flex flex-row gap-0 mb-4 px-2" v-if="form_mode === 0">
+                    <div class="flex flex-row gap-0  px-2" v-if="form_mode === 0">
                         <div class="flex flex-col gap-0">
                             <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[currentStep] }}</p>
                             <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                 steps[currentStep]
-                                }}
+                            }}
                             </p>
                         </div>
                         <div class="flex flex-row gap-1 ml-auto">
@@ -139,14 +140,14 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto py-2 h-full gap-6 flex flex-col ">
+                    <div class="flex-1 overflow-y-auto p-4 h-full gap-6 py-8 flex flex-col ">
                         <div v-if="currentStep === 0 || form_mode === 1"
                             class="flex flex-col px-10  gap-2 justify-center">
                             <div class="flex flex-col gap-0" v-if="form_mode === 1">
                                 <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
                                 <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[0]
-                                    }}
+                                }}
                                 </p>
                             </div>
                             <div class="grid grid-cols-1 gap-2 mb-auto">
@@ -178,7 +179,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[1]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
 
@@ -291,7 +292,7 @@
                                 <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
                                 <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[2]
-                                    }}
+                                }}
                                 </p>
                             </div>
                             <div class="grid grid-cols-3 gap-1 items-end">
@@ -399,7 +400,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[3]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-3 gap-1 items-end">
@@ -510,7 +511,7 @@
                                 <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
                                 <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[4]
-                                    }}
+                                }}
                                 </p>
                             </div>
 
@@ -612,7 +613,7 @@
                                 <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
                                 <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                     steps[5]
-                                    }}
+                                }}
                                 </p>
                             </div>
 
@@ -643,7 +644,7 @@
                                 </p>
                                 <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                                     steps[6]
-                                    }} Details
+                                }} Details
                                 </p>
                             </div>
                             <div class="w-80 mt-8">
@@ -830,7 +831,9 @@
 
 
                     </div>
-                    <div class="mt-auto flex flex-row gap-2  items-center justify-center py-2 ">
+
+
+                    <div class="mt-auto flex flex-row gap-2 p-2 border-t items-center justify-center py-2 ">
 
                         <div class="flex flex-row gap-2 ml-auto">
                             <button @click="submit()"
