@@ -56,67 +56,50 @@
 
         <FormModal title="Create New Form" v-if="isFormOpen" @exit-modal="closeModal()">
             <template v-slot:control>
-  <div
-    class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm"
-    v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook"
-  >
-    <label class="font-semibold text-sm text-gray-700">Document:</label>
+                <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm"
+                    v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook">
+                    <label class="font-semibold text-sm text-gray-700">Document:</label>
 
-    <div class="flex flex-row gap-2">
-      <button
-        v-for="type in FormTypes"
-        :key="type"
-        @click="toggleForm(`${type}`)"
-        :class="[
-          selectedType === type
-            ? 'bg-blue-600 text-white'
-            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-200',
-          'h-8 px-4 text-sm rounded-md shadow-sm font-medium transition duration-150 ease-in-out flex items-center justify-center'
-        ]"
-      >
-        Form {{ type }}
-      </button>
-    </div>
+                    <div class="flex flex-row gap-2">
+                        <button v-for="type in FormTypes" :key="type" @click="toggleForm(`${type}`)" :class="[
+                            selectedType === type
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-200',
+                            'h-8 px-4 text-sm rounded-md shadow-sm font-medium transition duration-150 ease-in-out flex items-center justify-center'
+                        ]">
+                            Form {{ type }}
+                        </button>
+                    </div>
 
-    <div class="ml-auto text-sm text-gray-500 italic"></div>
-  </div>
+                    <div class="ml-auto text-sm text-gray-500 italic"></div>
+                </div>
 
-  <div
-    v-else
-    class="flex flex-row items-center gap-3 p-2 rounded-md shadow-sm w-full"
-  >
-    <button
-      @click="isPreview = false"
-      class="h-8 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center"
-    >
-      <font-awesome-icon icon="fa-solid fa-edit" class="mr-2 text-base" />
-      Edit Form
-    </button>
+                <div v-else class="flex flex-row items-center gap-3 p-2 rounded-md shadow-sm w-full">
+                    <button @click="isPreview = false"
+                        class="h-8 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                        <font-awesome-icon icon="fa-solid fa-edit" class="mr-2 text-base" />
+                        Edit Form
+                    </button>
 
-    <div class="ml-auto flex gap-2">
-      <button
-        @click="createForm"
-        class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center"
-      >
-        <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
-        Print Document
-      </button>
+                    <div class="ml-auto flex gap-2">
+                        <button @click="createForm"
+                            class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                            <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
+                            Print Document
+                        </button>
 
-      <button
-        @click="createForm"
-        class="h-8 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center"
-      >
-        <font-awesome-icon icon="fa-solid fa-save" class="mr-2 text-base" />
-        Save
-      </button>
-    </div>
-  </div>
-</template>
+                        <button @click="createForm"
+                            class="h-8 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                            <font-awesome-icon icon="fa-solid fa-save" class="mr-2 text-base" />
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </template>
 
 
             <template v-slot:content>
-                <div v-if="!isPreview"
-                    class="w-full h-full grid grid-cols-1 max-w-screen-lg  py-1.5 bg-white ">
+                <div v-if="!isPreview" class="w-full h-full grid grid-cols-1 max-w-screen-lg  py-1.5 bg-white ">
 
 
                     <div v-if="unsavedDataMessage"

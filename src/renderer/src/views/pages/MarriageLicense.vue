@@ -100,13 +100,14 @@
         <!-- Add, Edit Modal -->
         <transition name="fade-scale">
             <div v-if="modal"
-                class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-50 bg-black/20 p-4 py-8"
+                class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex  bg-white items-center justify-center z-50  bg-black/20 "
                 tabindex="-1">
 
                 <div
-                    class="w-full max-w-[1200px] h-full max-h-screen flex flex-col outline-none ring-0 bg-white rounded-md  relative overflow-hidden">
+                    class="w-full  h-full max-h-screen flex flex-col justify-center items-center outline-none ring-0 bg-gray-100  relative overflow-hidden">
 
-                    <div class="flex items-center   flex-row gap-0 border py-2 px-4">
+                    <div
+                        class="flex items-center h-14   flex-row gap-0 border py-2 px-4 w-full bg-white max-w-screen-2xl">
                         <div class="flex flex-col ml-auto justify-center items-center">
                             <h2 class="font-bold text-lg uppercase text-gray-800 leading-tight">Application for Marriage
                                 License
@@ -122,25 +123,10 @@
                     </div>
 
 
-                    <div class="flex flex-row gap-0  px-2" v-if="form_mode === 0">
-                        <div class="flex flex-col gap-0">
-                            <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[currentStep] }}</p>
-                            <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
-                                steps[currentStep]
-                            }}
-                            </p>
-                        </div>
-                        <div class="flex flex-row gap-1 ml-auto">
-                            <button
-                                class="bg-green-300 text-xs w-8 h-8 px-2 font-medium  rounded-full text-white   py-1.5"
-                                v-for="(step, index) in steps" :key="index" @click="currentStep = index"
-                                :class="[currentStep >= index ? 'bg-green-500' : '']">
-                                {{ index + 1 }}
-                            </button>
-                        </div>
-                    </div>
 
-                    <div class="flex-1 overflow-y-auto p-4 h-full gap-6 py-8 flex flex-col ">
+
+                    <div class="flex-1 overflow-y-auto p-4 h-full  flex-col gap-4  w-full max-w-screen-xl py-8  flex ">
+
                         <div v-if="currentStep === 0 || form_mode === 1"
                             class="flex flex-col px-10  gap-2 justify-center">
                             <div class="flex flex-col gap-0" v-if="form_mode === 1">
@@ -176,7 +162,8 @@
                             <div class="grid grid-cols-1 gap-2">
 
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}</p>
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}
+                                    </p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[1]
                                     }}
@@ -397,7 +384,8 @@
                             <div class="grid grid-cols-1 gap-2">
 
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}</p>
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}
+                                    </p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[3]
                                     }}
@@ -640,7 +628,7 @@
 
                             <div class="flex flex-col gap-0" v-if="form_mode === 1">
                                 <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
-                                    }}
+                                }}
                                 </p>
                                 <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                                     steps[6]
@@ -735,10 +723,8 @@
 
                         </div>
 
-
                         <div v-if="currentStep === 7 || form_mode === 1"
-                            class="px-4 h-full gap-4 flex flex-col pt-8 mb-2">
-
+                            class="px-4 h-full gap-4 flex flex-col mt-8 mb-2">
                             <!-- Section Header -->
                             <div v-if="form_mode === 1">
                                 <p class="font-bold text-xl mb-4 uppercase text-gray-900">{{ steps[7] }}</p>
@@ -746,41 +732,40 @@
 
                             <!-- Step 1: Select Document -->
                             <div>
-                                <label for="documentType" class="font-semibold flex items-center gap-1">
-                                    <label class="font-semibold">1. What document do you want to preview and
-                                        print?</label>
-
+                                <label class="font-semibold flex items-center gap-1">
+                                    <span>1. What document do you want to preview and print?</span>
                                     <font-awesome-icon icon="fa-solid fa-circle-question"
                                         class="text-gray-400 cursor-pointer"
                                         title="Select the document you want to preview and print." />
                                 </label>
-                                <select id="documentType" @change="change_page()" v-model="select_page"
-                                    class="w-full bg-white border border-gray-300 rounded-md text-gray-700 focus:ring-2 focus:ring-blue-300 px-3 py-2 mt-1">
-                                    <option :value="0" selected disabled></option>
-                                    <option :value="1">Application for Marriage License</option>
-                                    <option :value="2">Notice of Posting</option>
-                                </select>
+                                <div class="flex gap-2 mt-2">
+                                    <button
+                                        :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 1 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
+                                        @click="select_page = 1; change_page()">
+                                        Application for Marriage License
+                                    </button>
+                                    <button
+                                        :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 2 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
+                                        @click="select_page = 2; change_page()">
+                                        Notice of Posting
+                                    </button>
+                                </div>
                             </div>
 
-
-                            <!-- Step 2: Print -->
                             <div>
-                                <label class="font-semibold">2. Print</label>
+                                <label class="font-semibold mt-4">2. Print</label>
                                 <div class="flex flex-col gap-2 mt-1">
                                     <div v-if="select_page === 1" class="flex flex-row gap-2 relative">
                                         <button @click="printAFML()"
                                             class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
                                             <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print
-                                            Application
-                                            for Marriage License
+                                            Application for Marriage License
                                         </button>
-                                        <!-- Settings Button -->
                                         <button @click="openAFMLSetting()"
-                                            class="flex gap-2 px-3 py-2 rounded-md  bg-indigo-500 hover:bg-indigo-600 w-52 items-center justify-center text-white text-sm transition-colors">
+                                            class="flex gap-2 px-3 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 w-52 items-center justify-center text-white text-sm transition-colors">
                                             <font-awesome-icon icon="fa-solid fa-gear" />
                                             Adjust Position
                                         </button>
-
 
                                         <!-- Settings Panel -->
                                         <div v-if="afml_setting"
@@ -800,6 +785,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <button v-if="select_page === 2" @click="printNoticePosting()"
                                         class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
                                         <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print Notice of
@@ -808,11 +794,11 @@
                                 </div>
                             </div>
 
-                            <!-- Step 3: Document Preview -->
+                            <!-- Step 2: Document Preview -->
                             <div>
-                                <label class="font-semibold">3. Document Preview</label>
+                                <label class="font-semibold mt-4">3. Document Preview</label>
                                 <div
-                                    class="mt-2 bg-gray-50 h-[33rem] border border-gray-300 shadow-inner flex items-center justify-center">
+                                    class="mt-2 bg-gray-50 rounded-xl border border-gray-300 shadow-inner flex items-center justify-center h-96">
                                     <p v-if="isLoadingPrev" class="italic text-gray-600">Loading preview...</p>
                                     <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
                                     <p v-if="!pdf_content && !isLoadingPrev"
@@ -820,12 +806,13 @@
                                         <font-awesome-icon icon="fa-regular fa-file-pdf" class="text-xl" />
                                         Select a document above to see a preview.
                                     </p>
-
                                 </div>
                                 <p v-if="pdf_content && !isLoadingPrev" class="text-green-600 text-sm mt-2">Preview
                                     loaded successfully.</p>
                             </div>
 
+                            <!-- Step 3: Print -->
+                         
                         </div>
 
 
@@ -833,20 +820,21 @@
                     </div>
 
 
-                    <div class="mt-auto flex flex-row gap-2 p-2 border-t items-center justify-center py-2 ">
-
+                    <div
+                        class="h-14 flex flex-row gap-2 p-2 border-t items-center bg-gray-100 shadow-xl justify-center py-2 w-full max-w-screen-2xl">
                         <div class="flex flex-row gap-2 ml-auto">
                             <button @click="submit()"
-                                v-if="currentStep + 1 === steps.length || form_mode === 1 && !isUpdating"
-                                class="bg-green-500 hover:bg-green-600 text-white py-1.5 w-52  rounded">Save
-                                Record</button>
-                            <button @click="updateRecord()"
-                                v-if="currentStep + 1 === steps.length || form_mode === 1 && isUpdating"
-                                class="bg-blue-500 hover:bg-blue-600 text-white py-1.5 w-52  rounded">Update
+                                v-if="(currentStep + 1 === steps.length || form_mode === 1) && !isUpdating"
+                                class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 w-52 rounded shadow">Save
                                 Record</button>
 
+                            <button @click="updateRecord()"
+                                v-if="(currentStep + 1 === steps.length || form_mode === 1) && isUpdating"
+                                class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 w-52 rounded shadow">Update
+                                Record</button>
                         </div>
                     </div>
+
 
                 </div>
             </div>

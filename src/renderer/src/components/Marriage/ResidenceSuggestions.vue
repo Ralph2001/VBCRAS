@@ -7,7 +7,7 @@
             :readonly="readonly" :tabindex="skip ? -1 : 0" @focus="scrollToView" @input="handleTyping"
             @keydown.up.prevent="focusPreviousInput" @keydown.down.prevent="focusNextInput"
             @keydown.enter.prevent="focusNextInputEnter" :class="[
-                'bg-gray-50 border font-bold text-sm text-gray-900 block w-full p-2.5 rounded tracking-wide',
+                'bg-white border font-bold text-sm text-gray-900 block w-full p-2.5 rounded tracking-wide',
                 'placeholder:italic placeholder:font-normal placeholder:text-xs',
                 'border-gray-300 focus:ring-green-500 focus:border-green-500 focus:bg-green-50',
                 {

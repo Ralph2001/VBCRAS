@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="bg-[#0D1B2A] shadow-lg text-sm font-sans tracking-tighter border-gray-200">
-      <div class="max-w-screen-xl mx-auto p-2 flex items-center justify-between relative">
+      <div class="max-w-screen-2xl mx-auto p-2 flex items-center justify-between relative">
         <router-link to="/pages/welcome" class="flex items-center space-x-3">
           <span class="text-lg font-semibold whitespace-nowrap text-gray-300">VBCRAS</span>
         </router-link>

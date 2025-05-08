@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row items-center p-1 px-5 mb-2">
+    <div class="flex flex-col md:flex-row items-center p-1 px-5 mb-2">
         <p class="text-md font-semibold tracking-tight text-[#2A4365]">
             {{ label }}
         </p>

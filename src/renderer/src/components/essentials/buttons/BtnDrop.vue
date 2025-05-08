@@ -5,11 +5,11 @@
             {{ label }}
         </button>
         <div v-if="dropdown"
-            class="z-50 right-0 top-10 absolute border bg-white shadow-lg divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700">
-            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+            class="z-50 right-0 top-10 overflow-hidden  absolute border bg-white shadow-xl divide-y divide-gray-100 rounded-lg w-44 dark:bg-gray-700">
+            <ul class="text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                 <li v-for="option in options" :key="option">
                     <a @click="emit('open-modal', option)"
-                        class="cursor-pointer block px-4 py-2 font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        class="cursor-pointer block px-4 py-2 font-semibold hover:bg-blue-500 hover:text-white dark:hover:bg-gray-600 dark:hover:text-white">
                         {{ option }}</a>
                 </li>
             </ul>

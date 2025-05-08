@@ -1,9 +1,12 @@
 <template>
   <button @click="handleShow()"
-    class="flex items-center gap-2 text-sm h-8 w-24 justify-center font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+    class="rounded-md border border-gray-300 h-8 flex items-center justify-center gap-1 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"
     aria-label="How to use this feature">
 
-    How to?
+    <!-- <font-awesome-icon icon="fa-solid fa-gear" /> -->
+    <font-awesome-icon
+    icon="fa-solid fa-info" />
+    <span class="text-xs font-medium">How To?</span>
   </button>
 
   <div v-if="show"

@@ -7,7 +7,7 @@
         <input ref="inputRef" :placeholder="holder" :type="type" :id="label" :value="modelValue" :readonly="readonly"
             :tabindex="skip ? '-1' : ''" @focus="scrollIntoView" @input="handleInput" @keydown.up="focusPrev"
             @keydown.down="focusNext" @keydown.enter="handleEnterKey" :class="[
-                'bg-gray-50 border font-bold text-gray-900 text-sm block w-full p-2.5',
+                'bg-white border font-bold text-gray-900 text-sm block w-full p-2.5',
                 {
                     'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
                     'focus:ring-green-500 focus:border-green-500 focus:bg-green-50': !error,
