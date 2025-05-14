@@ -60,20 +60,26 @@ export async function generateFormPDF(main_data) {
         await createAuthenticationForm(pdfDoc, data, fonts, CONFIG.FONT_SIZE)
     }
 
-    // Draw form-specific content if form type includes "A"
+
+    // Assuming the `data` and `page` objects, and other necessary constants are already set
     if (data.form_type.includes('A')) {
-        create_we_clerify(data, page, height, CONFIG.FONT_SIZE, fonts)
-        document_body_available(data, page, height, CONFIG.FONT_SIZE, fonts)
+        // If form type includes 'A', create "we certify" text and handle available documents
+        create_we_clerify(data, page, height, CONFIG.FONT_SIZE, fonts);
+        document_body_available(data, page, height, CONFIG.FONT_SIZE, fonts);
     } else {
-        document_body_intact_or_destroyed(
-            data,
-            page,
-            height,
-            CONFIG.FONT_SIZE,
-            fonts.regular,
-            fonts.bold
-        )
+        // Handle form types 'B' and 'C'
+        if (data.form_type.includes('B')) {
+            // Form type 'B' is for intact records
+            document_body_intact(data, page, height, CONFIG.FONT_SIZE, fonts.regular, fonts.bold);
+        } else if (data.form_type.includes('C')) {
+            // Form type 'C' is for destroyed records
+            document_body_destroyed(data, page, height, CONFIG.FONT_SIZE, fonts.regular, fonts.bold);
+        } else {
+            // If the form type is not 'A', 'B', or 'C', log an error
+            console.log('Invalid form type');
+        }
     }
+
 
     // Draw Remarks if Available
     if (data.is_reconstructed || data.is_other_remarks) {
@@ -609,14 +615,8 @@ function document_body_available(data, page, height, fontSize, fonts) {
     }
 }
 
-function document_body_intact_or_destroyed(
-    data,
-    page,
-    height,
-    fontSize,
-    timesRomanFont,
-    timesRomanFontBold
-) {
+
+function document_body_intact(data, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
     const record_of = data.form_type.includes('1')
         ? 'of birth of '
         : data.form_type.includes('2')
@@ -663,14 +663,9 @@ function document_body_intact_or_destroyed(
                 : ''
 
     const we_clerify_for_b = `We certify that this office has no record ${record_of} {{UNKNOWN NAME}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{UNKNOWN DATE}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
-    const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`
-
-    const we_clerify = data.form_type.includes('B')
-        ? we_clerify_for_b
-        : we_clerify_for_c
 
     const we_certify_with_line_break = add_line_break(
-        we_clerify,
+        we_clerify_for_b,
         page,
         height,
         fontSize,
@@ -711,12 +706,9 @@ function document_body_intact_or_destroyed(
                 ? 'marriage'
                 : ''
     const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{2024}} are still intact in the archives of this office`
-    const for_C = `We also certify that for every registered birth, this office submits a copy of the Certificate of Live Birth to the Office of the Civil Registrar General, Philippine Statistics Authority (PSA), East Avenue, Diliman, Quezon City, Metro Manila. In view of this, the interested party is hereby advised to make further verification in the archives of that office.`
-
-    const we_also_certify = data.form_type.includes('B') ? for_B : for_C
 
     const we_also_certify_with_break = add_line_break(
-        we_also_certify,
+        for_B,
         page,
         height,
         fontSize,
@@ -732,8 +724,7 @@ function document_body_intact_or_destroyed(
     let we_also_spacing = 0
     let we_also_gap = 0
 
-    // const we_also_certify_position_x = data.form_type.includes('B') ? 500 : 450
-    const minustoCertify = data.form_type.includes('B') ? 100 : 150
+    const minustoCertify = 100
     const WeAlsoCertifyPositionY = Number(data.body_data.y) - Number(minustoCertify)
     for (const items of we_also_certify_distribute) {
         const add_tab = not_first_certify ? 0 : 36
@@ -752,7 +743,90 @@ function document_body_intact_or_destroyed(
         we_also_gap = 0
     }
 }
-// Draw authentication details for abroad forms
+
+function document_body_destroyed(data, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
+    const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`
+
+    const we_certify_with_line_break = add_line_break(
+        we_clerify_for_c,
+        page,
+        height,
+        fontSize,
+        timesRomanFont,
+        timesRomanFontBold
+    )
+    const add_blanks = addBlanks(we_certify_with_line_break)
+    const distribute = distributeBlanks(add_blanks)
+
+    const ParagraphPositionX = Number(data.body_data.x)
+    const ParagraphPositionY = Number(data.body_data.y)
+    // Start Typing
+    let splitedwidth = 0
+    let info_spacing = 0
+    let not_first = false
+    for (const items of distribute) {
+        const add_tab = not_first ? 0 : 36
+        for (const item of items) {
+            page.drawText(item.data, {
+                x: 72 + add_tab + splitedwidth,
+                y: ParagraphPositionY - info_spacing,
+                size: fontSize,
+                font: item.isBold ? timesRomanFontBold : timesRomanFont,
+                lineHeight: 14
+            })
+            not_first = true
+            splitedwidth += item.size
+        }
+        info_spacing += 16
+        splitedwidth = 0
+    }
+
+    const for_C = `We also certify that for every registered birth, this office submits a copy of the Certificate of Live Birth to the Office of the Civil Registrar General, Philippine Statistics Authority (PSA), East Avenue, Diliman, Quezon City, Metro Manila. In view of this, the interested party is hereby advised to make further verification in the archives of that office.`
+
+    const we_also_certify_with_break = add_line_break(
+        for_C,
+        page,
+        height,
+        fontSize,
+        timesRomanFont,
+        timesRomanFontBold
+    )
+    const we_also_certify_add_blanks = addBlanks(we_also_certify_with_break)
+    const we_also_certify_distribute = distributeBlanks(
+        we_also_certify_add_blanks
+    )
+
+    let not_first_certify = false
+    let we_also_spacing = 0
+    let we_also_gap = 0
+
+    const minustoCertify = 150
+    const WeAlsoCertifyPositionY = Number(data.body_data.y) - Number(minustoCertify)
+    for (const items of we_also_certify_distribute) {
+        const add_tab = not_first_certify ? 0 : 36
+        for (const item of items) {
+            page.drawText(item.data, {
+                x: 72 + add_tab + we_also_gap,
+                y: WeAlsoCertifyPositionY - we_also_spacing,
+                size: fontSize,
+                font: item.isBold ? timesRomanFontBold : timesRomanFont,
+                lineHeight: 14
+            })
+            we_also_gap += item.size
+            not_first_certify = true
+        }
+        we_also_spacing += 16
+        we_also_gap = 0
+    }
+}
+
+
+/**
+ * Create Authenticated Form
+ * It will create page 2
+ * Automatic Center
+ * With In the Absence
+ */
 
 async function createAuthenticationForm(pdfDoc, data, fonts, fontSize) {
     const FORM_TYPE = data.form_type
@@ -989,8 +1063,11 @@ async function createRemarks(pdfDoc, data, page, fonts, fontSize) {
 }
 
 /**
- * Remarks Maker
- * Hirap naman neto langya hahahaha
+ * Remarks Formatter
+ * 
+ * @todo
+ * double check this function since this is not fully tested
+ * 
  */
 
 async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
@@ -1009,8 +1086,8 @@ async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
                         ? fonts.italic
                         : fonts.regular
 
-        // Extract font size from attributes (example: default to 12 if unspecified)
-        const fontSize = Number(config.remarks_config.font); // Dynamic font size
+
+        const fontSize = Number(config.remarks_config.font);
 
         const insertText = main_value.insert || '';
         const lines = insertText.split('\n');
@@ -1032,27 +1109,27 @@ async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
 
     let currentLine = [];
     let currentLineWidth = 0;
-    let currentLineMaxFontSize = 0; // Track tallest font size in current line
+    let currentLineMaxFontSize = 0;
 
     for (const word of words) {
         if (word.isNewLine) {
-            // Draw current line (if any) and force new line
+
             if (currentLine.length > 0) {
                 const lineHeight = calculateLineHeight(currentLineMaxFontSize);
                 drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, true);
                 currentY -= lineHeight;
             } else {
-                // Empty line - use font size from previous content or default
+
                 const lineHeight = calculateLineHeight(currentLineMaxFontSize || 12);
                 currentY -= lineHeight;
             }
 
-            // Reset for new line
+
             currentLine = [];
             currentLineWidth = 0;
             currentLineMaxFontSize = 0;
 
-            // Page boundary check
+
             if (currentY < 72) {
                 page = pdfDoc.addPage();
                 currentY = page.getHeight() - 72;
@@ -1063,13 +1140,13 @@ async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
         const wordWidth = word.font.widthOfTextAtSize(word.text, word.size);
         const spaceWidth = word.font.widthOfTextAtSize(' ', word.size);
 
-        // Calculate tentative width with dynamic font size
+
         let tentativeWidth = currentLineWidth +
             (currentLine.length > 0 ? spaceWidth : 0) +
             wordWidth;
 
         if (tentativeWidth > maxWidth) {
-            // Wrap text to new line
+
             const lineHeight = calculateLineHeight(currentLineMaxFontSize);
             drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, false);
             currentY -= lineHeight;
@@ -1079,12 +1156,12 @@ async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
                 currentY = page.getHeight() - 72;
             }
 
-            // Start new line with current word
+
             currentLine = [word];
             currentLineWidth = wordWidth;
             currentLineMaxFontSize = word.size;
         } else {
-            // Add to current line
+
             if (currentLine.length > 0) currentLineWidth += spaceWidth;
             currentLine.push(word);
             currentLineWidth += wordWidth;
@@ -1094,7 +1171,7 @@ async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
         }
     }
 
-    // Draw remaining content
+
     if (currentLine.length > 0) {
         const lineHeight = calculateLineHeight(currentLineMaxFontSize);
         drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, true);
@@ -1103,7 +1180,7 @@ async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
 
 // Helper function for dynamic line height
 function calculateLineHeight(fontSize) {
-    return fontSize * 1.2; // 120% of font size (adjust ratio as needed)
+    return fontSize * 1.2;
 }
 
 function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
@@ -1148,9 +1225,16 @@ function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
     });
 }
 
-/////////////////////////
-// Parangraph Function //
-/////////////////////////
+/**
+ * Paragraph Formatter
+ * @FOR
+ * @FORM_B
+ * @FORM_C
+ * 
+ * @todo
+ * double check this function, not fully tested
+ */
+
 function add_line_break(
     data,
     page,
