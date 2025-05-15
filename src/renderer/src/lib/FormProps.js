@@ -92,11 +92,11 @@ export const useForm2B = {
     died_on: '',
     mother_name: '',
     father_name: '',
-    intact_birth_year: '',
-
+    intact_death_year: '',
 }
 export const useForm3B = {
     no_record_marriage_of: '',
+    married_with: '',
     married_on: '',
     intact_marriage_year: '',
 }

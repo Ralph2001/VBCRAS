@@ -22,7 +22,7 @@
             <div class="flex flex-row items-center">
                 <div class="relative ">
                     <div @click="openMenu"
-                        class="flex flex-row w-60 border  border-gray-200 shadow items-center hover:cursor-pointer hover:bg-green-200 bg-white p-2 rounded-md">
+                        class="flex flex-row w-60 border  border-gray-200 shadow-md items-center hover:cursor-pointer hover:text-white hover:bg-green-500 bg-white p-2 rounded-md">
                         <p class="font-medium text-sm pl-2">{{ menu }}</p>
                         <font-awesome-icon icon="fa-solid fa-chevron-down" class="ml-auto text-xs" />
                     </div>
@@ -283,6 +283,8 @@
                                         <!-- <InputforForm width="100%" v-model="Form1A.place_marriage_parents" /> -->
                                     </InputLabel>
                                 </div>
+
+
                                 <!-- For Form 2A -->
                                 <div v-if="selectedType === '2A'" class="flex flex-col gap-2 mb-auto">
                                     <InputLabel label="Name of deceased">
@@ -334,24 +336,40 @@
                                         office
                                         has
                                         no
-                                        record of {{ records_of }} of
-                                        <InputforForm width="30rem" bold isUpperCase middle
-                                            v-model="formData.name_of" />
+                                        record of {{ selectedType === '1B' ? 'birth' : selectedType === '2B' ? 'death' :
+                                            'marriage' }} of
+                                        <InputforForm width="20rem" bold isUpperCase middle
+                                            v-model="intact_name_field" />
+
+                                        <span v-if="selectedType === '3B'" class="w-full"> and
+                                        </span>
+                                        <InputforForm v-if="selectedType === '3B'" width="20rem" bold isUpperCase middle
+                                            v-model="Form3B.married_with" />
                                         who
                                         is
                                         alleged
-                                        to have {{ alleged_to }} on
-                                        <InputforForm width="10rem" bold middle v-model="formData.date_of" /> in this
-                                        municipality, <span v-if="selectedType === '1B'"> of parents
-                                            <InputforForm width="18rem" bold middle v-if="selectedType === '1B'" /> and
-                                            <InputforForm width="18rem" bold v-if="selectedType === '1B'" middle />.
-                                        </span> Hence, we cannot issue,
+                                        to have {{ selectedType === '1B' ? 'been born' : selectedType === '2B' ? 'died'
+                                            : 'been married' }} on
+                                        <InputforForm width="10rem" bold middle v-model="intact_date_field" /> in this
+                                        municipality,
+
+                                        <!-- If Form 1B -->
+                                        <span v-if="selectedType === '1B'"> of parents
+                                            <InputforForm width="18rem" bold middle v-model="Form1B.father_name"
+                                                v-if="selectedType === '1B'" /> and
+                                            <InputforForm width="18rem" bold v-model="Form1B.mother_name"
+                                                v-if="selectedType === '1B'" middle />.
+                                        </span>
+
+                                        Hence, we cannot issue,
                                         as
                                         requested, a true
-                                        copy of his/her Certificate of {{ register_of }} or transcription from the
+                                        copy of his/her Certificate of {{ selectedType === '1B' ? 'Live Birth' :
+                                            selectedType === '2B' ? 'Death' : 'Marriage' }} or transcription from the
                                         Register
                                         of
-                                        {{ transcription_register_of }}.
+                                        {{ selectedType === '1B' ? 'Births' : selectedType === '2B' ? 'Deaths' :
+                                            'Marriages' }}.
                                     </p>
                                 </div>
 
@@ -360,7 +378,7 @@
                                         the
                                         records of
                                         {{ records_of }} for the year
-                                        <InputforForm width="6rem" bold middle v-model="formData.records_of_year" /> are
+                                        <InputforForm width="6rem" bold middle v-model="intact_year_field" /> are
                                         still
                                         intact in the
                                         archives of
@@ -369,6 +387,8 @@
                                 </div>
 
                             </div>
+
+
 
                             <!-- Forms with `C` -->
                             <div class="flex flex-col gap-2 mt-auto mb-auto" v-if="selectedType.includes('C')">
@@ -404,6 +424,10 @@
 
                         <!-- Page 2,  Other Side -->
                         <!-- This is Required for all Forms -->
+                        <!-- DONT TOUCH THIS AREA -->
+
+
+
                         <div class="flex flex-col gap-2 px-4 py-4">
                             <div
                                 class="flex items-center justify-center relative text-sm font-sans flex-row text-nowrap lg:text-wrap  py-6">
@@ -443,7 +467,7 @@
 
                                 <!-- {{ available.remarks }} -->
                             </div>
-                            <div class="mt-auto grid grid-cols-2   mb-4 h-44 items-center  ">
+                            <div class="mt-auto grid grid-cols-2  gap-4 mb-4 h-44 items-center  ">
 
                                 <div class="flex flex-col ">
                                     <p class="italic mb-10">Verified by:</p>
@@ -1139,6 +1163,13 @@ const settings = ref(false)
 let transactions = reactive({ ...useTransactionDetails });
 let available = reactive({ ...useAvailableForm });
 
+
+/**
+ * All Forms FormData
+ * @satisfies
+ */
+
+
 // Form A's
 let Form1A = reactive({ ...useForm1A });
 
@@ -1154,6 +1185,53 @@ let Form3B = reactive(useForm3B)
 let Form1C = reactive(useForm1C)
 let Form2C = reactive(useForm2C)
 let Form3C = reactive(useForm3C)
+
+
+
+
+const intact_name_field = computed({
+    get() {
+        if (selectedType.value === '1B') return Form1B.no_record_birth_of;
+        if (selectedType.value === '2B') return Form2B.no_record_death_of;
+        return Form3B.no_record_marriage_of;
+    },
+    set(value) {
+        if (selectedType.value === '1B') Form1B.no_record_birth_of = value;
+        else if (selectedType.value === '2B') Form2B.no_record_death_of = value;
+        else Form3B.no_record_marriage_of = value;
+    }
+});
+
+const intact_date_field = computed({
+    get() {
+        if (selectedType.value === '1B') return Form1B.born_on;
+        if (selectedType.value === '2B') return Form2B.died_on;
+        return Form3B.married_on;
+    },
+    set(value) {
+        if (selectedType.value === '1B') Form1B.born_on = value;
+        else if (selectedType.value === '2B') Form2B.died_on = value;
+        else Form3B.married_on = value;
+    }
+});
+
+const intact_year_field = computed({
+    get() {
+        if (selectedType.value === '1B') return Form1B.intact_birth_year;
+        if (selectedType.value === '2B') return Form2B.intact_death_year;
+        return Form3B.intact_marriage_year;
+    },
+    set(value) {
+        if (selectedType.value === '1B') Form1B.intact_birth_year = value;
+        else if (selectedType.value === '2B') Form2B.intact_death_year = value;
+        else Form3B.intact_marriage_year = value;
+    }
+});
+
+
+
+
+
 
 
 const selectedType = ref(null)

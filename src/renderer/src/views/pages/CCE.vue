@@ -62,29 +62,9 @@
 
     </div>
 
-    <!-- v-if="is_creating" -->
-    <div role="dialog" aria-modal="true" v-if="is_creating"
-      class="fixed top-0 bottom-0 left-0 right-0 h-full items-center justify-center flex p-4 z-50 backdrop-blur-sm backdrop-brightness-[0.7]"
-      tabindex="-1">
-      <div
-        class="h-auto w-[25rem] gap-1 bg-white border rounded-md border-gray-300 shadow-sm flex flex-col p-4 items-center justify-center">
-        <!-- <Loading /> -->
 
-        <div
-          class="relative h-[10rem] w-full bg-gray-100 rounded-lg brightness-95 hover:border-gray-300 border transition-all hover:brightness-100"
-          title="wave">
-          <Wave />
-        </div>
-        <p class="text-2xl text-gray-800 mt-5">{{ is_document_edit_mode ? "Updating" : is_document_regenerating ?
-          "Regenerating" : "Creating" }} Document</p>
-        <p class="text-xs text-gray-600">This process might take 30 seconds or longer.</p>
-        <p class="text-xs text-gray-600">
-          Please be patient...
-        </p>
-      </div>
-    </div>
-
-
+    <DocumentStatusModal :visible="is_creating" :is-edit="is_document_edit_mode"
+      :is-regenerating="is_document_regenerating" />
     <RegenerateMessage v-if="is_regen" @proceed="handleRegenerate" @cancel="is_regen = false" :data="regen_data" />
 
 
@@ -113,7 +93,7 @@
 
       <!-- Input Fields -->
       <div
-        class="flex flex-col sm:px-4 md:lg:px-[5rem] h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll  bg-slate-300 ">
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] max-w-screen-2xl mx-auto h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll  bg-slate-500 ">
         <div :class="[backround_per_event]" class="h-full flex flex-col py-4 gap-2 ">
 
           <!-- 1st  Document Selector-->
@@ -804,6 +784,7 @@ import EditForm from "../../components/Correction/EditForm.vue";
 import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue";
 import { MarriageRules } from "../../lib/marriage/rules.js";
 import HowTo from "../../components/Form/HowTo.vue";
+import DocumentStatusModal from "../../components/Correction/DocumentStatusModal.vue";
 // import { useRouter } from "vue-router";
 
 // const router = useRouter();

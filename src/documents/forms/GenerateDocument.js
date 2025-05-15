@@ -632,13 +632,13 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
                 ? 'have been married'
                 : ''
     const is_for_1 = data.form_type.includes('1')
-        ? ', of parents {{UNKNOWN PARENTS}} and {{UNKNOWN PARENTS}}'
-        : '' // With Parents Name kasi
+        ? `, of parents {{${data.father_name}}} and {{${data.mother_name}}}`
+        : ''
     const the_who_b =
         data.form_type.includes('1') || data.form_type.includes('2')
             ? 'who is'
             : 'who were'
-    const is_for_3 = data.form_type.includes('3') ? 'and {{UNKNOWN WIFE}}' : ''
+    const is_for_3 = data.form_type.includes('3') ? ` and {{${data.married_with}}}` : ''
     const certificate_of = data.form_type.includes('1')
         ? 'Live Birth'
         : data.form_type.includes('2')
@@ -655,14 +655,23 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
                 : ''
 
     const document_owner = data.form_type.includes('1')
-        ? data.name_child
+        ? data.no_record_birth_of
         : data.form_type.includes('2')
-            ? data.name_deceased
+            ? data.no_record_death_of
             : data.form_type.includes('3')
-                ? data.groom_name
+                ? data.no_record_marriage_of
+                : ''
+    const date_field = data.form_type.includes('1')
+        ? data.born_on
+        : data.form_type.includes('2')
+            ? data.died_on
+            : data.form_type.includes('3')
+                ? data.married_on
                 : ''
 
-    const we_clerify_for_b = `We certify that this office has no record ${record_of} {{UNKNOWN NAME}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{UNKNOWN DATE}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
+
+
+    const we_clerify_for_b = `We certify that this office has no record ${record_of} {{${document_owner}}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{${date_field}}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
 
     const we_certify_with_line_break = add_line_break(
         we_clerify_for_b,
@@ -705,7 +714,14 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
             : data.form_type.includes('3')
                 ? 'marriage'
                 : ''
-    const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{2024}} are still intact in the archives of this office`
+    const intact_year = data.form_type.includes('1')
+        ? data.intact_birth_year
+        : data.form_type.includes('2')
+            ? data.intact_death_year
+            : data.form_type.includes('3')
+                ? data.intact_marriage_year
+                : ''
+    const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{${intact_year}}} are still intact in the archives of this office`
 
     const we_also_certify_with_break = add_line_break(
         for_B,

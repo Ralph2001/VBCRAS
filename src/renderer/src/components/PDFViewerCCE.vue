@@ -52,19 +52,19 @@
                                 <button
                                     v-if="props.details.petition_type === 'CFN' || props.details.republic_act_number === '10172'"
                                     @click="create_publication_letter(props.details)"
-                                    class="p-2 bg-white shadow-inner items-center flex-row gap-2 outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex ">
+                                    class="p-2 bg-white shadow-inner items-center flex-row gap-2 outline-none ring-0 w-full h-8 hover:bg-blue-400 font-medium text-sm rounded-sm flex ">
                                     <font-awesome-icon icon="fa-solid fa-file-word" class="text-[#2B7Cd3]" />
                                     Publication Letter
                                 </button>
                             </div>
                             <button v-if="props.details" @click="create_certificate_filing(props.details)"
-                                class="p-2 bg-white shadow-inner items-center flex-row gap-2 outline-none ring-0 w-full hover:bg-blue-400 font-medium text-sm rounded-sm flex ">
+                                class="p-2 bg-white shadow-inner items-center flex-row gap-2 outline-none ring-0 w-full h-8 hover:bg-blue-400 font-medium text-sm rounded-sm flex ">
                                 <font-awesome-icon icon="fa-solid fa-file-word" class="text-[#2B7Cd3]" /> Create
                                 Certificate of Filing
                             </button>
 
                             <button v-if="props.details" @click="openfolder(props.details)"
-                                class="p-2 bg-green-400 hover:bg-green-500 text-white  shadow-inner items-center flex-row gap-2 text-center  justify-center outline-none ring-0 w-full  font-medium text-sm rounded-sm flex ">
+                                class="p-2 bg-green-500 hover:bg-green-600 text-white  shadow-inner items-center flex-row gap-2 text-center  justify-center outline-none ring-0 w-full h-8  font-medium text-sm rounded-sm flex ">
                                 Open Folder
                             </button>
                         </div>

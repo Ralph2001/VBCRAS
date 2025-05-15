@@ -18,7 +18,7 @@
         <div
           :class="['flex-col md:flex-row md:flex', isMenuOpen ? 'flex' : 'hidden', 'md:items-center', 'w-full', 'md:w-auto', 'z-50', 'bg-[#0D1B2A]', 'md:bg-transparent', 'absolute', 'md:relative', 'top-full', 'left-0', 'md:top-auto', 'md:left-auto']">
           <ul
-            class="flex flex-col md:flex-row gap-4 md:items-center   font-medium p-2 md:p-1 md:px-6 border-gray-200 shadow-lg md:shadow-none">
+            class="flex flex-col md:flex-row gap-4 md:items-center   font-medium p-2 md:p-1   shadow-lg md:shadow-none">
             <li>
               <router-link to="/pages/cce" active-class="text-white bg-[#1B263B]"
                 class="p-2 h-10  w-24  hover:bg-[#1B263B]/50 text-neutral-200 rounded">Correction</router-link>

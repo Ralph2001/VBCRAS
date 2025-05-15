@@ -1,8 +1,8 @@
 <template>
-    <aside id="sidebar-multi-level-sidebar"
-        class="fixed top-0 left-0 z-40 w-64 border-r border-gray-300 h-screen transition-transform -translate-x-full sm:translate-x-0"
+    <aside id=" sidebar-multi-level-sidebar"
+        class="fixed top-0 left-0 z-40 w-64 border-r hidden md:block border-gray-300 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
-        <div class="h-full px-3 py-4 overflow-y-auto flex flex-col bg-gray-50 dark:bg-gray-800">
+        <div class="h-full  px-3 py-4 overflow-y-auto flex flex-col bg-gray-50 dark:bg-gray-800">
             <p class="text-center font-bold text-gray-600 py-10 font-mono">VBRAS</p>
             <ul class="font-medium flex flex-col  h-full gap-2">
                 <li>
@@ -22,43 +22,34 @@
 
                 <li class="">
                     <router-link to="correction-report" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
-                        class="flex items-center p-2 text-gray-900 rounded ">
+                        class="flex items-center p-2 text-gray-900 rounded  hover:bg-blue-600 hover:text-white">
                         <span class="flex-1 ms-3 text-left">Corrections</span>
                     </router-link>
 
                 </li>
                 <li>
                     <router-link to="form-report" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
-                        class="flex items-center p-2 text-gray-900 rounded ">
+                        class="flex items-center p-2 text-gray-900 rounded  hover:bg-blue-600 hover:text-white">
                         <span class="flex-1 ms-3 text-left">Forms</span>
                     </router-link>
                 </li>
                 <li>
                     <router-link to="marriage-report" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
-                        class="flex items-center p-2 text-gray-900 rounded ">
+                        class="flex items-center p-2 text-gray-900 rounded  hover:bg-blue-600 hover:text-white">
                         <span class="flex-1 ms-3 text-left">Marriage License</span>
                     </router-link>
                 </li>
                 <li>
                     <router-link to="legitimation-report" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
-                        class="flex items-center p-2 text-gray-900 rounded ">
+                        class="flex items-center p-2 text-gray-900 rounded  hover:bg-blue-600 hover:text-white">
                         <span class="flex-1 ms-3 text-left">Legitimation</span>
                     </router-link>
                 </li>
-                <!-- <li>
-                    <router-link to="system-settings-report" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
-                        class="flex items-center p-2 text-gray-900 rounded ">
-                        <span class="flex-1 ms-3 text-left">System Settings</span>
-                    </router-link>
-                </li> -->
-
-
-
             </ul>
             <div class="w-full flex items-center justify-center">
                 <router-link to="/pages/welcome"
-                    class="border w-full p-2 font-medium  rounded-2xl bg-gray-50 text-md justify-center items-center flex text-gray-600 hover:bg-red-400 hover:text-white  shadow-md">
-                    Return
+                    class="border w-full p-2 font-medium rounded-lg  text-md justify-center items-center flex flex-row gap-4 bg-gray-200  text-gray-600 hover:bg-red-400 hover:text-white">
+                    <font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Return
                 </router-link>
 
             </div>
@@ -67,26 +58,5 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { AuthStore } from '../../../../stores/Authentication';
-
-const auth = AuthStore()
-const dropdowns = ref({
-    cceCFN: false,
-    forms: false
-});
-
-const toggleDropdown = (key) => {
-    dropdowns.value[key] = !dropdowns.value[key];
-};
-
-const logout = () => {
-    auth.logout();
-};
-
 
 </script>
-
-<style>
-/* Add any additional styles if needed */
-</style>

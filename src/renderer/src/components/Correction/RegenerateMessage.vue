@@ -1,70 +1,63 @@
 <template>
-    <div class="fixed top-0 bottom-0 left-0 right-0 z-50 bg-black bg-opacity-50 flex items-center p-4 min-w-md justify-center"
-        role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+    <div class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4" role="dialog"
+        aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+        <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6 space-y-4">
+            <!-- Title -->
+            <h2 id="modal-title" class="text-xl font-semibold text-red-600 flex items-center gap-2">
+                ⚠️ Warning!
+            </h2>
 
-        <div class="h-auto py-6 w-[50rem] rounded bg-white flex flex-col p-4">
-            <p class="font-medium text-2xl">⚠️ Warning!</p>
-            <div class="mt-2 px-6 flex flex-col">
-                <p class=" text-md mt-1">Petition Number: <span class="font-semibold text-gray-800">{{
-                    props.data.petition_number }}</span></p>
-                <p class=" text-md mt-1">Petitioner Name: <span class="font-semibold text-gray-800">{{
-                    props.data.petitioner_name }}</span></p>
-                <p class=" text-md mt-1">Petition Type: <span class="font-semibold text-gray-800">{{
-                    props.data.petition_type }}</span></p>
-                <p class=" text-md mt-1">Event Type: <span class="font-semibold text-gray-800">{{ props.data.event_type
-                        }}</span></p>
-                <p class=" text-md mt-1 text-blue-500 font-medium">File Path: <span
-                        class="font-semibold text-gray-800">{{ props.data.file_path }}</span></p>
+            <!-- Petition Details -->
+            <div class="text-sm text-gray-700 space-y-1">
+                <p><strong>Petition Number:</strong> {{ data.petition_number }}</p>
+                <p><strong>Petitioner Name:</strong> {{ data.petitioner_name }}</p>
+                <p><strong>Petition Type:</strong> {{ data.petition_type }}</p>
+                <p><strong>Event Type:</strong> {{ data.event_type }}</p>
+                <p><strong class="text-blue-600">File Path:</strong> {{ data.file_path }}</p>
             </div>
 
-            <p class="mt-4 text-md font-sans px-6 text-justify">
-                You can use this option if the previously generated files contain **errors** or some files were **not
-                generated correctly**.
-            </p>
-            <p class="mt-4 text-md font-sans px-6 text-justify">
-                Regenerating the document will <span class="font-medium text-red-500">permanently overwrite</span> the
-                existing file. This action **cannot be undone**.
-                Please ensure that <span class="font-medium">all open Word documents are closed</span> before proceeding
-                to prevent file conflicts or corruption.
-            </p>
+            <!-- Explanation -->
+            <div class="text-sm text-gray-600 space-y-3 leading-relaxed">
+                <p>
+                    This option is for fixing documents that contain <strong>errors</strong> or were
+                    <strong>not generated correctly</strong>.
+                </p>
+                <p>
+                    Regenerating will <span class="text-red-500 font-medium">permanently overwrite</span> the existing
+                    file. This action <strong>cannot be undone</strong>. Close all Word documents before proceeding to
+                    avoid file conflicts.
+                </p>
+                <p>
+                    <strong>Database data will remain unchanged</strong>. If changes are needed, update the data first
+                    before regenerating.
+                </p>
+                <p class="text-red-500 font-semibold">
+                    ⚠️ Double-check everything before proceeding!
+                </p>
+            </div>
 
-            <p class="mt-4 text-md font-sans px-6 text-justify">
-                The **dates and existing data will remain unchanged** as stored in the database.
-                If you need to modify the dates or any other details, please <span class="font-medium">edit them
-                    first</span> before regenerating the document.
-            </p>
-
-            <p class="mt-4 text-md font-sans px-6 text-justify font-bold">
-                Please note that if you choose to regenerate the document again, you will need to validate the layout
-                once more.
-            </p>
-
-            <p class="mt-4 text-md font-sans px-6 text-justify text-red-500 font-medium">
-                ⚠️ **Double-check all details before proceeding!**
-            </p>
-
-            <div class="mt-auto flex flex-row gap-2 justify-end">
+            <!-- Actions -->
+            <div class="flex justify-end gap-3 pt-2">
                 <button @click="emits('cancel')"
-                    class="rounded outline-none ring-0 py-1.5 px-2 bg-red-500 text-white font-medium hover:bg-red-600">Cancel</button>
+                    class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm font-medium">
+                    Cancel
+                </button>
                 <button @click="emits('proceed')"
-                    class="rounded outline-none ring-0 py-1.5 px-2 bg-green-500 hover:bg-green-600 font-medium text-white">Proceed</button>
+                    class="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white text-sm font-medium">
+                    Proceed
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-
 const emits = defineEmits(['cancel', 'proceed'])
 
 const props = defineProps({
-    data: Object
-})
-
-onMounted(() => {
-    console.log(props.data)
+    data: {
+        type: Object,
+        required: true
+    }
 })
 </script>
-
-<style lang="scss" scoped></style>
