@@ -125,696 +125,726 @@
 
 
 
-                    <div class="flex-1 overflow-y-auto p-4 h-full  flex-col gap-4  w-full max-w-screen-xl py-8  flex ">
+                    <div class="flex-1 overflow-y-auto p-4 h-full  flex-col gap-4  w-full max-w-screen-2xl py-8  flex ">
 
-                        <div v-if="currentStep === 0 || form_mode === 1"
-                            class="flex flex-col px-10  gap-2 justify-center">
-                            <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
-                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
-                                    steps[0]
-                                }}
-                                </p>
-                            </div>
-                            <div class="grid grid-cols-1 gap-2 mb-auto">
-
-                                <div class="grid grid-cols-3 gap-2">
-                                    <InputMarriage type="date" label="Date of Application/Reciept"
-                                        v-model="formData.date_of_receipt" />
-
-                                    <InputMarriage label="Marriage License No"
-                                        v-model="formData.marriage_license_number" />
-                                    <InputMarriage type="date" label="Date of Issuance of Marriage License"
-                                        v-model="formData.date_issuance_marriage_license" />
-
-                                </div>
-                                <div class="grid grid-cols-3 gap-2">
-
-                                    <InputMarriage label="Registry Number" v-model="formData.registry_number" />
-                                    <InputMarriage type="date" label="Date of Marriage"
-                                        v-model="formData.date_of_marriage" />
-                                    <InputMarriage label="Place of Marriage" v-model="formData.place_of_marriage" />
-                                </div>
-                            </div>
-
-                        </div>
-                        <div v-if="currentStep === 1 || form_mode === 1" class="flex flex-col px-10 justify-center  ">
-                            <div class="grid grid-cols-1 gap-2">
-
+                        <div class="flex flex-col gap-2 max-w-screen-xl mx-auto w-full">
+                            <div v-if="currentStep === 0 || form_mode === 1"
+                                class="flex flex-col px-10  gap-2 justify-center">
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}
-                                    </p>
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
-                                        steps[1]
+                                        steps[0]
                                     }}
                                     </p>
                                 </div>
+                                <div class="grid grid-cols-1 gap-2 mb-auto">
 
-                                <div class="grid grid-cols-3 gap-1 items-end">
-                                    <InputMarriage cap label="Full Name" holder="First Name"
-                                        v-model="formData.groom_first_name" :error="v$.groom_first_name.$error" />
-                                    <InputMarriage cap holder="Middle Name" v-model="formData.groom_middle_name" />
-                                    <InputMarriage cap holder="Last Name" v-model="formData.groom_last_name"
-                                        :error="v$.groom_last_name.$error" />
-                                </div>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <InputMarriage type="date" label="Date of Application/Reciept"
+                                            v-model="formData.date_of_receipt" />
 
-                                <div class="flex flex-row items-center gap-2">
-
-                                    <div class="w-full">
-                                        <InputMarriage type="date" label="Date of Birth" holder="MMMM/DD/YYYY"
-                                            v-model="formData.groom_date_birth" :error="v$.groom_date_birth.$error" />
-
+                                        <InputMarriage label="Marriage License No"
+                                            v-model="formData.marriage_license_number" />
+                                        <InputMarriage type="date" label="Date of Issuance of Marriage License"
+                                            v-model="formData.date_issuance_marriage_license" />
 
                                     </div>
-                                    <div class="w-[70%]">
-                                        <InputMarriage label="Age" skip v-model="formData.groom_age"
-                                            :error="v$.groom_age.$error" />
+                                    <div class="grid grid-cols-3 gap-2">
+
+                                        <InputMarriage label="Registry Number" v-model="formData.registry_number" />
+                                        <InputMarriage type="date" label="Date of Marriage"
+                                            v-model="formData.date_of_marriage" />
+                                        <InputMarriage label="Place of Marriage" v-model="formData.place_of_marriage" />
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-3 gap-1 items-end">
-                                    <InputMarriageSuggestion cap label="Place of Birth" holder="City/Municipality"
-                                        v-model="formData.groom_municipality" :error="v$.groom_municipality.$error"
-                                        :suggestion_data="municipality_with_province" />
-                                    <InputMarriageSuggestion cap holder="Province" v-model="formData.groom_province"
-                                        :suggestion_data="province" />
-                                    <InputMarriage cap holder="Country" v-model="formData.groom_country"
-                                        :error="v$.groom_country.$error" />
-                                </div>
-                                <div class="flex flex-row gap-1 items-end">
-                                    <div class="w-full">
-                                        <ResidenceSuggestions cap label="Residence"
-                                            holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                            v-model="formData.groom_residence" :suggestion_data="groomSuggestions"
-                                            :error="v$.groom_residence.$error" />
+                            </div>
+                            <div v-if="currentStep === 1 || form_mode === 1"
+                                class="flex flex-col px-10 justify-center  ">
+                                <div class="grid grid-cols-1 gap-2">
 
+                                    <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                        <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}
+                                        </p>
+                                        <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
+                                            steps[1]
+                                        }}
+                                        </p>
                                     </div>
-                                    <!-- <div class="w-[50%]">
+
+                                    <div class="grid grid-cols-3 gap-1 items-end">
+                                        <InputMarriage cap label="Full Name" holder="First Name"
+                                            v-model="formData.groom_first_name" :error="v$.groom_first_name.$error" />
+                                        <InputMarriage cap holder="Middle Name" v-model="formData.groom_middle_name" />
+                                        <InputMarriage cap holder="Last Name" v-model="formData.groom_last_name"
+                                            :error="v$.groom_last_name.$error" />
+                                    </div>
+
+                                    <div class="flex flex-row items-center gap-2">
+
+                                        <div class="w-full">
+                                            <InputMarriage type="date" label="Date of Birth" holder="MMMM/DD/YYYY"
+                                                v-model="formData.groom_date_birth"
+                                                :error="v$.groom_date_birth.$error" />
+
+
+                                        </div>
+                                        <div class="w-[70%]">
+                                            <InputMarriage label="Age" skip v-model="formData.groom_age"
+                                                :error="v$.groom_age.$error" />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-3 gap-1 items-end">
+                                        <InputMarriageSuggestion cap label="Place of Birth" holder="City/Municipality"
+                                            v-model="formData.groom_municipality" :error="v$.groom_municipality.$error"
+                                            :suggestion_data="municipality_with_province" />
+                                        <InputMarriageSuggestion cap holder="Province" v-model="formData.groom_province"
+                                            :suggestion_data="province" />
+                                        <InputMarriage cap holder="Country" v-model="formData.groom_country"
+                                            :error="v$.groom_country.$error" />
+                                    </div>
+                                    <div class="flex flex-row gap-1 items-end">
+                                        <div class="w-full">
+                                            <ResidenceSuggestions cap label="Residence"
+                                                holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                                v-model="formData.groom_residence" :suggestion_data="groomSuggestions"
+                                                :error="v$.groom_residence.$error" />
+
+                                        </div>
+                                        <!-- <div class="w-[50%]">
                                         <InputMarriage cap holder="Country" v-model="formData.groom_residence_country"
                                             :error="v$.groom_residence_country.$error" />
                                     </div> -->
-                                </div>
-                                <div class="flex flex-row items-center gap-2">
+                                    </div>
+                                    <div class="flex flex-row items-center gap-2">
 
-                                    <div class="w-full">
-                                        <!-- <InputMarriage cap label="Sex" v-model="formData.groom_sex" /> -->
-                                        <InputMarriageSuggestion cap skip label="Sex" v-model="formData.groom_sex"
-                                            :suggestion_data="['MALE', 'FEMALE']" :error="v$.groom_sex.$error" />
+                                        <div class="w-full">
+                                            <!-- <InputMarriage cap label="Sex" v-model="formData.groom_sex" /> -->
+                                            <InputMarriageSuggestion cap skip label="Sex" v-model="formData.groom_sex"
+                                                :suggestion_data="['MALE', 'FEMALE']" :error="v$.groom_sex.$error" />
+
+                                        </div>
+                                        <div class="w-full">
+                                            <InputMarriageSuggestion cap label="Citizenship"
+                                                v-model="formData.groom_citizenship"
+                                                :suggestion_data="citizenshipOptions"
+                                                :error="v$.groom_citizenship.$error" />
+
+                                        </div>
+                                        <div class="w-[70%]">
+                                            <InputMarriageSuggestion cap label="Civil Status"
+                                                v-model="formData.groom_civil_status"
+                                                :suggestion_data="civil_status_type"
+                                                :error="v$.groom_civil_status.$error" />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-row items-center gap-2"
+                                        v-if="formData.groom_civil_status !== 'SINGLE' && formData.groom_civil_status !== ''">
+                                        <InputMarriage cap label="IF PREVIOUSLY MARRIED: How was it dissolved?"
+                                            v-model="formData.groom_previously_married_dissolved" />
+                                        <div class="w-[70%]">
+                                            <InputMarriage cap type="date" label="Date when dissolved"
+                                                v-model="formData.groom_date_dissolved" />
+
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-3 gap-2 items-end"
+                                        v-if="formData.groom_civil_status !== 'SINGLE' && formData.groom_civil_status !== ''">
+                                        <InputMarriageSuggestion cap label="Place where dissolved"
+                                            holder="City/Municipality"
+                                            v-model="formData.groom_place_dissolved_municipality"
+                                            :suggestion_data="municipality_with_province" />
+                                        <InputMarriage cap holder="Province"
+                                            v-model="formData.groom_place_dissolved_province" />
+                                        <InputMarriage cap holder="Country"
+                                            v-model="formData.groom_place_dissolved_country" />
 
                                     </div>
-                                    <div class="w-full">
+
+
+
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <InputMarriageSuggestion cap label="Religion" v-model="formData.groom_religion"
+                                            :suggestion_data="religionOptions" :error="v$.groom_religion.$error" />
+                                        <InputMarriage cap label="Degree of relationship of contradicting parties"
+                                            v-model="formData.groom_degree_relation"
+                                            :error="v$.groom_degree_relation.$error" />
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div v-if="currentStep === 2 || form_mode === 1"
+                                class="flex flex-col gap-2 px-10 justify-center">
+
+
+                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
+                                    <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
+                                        steps[2]
+                                    }}
+                                    </p>
+                                </div>
+                                <div class="grid grid-cols-3 gap-1 items-end">
+                                    <InputMarriage cap label="Name of Father" holder="First Name"
+                                        v-model="formData.groom_father_first_name"
+                                        :error="v$.groom_father_first_name.$error" />
+                                    <InputMarriage cap holder="Middle Name"
+                                        v-model="formData.groom_father_middle_name" />
+                                    <InputMarriageSuggestion cap holder="Last Name"
+                                        v-model="formData.groom_father_last_name"
+                                        :error="v$.groom_father_last_name.$error"
+                                        :suggestion_data="[formData.groom_last_name]" />
+                                </div>
+                                <div class="flex flex-row gap-1 items-end">
+                                    <div class="w-[50%]">
                                         <InputMarriageSuggestion cap label="Citizenship"
-                                            v-model="formData.groom_citizenship" :suggestion_data="citizenshipOptions"
-                                            :error="v$.groom_citizenship.$error" />
-
+                                            v-model="formData.groom_father_citizenship"
+                                            :error="v$.groom_father_citizenship.$error"
+                                            :suggestion_data="citizenshipOptions" />
                                     </div>
-                                    <div class="w-[70%]">
-                                        <InputMarriageSuggestion cap label="Civil Status"
-                                            v-model="formData.groom_civil_status" :suggestion_data="civil_status_type"
-                                            :error="v$.groom_civil_status.$error" />
+                                    <div class="w-full">
+                                        <ResidenceSuggestions cap label="Residence"
+                                            holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                            v-model="formData.groom_father_residence"
+                                            :error="v$.groom_father_residence.$error"
+                                            :suggestion_data="groomfatherSuggestions" />
                                     </div>
-                                </div>
-                                <div class="flex flex-row items-center gap-2"
-                                    v-if="formData.groom_civil_status !== 'SINGLE' && formData.groom_civil_status !== ''">
-                                    <InputMarriage cap label="IF PREVIOUSLY MARRIED: How was it dissolved?"
-                                        v-model="formData.groom_previously_married_dissolved" />
-                                    <div class="w-[70%]">
-                                        <InputMarriage cap type="date" label="Date when dissolved"
-                                            v-model="formData.groom_date_dissolved" />
-
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-3 gap-2 items-end"
-                                    v-if="formData.groom_civil_status !== 'SINGLE' && formData.groom_civil_status !== ''">
-                                    <InputMarriageSuggestion cap label="Place where dissolved"
-                                        holder="City/Municipality" v-model="formData.groom_place_dissolved_municipality"
-                                        :suggestion_data="municipality_with_province" />
-                                    <InputMarriage cap holder="Province"
-                                        v-model="formData.groom_place_dissolved_province" />
-                                    <InputMarriage cap holder="Country"
-                                        v-model="formData.groom_place_dissolved_country" />
-
-                                </div>
-
-
-
-                                <div class="grid grid-cols-2 gap-2">
-                                    <InputMarriageSuggestion cap label="Religion" v-model="formData.groom_religion"
-                                        :suggestion_data="religionOptions" :error="v$.groom_religion.$error" />
-                                    <InputMarriage cap label="Degree of relationship of contradicting parties"
-                                        v-model="formData.groom_degree_relation"
-                                        :error="v$.groom_degree_relation.$error" />
-
-
-                                </div>
-
-                            </div>
-                        </div>
-                        <div v-if="currentStep === 2 || form_mode === 1"
-                            class="flex flex-col gap-2 px-10 justify-center">
-
-
-                            <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
-                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
-                                    steps[2]
-                                }}
-                                </p>
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 items-end">
-                                <InputMarriage cap label="Name of Father" holder="First Name"
-                                    v-model="formData.groom_father_first_name"
-                                    :error="v$.groom_father_first_name.$error" />
-                                <InputMarriage cap holder="Middle Name" v-model="formData.groom_father_middle_name" />
-                                <InputMarriageSuggestion cap holder="Last Name"
-                                    v-model="formData.groom_father_last_name" :error="v$.groom_father_last_name.$error"
-                                    :suggestion_data="[formData.groom_last_name]" />
-                            </div>
-                            <div class="flex flex-row gap-1 items-end">
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship"
-                                        v-model="formData.groom_father_citizenship"
-                                        :error="v$.groom_father_citizenship.$error"
-                                        :suggestion_data="citizenshipOptions" />
-                                </div>
-                                <div class="w-full">
-                                    <ResidenceSuggestions cap label="Residence"
-                                        holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                        v-model="formData.groom_father_residence"
-                                        :error="v$.groom_father_residence.$error"
-                                        :suggestion_data="groomfatherSuggestions" />
-                                </div>
-                                <!-- <div class="w-[50%]">
+                                    <!-- <div class="w-[50%]">
                                     <InputMarriage cap holder="Country"
                                         v-model="formData.groom_father_residence_country"
                                         :error="v$.groom_father_residence_country.$error" />
                                 </div> -->
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 items-end">
-                                <InputMarriage cap label="Maiden Name of Mother" holder="First Name"
-                                    v-model="formData.groom_mother_first_name"
-                                    :error="v$.groom_mother_first_name.$error" />
-                                <InputMarriage cap holder="Middle Name" v-model="formData.groom_mother_middle_name" />
-                                <InputMarriageSuggestion cap holder="Last Name"
-                                    v-model="formData.groom_mother_last_name" :error="v$.groom_mother_last_name.$error"
-                                    :suggestion_data="[formData.groom_middle_name]" />
-                            </div>
-                            <div class="flex flex-row gap-1 items-end">
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship"
-                                        v-model="formData.groom_mother_citizenship"
-                                        :error="v$.groom_mother_citizenship.$error"
-                                        :suggestion_data="citizenshipOptions" />
                                 </div>
-                                <div class="w-full">
-                                    <ResidenceSuggestions cap label="Residence"
-                                        holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                        v-model="formData.groom_mother_residence"
-                                        :error="v$.groom_mother_residence.$error"
-                                        :suggestion_data="groommotherSuggestions" />
+                                <div class="grid grid-cols-3 gap-1 items-end">
+                                    <InputMarriage cap label="Maiden Name of Mother" holder="First Name"
+                                        v-model="formData.groom_mother_first_name"
+                                        :error="v$.groom_mother_first_name.$error" />
+                                    <InputMarriage cap holder="Middle Name"
+                                        v-model="formData.groom_mother_middle_name" />
+                                    <InputMarriageSuggestion cap holder="Last Name"
+                                        v-model="formData.groom_mother_last_name"
+                                        :error="v$.groom_mother_last_name.$error"
+                                        :suggestion_data="[formData.groom_middle_name]" />
                                 </div>
-                                <!-- <div class="w-[50%]">
+                                <div class="flex flex-row gap-1 items-end">
+                                    <div class="w-[50%]">
+                                        <InputMarriageSuggestion cap label="Citizenship"
+                                            v-model="formData.groom_mother_citizenship"
+                                            :error="v$.groom_mother_citizenship.$error"
+                                            :suggestion_data="citizenshipOptions" />
+                                    </div>
+                                    <div class="w-full">
+                                        <ResidenceSuggestions cap label="Residence"
+                                            holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                            v-model="formData.groom_mother_residence"
+                                            :error="v$.groom_mother_residence.$error"
+                                            :suggestion_data="groommotherSuggestions" />
+                                    </div>
+                                    <!-- <div class="w-[50%]">
                                     <InputMarriage cap holder="Country"
                                         v-model="formData.groom_mother_residence_country"
                                         :error="v$.groom_mother_residence_country.$error" />
                                 </div> -->
-                            </div>
-
-                            <div class="flex flex-row gap-1">
-                                <div class="w-full">
-                                    <InputMarriageSuggestion cap label="Person who gave consent or advince"
-                                        v-model="formData.groom_person_who_gave_consent"
-                                        :error="v$.groom_person_who_gave_consent.$error" :skip="skip_groom_consent"
-                                        :suggestion_data="person_gave_consent_groom_suggestion" />
-                                </div>
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Relationship"
-                                        v-model="formData.groom_person_who_gave_consent_relation"
-                                        :error="v$.groom_person_who_gave_consent_relation.$error"
-                                        :skip="skip_groom_consent" :suggestion_data="consent_advised_relationship" />
-                                </div>
-                            </div>
-                            <div class="flex flex-row gap-1 items-end">
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship"
-                                        v-model="formData.groom_person_who_gave_consent_citizenship"
-                                        :skip="skip_groom_consent"
-                                        :error="v$.groom_person_who_gave_consent_citizenship.$error"
-                                        :suggestion_data="citizenshipOptions" />
-                                </div>
-                                <div class="w-full">
-                                    <ResidenceSuggestions cap label="Residence"
-                                        holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                        v-model="formData.groom_person_who_gave_consent_residence"
-                                        :skip="skip_groom_consent"
-                                        :error="v$.groom_person_who_gave_consent_residence.$error"
-                                        :suggestion_data="groomconsentSuggestions" />
                                 </div>
 
-                            </div>
-
-                        </div>
-
-                        <!-- Bride Details -->
-
-                        <div v-if="currentStep === 3 || form_mode === 1" class="flex flex-col px-10 justify-center">
-
-
-                            <div class="grid grid-cols-1 gap-2">
-
-                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}
-                                    </p>
-                                    <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
-                                        steps[3]
-                                    }}
-                                    </p>
-                                </div>
-                                <div class="grid grid-cols-3 gap-1 items-end">
-                                    <InputMarriage cap label="Full Name" holder="First Name"
-                                        v-model="formData.bride_first_name" :error="v$.bride_first_name.$error" />
-                                    <InputMarriage cap holder="Middle Name" v-model="formData.bride_middle_name" />
-                                    <InputMarriage cap holder="Last Name" v-model="formData.bride_last_name"
-                                        :error="v$.bride_last_name.$error" />
-                                </div>
-
-                                <div class="flex flex-row items-center gap-2">
-
+                                <div class="flex flex-row gap-1">
                                     <div class="w-full">
-                                        <InputMarriage type="date" label="Date of Birth" holder="MMMM/DD/YYYY"
-                                            v-model="formData.bride_date_birth" :error="v$.bride_date_birth.$error" />
-
-
+                                        <InputMarriageSuggestion cap label="Person who gave consent or advince"
+                                            v-model="formData.groom_person_who_gave_consent"
+                                            :error="v$.groom_person_who_gave_consent.$error" :skip="skip_groom_consent"
+                                            :suggestion_data="person_gave_consent_groom_suggestion" />
                                     </div>
-                                    <div class="w-[70%]">
-                                        <InputMarriage label="Age" skip v-model="formData.bride_age"
-                                            :error="v$.bride_age.$error" />
+                                    <div class="w-[50%]">
+                                        <InputMarriageSuggestion cap label="Relationship"
+                                            v-model="formData.groom_person_who_gave_consent_relation"
+                                            :error="v$.groom_person_who_gave_consent_relation.$error"
+                                            :skip="skip_groom_consent"
+                                            :suggestion_data="consent_advised_relationship" />
                                     </div>
-                                </div>
-
-                                <div class="grid grid-cols-3 gap-1 items-end">
-                                    <InputMarriageSuggestion cap label="Place of Birth" holder="City/Municipality"
-                                        v-model="formData.bride_municipality" :error="v$.bride_municipality.$error"
-                                        :suggestion_data="municipality_with_province" />
-                                    <InputMarriageSuggestion cap holder="Province" v-model="formData.bride_province"
-                                        :suggestion_data="province" />
-                                    <InputMarriage cap holder="Country" v-model="formData.bride_country"
-                                        :error="v$.bride_country.$error" />
                                 </div>
                                 <div class="flex flex-row gap-1 items-end">
+                                    <div class="w-[50%]">
+                                        <InputMarriageSuggestion cap label="Citizenship"
+                                            v-model="formData.groom_person_who_gave_consent_citizenship"
+                                            :skip="skip_groom_consent"
+                                            :error="v$.groom_person_who_gave_consent_citizenship.$error"
+                                            :suggestion_data="citizenshipOptions" />
+                                    </div>
                                     <div class="w-full">
                                         <ResidenceSuggestions cap label="Residence"
                                             holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                            v-model="formData.bride_residence" :suggestion_data="brideSuggestions"
-                                            :error="v$.bride_residence.$error" />
-
+                                            v-model="formData.groom_person_who_gave_consent_residence"
+                                            :skip="skip_groom_consent"
+                                            :error="v$.groom_person_who_gave_consent_residence.$error"
+                                            :suggestion_data="groomconsentSuggestions" />
                                     </div>
-                                    <!-- <div class="w-[50%]">
+
+                                </div>
+
+                            </div>
+
+                            <!-- Bride Details -->
+
+                            <div v-if="currentStep === 3 || form_mode === 1" class="flex flex-col px-10 justify-center">
+
+
+                                <div class="grid grid-cols-1 gap-2">
+
+                                    <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                        <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}
+                                        </p>
+                                        <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
+                                            steps[3]
+                                        }}
+                                        </p>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-1 items-end">
+                                        <InputMarriage cap label="Full Name" holder="First Name"
+                                            v-model="formData.bride_first_name" :error="v$.bride_first_name.$error" />
+                                        <InputMarriage cap holder="Middle Name" v-model="formData.bride_middle_name" />
+                                        <InputMarriage cap holder="Last Name" v-model="formData.bride_last_name"
+                                            :error="v$.bride_last_name.$error" />
+                                    </div>
+
+                                    <div class="flex flex-row items-center gap-2">
+
+                                        <div class="w-full">
+                                            <InputMarriage type="date" label="Date of Birth" holder="MMMM/DD/YYYY"
+                                                v-model="formData.bride_date_birth"
+                                                :error="v$.bride_date_birth.$error" />
+
+
+                                        </div>
+                                        <div class="w-[70%]">
+                                            <InputMarriage label="Age" skip v-model="formData.bride_age"
+                                                :error="v$.bride_age.$error" />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-3 gap-1 items-end">
+                                        <InputMarriageSuggestion cap label="Place of Birth" holder="City/Municipality"
+                                            v-model="formData.bride_municipality" :error="v$.bride_municipality.$error"
+                                            :suggestion_data="municipality_with_province" />
+                                        <InputMarriageSuggestion cap holder="Province" v-model="formData.bride_province"
+                                            :suggestion_data="province" />
+                                        <InputMarriage cap holder="Country" v-model="formData.bride_country"
+                                            :error="v$.bride_country.$error" />
+                                    </div>
+                                    <div class="flex flex-row gap-1 items-end">
+                                        <div class="w-full">
+                                            <ResidenceSuggestions cap label="Residence"
+                                                holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                                v-model="formData.bride_residence" :suggestion_data="brideSuggestions"
+                                                :error="v$.bride_residence.$error" />
+
+                                        </div>
+                                        <!-- <div class="w-[50%]">
                                         <InputMarriage cap holder="Country" skip
                                             v-model="formData.bride_residence_country"
                                             :error="v$.bride_residence_country.$error" />
                                     </div> -->
-                                </div>
-                                <div class="flex flex-row items-center gap-2">
+                                    </div>
+                                    <div class="flex flex-row items-center gap-2">
 
-                                    <div class="w-full">
-                                        <!-- <InputMarriage cap label="Sex" v-model="formData.bride_sex" /> -->
-                                        <InputMarriageSuggestion skip cap label="Sex" v-model="formData.bride_sex"
-                                            :suggestion_data="['MALE', 'FEMALE']" :error="v$.bride_sex.$error" />
+                                        <div class="w-full">
+                                            <!-- <InputMarriage cap label="Sex" v-model="formData.bride_sex" /> -->
+                                            <InputMarriageSuggestion skip cap label="Sex" v-model="formData.bride_sex"
+                                                :suggestion_data="['MALE', 'FEMALE']" :error="v$.bride_sex.$error" />
+
+                                        </div>
+                                        <div class="w-full">
+                                            <InputMarriageSuggestion cap label="Citizenship"
+                                                v-model="formData.bride_citizenship"
+                                                :suggestion_data="citizenshipOptions"
+                                                :error="v$.bride_citizenship.$error" />
+
+                                        </div>
+                                        <div class="w-[70%]">
+                                            <InputMarriageSuggestion cap label="Civil Status"
+                                                v-model="formData.bride_civil_status"
+                                                :suggestion_data="civil_status_type"
+                                                :error="v$.bride_civil_status.$error" />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-row items-center gap-2"
+                                        v-if="formData.bride_civil_status !== 'SINGLE' && formData.bride_civil_status !== ''">
+                                        <InputMarriage cap label="IF PREVIOUSLY MARRIED: How was it dissolved?"
+                                            v-model="formData.bride_previously_married_dissolved" />
+                                        <div class="w-[70%]">
+                                            <InputMarriage cap type="date" v-model="formData.bride_date_dissolved"
+                                                label="Date when dissolved" />
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-3 gap-2 items-end"
+                                        v-if="formData.bride_civil_status !== 'SINGLE' && formData.bride_civil_status !== ''">
+                                        <InputMarriageSuggestion cap label="Place where dissolved"
+                                            holder="City/Municipality"
+                                            v-model="formData.bride_place_dissolved_municipality"
+                                            :suggestion_data="municipality_with_province" />
+                                        <InputMarriage cap holder="Province"
+                                            v-model="formData.bride_place_dissolved_province" />
+                                        <InputMarriage cap holder="Country"
+                                            v-model="formData.bride_place_dissolved_country" />
 
                                     </div>
-                                    <div class="w-full">
+
+
+
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <InputMarriageSuggestion cap label="Religion" v-model="formData.bride_religion"
+                                            :suggestion_data="religionOptions" :error="v$.bride_religion.$error" />
+                                        <InputMarriage cap label="Degree of relationship of contradicting parties"
+                                            v-model="formData.bride_degree_relation"
+                                            :error="v$.bride_degree_relation.$error" />
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div v-if="currentStep === 4 || form_mode === 1"
+                                class="flex flex-col gap-2 px-10 justify-center">
+
+                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
+                                    <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
+                                        steps[4]
+                                    }}
+                                    </p>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-1 items-end">
+                                    <InputMarriage cap label="Name of Father" holder="First Name"
+                                        v-model="formData.bride_father_first_name"
+                                        :error="v$.bride_father_first_name.$error" />
+                                    <InputMarriage cap holder="Middle Name"
+                                        v-model="formData.bride_father_middle_name" />
+                                    <InputMarriageSuggestion cap holder="Last Name"
+                                        v-model="formData.bride_father_last_name"
+                                        :error="v$.bride_father_last_name.$error"
+                                        :suggestion_data="[formData.bride_last_name]" />
+                                </div>
+                                <div class="flex flex-row gap-1 items-end">
+                                    <div class="w-[50%]">
                                         <InputMarriageSuggestion cap label="Citizenship"
-                                            v-model="formData.bride_citizenship" :suggestion_data="citizenshipOptions"
-                                            :error="v$.bride_citizenship.$error" />
-
+                                            v-model="formData.bride_father_citizenship"
+                                            :error="v$.bride_father_citizenship.$error"
+                                            :suggestion_data="citizenshipOptions" />
                                     </div>
-                                    <div class="w-[70%]">
-                                        <InputMarriageSuggestion cap label="Civil Status"
-                                            v-model="formData.bride_civil_status" :suggestion_data="civil_status_type"
-                                            :error="v$.bride_civil_status.$error" />
+                                    <div class="w-full">
+                                        <ResidenceSuggestions cap label="Residence"
+                                            holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                            v-model="formData.bride_father_residence"
+                                            :error="v$.bride_father_residence.$error"
+                                            :suggestion_data="bridefatherSuggestions" />
                                     </div>
-                                </div>
-                                <div class="flex flex-row items-center gap-2"
-                                    v-if="formData.bride_civil_status !== 'SINGLE' && formData.bride_civil_status !== ''">
-                                    <InputMarriage cap label="IF PREVIOUSLY MARRIED: How was it dissolved?"
-                                        v-model="formData.bride_previously_married_dissolved" />
-                                    <div class="w-[70%]">
-                                        <InputMarriage cap type="date" v-model="formData.bride_date_dissolved"
-                                            label="Date when dissolved" />
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-3 gap-2 items-end"
-                                    v-if="formData.bride_civil_status !== 'SINGLE' && formData.bride_civil_status !== ''">
-                                    <InputMarriageSuggestion cap label="Place where dissolved"
-                                        holder="City/Municipality" v-model="formData.bride_place_dissolved_municipality"
-                                        :suggestion_data="municipality_with_province" />
-                                    <InputMarriage cap holder="Province"
-                                        v-model="formData.bride_place_dissolved_province" />
-                                    <InputMarriage cap holder="Country"
-                                        v-model="formData.bride_place_dissolved_country" />
-
-                                </div>
-
-
-
-                                <div class="grid grid-cols-2 gap-2">
-                                    <InputMarriageSuggestion cap label="Religion" v-model="formData.bride_religion"
-                                        :suggestion_data="religionOptions" :error="v$.bride_religion.$error" />
-                                    <InputMarriage cap label="Degree of relationship of contradicting parties"
-                                        v-model="formData.bride_degree_relation"
-                                        :error="v$.bride_degree_relation.$error" />
-
-
-                                </div>
-
-                            </div>
-                        </div>
-                        <div v-if="currentStep === 4 || form_mode === 1"
-                            class="flex flex-col gap-2 px-10 justify-center">
-
-                            <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
-                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
-                                    steps[4]
-                                }}
-                                </p>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-1 items-end">
-                                <InputMarriage cap label="Name of Father" holder="First Name"
-                                    v-model="formData.bride_father_first_name"
-                                    :error="v$.bride_father_first_name.$error" />
-                                <InputMarriage cap holder="Middle Name" v-model="formData.bride_father_middle_name" />
-                                <InputMarriageSuggestion cap holder="Last Name"
-                                    v-model="formData.bride_father_last_name" :error="v$.bride_father_last_name.$error"
-                                    :suggestion_data="[formData.bride_last_name]" />
-                            </div>
-                            <div class="flex flex-row gap-1 items-end">
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship"
-                                        v-model="formData.bride_father_citizenship"
-                                        :error="v$.bride_father_citizenship.$error"
-                                        :suggestion_data="citizenshipOptions" />
-                                </div>
-                                <div class="w-full">
-                                    <ResidenceSuggestions cap label="Residence"
-                                        holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                        v-model="formData.bride_father_residence"
-                                        :error="v$.bride_father_residence.$error"
-                                        :suggestion_data="bridefatherSuggestions" />
-                                </div>
-                                <!-- <div class="w-[50%]">
+                                    <!-- <div class="w-[50%]">
                                     <InputMarriage cap holder="Country"
                                         v-model="formData.bride_father_residence_country"
                                         :error="v$.bride_father_residence_country.$error" />
                                 </div> -->
-                            </div>
-                            <div class="grid grid-cols-3 gap-1 items-end">
-                                <InputMarriage cap label="Maiden Name of Mother" holder="First Name"
-                                    v-model="formData.bride_mother_first_name"
-                                    :error="v$.bride_mother_first_name.$error" />
-                                <InputMarriage cap holder="Middle Name" v-model="formData.bride_mother_middle_name" />
-                                <InputMarriageSuggestion cap holder="Last Name"
-                                    v-model="formData.bride_mother_last_name" :error="v$.bride_mother_last_name.$error"
-                                    :suggestion_data="[formData.bride_middle_name]" />
-                            </div>
-                            <div class="flex flex-row gap-1 items-end">
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship"
-                                        v-model="formData.bride_mother_citizenship"
-                                        :error="v$.bride_mother_citizenship.$error"
-                                        :suggestion_data="citizenshipOptions" />
                                 </div>
-                                <div class="w-full">
-                                    <ResidenceSuggestions cap label="Residence"
-                                        holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                        v-model="formData.bride_mother_residence"
-                                        :error="v$.bride_mother_residence.$error"
-                                        :suggestion_data="bridemotherSuggestions" />
+                                <div class="grid grid-cols-3 gap-1 items-end">
+                                    <InputMarriage cap label="Maiden Name of Mother" holder="First Name"
+                                        v-model="formData.bride_mother_first_name"
+                                        :error="v$.bride_mother_first_name.$error" />
+                                    <InputMarriage cap holder="Middle Name"
+                                        v-model="formData.bride_mother_middle_name" />
+                                    <InputMarriageSuggestion cap holder="Last Name"
+                                        v-model="formData.bride_mother_last_name"
+                                        :error="v$.bride_mother_last_name.$error"
+                                        :suggestion_data="[formData.bride_middle_name]" />
                                 </div>
-                                <!-- <div class="w-[50%]">
+                                <div class="flex flex-row gap-1 items-end">
+                                    <div class="w-[50%]">
+                                        <InputMarriageSuggestion cap label="Citizenship"
+                                            v-model="formData.bride_mother_citizenship"
+                                            :error="v$.bride_mother_citizenship.$error"
+                                            :suggestion_data="citizenshipOptions" />
+                                    </div>
+                                    <div class="w-full">
+                                        <ResidenceSuggestions cap label="Residence"
+                                            holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                            v-model="formData.bride_mother_residence"
+                                            :error="v$.bride_mother_residence.$error"
+                                            :suggestion_data="bridemotherSuggestions" />
+                                    </div>
+                                    <!-- <div class="w-[50%]">
                                     <InputMarriage cap holder="Country"
                                         v-model="formData.bride_mother_residence_country"
                                         :error="v$.bride_mother_residence_country.$error" />
                                 </div> -->
-                            </div>
-
-                            <div class="flex flex-row gap-1">
-                                <div class="w-full">
-                                    <InputMarriageSuggestion cap label="Person who gave consent or advince"
-                                        v-model="formData.bride_person_who_gave_consent"
-                                        :error="v$.bride_person_who_gave_consent.$error" :skip="skip_bride_consent"
-                                        :suggestion_data="person_gave_consent_bride_suggestion" />
-                                </div>
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Relationship"
-                                        v-model="formData.bride_person_who_gave_consent_relation"
-                                        :error="v$.bride_person_who_gave_consent_relation.$error"
-                                        :skip="skip_bride_consent" :suggestion_data="consent_advised_relationship" />
-                                </div>
-                            </div>
-                            <div class="flex flex-row gap-1 items-end">
-                                <div class="w-[50%]">
-                                    <InputMarriageSuggestion cap label="Citizenship"
-                                        v-model="formData.bride_person_who_gave_consent_citizenship"
-                                        :error="v$.bride_person_who_gave_consent_citizenship.$error"
-                                        :skip="skip_bride_consent" :suggestion_data="citizenshipOptions" />
-                                </div>
-                                <div class="w-full">
-                                    <ResidenceSuggestions cap label="Residence"
-                                        holder="(House No., St., Barangay, City/Municipality, Province, Country)"
-                                        v-model="formData.bride_person_who_gave_consent_residence"
-                                        :error="v$.bride_person_who_gave_consent_residence.$error"
-                                        :skip="skip_bride_consent" :suggestion_data="brideconsentSuggestions" />
                                 </div>
 
-                            </div>
-
-                        </div>
-                        <div v-if="currentStep === 5 || form_mode === 1"
-                            class="flex flex-col gap-2 px-10 justify-center">
-
-                            <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
-                                <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
-                                    steps[5]
-                                }}
-                                </p>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2 mt-4">
-                                <InputMarriage cap label="Groom Community Tax Cert. Number"
-                                    v-model="formData.groom_ctc_number" :error="v$.groom_ctc_number.$error" />
-                                <InputMarriage cap label="Bride Community Tax Cert. Number"
-                                    v-model="formData.bride_ctc_number" :error="v$.bride_ctc_number.$error" />
-                                <InputMarriage type="date" holder="Date" cap label="on" v-model="formData.groom_ctc_on"
-                                    :error="v$.groom_ctc_on.$error" />
-                                <InputMarriage type="date" holder="Date" cap label="on" v-model="formData.bride_ctc_on"
-                                    :error="v$.bride_ctc_on.$error" />
-                                <InputMarriageSuggestion :suggestion_data="municipality" holder="Place" cap label="at"
-                                    v-model="formData.groom_ctc_at" :error="v$.groom_ctc_at.$error" />
-                                <InputMarriageSuggestion :suggestion_data="municipality" holder="Place" cap label="at"
-                                    v-model="formData.bride_ctc_at" :error="v$.bride_ctc_at.$error" />
-                            </div>
-
-
-
-                        </div>
-                        <div v-if="currentStep === 6 || form_mode === 1"
-                            class="flex flex-col gap-2 px-10 justify-center mt-10">
-
-                            <div class="flex flex-col gap-0" v-if="form_mode === 1">
-                                <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
-                                }}
-                                </p>
-                                <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
-                                    steps[6]
-                                }} Details
-                                </p>
-                            </div>
-                            <div class="w-80 mt-8">
-                                <InputMarriage label="Date of Posting" type="date"
-                                    v-model="formData.notice_date_posting" :error="v$.notice_date_posting.$error" />
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 mt-4">
-                                <!-- Groom -->
-                                <div class="flex flex-col gap-2 justify-center  items-center">
-                                    <div class=" h-[166px] w-[170px] ">
-                                        <Camera @capture="handle_groom_image" v-if="!groom_picture" />
-                                        <div v-if="groom_picture"
-                                            class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
-                                            <button @click="groom_picture = ''"
-                                                class="absolute -top-3 -right-2.5 z-50 bg-red-400 hover:bg-red-500 text-white rounded-full px-1.5 hidden group-hover:block">
-                                                <font-awesome-icon icon="fa-solid fa-xmark" />
-                                            </button>
-                                            <img :src="groom_picture" alt="Captured photo"
-                                                class="w-full h-full object-contain " />
-                                        </div>
-
+                                <div class="flex flex-row gap-1">
+                                    <div class="w-full">
+                                        <InputMarriageSuggestion cap label="Person who gave consent or advince"
+                                            v-model="formData.bride_person_who_gave_consent"
+                                            :error="v$.bride_person_who_gave_consent.$error" :skip="skip_bride_consent"
+                                            :suggestion_data="person_gave_consent_bride_suggestion" />
                                     </div>
-                                    <p class="font-medium text-sm italic text-gray-600">Groom:</p>
-                                    <div class="flex flex-col grow gap-0 w-full">
-                                        <div class="flex flex-row gap-1 items-center">
-                                            <InputMarriage holder="Name" v-model="formData.notice_groom_name"
-                                                :error="v$.notice_groom_name.$error" />
-                                            <div class="w-[50%]">
-                                                <InputMarriage holder="Age" v-model="formData.notice_groom_age"
-                                                    :error="v$.notice_groom_age.$error" />
-                                            </div>
-                                        </div>
-                                        <InputMarriage holder="Birth Place" v-model="formData.notice_groom_birthplace"
-                                            :error="v$.notice_groom_birthplace.$error" />
-                                        <InputMarriage holder="Residence" v-model="formData.notice_groom_residence"
-                                            :error="v$.notice_groom_residence.$error" />
-                                        <InputMarriage holder="Father" v-model="formData.notice_groom_father"
-                                            :error="v$.notice_groom_father.$error" />
-                                        <InputMarriage holder="Mother" v-model="formData.notice_groom_mother"
-                                            :error="v$.notice_groom_mother.$error" />
-
+                                    <div class="w-[50%]">
+                                        <InputMarriageSuggestion cap label="Relationship"
+                                            v-model="formData.bride_person_who_gave_consent_relation"
+                                            :error="v$.bride_person_who_gave_consent_relation.$error"
+                                            :skip="skip_bride_consent"
+                                            :suggestion_data="consent_advised_relationship" />
                                     </div>
                                 </div>
-                                <!-- Bride -->
-                                <div class="flex flex-col gap-2 justify-center  items-center">
-                                    <div class=" h-[166px] w-[170px] ">
-                                        <Camera @capture="handle_bride_image" v-if="!bride_picture" />
-                                        <div v-if="bride_picture"
-                                            class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
-                                            <button @click="bride_picture = ''"
-                                                class="absolute -top-3 -right-2.5 z-50 bg-red-400 hover:bg-red-500 text-white rounded-full px-1.5 hidden group-hover:block">
-                                                <font-awesome-icon icon="fa-solid fa-xmark" />
-                                            </button>
-                                            <img :src="bride_picture" alt="Captured photo"
-                                                class="w-full h-full object-contain " />
-                                        </div>
+                                <div class="flex flex-row gap-1 items-end">
+                                    <div class="w-[50%]">
+                                        <InputMarriageSuggestion cap label="Citizenship"
+                                            v-model="formData.bride_person_who_gave_consent_citizenship"
+                                            :error="v$.bride_person_who_gave_consent_citizenship.$error"
+                                            :skip="skip_bride_consent" :suggestion_data="citizenshipOptions" />
                                     </div>
-                                    <p class="font-medium text-sm italic text-gray-600">Bride:</p>
-                                    <div class="flex flex-col grow gap-0 w-full">
-                                        <div class="flex flex-row gap-1 items-center">
-                                            <InputMarriage holder="Name" v-model="formData.notice_bride_name"
-                                                :error="v$.notice_bride_name.$error" />
-                                            <div class="w-[50%]">
-                                                <InputMarriage holder="Age" v-model="formData.notice_bride_age"
-                                                    :error="v$.notice_bride_age.$error" />
-                                            </div>
-                                        </div>
-                                        <InputMarriage holder="Birth Place" v-model="formData.notice_bride_birthplace"
-                                            :error="v$.notice_bride_birthplace.$error" />
-                                        <InputMarriage holder="Residence" v-model="formData.notice_bride_residence"
-                                            :error="v$.notice_bride_residence.$error" />
-                                        <InputMarriage holder="Father" v-model="formData.notice_bride_father"
-                                            :error="v$.notice_bride_father.$error" />
-                                        <InputMarriage holder="Mother" v-model="formData.notice_bride_mother"
-                                            :error="v$.notice_bride_mother.$error" />
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p class="italic mt-4 text-sm font-medium text-green-500">Copy Furnished:</p>
-                            <div class="w-[40%] pl-4 flex flex-col gap-0">
-                                <InputMarriage v-model="formData.notice_copy_furnished1" />
-                                <InputMarriage v-model="formData.notice_copy_furnished2" />
-                                <InputMarriage v-model="formData.notice_copy_furnished3" />
-                                <InputMarriage v-model="formData.notice_copy_furnished4" />
-                            </div>
-
-                        </div>
-
-                        <div v-if="currentStep === 7 || form_mode === 1"
-                            class="px-4 h-full gap-4 flex flex-col mt-8 mb-2">
-                            <!-- Section Header -->
-                            <div v-if="form_mode === 1">
-                                <p class="font-bold text-xl mb-4 uppercase text-gray-900">{{ steps[7] }}</p>
-                            </div>
-
-                            <!-- Step 1: Select Document -->
-                            <div>
-                                <label class="font-semibold flex items-center gap-1">
-                                    <span>1. What document do you want to preview and print?</span>
-                                    <font-awesome-icon icon="fa-solid fa-circle-question"
-                                        class="text-gray-400 cursor-pointer"
-                                        title="Select the document you want to preview and print." />
-                                </label>
-                                <div class="flex gap-2 mt-2">
-                                    <button
-                                        :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 1 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
-                                        @click="select_page = 1; change_page()">
-                                        Application for Marriage License
-                                    </button>
-                                    <button
-                                        :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 2 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
-                                        @click="select_page = 2; change_page()">
-                                        Notice of Posting
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="font-semibold mt-4">2. Print</label>
-                                <div class="flex flex-col gap-2 mt-1">
-                                    <div v-if="select_page === 1" class="flex flex-row gap-2 relative">
-                                        <button @click="printAFML()"
-                                            class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
-                                            <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print
-                                            Application for Marriage License
-                                        </button>
-                                        <button @click="openAFMLSetting()"
-                                            class="flex gap-2 px-3 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 w-52 items-center justify-center text-white text-sm transition-colors">
-                                            <font-awesome-icon icon="fa-solid fa-gear" />
-                                            Adjust Position
-                                        </button>
-
-                                        <!-- Settings Panel -->
-                                        <div v-if="afml_setting"
-                                            class="absolute right-0 top-14 shadow-lg border p-2 w-56 h-auto bg-white rounded-md z-10">
-                                            <p class="text-center font-medium">Print Position Adjustment</p>
-                                            <div class="flex flex-col mt-2">
-                                                <div class="flex flex-row items-center gap-4">
-                                                    <font-awesome-icon icon="fa-solid fa-x" class="text-xs w-10" />
-                                                    <InputMarriage v-model="pdf_settings.x" type="number" />
-                                                </div>
-                                                <div class="flex flex-row items-center gap-4">
-                                                    <font-awesome-icon icon="fa-solid fa-y" class="text-xs w-10" />
-                                                    <InputMarriage v-model="pdf_settings.y" type="number" />
-                                                </div>
-                                                <button class="w-full rounded-md mt-4 bg-blue-500 h-10 text-white"
-                                                    @click="saveAFMLSetting()">Save</button>
-                                            </div>
-                                        </div>
+                                    <div class="w-full">
+                                        <ResidenceSuggestions cap label="Residence"
+                                            holder="(House No., St., Barangay, City/Municipality, Province, Country)"
+                                            v-model="formData.bride_person_who_gave_consent_residence"
+                                            :error="v$.bride_person_who_gave_consent_residence.$error"
+                                            :skip="skip_bride_consent" :suggestion_data="brideconsentSuggestions" />
                                     </div>
 
-                                    <button v-if="select_page === 2" @click="printNoticePosting()"
-                                        class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
-                                        <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print Notice of
-                                        Posting
-                                    </button>
                                 </div>
-                            </div>
 
-                            <!-- Step 2: Document Preview -->
-                            <div>
-                                <label class="font-semibold mt-4">3. Document Preview</label>
-                                <div
-                                    class="mt-2 bg-gray-50 rounded-xl border border-gray-300 shadow-inner flex items-center justify-center h-96">
-                                    <p v-if="isLoadingPrev" class="italic text-gray-600">Loading preview...</p>
-                                    <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
-                                    <p v-if="!pdf_content && !isLoadingPrev"
-                                        class="italic text-gray-500 flex items-center gap-2">
-                                        <font-awesome-icon icon="fa-regular fa-file-pdf" class="text-xl" />
-                                        Select a document above to see a preview.
+                            </div>
+                            <div v-if="currentStep === 5 || form_mode === 1"
+                                class="flex flex-col gap-2 px-10 justify-center">
+
+                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
+                                    <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
+                                        steps[5]
+                                    }}
                                     </p>
                                 </div>
-                                <p v-if="pdf_content && !isLoadingPrev" class="text-green-600 text-sm mt-2">Preview
-                                    loaded successfully.</p>
+
+                                <div class="grid grid-cols-2 gap-2 mt-4">
+                                    <InputMarriage cap label="Groom Community Tax Cert. Number"
+                                        v-model="formData.groom_ctc_number" :error="v$.groom_ctc_number.$error" />
+                                    <InputMarriage cap label="Bride Community Tax Cert. Number"
+                                        v-model="formData.bride_ctc_number" :error="v$.bride_ctc_number.$error" />
+                                    <InputMarriage type="date" holder="Date" cap label="on"
+                                        v-model="formData.groom_ctc_on" :error="v$.groom_ctc_on.$error" />
+                                    <InputMarriage type="date" holder="Date" cap label="on"
+                                        v-model="formData.bride_ctc_on" :error="v$.bride_ctc_on.$error" />
+                                    <InputMarriageSuggestion :suggestion_data="municipality" holder="Place" cap
+                                        label="at" v-model="formData.groom_ctc_at" :error="v$.groom_ctc_at.$error" />
+                                    <InputMarriageSuggestion :suggestion_data="municipality" holder="Place" cap
+                                        label="at" v-model="formData.bride_ctc_at" :error="v$.bride_ctc_at.$error" />
+                                </div>
+
+
+
+                            </div>
+                            <div v-if="currentStep === 6 || form_mode === 1"
+                                class="flex flex-col gap-2 px-10 justify-center mt-10">
+
+                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                    <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
+                                    }}
+                                    </p>
+                                    <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
+                                        steps[6]
+                                    }} Details
+                                    </p>
+                                </div>
+                                <div class="w-80 mt-8">
+                                    <InputMarriage label="Date of Posting" type="date"
+                                        v-model="formData.notice_date_posting" :error="v$.notice_date_posting.$error" />
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mt-4">
+                                    <!-- Groom -->
+                                    <div class="flex flex-col gap-2 justify-center  items-center">
+                                        <div class=" h-[166px] w-[170px] ">
+                                            <Camera @capture="handle_groom_image" v-if="!groom_picture" />
+                                            <div v-if="groom_picture"
+                                                class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
+                                                <button @click="groom_picture = ''"
+                                                    class="absolute -top-3 -right-2.5 z-50 bg-red-400 hover:bg-red-500 text-white rounded-full px-1.5 hidden group-hover:block">
+                                                    <font-awesome-icon icon="fa-solid fa-xmark" />
+                                                </button>
+                                                <img :src="groom_picture" alt="Captured photo"
+                                                    class="w-full h-full object-contain " />
+                                            </div>
+
+                                        </div>
+                                        <p class="font-medium text-sm italic text-gray-600">Groom:</p>
+                                        <div class="flex flex-col grow gap-0 w-full">
+                                            <div class="flex flex-row gap-1 items-center">
+                                                <InputMarriage holder="Name" v-model="formData.notice_groom_name"
+                                                    :error="v$.notice_groom_name.$error" />
+                                                <div class="w-[50%]">
+                                                    <InputMarriage holder="Age" v-model="formData.notice_groom_age"
+                                                        :error="v$.notice_groom_age.$error" />
+                                                </div>
+                                            </div>
+                                            <InputMarriage holder="Birth Place"
+                                                v-model="formData.notice_groom_birthplace"
+                                                :error="v$.notice_groom_birthplace.$error" />
+                                            <InputMarriage holder="Residence" v-model="formData.notice_groom_residence"
+                                                :error="v$.notice_groom_residence.$error" />
+                                            <InputMarriage holder="Father" v-model="formData.notice_groom_father"
+                                                :error="v$.notice_groom_father.$error" />
+                                            <InputMarriage holder="Mother" v-model="formData.notice_groom_mother"
+                                                :error="v$.notice_groom_mother.$error" />
+
+                                        </div>
+                                    </div>
+                                    <!-- Bride -->
+                                    <div class="flex flex-col gap-2 justify-center  items-center">
+                                        <div class=" h-[166px] w-[170px] ">
+                                            <Camera @capture="handle_bride_image" v-if="!bride_picture" />
+                                            <div v-if="bride_picture"
+                                                class="h-full w-full flex hover:border-blue-600 border-2 hover:cursor-pointer relative group">
+                                                <button @click="bride_picture = ''"
+                                                    class="absolute -top-3 -right-2.5 z-50 bg-red-400 hover:bg-red-500 text-white rounded-full px-1.5 hidden group-hover:block">
+                                                    <font-awesome-icon icon="fa-solid fa-xmark" />
+                                                </button>
+                                                <img :src="bride_picture" alt="Captured photo"
+                                                    class="w-full h-full object-contain " />
+                                            </div>
+                                        </div>
+                                        <p class="font-medium text-sm italic text-gray-600">Bride:</p>
+                                        <div class="flex flex-col grow gap-0 w-full">
+                                            <div class="flex flex-row gap-1 items-center">
+                                                <InputMarriage holder="Name" v-model="formData.notice_bride_name"
+                                                    :error="v$.notice_bride_name.$error" />
+                                                <div class="w-[50%]">
+                                                    <InputMarriage holder="Age" v-model="formData.notice_bride_age"
+                                                        :error="v$.notice_bride_age.$error" />
+                                                </div>
+                                            </div>
+                                            <InputMarriage holder="Birth Place"
+                                                v-model="formData.notice_bride_birthplace"
+                                                :error="v$.notice_bride_birthplace.$error" />
+                                            <InputMarriage holder="Residence" v-model="formData.notice_bride_residence"
+                                                :error="v$.notice_bride_residence.$error" />
+                                            <InputMarriage holder="Father" v-model="formData.notice_bride_father"
+                                                :error="v$.notice_bride_father.$error" />
+                                            <InputMarriage holder="Mother" v-model="formData.notice_bride_mother"
+                                                :error="v$.notice_bride_mother.$error" />
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="italic mt-4 text-sm font-medium text-green-500">Copy Furnished:</p>
+                                <div class="w-[40%] pl-4 flex flex-col gap-0">
+                                    <InputMarriage v-model="formData.notice_copy_furnished1" />
+                                    <InputMarriage v-model="formData.notice_copy_furnished2" />
+                                    <InputMarriage v-model="formData.notice_copy_furnished3" />
+                                    <InputMarriage v-model="formData.notice_copy_furnished4" />
+                                </div>
+
                             </div>
 
-                            <!-- Step 3: Print -->
-                         
-                        </div>
+                            <div v-if="currentStep === 7 || form_mode === 1"
+                                class="px-4 h-full gap-4 flex flex-col mt-8 mb-2">
+                                <!-- Section Header -->
+                                <div v-if="form_mode === 1">
+                                    <p class="font-bold text-xl mb-4 uppercase text-gray-900">{{ steps[7] }}</p>
+                                </div>
 
+                                <!-- Step 1: Select Document -->
+                                <div>
+                                    <label class="font-semibold flex items-center gap-1">
+                                        <span>1. What document do you want to preview and print?</span>
+                                        <font-awesome-icon icon="fa-solid fa-circle-question"
+                                            class="text-gray-400 cursor-pointer"
+                                            title="Select the document you want to preview and print." />
+                                    </label>
+                                    <div class="flex gap-2 mt-2">
+                                        <button
+                                            :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 1 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
+                                            @click="select_page = 1; change_page()">
+                                            Application for Marriage License
+                                        </button>
+                                        <button
+                                            :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 2 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
+                                            @click="select_page = 2; change_page()">
+                                            Notice of Posting
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="font-semibold mt-4">2. Print</label>
+                                    <div class="flex flex-col gap-2 mt-1">
+                                        <div v-if="select_page === 1" class="flex flex-row gap-2 relative">
+                                            <button @click="printAFML()"
+                                                class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
+                                                <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print
+                                                Application for Marriage License
+                                            </button>
+                                            <button @click="openAFMLSetting()"
+                                                class="flex gap-2 px-3 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 w-52 items-center justify-center text-white text-sm transition-colors">
+                                                <font-awesome-icon icon="fa-solid fa-gear" />
+                                                Adjust Position
+                                            </button>
+
+                                            <!-- Settings Panel -->
+                                            <div v-if="afml_setting"
+                                                class="absolute right-0 top-14 shadow-lg border p-2 w-56 h-auto bg-white rounded-md z-10">
+                                                <p class="text-center font-medium">Print Position Adjustment</p>
+                                                <div class="flex flex-col mt-2">
+                                                    <div class="flex flex-row items-center gap-4">
+                                                        <font-awesome-icon icon="fa-solid fa-x" class="text-xs w-10" />
+                                                        <InputMarriage v-model="pdf_settings.x" type="number" />
+                                                    </div>
+                                                    <div class="flex flex-row items-center gap-4">
+                                                        <font-awesome-icon icon="fa-solid fa-y" class="text-xs w-10" />
+                                                        <InputMarriage v-model="pdf_settings.y" type="number" />
+                                                    </div>
+                                                    <button class="w-full rounded-md mt-4 bg-blue-500 h-10 text-white"
+                                                        @click="saveAFMLSetting()">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button v-if="select_page === 2" @click="printNoticePosting()"
+                                            class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
+                                            <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print Notice of
+                                            Posting
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2: Document Preview -->
+                                <div>
+                                    <label class="font-semibold mt-4">3. Document Preview</label>
+                                    <div class="mt-2 bg-gray-50 rounded-xl  shadow-inner flex items-center justify-center h-96 relative"
+                                        ref="pdfContainer">
+                                        <button
+                                            class="absolute top-2 right-4 z-10 bg-white shadow px-3 py-1 rounded text-sm hover:bg-gray-100"
+                                            @click="toggleFullScreen">
+                                            {{ isFullScreen ? 'Exit Full Screen' : 'Full Screen' }}
+
+                                        </button>
+
+
+                                        <p v-if="isLoadingPrev" class="italic text-gray-600">Loading preview...</p>
+                                        <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
+                                        <p v-if="!pdf_content && !isLoadingPrev"
+                                            class="italic text-gray-500 flex items-center gap-2">
+                                            <font-awesome-icon icon="fa-regular fa-file-pdf" class="text-xl" />
+                                            Select a document above to see a preview.
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <!-- Step 3: Print -->
+
+                            </div>
+
+                        </div>
 
 
                     </div>
@@ -945,6 +975,25 @@ const hide_application_marriage = () => {
     show_application_marriage_settings.value = false
 }
 
+const pdfContainer = ref(null)
+const isFullScreen = ref(false)
+function toggleFullScreen() {
+    const el = pdfContainer.value
+
+    if (!el) return
+
+    if (!document.fullscreenElement) {
+        el.requestFullscreen().then(() => {
+            isFullScreen.value = true
+        }).catch(err => {
+            console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+        isFullScreen.value = false
+    } else {
+        isFullScreen.value = false
+        document.exitFullscreen();
+    }
+}
 
 /**
  * Toast hehe
@@ -1493,14 +1542,11 @@ const {
 function calculateNoticeDate(receiptDateStr) {
     const receiptDate = parseISO(receiptDateStr);
 
-    let startDate;
-    if (isFriday(receiptDate)) {
-        startDate = nextMonday(receiptDate); // start from next Monday
-    } else {
-        startDate = receiptDate;
-    }
+    // If Friday, add 3 days to skip to Monday
+    const noticeDate = isFriday(receiptDate)
+        ? addDays(receiptDate, 3)
+        : addDays(receiptDate, 1);
 
-    const noticeDate = addDays(startDate, 10);
     return format(noticeDate, 'yyyy-MM-dd');
 }
 
@@ -1524,7 +1570,7 @@ const validateForm = async () => {
             title: 'Please fill in all required fields to proceed.',
             duration: 5000,
         })
-        return false
+        return false // change this in prod
     }
     return true
 }

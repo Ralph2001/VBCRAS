@@ -36,8 +36,8 @@ class PaymentMixin:
 class RegisteredPeriodMixin:
     """Fields for forms tracking registration periods"""
     registered_from = db.Column(db.String(255))
-    from_year = db.Column(db.Integer)
-    to_year = db.Column(db.Integer)
+    from_year = db.Column(db.String(155))
+    to_year = db.Column(db.String(155))
     destroyed_by = db.Column(db.String(255))
 
 # -------------------- A-Series Forms --------------------
@@ -81,8 +81,8 @@ class MarriageAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
 
     # Groom information
     groom_name = db.Column(db.String(255), nullable=False)
-    groom_date_birth = db.Column(db.Date)
-    groom_age = db.Column(db.Integer)
+    groom_date_birth = db.Column(db.String(100))
+    groom_age = db.Column(db.String(155))
     groom_citizenship = db.Column(db.String(100))
     groom_civil_status = db.Column(db.String(50))
     groom_mother = db.Column(db.String(255))
@@ -90,15 +90,15 @@ class MarriageAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
     
     # Bride information
     bride_name = db.Column(db.String(255), nullable=False)
-    bride_date_birth = db.Column(db.Date)
-    bride_age = db.Column(db.Integer)
+    bride_date_birth = db.Column(db.String(100))
+    bride_age = db.Column(db.String(155))
     bride_citizenship = db.Column(db.String(100))
     bride_civil_status = db.Column(db.String(50))
     bride_mother = db.Column(db.String(255))
     bride_father = db.Column(db.String(255))
     
     # Marriage details
-    date_marriage = db.Column(db.Date, nullable=False)
+    date_marriage = db.Column(db.String(100), nullable=False)
     place_marriage = db.Column(db.String(255))
 
 
@@ -106,36 +106,37 @@ class MarriageAvailable(BaseCertificate, PaymentMixin, AvailableMixin):
 class BirthIntact(BaseCertificate, PaymentMixin):
     __tablename__ = 'birth_intact'
     no_record_birth_of = db.Column(db.String(255))
-    born_on = db.Column(db.Date)
+    born_on = db.Column(db.String(155))
     mother_name = db.Column(db.String(255))
     father_name = db.Column(db.String(255))
-    intact_birth_year = db.Column(db.Integer)
+    intact_birth_year = db.Column(db.String(155))
 
 class DeathIntact(BaseCertificate, PaymentMixin):
     __tablename__ = 'death_intact'
     no_record_death_of = db.Column(db.String(255))
-    died_on = db.Column(db.Date)
-    intact_death_year = db.Column(db.Integer)
+    died_on = db.Column(db.String(155))
+    intact_death_year = db.Column(db.String(155))
 
 class MarriageIntact(BaseCertificate, PaymentMixin):
     __tablename__ = 'marriage_intact'
     no_record_marriage_of = db.Column(db.String(255))
-    married_on = db.Column(db.Date)
-    intact_marriage_year = db.Column(db.Integer)
+    married_on = db.Column(db.String(155))
+    intact_marriage_year = db.Column(db.String(155))
 
 
 # -------------------- C-Series Forms --------------------
 class BirthDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
     __tablename__ = 'birth_destroyed'
     birth_name = db.Column(db.String(255))
-    born_on = db.Column(db.Date)
+    born_on = db.Column(db.String(155))
 
 class DeathDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
     __tablename__ = 'death_destroyed'
     death_name = db.Column(db.String(255))
-    died_on = db.Column(db.Date)
+    died_on = db.Column(db.String(155))
 
 class MarriageDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
     __tablename__ = 'marriage_destroyed'
-    marriage_name = db.Column(db.String(255))
-    married_on = db.Column(db.Date)
+    groom_name = db.Column(db.String(255))
+    bride_name = db.Column(db.String(255))
+    married_on = db.Column(db.String(155))

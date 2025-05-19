@@ -20,26 +20,41 @@
 
         <div class="h-[calc(100vh-200px)] flex flex-col gap-4">
             <div class="flex flex-row items-center">
-                <div class="relative ">
+                <div class="relative w-60">
+                    <!-- Header label -->
+                    <label class="block text-xs font-medium text-gray-700 mb-1">
+                        Change Document DataTable
+                    </label>
+
+                    <!-- Dropdown -->
                     <div @click="openMenu"
-                        class="flex flex-row w-60 border  border-gray-200 shadow-md items-center hover:cursor-pointer hover:text-white hover:bg-green-500 bg-white p-2 rounded-md">
-                        <p class="font-medium text-sm pl-2">{{ menu }}</p>
-                        <font-awesome-icon icon="fa-solid fa-chevron-down" class="ml-auto text-xs" />
+                        class="flex items-center justify-between border border-gray-300 rounded-md p-2 bg-white shadow-sm hover:bg-gray-100 cursor-pointer transition-colors">
+                        <p class="font-medium text-sm">{{ menu }}</p>
+                        <font-awesome-icon icon="chevron-down" class="text-sm" />
                     </div>
+
+                    <!-- Dropdown items -->
                     <div v-if="isMenuOpen" ref="MenuBox"
-                        class="absolute top-10 border shadow-md rounded-md w-60 min-h-44 max-h-[21rem] overflow-y-auto bg-white z-50">
-                        <ul class="flex p-2 flex-col  ">
-                            <div v-for="(category, index) in menuItems" :key="index">
-                                <!-- <div class="w-full bg-gray-100 px-1 text-center">{{ category.label }}</div> -->
-                                <li v-for="(item, i) in category.items" :key="i" @click="changeMenu(item)"
-                                    :class="[menu === item ? 'bg-gray-200' : '']"
-                                    class="hover:bg-gray-200 px-2 hover:cursor-pointer flex items-center flex-row gap-2">
-                                    <font-awesome-icon icon="fa-solid fa-info" class="text-xs" /> {{ item }}
-                                </li>
-                            </div>
+                        class="absolute top-full mt-1 w-full max-h-96 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg z-50">
+                        <ul>
+                            <li v-for="(category, index) in menuItems" :key="index"
+                                class="px-3 py-2 border-b last:border-b-0">
+                                <div class="text-xs text-gray-500 mb-1">{{ category.label }}</div>
+                                <ul>
+                                    <li v-for="(item, i) in category.items" :key="i" @click="changeMenu(item)" :class="[
+                                        'flex items-center gap-2 px-2 py-1 rounded cursor-pointer transition-colors',
+                                        menu === item ? 'bg-gray-200' : 'hover:bg-gray-100'
+                                    ]">
+                                        <font-awesome-icon icon="info-circle" class="text-xs text-gray-600" />
+                                        <span class="text-sm">{{ item }}</span>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </div>
+
+
                 <div class="ml-auto w-80">
                     <Input label="Search" v-model="search" />
                 </div>
@@ -338,26 +353,27 @@
                                         no
                                         record of {{ selectedType === '1B' ? 'birth' : selectedType === '2B' ? 'death' :
                                             'marriage' }} of
-                                        <InputforForm width="20rem" bold isUpperCase middle
+                                        <InputforForm isUpperCase width="20rem" bold middle
                                             v-model="intact_name_field" />
 
                                         <span v-if="selectedType === '3B'" class="w-full"> and
                                         </span>
-                                        <InputforForm v-if="selectedType === '3B'" width="20rem" bold isUpperCase middle
+                                        <InputforForm isUpperCase v-if="selectedType === '3B'" width="20rem" bold middle
                                             v-model="Form3B.married_with" />
                                         who
                                         is
                                         alleged
                                         to have {{ selectedType === '1B' ? 'been born' : selectedType === '2B' ? 'died'
                                             : 'been married' }} on
-                                        <InputforForm width="10rem" bold middle v-model="intact_date_field" /> in this
+                                        <InputforForm isUpperCase width="10rem" bold middle
+                                            v-model="intact_date_field" /> in this
                                         municipality,
 
                                         <!-- If Form 1B -->
                                         <span v-if="selectedType === '1B'"> of parents
-                                            <InputforForm width="18rem" bold middle v-model="Form1B.father_name"
-                                                v-if="selectedType === '1B'" /> and
-                                            <InputforForm width="18rem" bold v-model="Form1B.mother_name"
+                                            <InputforForm isUpperCase width="18rem" bold middle
+                                                v-model="Form1B.father_name" v-if="selectedType === '1B'" /> and
+                                            <InputforForm isUpperCase width="18rem" bold v-model="Form1B.mother_name"
                                                 v-if="selectedType === '1B'" middle />.
                                         </span>
 
@@ -378,7 +394,8 @@
                                         the
                                         records of
                                         {{ records_of }} for the year
-                                        <InputforForm width="6rem" bold middle v-model="intact_year_field" /> are
+                                        <InputforForm isUpperCase width="6rem" bold middle
+                                            v-model="intact_year_field" /> are
                                         still
                                         intact in the
                                         archives of
@@ -399,24 +416,31 @@
                                     of
                                     {{ records_of }}
                                     filed in the archives of this office include those, which were registered from
-                                    <InputforForm width="6rem" middle v-model="formData.registered_from" /> to
+                                    <InputforForm width="6rem" middle v-model="destroyed.registered_from" /> to
                                     present.
                                     However, the records of {{ records_of }} during period
-                                    <InputforForm width="6rem" v-model="formData.period_from" />
+                                    <InputforForm width="6rem" v-model="destroyed.from_year" />
                                     to
-                                    <InputforForm width="6rem" v-model="formData.period_to" />
+                                    <InputforForm width="6rem" v-model="destroyed.to_year" />
                                     were totally destroyed by
-                                    <InputforForm width="20rem" v-model="formData.destroyed_by" />
+                                    <InputforForm width="20rem" v-model="destroyed.destroyed_by" />
                                     Hence, we cannot issue as requested, a true transcription from the Register of
                                     {{ register_of }} or
                                     true
                                     copy of the Certification of {{ register_of }} of
-                                    <InputforForm width="15rem" v-model="formData.name_of" /> who
+                                    <InputforForm width="25rem" v-if="selectedType === '1C' && selectedType === '2C'"
+                                        v-model="destroyed_name_field" /> <span v-if="selectedType === '3C'">
+                                        <InputforForm width="25rem" v-model="Form3C.groom_name" /> and
+                                        <InputforForm width="25rem" v-model="Form3C.bride_name" />
+                                    </span> who
                                     is alleged
                                     to have {{ alleged_to }} on
-                                    <InputforForm width="10rem" v-model="formData.date_of" /> in
+                                    <InputforForm width="10rem" v-model="destroyed_date_field" /> in
                                     this
-                                    municipality.
+                                    municipality <span v-if="selectedType === '1C'">of parents
+                                        <InputforForm width="25rem" v-model="Form1C.father_name" /> and
+                                        <InputforForm width="25rem" v-model="Form1C.mother_name" />
+                                    </span>.
                                 </p>
 
                             </div>
@@ -441,7 +465,7 @@
 
                             <div class="flex flex-col gap-2 " v-if="is_with_remarks">
                                 <div class="flex flex-row gap-2 items-center">
-                                    <input type="checkbox" v-model="transactions.is_reconstructed"
+                                    <input type="checkbox" v-model="available.is_reconstructed"
                                         class="border rounded-sm border-gray-400" id="is_reconstructed">
                                     <label class="text-md font-medium text-neutral-800 text-sm"
                                         for="is_reconstructed">Reconstructed
@@ -449,7 +473,7 @@
                                 </div>
 
                                 <div class="flex flex-row gap-2 items-center">
-                                    <input type="checkbox" v-model="transactions.is_other_remarks"
+                                    <input type="checkbox" v-model="available.is_other_remarks"
                                         class="border rounded-sm border-gray-400" id="is_other_remarks">
                                     <label class="text-md font-medium text-neutral-800 text-sm"
                                         for="is_other_remarks">Other
@@ -457,7 +481,7 @@
                                 </div>
                                 <!-- <p class="font-medium text-xs">Add Remarks</p> -->
 
-                                <div class="flex flex-col py-2 w-full gap-2" v-show="transactions.is_other_remarks">
+                                <div class="flex flex-col py-2 w-full gap-2" v-show="available.is_other_remarks">
                                     <div class="w-full flex flex-col gap-1 bg-white">
                                         <QuillEditor @ready="handleEditorReady" theme="snow"
                                             :toolbar="['bold', 'italic']" v-model:content="available.remarks"
@@ -1162,7 +1186,7 @@ const changeMenu = (item) => {
 const settings = ref(false)
 let transactions = reactive({ ...useTransactionDetails });
 let available = reactive({ ...useAvailableForm });
-
+let destroyed = reactive({ ...useRegisteredPeriod })
 
 /**
  * All Forms FormData
@@ -1230,7 +1254,30 @@ const intact_year_field = computed({
 
 
 
-
+const destroyed_name_field = computed({
+    get() {
+        if (selectedType.value === '1C') return Form1C.birth_name;
+        if (selectedType.value === '2C') return Form2C.death_name;
+        return;
+    },
+    set(value) {
+        if (selectedType.value === '1C') Form1C.birth_name = value;
+        else if (selectedType.value === '2C') Form2C.death_name = value;
+        else return;
+    }
+});
+const destroyed_date_field = computed({
+    get() {
+        if (selectedType.value === '1C') return Form1C.born_on;
+        if (selectedType.value === '2C') return Form2C.died_on;
+        return Form3C.married_on;
+    },
+    set(value) {
+        if (selectedType.value === '1C') Form1C.born_on = value;
+        else if (selectedType.value === '2C') Form2C.died_on = value;
+        else Form3C.married_on = value;
+    }
+});
 
 
 
@@ -1354,6 +1401,9 @@ function handleEditorReady(editor) {
 const formID = ref(null)
 const isUpdateHook = ref(false)
 
+
+
+
 const saveForm = async () => {
     const form_type = selectedType.value;
     const formAvailableMapping = {
@@ -1379,11 +1429,11 @@ const saveForm = async () => {
             ...preference,
             ...transactions,
             ...(form_type.endsWith('A') ? available : {}),
+            ...(form_type.endsWith('C') ? destroyed : {}),
             ...formAvailableMapping[form_type],
         });
 
         available.remarks = ''
-
         available.remarks = remarksNotDelta.value
 
 
@@ -1401,11 +1451,14 @@ const saveForm = async () => {
                 "1A": formsStore.add_form1a,
                 "1B": formsStore.add_form1b,
                 "1C": formsStore.add_form1c,
+
                 "2A": formsStore.add_form2a,
                 "2B": formsStore.add_form2b,
-                "2C": formsStore.add_form2b,
+                "2C": formsStore.add_form2c,
+
                 "3A": formsStore.add_form3a,
                 "3B": formsStore.add_form3b,
+                "3C": formsStore.add_form3c,
             };
             // Save it to databse
             const add = formFunctions[selectedType.value] ? formFunctions[selectedType.value](formData) : "";
@@ -1415,8 +1468,8 @@ const saveForm = async () => {
             }
         }
 
-        // //    Print the document
-        // const print = await window.LocalCivilApi.printPDFBase64(preview.result.pdfbase64)
+        // Save PDF locally 
+        // const save = await window.FormApi.SaveFormPDF(JSON.stringify(main_data));
 
         closeModal()
         toast.fire({
@@ -1458,6 +1511,7 @@ const previewForm = async () => {
             form_type,
             ...preference,
             ...transactions,
+            ...destroyed,
             ...(form_type.endsWith('A') ? available : {}),
             ...formAvailableMapping[form_type],
         });
@@ -1678,8 +1732,8 @@ const EditMap = (data) => {
     transactions.for_and_in_the_absence = data.for_and_in_the_absence
     transactions.absence_verified_by = data.absence_verified_by
     transactions.absence_verifier_position = data.absence_verifier_position
-    transactions.is_reconstructed = data.is_reconstructed
-    transactions.is_other_remarks = data.is_other_remarks
+    available.is_reconstructed = data.is_reconstructed
+    available.is_other_remarks = data.is_other_remarks
 
     available.date_registration = data.date_registration
     available.page_number = data.page_number
@@ -1741,65 +1795,161 @@ const handleCopy = async (data) => {
 
 
 
-const colDefs = ref([
-    {
-        field: "name_child",
-        headerName: "Document Owner",
-        flex: 2,
-        filter: true,
-        cellClass: 'font-medium',
-        cellStyle: { border: "none" },
-        pinned: "left",
-        width: 300,
-        lockPinned: true,
-        resizable: true,
-        sortable: false,
-    },
-    {
-        field: "date_filed",
-        flex: 1,
-        headerName: "Date Filed",
-        filter: true,
-    },
-    {
-        field: "registry_number",
-        headerName: "Registry Number",
-        filter: true,
-    },
-    {
-        field: "date_registration",
-        headerName: "Date Registration",
-        filter: true,
-    },
-    {
-        field: "date_birth",
-        headerName: "Date of Birth",
-        filter: true,
-    },
-    {
-        field: "place_birth",
-        headerName: "Place of Birth",
-        filter: true,
-    },
-    {
-        headerName: "Action",
-        cellStyle: { border: "none" },
-        pinned: "right",
-        flex: 2,
-        width: 150,
-        lockPinned: true,
-        resizable: true,
-        sortable: false,
-        cellStyle: { overflow: "visible", border: "none" },
-        cellRenderer: ManageBtn,
-        cellRendererParams: {
-            onViewLocal: handleViewLocal,
-            onRemove: handleRemove,
-            onEdit: handleEdit,
-            onCopy: handleCopy
-        },
-    },
-]);
+// Define your base action column
+const actionColumn = {
+    headerName: "Action",
+    pinned: "right",
+    flex: 2,
+    width: 150,
+    lockPinned: true,
+    resizable: true,
+    sortable: false,
+    cellStyle: { overflow: "visible", border: "none" },
+    cellRenderer: ManageBtn,
+    cellRendererParams: {
+        onViewLocal: handleViewLocal,
+        onRemove: handleRemove,
+        onEdit: handleEdit,
+        onCopy: handleCopy
+    }
+}
+
+// Dynamic column definitions
+const colDefs = ref([])
+
+// Column presets
+const columnPresets = {
+    // -------------------- Available --------------------
+    'Birth Available': [
+        { field: "name_child", headerName: "Child Name", flex: 1, pinned: 'left', filter: true },
+        // { field: "sex", headerName: "Sex" },
+        { field: "date_birth", headerName: "Date of Birth" },
+        { field: "place_birth", headerName: "Place of Birth" },
+        // { field: "name_mother", headerName: "Mother's Name" },
+        // { field: "name_father", headerName: "Father's Name" },
+        // { field: "date_marriage_parents", headerName: "Parents' Marriage Date" },
+        { field: "registry_number", headerName: "Registry Number" },
+        { field: "date_registration", headerName: "Date of Registration" },
+        // { field: "remarks", headerName: "Remarks" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+    'Death Available': [
+        { field: "name_deceased", headerName: "Deceased Name", flex: 1, pinned: 'left' },
+        // { field: "sex", headerName: "Sex" },
+        // { field: "deceased_age", headerName: "Age" },
+        // { field: "deceased_civil_status", headerName: "Civil Status" },
+        // { field: "deceased_citizenship", headerName: "Citizenship" },
+        { field: "date_of_death", headerName: "Date of Death" },
+        { field: "place_of_death", headerName: "Place of Death" },
+        // { field: "cause_of_death", headerName: "Cause of Death" },
+        { field: "registry_number", headerName: "Registry Number" },
+        // { field: "date_registration", headerName: "Date of Registration" },
+        // { field: "remarks", headerName: "Remarks" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+    'Marriage Available': [
+        { field: "groom_name", headerName: "Groom Name", flex: 1 },
+        { field: "bride_name", headerName: "Bride Name", flex: 1 },
+        { field: "date_marriage", headerName: "Marriage Date" },
+        { field: "place_marriage", headerName: "Place of Marriage" },
+        { field: "registry_number", headerName: "Registry Number" },
+        { field: "date_registration", headerName: "Date of Registration" },
+        // { field: "remarks", headerName: "Remarks" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+
+    // -------------------- Intact --------------------
+    'Birth Intact': [
+        { field: "no_record_birth_of", headerName: "No Record Birth Of", flex: 1, pinned: 'left' },
+        { field: "born_on", headerName: "Born On" },
+        // { field: "mother_name", headerName: "Mother's Name" },
+        // { field: "father_name", headerName: "Father's Name" },
+        { field: "intact_birth_year", headerName: "Intact Year" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+    'Death Intact': [
+        { field: "no_record_death_of", headerName: "No Record Death Of", flex: 1, pinned: 'left' },
+        { field: "died_on", headerName: "Died On" },
+        { field: "intact_death_year", headerName: "Intact Year" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+    'Marriage Intact': [
+        { field: "no_record_marriage_of", headerName: "No Record Marriage Of", flex: 1, pinned: 'left' },
+        { field: "married_on", headerName: "Married On" },
+        { field: "intact_marriage_year", headerName: "Intact Year" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+
+    // -------------------- Destroyed --------------------
+    'Birth Destroyed': [
+        { field: "birth_name", headerName: "Birth Name", flex: 1, pinned: 'left' },
+        { field: "born_on", headerName: "Born On" },
+        { field: "registered_from", headerName: "Registered From" },
+        { field: "from_year", headerName: "From Year" },
+        { field: "to_year", headerName: "To Year" },
+        // { field: "destroyed_by", headerName: "Destroyed By" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+    'Death Destroyed': [
+        { field: "death_name", headerName: "Death Name", flex: 1, pinned: 'left' },
+        { field: "died_on", headerName: "Died On" },
+        { field: "registered_from", headerName: "Registered From" },
+        { field: "from_year", headerName: "From Year" },
+        { field: "to_year", headerName: "To Year" },
+        // { field: "destroyed_by", headerName: "Destroyed By" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+    'Marriage Destroyed': [
+        { field: "groom_name", headerName: "Groom Name", flex: 1 },
+        { field: "bride_name", headerName: "Bride Name", flex: 1 },
+        { field: "married_on", headerName: "Married On" },
+        { field: "registered_from", headerName: "Registered From" },
+        { field: "from_year", headerName: "From Year" },
+        { field: "to_year", headerName: "To Year" },
+        // { field: "destroyed_by", headerName: "Destroyed By" },
+        // { field: "amount_paid", headerName: "Amount Paid" },
+        // { field: "or_number", headerName: "OR Number" },
+        { field: "date_paid", headerName: "Date Paid" },
+    ],
+};
+
+
+// Watch for menu change
+watch(menu, (newVal) => {
+    if (columnPresets[newVal]) {
+        colDefs.value = [
+            ...columnPresets[newVal].map(col => ({
+                filter: true,
+                resizable: true,
+                sortable: true,
+                cellStyle: { border: "none" },
+                ...col
+            })),
+            actionColumn
+        ]
+    }
+}, { immediate: true })
+
+
+
+
+
 
 </script>
 <style scoped>

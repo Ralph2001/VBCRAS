@@ -15,16 +15,12 @@ export const useTransactionDetails = {
     for_and_in_the_absence: false,
     absence_verified_by: 'GLENN ALBERT R. MALICDEM',
     absence_verifier_position: 'Administrative Aide III',
+
+}
+
+export const useAvailableForm = {
     is_reconstructed: false,
     is_other_remarks: false,
-}
-export const useRegisteredPeriod = {
-    registered_from: '',
-    from_year: '',
-    to_year: '',
-    destroyed_by: '',
-}
-export const useAvailableForm = {
     date_registration: '',
     page_number: '',
     book_number: '',
@@ -101,18 +97,27 @@ export const useForm3B = {
     intact_marriage_year: '',
 }
 
+export const useRegisteredPeriod = {
+    registered_from: '',
+    from_year: '',
+    to_year: '',
+    destroyed_by: '',
+}
+
 export const useForm1C = {
     birth_name: '',
     born_on: '',
-    ...useRegisteredPeriod
+    father_name: '',
+    mother_name: '',
 }
 export const useForm2C = {
     death_name: '',
     died_on: '',
-    ...useRegisteredPeriod
+
 }
 export const useForm3C = {
-    marriage_name: '',
+    // marriage_name: '',
     married_on: '',
-    ...useRegisteredPeriod
+    groom_name: '',
+    bride_name: '',
 }

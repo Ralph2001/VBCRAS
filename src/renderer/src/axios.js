@@ -1,14 +1,28 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: `http://${localStorage.getItem('host')}:1216/`,
+    baseURL: '', // Will be set dynamically before each request
     headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json' 
+        'Content-Type': 'application/json'
     },
 });
 
-// A reusable function to make requests
+
+axiosInstance.interceptors.request.use(config => {
+    const host = localStorage.getItem('host');
+    const token = localStorage.getItem('token');
+
+    config.baseURL = `http://${host}:1216/`;
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    } else {
+        delete config.headers['Authorization'];
+    }
+
+    return config;
+}, error => Promise.reject(error));
+
+
 const makeRequest = async (method, endpoint, data = null) => {
     try {
         const response = await axiosInstance({
@@ -18,6 +32,7 @@ const makeRequest = async (method, endpoint, data = null) => {
         });
         return response.data;
     } catch (error) {
+      
         console.error(`Error with ${method} request to ${endpoint}:`, error);
         throw error;
     }

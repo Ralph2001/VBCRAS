@@ -632,13 +632,17 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
                 ? 'have been married'
                 : ''
     const is_for_1 = data.form_type.includes('1')
-        ? `, of parents {{${data.father_name}}} and {{${data.mother_name}}}`
-        : ''
+        ? `, of parents {{${data.father_name}}}${data.mother_name ? ` and {{${data.mother_name}}}` : ''}`
+        : '';
+
     const the_who_b =
         data.form_type.includes('1') || data.form_type.includes('2')
             ? 'who is'
             : 'who were'
-    const is_for_3 = data.form_type.includes('3') ? ` and {{${data.married_with}}}` : ''
+    const is_for_3 = data.form_type.includes('3') && data.married_with
+        ? ` and {{${data.married_with}}}`
+        : '';
+
     const certificate_of = data.form_type.includes('1')
         ? 'Live Birth'
         : data.form_type.includes('2')
@@ -761,7 +765,61 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
 }
 
 function document_body_destroyed(data, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
-    const we_clerify_for_c = `We certify that the records of births filed in the archives of this office, include those which were registered from {{1932}} to present. However, the records of births during the period {{1932 to 1946}} were totally destroyed by {{flood}}. Hence, we cannot issue as requested a true transcription from the Register of Births or true copy of the Certificate of Live Birth of {{ROMANA BATO SOLIS}} who was alleged to have been born on {{August 09, 1932}} in this municipality of parents {{Emelio Solis}} and {{Elena Bato.}}`
+
+    const document_owner = data.form_type.includes('1')
+        ? `${data.birth_name}`
+        : data.form_type.includes('2')
+            ? `${data.death_name}`
+            : data.form_type.includes('3')
+                ? `${data.groom_name} and ${data.bride_name}`
+                : '';
+
+    const date_field = data.form_type.includes('1')
+        ? `${data.born_on}`
+        : data.form_type.includes('2')
+            ? `${data.died_on}`
+            : data.form_type.includes('3')
+                ? `${data.married_on}`
+                : '';
+
+    const isBirth = data.form_type.includes('1') && data.father_name
+        ? ` of parents {{${data.father_name}}}${data.mother_name ? ` and {{${data.mother_name}}}` : ''}`
+        : '';
+
+
+    const eventPlural = data.form_type.includes('1')
+        ? 'births'
+        : data.form_type.includes('2')
+            ? 'deaths'
+            : data.form_type.includes('3')
+                ? 'marriages'
+                : '';
+
+    const eventRegister = data.form_type.includes('1')
+        ? 'Register of Births'
+        : data.form_type.includes('2')
+            ? 'Register of Deaths'
+            : data.form_type.includes('3')
+                ? 'Register of Marriages'
+                : '';
+
+    const certificateType = data.form_type.includes('1')
+        ? 'Certificate of Live Birth'
+        : data.form_type.includes('2')
+            ? 'Certificate of Death'
+            : data.form_type.includes('3')
+                ? 'Certificate of Marriage'
+                : '';
+
+    const eventVerb = data.form_type.includes('1')
+        ? 'born'
+        : data.form_type.includes('2')
+            ? 'died'
+            : data.form_type.includes('3')
+                ? 'married'
+                : '';
+
+    const we_clerify_for_c = `We certify that the records of ${eventPlural} filed in the archives of this office, include those which were registered from {{${data.registered_from}}} to present. However, the records of ${eventPlural} during the period {{${data.from_year} to ${data.to_year}}} were totally destroyed by {{${data.destroyed_by}}}. Hence, we cannot issue as requested a true transcription from the ${eventRegister} or true copy of the ${certificateType} of {{${document_owner}}} who was alleged to have been ${eventVerb} on {{${date_field}}} in this municipality${isBirth}.`;
 
     const we_certify_with_line_break = add_line_break(
         we_clerify_for_c,
@@ -1335,7 +1393,7 @@ function add_line_break(
 
 function addBlanks(data) {
     const targetWidth = 451
-    const minimumWidthToAddBlanks = 350
+    const minimumWidthToAddBlanks = 304
 
     let newData = []
     let this_is_not_the_first = false
