@@ -134,7 +134,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[0]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-1 gap-2 mb-auto">
@@ -168,7 +168,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[1]
-                                        }}
+                                            }}
                                         </p>
                                     </div>
 
@@ -285,7 +285,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[2]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-3 gap-1 items-end">
@@ -399,7 +399,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[3]
-                                        }}
+                                            }}
                                         </p>
                                     </div>
                                     <div class="grid grid-cols-3 gap-1 items-end">
@@ -514,7 +514,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[4]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
 
@@ -621,7 +621,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[5]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
 
@@ -648,11 +648,11 @@
 
                                 <div class="flex flex-col gap-0" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
-                                    }}
+                                        }}
                                     </p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                                         steps[6]
-                                    }} Details
+                                        }} Details
                                     </p>
                                 </div>
                                 <div class="w-80 mt-8">

@@ -45,7 +45,7 @@
       <!-- Render Items -->
       <RecycleScroller class="flex-1" v-if="isValidSelection && !documents.loading && !documents.isError"
         :items="filteredFiles" :item-size="5" key-field="id" v-slot="{ item }">
-        <ScannedFile :file_info="item" :size="5" @open-details="emits('open-details')" />
+        <ScannedFile :file_info="item" :size="5" @open-details="handleData" />
       </RecycleScroller>
     </div>
   </div>
@@ -73,7 +73,13 @@ const isLoading = ref(false)
 
 const searchQuery = ref("");
 
-const emits = defineEmits(['open-details', 'openNewTypeModal'])
+
+const emits = defineEmits(['open-details', 'openNewTypeModal', 'pass-data'])
+
+const handleData = (data) => {
+  emits('pass-data', data)
+
+}
 
 const debouncedFn = useDebounceFn(() => {
   SearchFile();

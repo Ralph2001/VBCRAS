@@ -15,10 +15,11 @@
             </div>
         </div>
         <div class="h-[calc(100vh-180px)] relative">
-            <ScannedDetails v-if="isDetailsOpen" @close-details="isDetailsOpen = false" />
+            <ScannedDetails v-if="isDetailsOpen" @close-details="closeDetails" :fileInfo="fileInfo"
+                />
             <DropZone v-if="isDropzoneOpen" @dragleave="isDropzoneOpen = false" @drop="handleDrop" @dragover.prevent />
             <ExplorerView @openNewTypeModal="openNewTypeModal" v-if="isExplorerVisible" :types="documents.scanned_types"
-                @open-details="isDetailsOpen = true" />
+                @pass-data="openFileInfo" />
             <Transition mode="out-in" name="zoom_in">
                 <div tabindex="-1" v-if="IsModalOpen"
                     class="fixed top-0 p-2 bottom-0 left-0 right-0 flex items-center justify-center z-50 backdrop-blur-sm backdrop-brightness-75">
@@ -171,6 +172,21 @@ onMounted(() => {
 
 })
 
+const fileInfo = ref(null)
+const pdfbase64 = ref(null)
+
+const openFileInfo = async (file) => {
+    fileInfo.value = null;
+    isDetailsOpen.value = true;
+    fileInfo.value = file;
+};
+
+
+
+const closeDetails = () => {
+    isDetailsOpen.value = false;
+    fileInfo.value = null;
+};
 
 onUnmounted(() => {
     authUser.isAuthenticated()
@@ -233,35 +249,44 @@ function sanitizeFilePath(path) {
     return safePath;
 }
 
+
+
+async function getRelativePath(fullPath) {
+    const user = await window.LocalCivilApi.getUser();
+
+    const homePath = `C:\\Users\\${user}\\`;
+    return fullPath.startsWith(homePath)
+        ? fullPath.replace(homePath, '')
+        : fullPath;
+}
+
 async function handleDrop(event) {
-    event.preventDefault()
+    event.preventDefault();
     event.stopPropagation();
 
     if (mainData.Files.length > 0) {
-        mainData.Files = []
+        mainData.Files = [];
     }
 
     for (const f of event.dataTransfer.files) {
-        if (f.type !== "application/pdf") {
-            // Add Warning Message
-            continue
-        }
-        try {
-            const path = await window.getPathApi.showFilePath(f);
-            const sanitizedPath = sanitizeFilePath(path);
+        if (f.type !== "application/pdf") continue;
 
+        try {
+            const fullPath = await window.getPathApi.showFilePath(f);
+            const sanitizedPath = sanitizeFilePath(fullPath);
+            const relativePath = await getRelativePath(sanitizedPath);
 
             mainData.Files.push({
                 name: f.name,
-                filepath: sanitizedPath,
+                filepath: relativePath,
             });
         } catch (error) {
             console.error("Error getting file path for", f.name, error);
         }
     }
 
-    isDropzoneOpen.value = false
-    IsModalOpen.value = true
+    isDropzoneOpen.value = false;
+    IsModalOpen.value = true;
 }
 
 

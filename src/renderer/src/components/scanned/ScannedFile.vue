@@ -11,20 +11,26 @@
             </p>
         </div>
         <div ref="itemDiv" v-if="isOptionOpen"
-            class="flex transition-all border py-0.5 h-full duration-300  items-center justify-end bg-blue-100">
-            <div class="flex flex-row gap-1 px-4 py-2.5 ">
-                <button @click="emits('open-details')"
-                    class=" rounded-sm bg-green-600 hover:bg-green-600/90 transition-all duration-200 text-white  flex text-start px-2 py-1  font-medium text-sm ">View
+            class="flex items-center justify-end bg-gray-50 border rounded-md transition-all duration-300 h-full">
+            <div class="flex gap-2 px-4 py-3">
+                <button @click="emits('open-details', file_info)"
+                    class="px-3 py-1.5 text-sm font-medium text-white bg-gray-700 rounded hover:bg-gray-600 transition-colors">
+                    View
                 </button>
 
                 <button
-                    class=" rounded-sm bg-blue-600 hover:bg-blue-600/90 transition-all duration-200 text-white  flex text-start px-2 py-1  font-medium text-sm ">
-                    Create Form</button>
+                    class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-500 transition-colors">
+                    Create Form
+                </button>
+
                 <button
-                    class=" rounded-sm bg-red-600 hover:bg-red-600/90 transition-all duration-200 text-white  flex text-start px-2 py-1  font-medium text-sm ">Remove
+                    class="px-3 py-1.5 text-sm font-medium text-white bg-rose-600 rounded hover:bg-rose-500 transition-colors">
+                    Remove
                 </button>
             </div>
         </div>
+
+
     </div>
 </template>
 
@@ -33,7 +39,8 @@ import { onClickOutside } from '@vueuse/core/index.cjs';
 import { nextTick, ref } from 'vue';
 
 const itemDiv = ref(null)
-const emits = defineEmits('open-details')
+
+const emits = defineEmits(['open-details'])
 onClickOutside(itemDiv, event =>
     isOptionOpen.value = false
 )
