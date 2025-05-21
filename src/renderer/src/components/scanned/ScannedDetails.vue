@@ -1,52 +1,84 @@
 <template>
     <div class="fixed inset-0 bg-white z-50 flex flex-col h-screen">
-
-        <!-- Header / Toolbar -->
+        <!-- Header -->
         <div class="p-4 border-b flex items-center justify-between bg-gray-100 shadow-sm">
-            <h2 class="font-semibold text-lg text-gray-800">
-                <!-- {{ previewPage === 1 ? 'Application for Marriage License' : 'Notice of Posting' }} -->
-                {{ props.fileInfo.name ? props.fileInfo.name.replace('.pdf', '') : 'Unnamed' }}
-            </h2>
-            <button @click="emits(
-                'close-details'
-            )" class="text-gray-500 hover:text-gray-700">
+            <div class="flex flex-col">
+                <h2 class="font-semibold text-lg text-gray-800 truncate">
+                    {{ props.fileInfo.name?.replace('.pdf', '') || 'Unnamed' }}
+                </h2>
+                <div class="space-x-4 truncate text-xs">
+
+                </div>
+            </div>
+            <button @click="emits('close-details')" class="text-gray-500 hover:text-gray-700">
                 <font-awesome-icon icon="fa-solid fa-xmark" class="text-xl" />
             </button>
         </div>
 
-
-        <!-- Controls Section -->
+        <!-- Info Bar -->
         <div class="flex items-center justify-between px-4 py-3 bg-gray-100 border-b shadow text-sm text-gray-600">
+            <button @click="isFilterOpen = !isFilterOpen" :disabled="isCertifiedTrueCopy"
+                :class="isFilterOpen ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 hover:bg-gray-300'"
+                class="px-3 py-1.5 rounded  text-gray-800 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
+                Filter Tab
+            </button>
+            <div class="flex justify-center items-center gap-4 my-2 text-sm">
+                <button @click="prevPage" :disabled="currentPageNum <= 1"
+                    class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white">
+                    Prev
+                </button>
 
-            <!-- Minimal Metadata -->
-            <div class="space-x-4 truncate">
-                <span><strong>Type:</strong> {{ props.fileInfo.scanned_type?.name || 'N/A' }}</span>
-                <span><strong>Year:</strong> {{ props.fileInfo.year }}</span>
-                <span><strong>Month:</strong> {{ props.fileInfo.month }}</span>
+                <span class="text-gray-700">Page {{ currentPageNum }} / {{ totalPages }}</span>
 
+                <button @click="nextPage" :disabled="currentPageNum >= totalPages"
+                    class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white">
+                    Next
+                </button>
             </div>
 
-            <!-- Action Buttons -->
             <div class="flex items-center space-x-2">
+
                 <label
                     class="inline-flex items-center space-x-2 cursor-pointer border broder-gray-300 rounded-md shadow-sm px-3 py-1.5 bg-white">
                     <input type="checkbox" v-model="isCertifiedTrueCopy"
                         class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                     <span class="text-sm text-gray-800 font-medium">Certified True Copy</span>
                 </label>
-                <button @click="handlePreviewPrint(props.pdfbase64)"
-                    class="bg-green-500 text-white px-3 py-1.5 rounded hover:bg-green-600">
+                <button @click="handlePreviewPrint"
+                    class="bg-green-500 text-white px-3 py-1.5 rounded hover:bg-green-600 ">
                     <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
                     Print
                 </button>
             </div>
-
         </div>
 
-        <!-- PDF Preview -->
-        <div class="flex-1 overflow-auto flex flex-row bg-gray-50  items-center justify-center relative">
-            <div class="grow h-full flex items-center justify-center">
-                <PDFViewerWorker :pdfBytes64="pdfbase64" />
+        <div class="flex-1 flex flex-row overflow-hidden">
+            <div class="flex-1 overflow-auto bg-gray-900 relative" @wheel.ctrl.prevent="handleWheelZoom">
+                <div class="min-w-full min-h-full p-4" :style="{ filter: canvasFilter }">
+                    <canvas ref="pdfCanvas" class="shadow-md  mx-auto block"></canvas>
+
+                    <div v-if="isCertifiedTrueCopy" v-for="(box, index) in boxes.filter(b => b.page === currentPageNum)"
+                        :key="index" class="absolute flex flex-col cursor-move text-center overflow-hidden" :style="{
+                            top: `${offsetY + box.y * scale}px`,
+                            left: `${offsetX + box.x * scale}px`,
+                            width: `${box.width * scale}px`,
+                            height: `${box.height * scale}px`,
+                        }" @mousedown="startDrag(index, $event)">
+                        <div :class="`text-[${stampColor}]`"
+                            class="flex-1  flex flex-col justify-center p-1 select-none  active:rounded-md tracking-tight active:border-dashed  active:border-blue-600 active:border-2">
+
+                            <p v-for="text in textChar" :key="text.title" :style="{
+                                fontSize: `${text.fontSize * scale}px`,
+                                fontWeight: text.fontWeight,
+
+                            }">
+                                {{ text.title }}
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="w-72 p-4 border-l bg-white h-full" v-if="isCertifiedTrueCopy">
                 <h3 class="text-sm font-semibold text-gray-800 mb-3">Certified True Copy Settings</h3>
@@ -58,27 +90,34 @@
                     <select id="position" v-model="position"
                         class="w-full text-sm border rounded px-3 py-1.5 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400">
                         <option disabled value="">Select Position</option>
-                        <option value="top-right">Top Right</option>
-                        <option value="top-center">Top Center</option>
-                        <option value="top-left">Top Left</option>
-                        <option value="bottom-right">Bottom Right</option>
-                        <option value="bottom-center">Bottom Center</option>
-                        <option value="bottom-left">Bottom Left</option>
+                        <option :value="pos.value" v-for="pos in predefinedPositions" :key="pos.name">{{ pos.name }}
+                        </option>
                     </select>
                 </div>
 
                 <!-- Manual Coordinates -->
+                <label for="position" class="block text-xs text-gray-800 font-semibold mb-1 ">Stamp Page</label>
+                <div class="grid gap-4 mb-4">
+
+                    <select id="position" v-model="boxes[0].page"
+                        class="w-full text-sm border rounded px-3 py-1.5 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <option disabled value="">Select Page</option>
+                        <option :value="i" v-for="i in totalPages" :key="i">{{ i }}</option>
+                    </select>
+
+
+                </div>
                 <label for="position" class="block text-xs text-gray-800 font-semibold mb-1 ">Manually Set
                     Position</label>
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
                         <label for="pos-x" class="block text-xs text-gray-600 mb-1">X Position</label>
-                        <input id="pos-x" type="number" v-model="positionX"
+                        <input id="pos-x" type="number" v-model="x_pos"
                             class="w-full text-sm border rounded px-3 py-1.5 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div>
                         <label for="pos-y" class="block text-xs text-gray-600 mb-1">Y Position</label>
-                        <input id="pos-y" type="number" v-model="positionY"
+                        <input id="pos-y" type="number" v-model="y_pos"
                             class="w-full text-sm border rounded px-3 py-1.5 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400">
                     </div>
                 </div>
@@ -95,167 +134,491 @@
 
                 </div>
 
-                <!-- Custom Color Picker -->
-                <!-- <div>
-                    <label for="stampColor" class="block text-xs text-gray-600 mb-1">Custom Color</label>
-                    <input id="stampColor" type="color" v-model="stampColor"
-                        class="w-full h-9 border rounded cursor-pointer bg-white p-1" />
-                </div> -->
-
             </div>
+            <div v-if="isFilterOpen" class="w-72 p-3 border-l bg-white h-full text-sm text-gray-700">
+                <h3 class="font-medium mb-2">Filters</h3>
+
+                <!-- Presets -->
+                <div class="mb-4">
+                    <label for="preset" class="block mb-1 text-xs font-medium">Preset</label>
+                    <select id="preset" v-model="selectedPreset"
+                        class="w-full border rounded px-2 py-1 bg-gray-50 focus:outline-none focus:ring">
+                        <option v-for="p in filterPresets" :key="p.name" :value="p.name">{{ p.name }}</option>
+                    </select>
+                </div>
+
+                <!-- Sliders -->
+                <template v-for="control in filterControls" :key="control.key">
+                    <div class="mb-3">
+                        <label :for="control.key" class="block mb-1 text-xs">
+                            {{ control.label }} ({{ filters[control.key] }}{{ control.unit }})
+                        </label>
+                        <input type="range" :id="control.key" :min="control.min" :max="control.max" :step="control.step"
+                            v-model.number="filters[control.key]" class="w-full" />
+                    </div>
+                </template>
+
+                <button @click="selectedPreset = 'Normal'"
+                    class="w-full mt-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-xs">
+                    Reset to Normal
+                </button>
+            </div>
+
+
 
 
         </div>
     </div>
 </template>
+
 <script setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue';
-import PDFViewerWorker from '../PDFViewerWorker.vue';
+import { onMounted, onUnmounted, ref, watch, nextTick, watchEffect, computed } from 'vue'
+import * as pdfjsLib from 'pdfjs-dist/webpack'
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+
 const emits = defineEmits(['close-details'])
 
-// State Variables
+const currentPageNum = ref(1)
+const totalPages = ref(1)
+
+const predefinedPositions = [
+    { name: 'Top Right', value: 'top-right', x: 382, y: 26 },
+    { name: 'Top Left', value: 'top-left', x: 55, y: 55 },
+    { name: 'Bottom Right', value: 'bottom-right', x: 364, y: 819 },
+    { name: 'Bottom Left', value: 'bottom-left', x: 28, y: 819 },
+]
+
+
 const isCertifiedTrueCopy = ref(false);
 const position = ref('bottom-right');
-const positionX = ref(0);
-const positionY = ref(0);
 const stampColor = ref('#4169E1');
 const predefinedColors = ['#4169E1'];
 
 
+watch(isCertifiedTrueCopy, async (val) => {
+    if (!val) {
+        boxes.value = [{ x: 360, y: 832, width: 200, height: 120, page: currentPageNum.value }];
+    }
+    await nextTick()
+    await renderPdf()
+})
+
+
+const textChar = [
+    {
+        title: 'LOCAL CIVIL REGISTRY OFFICE',
+        fontSize: 9,
+        fontWeight: 'bold',
+    },
+    {
+        title: 'Bayambang, Pangasinan',
+        fontSize: 9,
+        fontWeight: 'bold',
+    },
+    {
+        title: 'CERTIFIED TRUE COPY',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    {
+        title: '\u00A0',
+        fontSize: 8,
+        fontWeight: '',
+    },
+    {
+        title: 'ISMAEL D. MALICDEM, JR.',
+        fontSize: 10,
+        fontWeight: 'bold',
+    },
+    {
+        title: 'Municipal Civil Registrar',
+        fontSize: 9,
+        fontWeight: 'normal',
+    },
+]
+
+
 const props = defineProps({
     fileInfo: {
-        type: [Array, Object]
+        type: [Object],
+        required: true
     }
 })
 
 const pdfbase64 = ref(null)
-onMounted(async () => {
-    try {
-        const path = await window.ScannedApi.OpenInSideBar(props.fileInfo.filepath);
-        pdfbase64.value = path.fileUrl;
-        originalPdfBytes.value = path.fileUrl;
-    } catch (error) {
-        console.error(error);
+const pdfCanvas = ref(null);
+const scale = ref(1.0);
+const offsetX = ref(0);
+const offsetY = ref(0);
+
+
+const boxes = ref([
+    { x: 360, y: 832, width: 200, height: 120, page: 1 }
+])
+
+watch(() => {
+    if (position.value) {
+        const selectedPosition = predefinedPositions.find(pos => pos.value === position.value);
+        if (selectedPosition) {
+            boxes.value[0].x = selectedPosition.x;
+            boxes.value[0].y = selectedPosition.y;
+
+        }
     }
 });
 
-onUnmounted(() => {
-    pdfbase64.value = null;
-});
+const updateCanvasOffset = () => {
+    if (!pdfCanvas.value) return;
+    const parent = pdfCanvas.value.parentElement;
+    if (parent) {
+        offsetX.value = (parent.clientWidth - pdfCanvas.value.clientWidth) / 2;
+        offsetY.value = (parent.clientHeight - pdfCanvas.value.clientHeight) / 2;
 
-
-
-const handlePreviewPrint = async () => {
-    try {
-        const print = await window.LocalCivilApi.printPDFBase64(pdfbase64.value);
-        console.log('Print result:', print);
-    } catch (error) {
-        console.error('Error printing PDF:', error);
     }
 };
 
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
-const originalPdfBytes = ref(null);
 
-watch([isCertifiedTrueCopy, position, positionX, positionY, stampColor], async () => {
-    if (!originalPdfBytes.value) return;
 
-    const pdfDoc = await PDFDocument.load(originalPdfBytes.value);
-    const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
+let pdfDoc = null
+let currentPage = null
 
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const fontItalic = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
-    const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const colorRgb = hexToRgb(stampColor.value);
+const handlePreviewPrint = async () => {
+    try {
+        // Fetch the PDF file
+        const path = await window.ScannedApi.OpenInSideBar(props.fileInfo.filepath);
+        const cleanBase64 = path.fileUrl.replace(/^data:application\/pdf;base64,/, '');
+        const bytes = Uint8Array.from(atob(cleanBase64), c => c.charCodeAt(0));
 
-    const lineSpacing = 3;
-    const padding = 8;
-    const lines = [
-        // { text: 'For and in the absence of:', font: fontItalic, size: 9 },
-        { text: 'LOCAL CIVIL REGISTRY OFFICE', font: fontBold, size: 9 },
-        { text: 'Bayambang, Pangasinan', font: fontBold, size: 9 },
-        { text: 'CERTIFIED TRUE COPY', font: fontBold, size: 14 },
-        { text: '', font: fontRegular, size: 12 },
-        { text: 'ISMAEL D. MALICDEM, JR.', font: fontBold, size: 10 },
-        { text: 'Municipal Civil Registrar', font: fontBold, size: 9 },
-        { text: '', font: fontRegular, size: 12 },
-        // { text: 'ERIKA JOYCE B. PARAGAS', font: fontBold, size: 10 },
-        // { text: 'Registration Officer I', font: fontBold, size: 9 },
+        // Load PDF with pdf-lib
+        const pdfDoc = await PDFDocument.load(bytes);
+        const pages = pdfDoc.getPages();
 
-    ];
+        // Embed fonts
+        const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-    // Calculate dimensions
-    const textWidths = lines.map(line => line.font.widthOfTextAtSize(line.text, line.size));
-    const maxTextWidth = Math.max(...textWidths);
-    const boxWidth = maxTextWidth + padding * 4;
+        // Add stamps if certified
+        if (isCertifiedTrueCopy.value) {
+            boxes.value.forEach((box) => {
+                const pageIndex = box.page - 1;
+                if (pageIndex < 0 || pageIndex >= pages.length) return;
 
-    const sumLineSizes = lines.reduce((sum, line) => sum + line.size, 0);
-    const totalLineSpacing = (lines.length - 1) * lineSpacing;
-    const boxHeight = sumLineSizes + totalLineSpacing + padding * 2;
+                const page = pages[pageIndex];
+                const { x, y, width, height } = box;
 
-    let x = positionX.value || 0;
-    let y = positionY.value || 0;
+                // Convert hex color to RGB
+                const hexToRgb = (hex) => {
+                    const bigint = parseInt(hex.replace('#', ''), 16);
+                    return rgb(
+                        ((bigint >> 16) & 255) / 255,
+                        ((bigint >> 8) & 255) / 255,
+                        (bigint & 255) / 255
+                    );
+                };
 
-    // Handle predefined positions
-    if (position.value && !positionX.value && !positionY.value) {
-        const { width, height } = firstPage.getSize();
-        const margin = 20;
-        const posMap = {
-            'top-left': [margin, height - margin - boxHeight],
-            'top-center': [(width - boxWidth) / 2, height - margin - boxHeight],
-            'top-right': [width - margin - boxWidth, height - margin - boxHeight],
-            'bottom-left': [margin, margin],
-            'bottom-center': [(width - boxWidth) / 2, margin],
-            'bottom-right': [width - margin - boxWidth, margin]
-        };
-        [x, y] = posMap[position.value] || [0, 0];
-    }
+                // Calculate positions for each text line
+                let currentY = y + height; // Start from top of the box
+                const textElements = textChar.map(line => ({
+                    text: line.title,
+                    fontSize: line.fontSize,
+                    font: line.fontWeight === 'bold' ? helveticaBold : helvetica,
+                }));
 
-    if (isCertifiedTrueCopy.value) {
-        // Draw border
-        // firstPage.drawRectangle({
-        //     x,
-        //     y,
-        //     width: boxWidth,
-        //     height: boxHeight,
-        //     borderColor: rgb(colorRgb.r, colorRgb.g, colorRgb.b),
-        //     borderWidth: 1.5,
-        // });
+                // Total height of all text lines
+                const totalTextHeight = textElements.reduce((acc, line) => acc + line.fontSize, 0);
+                currentY -= (height - totalTextHeight) / 2; // Center vertically
 
-        // Draw text lines
-        let currentY = y + boxHeight - padding;
-        lines.forEach(line => {
-            if (line.text) {
-                const textWidth = line.font.widthOfTextAtSize(line.text, line.size);
-                const textX = x + (boxWidth - textWidth) / 2;
-                const textY = currentY - line.size;
 
-                firstPage.drawText(line.text, {
-                    x: textX,
-                    y: textY,
-                    size: line.size,
-                    font: line.font,
-                    color: rgb(colorRgb.r, colorRgb.g, colorRgb.b),
+                // Draw each line
+
+                textElements.forEach((line) => {
+                    const textWidth = line.font.widthOfTextAtSize(line.text, line.fontSize);
+                    const xPos = x + (width - textWidth) / 2; // Center horizontally
+
+                    page.drawText(line.text, {
+                        x: xPos,
+                        y: currentY,
+                        size: line.fontSize,
+                        font: line.font,
+                        color: hexToRgb(stampColor.value),
+                    });
+
+                    currentY -= line.fontSize; // Move down for next line
                 });
-            }
-            currentY -= line.size + lineSpacing;
-        });
+            });
+        }
+
+        // Save and open PDF for printing
+
+        try {
+            const pdfBytes = await pdfDoc.save();
+            // const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const print = await window.LocalCivilApi.printPDFBase64(pdfBytes);
+            console.log('Print result:', print);
+        } catch (error) {
+            console.error('Error printing PDF:', error);
+        }
+
+
+        // const url = URL.createObjectURL(blob);
+        // const printWindow = window.open(url);
+        // printWindow.onload = () => printWindow.print();
+
+    } catch (error) {
+        console.error('Error printing:', error);
+    }
+};
+
+const nextPage = async () => {
+    if (currentPageNum.value < totalPages.value) {
+        currentPageNum.value++
+        await renderPdf()
+    }
+}
+
+const prevPage = async () => {
+    if (currentPageNum.value > 1) {
+        currentPageNum.value--
+        await renderPdf()
+    }
+}
+
+
+const renderPdf = async () => {
+    if (!pdfDoc || currentPageNum.value < 1 || currentPageNum.value > totalPages.value) return
+
+    const page = await pdfDoc.getPage(currentPageNum.value)
+    currentPage = page
+
+    const viewport = page.getViewport({ scale: scale.value })
+    const canvas = pdfCanvas.value
+    const context = canvas.getContext('2d')
+
+    canvas.width = viewport.width
+    canvas.height = viewport.height
+
+    const renderContext = {
+        canvasContext: context,
+        viewport: viewport
     }
 
-    const modifiedPdfBytes = await pdfDoc.saveAsBase64({ dataUri: true });
-    pdfbase64.value = modifiedPdfBytes;
-}, { immediate: true });
-
-
-
-
-function hexToRgb(hex) {
-    const bigint = parseInt(hex.replace('#', ''), 16);
-    return {
-        r: ((bigint >> 16) & 255) / 255,
-        g: ((bigint >> 8) & 255) / 255,
-        b: (bigint & 255) / 255
-    };
+    await page.render(renderContext).promise
+    updateCanvasOffset()
 }
+
+
+const loadPdf = async () => {
+    try {
+        const path = await window.ScannedApi.OpenInSideBar(props.fileInfo.filepath)
+        pdfbase64.value = path.fileUrl
+    } catch (error) {
+        console.error(error)
+        return
+    }
+
+    const cleanBase64 = pdfbase64.value.replace(/^data:application\/pdf;base64,/, '')
+    const rawData = atob(cleanBase64)
+    const uint8Array = new Uint8Array(rawData.length)
+    for (let i = 0; i < rawData.length; i++) {
+        uint8Array[i] = rawData.charCodeAt(i)
+    }
+
+    pdfDoc = await pdfjsLib.getDocument({ data: uint8Array }).promise
+    totalPages.value = pdfDoc.numPages
+    await renderPdf()
+}
+const x_pos = ref(0)
+const y_pos = ref(0)
+
+const startDrag = (index, event) => {
+    const box = boxes.value[index];
+    const parent = pdfCanvas.value.parentElement;
+    const parentRect = parent.getBoundingClientRect();
+    const canvas = pdfCanvas.value;
+
+    const startMouseX = event.clientX - parentRect.left;
+    const startMouseY = event.clientY - parentRect.top;
+    const startX = box.x;
+    const startY = box.y;
+
+    const onMouseMove = (e) => {
+        if (!canvas) return;
+
+        // Get current canvas dimensions
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+
+        // Calculate maximum allowed positions
+        const maxX = (canvasWidth / scale.value) - box.width;
+        const maxY = (canvasHeight / scale.value) - box.height;
+
+        // Calculate new position
+        const currentMouseX = e.clientX - parentRect.left;
+        const currentMouseY = e.clientY - parentRect.top;
+
+        const deltaX = (currentMouseX - startMouseX) / scale.value;
+        const deltaY = (currentMouseY - startMouseY) / scale.value;
+
+        // Apply boundaries
+        boxes.value[index].x = Math.max(0, Math.min(startX + deltaX, maxX));
+        boxes.value[index].y = Math.max(0, Math.min(startY + deltaY, maxY));
+
+        x_pos.value = boxes.value[index].x
+        y_pos.value = boxes.value[index].y
+    };
+
+
+    const onMouseUp = () => {
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+};
+
+
+onMounted(() => {
+    window.addEventListener('resize', updateCanvasOffset);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateCanvasOffset);
+});
+
+watch(scale, async () => {
+    await nextTick();
+    await renderPdf();
+    updateCanvasOffset();
+});
+
+const zoomIn = () => {
+    if (scale.value >= 3) return
+    scale.value = Math.min(scale.value + 0.1, 3)
+}
+
+const zoomOut = () => {
+    if (scale.value <= 0.8) return
+    scale.value = Math.max(scale.value - 0.1, 0.8)
+}
+
+const handleWheelZoom = (event) => {
+    if (event.deltaY < 0) {
+        zoomIn()
+    } else {
+        zoomOut()
+    }
+}
+
+onMounted(() => {
+    loadPdf()
+})
+
+onUnmounted(() => {
+    pdfbase64.value = null
+    pdfDoc = null
+})
+
+watch(scale, async () => {
+    await nextTick()
+    await renderPdf()
+})
+
+
+
+
+
+
+
+
+
+
+/**
+ * For Filter Tab
+ */
+
+
+const isFilterOpen = ref(false)
+
+
+const filters = ref({
+    brightness: 100,  // percent
+    contrast: 100,  // percent
+    saturate: 100,  // percent
+    grayscale: 0,    // percent
+    sepia: 0,    // percent  ← new
+    invert: 0     // percent  ← new
+})
+
+const filterControls = [
+    { key: 'brightness', label: 'Brightness', min: 50, max: 200, step: 1, unit: '%' },
+    { key: 'contrast', label: 'Contrast', min: 50, max: 200, step: 1, unit: '%' },
+    { key: 'saturate', label: 'Saturation', min: 0, max: 200, step: 1, unit: '%' },
+    { key: 'grayscale', label: 'Grayscale', min: 0, max: 100, step: 1, unit: '%' },
+    { key: 'sepia', label: 'Sepia Tone', min: 0, max: 100, step: 1, unit: '%' },
+    { key: 'invert', label: 'Invert (for negatives)', min: 0, max: 100, step: 1, unit: '%' },
+]
+
+// compute CSS `filter:` string for the wrapper div
+const canvasFilter = computed(() => {
+    const { brightness, contrast, saturate, grayscale, sepia, invert } = filters.value
+    return [
+        `brightness(${brightness}%)`,
+        `contrast(${contrast}%)`,
+        `saturate(${saturate}%)`,
+        `grayscale(${grayscale}%)`,
+        `sepia(${sepia}%)`,
+        `invert(${invert}%)`
+    ].join(' ')
+})
+// Preset definitions
+const filterPresets = [
+    { name: 'Normal', values: { brightness: 100, contrast: 100, saturate: 100, grayscale: 0, sepia: 0, invert: 0 } },
+    { name: 'High Contrast', values: { brightness: 100, contrast: 150, saturate: 100, grayscale: 0, sepia: 0, invert: 0 } },
+    { name: 'Black & White', values: { brightness: 100, contrast: 100, saturate: 0, grayscale: 100, sepia: 0, invert: 0 } },
+    { name: 'Brighten', values: { brightness: 150, contrast: 100, saturate: 120, grayscale: 0, sepia: 0, invert: 0 } },
+    { name: 'Text Enhanced', values: { brightness: 110, contrast: 150, saturate: 100, grayscale: 0, sepia: 0, invert: 0 } },
+    { name: 'Ink Saver', values: { brightness: 95, contrast: 130, saturate: 80, grayscale: 20, sepia: 0, invert: 0 } },
+    // new presets ↓
+    { name: 'Warm Antique', values: { brightness: 105, contrast: 120, saturate: 120, grayscale: 0, sepia: 30, invert: 0 } },
+    { name: 'Reverse Negative', values: { brightness: 100, contrast: 120, saturate: 100, grayscale: 0, sepia: 0, invert: 100 } },
+    { name: 'Parchment', values: { brightness: 110, contrast: 110, saturate: 80, grayscale: 0, sepia: 50, invert: 0 } },
+]
+
+// which preset is currently selected
+const selectedPreset = ref('Normal')
+// watch(selectedPreset, name => {
+//     const p = filterPresets.find(x => x.name === name)
+//     if (p) Object.assign(filters.value, p.values)
+// })
+// // whenever the user picks a preset, apply its values
+
+watch(selectedPreset, (newName) => {
+    const preset = filterPresets.find(p => p.name === newName)
+    if (preset) {
+        Object.assign(filters.value, preset.values)
+    }
+})
+
 </script>
+
+<style scoped>
+canvas {
+    transition: all 0.2s ease;
+}
+
+.mb-0\.5em {
+    margin-bottom: 0.5em;
+}
+
+.leading-tight {
+    line-height: 1.2;
+}
+
+.select-none {
+    user-select: none;
+    -webkit-user-select: none;
+}
+</style>
