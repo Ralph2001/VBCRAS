@@ -1,36 +1,32 @@
 <template>
-    <div class="flex flex-col h-full justify-center items-center bg-[#FFFFFF] relative overflow-y-scroll">
+    <div class="flex h-screen justify-center items-center bg-gray-50 overflow-y-auto">
+        <div class="w-full max-w-md ">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6 uppercase">Create an Account</h1>
 
-
-        <div class=" flex flex-col items-center  w-[40rem] h-auto p-4 rounded-md">
-            <p class="text-4xl text-gray-800 font-mono font-bold uppercase">CREATE AN ACCOUNT</p>
-
-            <div class="h-16 flex items-center">
-                <div v-if="auth.error"
-                    class="p-4 text-sm w-full flex items-center justify-center h-10 text-red-800 rounded-sm bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                    role="alert">
-                    <span class="font-medium"> {{ auth.error }}</span>
-                </div>
+            <div v-if="auth.error" class="bg-red-100 text-red-700 text-sm p-3 rounded mb-4 text-center">
+                {{ auth.error }}
             </div>
-            <div class="h-full flex  w-full flex-col gap-2   px-20">
+
+            <div class="flex flex-col gap-4">
                 <Input :error="v$.username.$error" v-model="formData.username" label="Username" />
-                <Input :error="v$.username.$error" v-model="formData.password" label="Password" type="password" />
-                <Input :error="v$.confirmPassword.$error" v-model="formData.confirmPassword" label="Confirm Password" skipnext
-                    type="password" @keydown.enter="signup()" />
+                <Input :error="v$.password.$error" v-model="formData.password" label="Password" type="password" />
+                <Input :error="v$.confirmPassword.$error" v-model="formData.confirmPassword" label="Confirm Password"
+                    type="password" @keydown.enter="signup" />
 
-                <div class="w-full flex flex-col gap2">
-                    <button class="border py-2 w-full bg-blue-500 hover:bg-blue-600 rounded-md font-medium text-white mt-2"
-                        @click="signup()">Signup</button>
-                    <router-link to="/login"
-                        class="text-gray-600 hover:underline mt-2 w-fit font-medium px-2 border-black h-6 hover:text-blue-500">
-                        Already have an Account
-                    </router-link>
-                </div>
+                <button @click="signup"
+                    class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                    Sign Up
+                </button>
 
+                <router-link to="/login"
+                    class="text-sm text-center text-gray-600 hover:text-blue-600 hover:underline transition">
+                    Already have an account? Log in
+                </router-link>
             </div>
         </div>
-        <div class="fixed bottom-0 right-0 bg-blue-200 z-50 border">
-            <KillSwitch @click="disconnect()">
+
+        <div class="fixed bottom-4 right-4 z-50">
+            <KillSwitch @click="disconnect">
                 <template #icon>
                     <font-awesome-icon icon="fa-solid fa-power-off" />
                 </template>
@@ -40,65 +36,60 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, sameAs } from '@vuelidate/validators';
+import { useRouter } from 'vue-router';
 import { AuthStore } from '../stores/Authentication';
-import InputField from '../components/client/InputField.vue';
-import KillSwitch from '../components/client/KillSwitch.vue';
 import { useHostStore } from '../stores/Connection';
 import Input from '../components/essentials/inputs/Input.vue';
-const con = useHostStore();
-const router = useRouter();
-const loader = ref(false);
-
-
-const disconnect = () => {
-    con.removeConnection();
-};
+import KillSwitch from '../components/client/KillSwitch.vue';
 
 const auth = AuthStore();
-onMounted(() => {
-    auth.error = null;
-});
+const con = useHostStore();
+const router = useRouter();
+
+const loader = ref(false);
 
 const formData = reactive({
     username: '',
     password: '',
     confirmPassword: '',
-
 });
 
-const rules = computed(() => {
-    return {
-        username: { required },
-        password: { required },
-        confirmPassword: { required, sameAsPassword: sameAs(formData.password) }
-    };
-});
+const rules = computed(() => ({
+    username: { required },
+    password: { required },
+    confirmPassword: {
+        required,
+        sameAsPassword: sameAs(() => formData.password),
+    },
+}));
 
 const v$ = useVuelidate(rules, formData);
 
+onMounted(() => {
+    auth.error = null;
+});
+
+const disconnect = () => {
+    con.removeConnection();
+};
+
 const signup = async () => {
     v$.value.$touch();
-    if (v$.value.$error) {
-        return;
-    }
-    const username = formData.username;
-    const password = formData.password;
+    if (v$.value.$error) return;
 
     loader.value = true;
     try {
-        const signUp = auth.signUp(username, password);
-        if (signUp) {
-            loader.value = false;
-        } else {
-            console.log('error hays');
+        const result = await auth.signUp(formData.username, formData.password);
+        loader.value = false;
+
+        if (!result) {
+            console.warn('Signup failed.');
         }
     } catch (error) {
-        console.log(error);
+        console.error('Signup error:', error);
     }
 };
 </script>

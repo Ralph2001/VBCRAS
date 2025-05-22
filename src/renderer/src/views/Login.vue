@@ -1,94 +1,80 @@
 <template>
-    <div class="flex flex-col h-screen w-full justify-center items-center  bg-gray-50 relative">
-        <div class=" flex flex-col items-center  w-[40rem] h-auto p-4 rounded-md ">
-            <p class="text-4xl text-gray-800 font-mono font-bold uppercase">LOGIN</p>
+    <div class="flex h-screen w-full justify-center items-center bg-gray-100">
+        <div class="w-full max-w-md ">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6 uppercase">Login</h1>
 
-            <div class="h-16 flex items-center">
-                <div v-if="auth.error"
-                    class="p-4 text-sm w-full flex items-center justify-center h-10 text-red-800 rounded-sm bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                    role="alert">
-                    <span class="font-medium"> {{ auth.error }}</span>
-                </div>
+            <div v-if="auth.error" class="bg-red-100 text-red-700 text-sm p-3 rounded mb-4 text-center">
+                {{ auth.error }}
             </div>
 
-            <div class="h-full flex  w-full flex-col gap-2   px-20">
-                <Input skipnext :error="v$.username.$error" v-model="formData.username" label="Username" />
-                <Input skipnext :error="v$.username.$error" v-model="formData.password" label="Password" type="password"
-                    @keydown.enter="login()" />
+            <div class="flex flex-col gap-4">
+                <Input :error="v$.username.$error" v-model="formData.username" label="Username" />
+                <Input :error="v$.password.$error" v-model="formData.password" label="Password" type="password"
+                    @keydown.enter="login" />
 
-                <div class="w-full flex flex-col gap2">
-                    <button
-                        class="border py-2 w-full bg-blue-500 rounded-md hover:bg-blue-600 font-medium text-white mt-2"
-                        @click="login()">
-                        Login</button>
-                    <router-link to="/signup"
-                        class="text-gray-600 hover:underline mt-2 w-fit font-medium px-2 border-black h-6 hover:text-blue-500">
-                        Create an Account
-                    </router-link>
-                </div>
+                <button @click="login"
+                    class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition">
+                    Login
+                </button>
 
+                <router-link to="/signup"
+                    class="text-sm text-center text-gray-600 hover:text-blue-600 transition hover:underline">
+                    Don’t have an account? Sign up
+                </router-link>
             </div>
 
-            <KillSwitch />
-
+            <div class="fixed bottom-4 right-4 z-50">
+                <KillSwitch @click="disconnect">
+                    <template #icon>
+                        <font-awesome-icon icon="fa-solid fa-power-off" />
+                    </template>
+                </KillSwitch>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
 import { ref, reactive, computed, onMounted } from "vue";
-import { useVuelidate } from '@vuelidate/core'
-import { required } from '@vuelidate/validators'
-import { AuthStore } from '../stores/Authentication'
+import { useVuelidate } from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
+import { AuthStore } from "../stores/Authentication";
 import Input from "../components/essentials/inputs/Input.vue";
 import KillSwitch from "../components/client/KillSwitch.vue";
 
-const loader = ref(false)
-
-const auth = AuthStore()
-onMounted(() => {
-    auth.error = null
-})
-
-
-
+const auth = AuthStore();
+const loader = ref(false);
 
 const formData = reactive({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
 });
 
-const rules = computed(() => {
-    return {
-        username: { required },
-        password: { required },
-    };
-});
+const rules = computed(() => ({
+    username: { required },
+    password: { required },
+}));
 
 const v$ = useVuelidate(rules, formData);
 
+onMounted(() => {
+    auth.error = null;
+});
+
 const login = async () => {
     v$.value.$touch();
-    if (v$.value.$error) {
-        return;
-    }
-    loader.value = true
-    const username = formData.username;
-    const password = formData.password;
+    if (v$.value.$error) return;
+
+    loader.value = true;
 
     try {
-        const login = auth.login(username, password)
-        if (login) {
-            loader.value = false
-        }
-        else {
-            console.log('error hays')
+        const success = await auth.login(formData.username, formData.password);
+        loader.value = false;
+        if (!success) {
+            console.warn("Login failed");
         }
     } catch (error) {
-        console.log(error)
+        console.error("Login error:", error);
     }
-
-}
-
+};
 </script>

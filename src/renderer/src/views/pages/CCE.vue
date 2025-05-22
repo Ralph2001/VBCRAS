@@ -78,22 +78,9 @@
       </template>
 
 
-      <div v-if="v$.$error"
-        class="fixed top-16 bg-red-500 rounded shadow-2xl right-10 z-[9999] h-auto px-4 py-2.5 flex flex-col items-center justify-center">
-        <p class="font-semibold tracking-wider text-white text-sm font-mono"> Required Field/s
-        </p>
-        <!-- <div class="h-20 overflow-y-scroll flex flex-col items-start  mt-4 border p-2 bg-gray-100 shadow-inner">
-          <p v-for="error in v$.$errors" >
-            {{ error.$propertyPath.replace('_', ' ') }}
-
-          </p> 
-
-       </div>  -->
-      </div>
-
       <!-- Input Fields -->
       <div
-        class="flex flex-col sm:px-4 md:lg:px-[5rem] max-w-screen-2xl mx-auto h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll  bg-slate-500 ">
+        class="flex flex-col sm:px-4 md:lg:px-[5rem] max-w-screen-2xl mx-auto h-max w-full  gap-4 relative items-center justify-center overflow-y-scroll   ">
         <div :class="[backround_per_event]" class="h-full flex flex-col py-4 gap-2 ">
 
           <!-- 1st  Document Selector-->
@@ -697,20 +684,22 @@
       </div>
 
       <template v-slot:footer>
-        <div class="h-full flex items-center justify-start gap-2 w-full px-5 rounded-md font-medium ">
-          <div class="flex flex-row items-center gap-6">
-            <div class="flex flex-row items-center gap-2">
-              <CheckBox skip v-model="formData.is_to_validate" tabindex="-1" />
-              <p class="text-sm font-medium text-gray-200">Validate Layout</p>
-            </div>
-
+        <div class="w-full flex items-center justify-between px-4 py-2 bg-white border-t">
+          <!-- Left: Validation toggle -->
+          <div class="flex items-center gap-2">
+            <CheckBox skip v-model="formData.is_to_validate" tabindex="-1" />
+            <p class="text-sm text-gray-700">Validate Layout</p>
           </div>
-          <button type="button" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
-            class="bg-white ml-auto px-2.5 py-1  text-sm rounded transition-all focus:bg-blue-500 focus:text-white border-gray-300 hover:bg-blue-500 hover:text-white"
-            @click="submitForm()"><font-awesome-icon icon="fa-solid fa-right-to-bracket" /> {{ !is_document_edit_mode ?
-              'Submit' : 'Update' }}</button>
+
+          <!-- Right: Submit Button -->
+          <button type="button" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" @click="submitForm()"
+            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <font-awesome-icon icon="fa-solid fa-right-to-bracket" />
+            {{ !is_document_edit_mode ? 'Submit' : 'Update' }}
+          </button>
         </div>
       </template>
+
     </Modal>
 
 

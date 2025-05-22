@@ -125,7 +125,8 @@
 
 
 
-                    <div class="flex-1 overflow-y-auto p-4 h-full  flex-col gap-4  w-full max-w-screen-2xl py-8  flex ">
+                    <div
+                        class="flex-1 overflow-y-auto p-4 h-full  flex-col gap-6  w-full max-w-screen-2xl py-8  bg-gray-100 flex ">
 
                         <div class="flex flex-col gap-2 max-w-screen-xl mx-auto w-full">
                             <div v-if="currentStep === 0 || form_mode === 1"

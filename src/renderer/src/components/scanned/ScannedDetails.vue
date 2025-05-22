@@ -17,11 +17,19 @@
 
         <!-- Info Bar -->
         <div class="flex items-center justify-between px-4 py-3 bg-gray-100 border-b shadow text-sm text-gray-600">
-            <button @click="isFilterOpen = !isFilterOpen" :disabled="isCertifiedTrueCopy"
-                :class="isFilterOpen ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 hover:bg-gray-300'"
-                class="px-3 py-1.5 rounded  text-gray-800 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
-                Filter Tab
-            </button>
+            <div class="flex items-center space-x-2">
+                <button @click="isFilterOpen = !isFilterOpen" :disabled="isCertifiedTrueCopy"
+                    :class="isFilterOpen ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 hover:bg-gray-300'"
+                    class="px-3 py-1.5 rounded  text-gray-800 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    Filter Tab
+                </button>
+                <button @click="selectedPreset = 'Normal'" :disabled="isCertifiedTrueCopy"
+                    v-if="selectedPreset !== 'Normal'"
+                    class="px-3 py-1.5 rounded  text-white font-medium bg-red-400 hover:bg-red-500 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    Reset Filter
+                </button>
+            </div>
+
             <div class="flex justify-center items-center gap-4 my-2 text-sm">
                 <button @click="prevPage" :disabled="currentPageNum <= 1"
                     class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white">
@@ -38,12 +46,14 @@
 
             <div class="flex items-center space-x-2">
 
-                <label
+                <label :disabled="isFilterOpen" :class="isFilterOpen ? 'bg-gray-300 cursor-not-allowed' : ''"
                     class="inline-flex items-center space-x-2 cursor-pointer border broder-gray-300 rounded-md shadow-sm px-3 py-1.5 bg-white">
-                    <input type="checkbox" v-model="isCertifiedTrueCopy"
+                    <input :disabled="isFilterOpen" :class="isFilterOpen ? 'bg-gray-300 cursor-not-allowed' : ''"
+                        type="checkbox" v-model="isCertifiedTrueCopy"
                         class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
                     <span class="text-sm text-gray-800 font-medium">Certified True Copy</span>
                 </label>
+
                 <button @click="handlePreviewPrint"
                     class="bg-green-500 text-white px-3 py-1.5 rounded hover:bg-green-600 ">
                     <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
@@ -64,14 +74,15 @@
                             width: `${box.width * scale}px`,
                             height: `${box.height * scale}px`,
                         }" @mousedown="startDrag(index, $event)">
-                        <div :class="`text-[${stampColor}]`"
-                            class="flex-1  flex flex-col justify-center p-1 select-none  active:rounded-md tracking-tight active:border-dashed  active:border-blue-600 active:border-2">
+                        <div :style="{ color: stampColor }"
+                            class="flex-1 flex flex-col gap-0  justify-center  select-none space-y-0 active:rounded-md hover:border-dashed hover:border-blue-600 hover:border-2 transition-colors duration-300 active:border-dashed  active:border-blue-600 active:border-2">
 
                             <p v-for="text in textChar" :key="text.title" :style="{
                                 fontSize: `${text.fontSize * scale}px`,
                                 fontWeight: text.fontWeight,
+                                lineHeight: `${text.fontSize * scale * 1.2}px`,
 
-                            }">
+                            }" class="text-center">
                                 {{ text.title }}
                             </p>
 
@@ -80,7 +91,7 @@
                 </div>
 
             </div>
-            <div class="w-72 p-4 border-l bg-white h-full" v-if="isCertifiedTrueCopy">
+            <div class="w-72 p-4 border-l bg-white h-full" v-if="null">
                 <h3 class="text-sm font-semibold text-gray-800 mb-3">Certified True Copy Settings</h3>
 
                 <!-- Predefined Positions -->
@@ -193,11 +204,14 @@ const predefinedPositions = [
 
 const isCertifiedTrueCopy = ref(false);
 const position = ref('bottom-right');
-const stampColor = ref('#4169E1');
-const predefinedColors = ['#4169E1'];
+const stampColor = ref('#000080');
+const predefinedColors = ['#000080'];
 
 
 watch(isCertifiedTrueCopy, async (val) => {
+    if (val) {
+        scale.value = 1.0
+    }
     if (!val) {
         boxes.value = [{ x: 360, y: 832, width: 200, height: 120, page: currentPageNum.value }];
     }
@@ -209,33 +223,39 @@ watch(isCertifiedTrueCopy, async (val) => {
 const textChar = [
     {
         title: 'LOCAL CIVIL REGISTRY OFFICE',
-        fontSize: 9,
+        fontSize: 10,
         fontWeight: 'bold',
+        letterSpacing: -0.5
     },
     {
         title: 'Bayambang, Pangasinan',
-        fontSize: 9,
+        fontSize: 10,
         fontWeight: 'bold',
+        letterSpacing: -0.5
     },
     {
         title: 'CERTIFIED TRUE COPY',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
+        letterSpacing: -0.5
     },
     {
         title: '\u00A0',
-        fontSize: 8,
+        fontSize: 16,
         fontWeight: '',
+        letterSpacing: -0.5
     },
     {
         title: 'ISMAEL D. MALICDEM, JR.',
-        fontSize: 10,
+        fontSize: 12,
         fontWeight: 'bold',
+        letterSpacing: -0.5
     },
     {
         title: 'Municipal Civil Registrar',
-        fontSize: 9,
-        fontWeight: 'normal',
+        fontSize: 10,
+        fontWeight: 'bold',
+        letterSpacing: -0.5
     },
 ]
 
@@ -286,29 +306,44 @@ let currentPage = null
 
 const handlePreviewPrint = async () => {
     try {
-        // Fetch the PDF file
+        // ... (existing code to fetch PDF and load with pdf-lib)
+
         const path = await window.ScannedApi.OpenInSideBar(props.fileInfo.filepath);
         const cleanBase64 = path.fileUrl.replace(/^data:application\/pdf;base64,/, '');
         const bytes = Uint8Array.from(atob(cleanBase64), c => c.charCodeAt(0));
 
-        // Load PDF with pdf-lib
         const pdfDoc = await PDFDocument.load(bytes);
         const pages = pdfDoc.getPages();
 
-        // Embed fonts
         const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
         const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-        // Add stamps if certified
         if (isCertifiedTrueCopy.value) {
-            boxes.value.forEach((box) => {
+            for (const box of boxes.value) { // Use for...of for easier async/await if needed later, though not strictly required here.
                 const pageIndex = box.page - 1;
-                if (pageIndex < 0 || pageIndex >= pages.length) return;
+                if (pageIndex < 0 || pageIndex >= pages.length) continue;
 
                 const page = pages[pageIndex];
-                const { x, y, width, height } = box;
+                const { x, y, width, height } = box; // These are your canvas coordinates
 
-                // Convert hex color to RGB
+                // Get the actual dimensions of the PDF page for Y-axis conversion
+                const { height: pageHeight } = page.getSize();
+
+                // Convert canvas Y (top-left origin) to PDF Y (bottom-left origin)
+                // This `pdfY_bottom` is the Y-coordinate of the *bottom edge* of your stamp box.
+                const pdfY_bottom = pageHeight - y - height;
+
+                // --- OPTIONAL: Debug Rectangle (Keep this for now!) ---
+                // page.drawRectangle({
+                //     x: x,
+                //     y: pdfY_bottom, // The Y for drawRectangle is its bottom-left corner
+                //     width: width,
+                //     height: height,
+                //     borderColor: rgb(1, 0, 0), // Red border
+                //     borderWidth: 1,
+                // });
+                // --- END Debug Rectangle ---
+
                 const hexToRgb = (hex) => {
                     const bigint = parseInt(hex.replace('#', ''), 16);
                     return rgb(
@@ -318,53 +353,61 @@ const handlePreviewPrint = async () => {
                     );
                 };
 
-                // Calculate positions for each text line
-                let currentY = y + height; // Start from top of the box
-                const textElements = textChar.map(line => ({
-                    text: line.title,
-                    fontSize: line.fontSize,
-                    font: line.fontWeight === 'bold' ? helveticaBold : helvetica,
-                }));
+                let currentLineHeightSum = 0; // Tracks the total height of lines drawn so far
+                const lineSpacing = 2; // Spacing between lines (adjust as needed)
 
-                // Total height of all text lines
-                const totalTextHeight = textElements.reduce((acc, line) => acc + line.fontSize, 0);
-                currentY -= (height - totalTextHeight) / 2; // Center vertically
+                // Calculate total height of all text lines including spacing
+                let totalContentHeight = 0;
+                textChar.forEach((line, index) => {
+                    totalContentHeight += line.fontSize;
+                    if (index < textChar.length - 1) { // Add spacing only between lines
+                        totalContentHeight += lineSpacing;
+                    }
+                });
+
+                // Calculate the starting Y position for the first line
+                // This will be the Y-coordinate of the baseline of the first text line.
+                // We want to start from the top of the box (pdfY_bottom + height)
+                // then move down by (height - totalContentHeight) / 2 to vertically center the block.
+                // Then, move down by the first line's font size to get its baseline.
+                let currentYPositionForText = pdfY_bottom + height - (height - totalContentHeight) / 2;
 
 
-                // Draw each line
+                textChar.forEach((line, index) => {
+                    const font = line.fontWeight === 'bold' ? helveticaBold : helvetica;
+                    const textWidth = font.widthOfTextAtSize(line.title, line.fontSize);
 
-                textElements.forEach((line) => {
-                    const textWidth = line.font.widthOfTextAtSize(line.text, line.fontSize);
-                    const xPos = x + (width - textWidth) / 2; // Center horizontally
+                    // X position: Center horizontally within the box
+                    const xPos = x + (width - textWidth) / 2;
 
-                    page.drawText(line.text, {
+                    // Y position: For PDF-lib, Y is the baseline of the text.
+                    // We need to subtract the font size to get the top of the text,
+                    // then adjust from there.
+                    // Instead, let's keep track of current Y for the *baseline* of the next line.
+
+                    // Adjust currentYPositionForText to the baseline of the *current* line.
+                    // For the first line, this is calculated above. For subsequent lines, it's
+                    // the previous line's baseline minus its height and spacing.
+                    if (index > 0) {
+                        currentYPositionForText -= (textChar[index - 1].fontSize + lineSpacing);
+                    }
+
+                    page.drawText(line.title, {
                         x: xPos,
-                        y: currentY,
+                        y: currentYPositionForText - line.fontSize,
                         size: line.fontSize,
-                        font: line.font,
+                        font: font,
                         color: hexToRgb(stampColor.value),
+                        letterSpacing: -0.7,
                     });
 
-                    currentY -= line.fontSize; // Move down for next line
                 });
-            });
+            }
         }
 
-        // Save and open PDF for printing
-
-        try {
-            const pdfBytes = await pdfDoc.save();
-            // const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            const print = await window.LocalCivilApi.printPDFBase64(pdfBytes);
-            console.log('Print result:', print);
-        } catch (error) {
-            console.error('Error printing PDF:', error);
-        }
-
-
-        // const url = URL.createObjectURL(blob);
-        // const printWindow = window.open(url);
-        // printWindow.onload = () => printWindow.print();
+        const pdfBytes = await pdfDoc.save();
+        const print = await window.LocalCivilApi.printPDFBase64(pdfBytes);
+        console.log('Print result:', print);
 
     } catch (error) {
         console.error('Error printing:', error);
@@ -495,8 +538,8 @@ watch(scale, async () => {
 });
 
 const zoomIn = () => {
-    if (scale.value >= 3) return
-    scale.value = Math.min(scale.value + 0.1, 3)
+    if (scale.value >= 2.5) return
+    scale.value = Math.min(scale.value + 0.1, 2.4)
 }
 
 const zoomOut = () => {
@@ -589,11 +632,6 @@ const filterPresets = [
 
 // which preset is currently selected
 const selectedPreset = ref('Normal')
-// watch(selectedPreset, name => {
-//     const p = filterPresets.find(x => x.name === name)
-//     if (p) Object.assign(filters.value, p.values)
-// })
-// // whenever the user picks a preset, apply its values
 
 watch(selectedPreset, (newName) => {
     const preset = filterPresets.find(p => p.name === newName)

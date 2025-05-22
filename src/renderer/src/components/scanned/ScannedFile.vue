@@ -1,36 +1,29 @@
 <template>
-    <div :class="`h-[${props.size}px]`" class="flex flex-col  ">
-        <div :class="isOptionOpen ? 'bg-blue-400' : 'hover:bg-blue-200'" @click="openOption()"
-            class="text-md h-full relative flex-row justify-between font-semibold antialiased flex items-center  gap-1 hover:cursor-pointer rounded-sm  group">
-            <div class="block w-[60%] overflow-hidden truncate">
-                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500 me-2 ms-3" />
-                {{ file_info.name ? file_info.name.replace(".pdf", "") : 'Unnamed' }}
+    <div :class="`h-[${props.size}px]`" class="flex flex-col">
+        <div @click="openOption()" :class="[
+            'flex items-center justify-between px-4 py-1.5 rounded-md cursor-pointer transition-colors',
+            isOptionOpen ? 'bg-blue-500 text-white' : 'hover:bg-blue-100 text-gray-800'
+        ]">
+            <div class="flex items-center gap-2 truncate w-3/5">
+                <font-awesome-icon icon="fa-solid fa-file-pdf" class="text-red-500" />
+                <span class="truncate font-medium">
+                    {{ file_info.name ? file_info.name.replace(".pdf", "") : 'Unnamed' }}
+                </span>
             </div>
-            <p :class="isOptionOpen ? 'text-white' : 'text-gray-600 '" class="text-xs italic  mr-2  ">
+            <p class="text-xs italic">
                 {{ file_info.type }} {{ file_info.month }} {{ file_info.year }}
             </p>
         </div>
-        <div ref="itemDiv" v-if="isOptionOpen"
-            class="flex items-center justify-end bg-gray-50 border rounded-md transition-all duration-300 h-full">
+
+        <div v-if="isOptionOpen" ref="itemDiv"
+            class="flex justify-end bg-gray-50 border border-gray-200 rounded-md transition-all duration-300">
             <div class="flex gap-2 px-4 py-3">
                 <button @click="emits('open-details', file_info)"
-                    class="px-3 py-1.5 text-sm font-medium text-white bg-gray-700 rounded hover:bg-gray-600 transition-colors">
-                    View
-                </button>
-
-                <button
-                    class="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-500 transition-colors">
-                    Create Form
-                </button>
-
-                <button
-                    class="px-3 py-1.5 text-sm font-medium text-white bg-rose-600 rounded hover:bg-rose-500 transition-colors">
-                    Remove
+                    class="px-3 py-1.5 text-sm font-medium text-white bg-gray-700 rounded-md hover:bg-gray-600 transition">
+                    View File
                 </button>
             </div>
         </div>
-
-
     </div>
 </template>
 

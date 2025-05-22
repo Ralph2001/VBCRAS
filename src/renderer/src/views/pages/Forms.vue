@@ -18,6 +18,9 @@
             </div>
         </div>
 
+
+        <!-- <FormLayoutSettings  /> -->
+
         <div class="h-[calc(100vh-200px)] flex flex-col gap-4">
             <div class="flex flex-row items-center">
                 <div class="relative w-60">
@@ -97,6 +100,11 @@
                     </button>
 
                     <div class="ml-auto flex gap-2">
+                        <button @click="setSettingsState(true)"
+                            class="h-8 px-4 bg-gray-200 border border-gray-300 hover:bg-gray-300 text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                            <font-awesome-icon icon="fa-solid fa-gear" class="mr-2 text-base" />
+                            Configuration
+                        </button>
                         <button @click="previewForm"
                             class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
                             <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
@@ -114,6 +122,8 @@
 
 
             <template v-slot:content>
+
+
                 <div v-if="!isPreview" class="flex flex-col w-full overflow-y-auto  h-full items-center">
 
                     <div class="w-full  grid grid-cols-1 max-w-screen-lg  py-1.5 bg-white ">
@@ -578,11 +588,34 @@
                     </div>
                 </div>
 
-                <div v-else class="h-full w-full relative bg-gray-50">
-                    <div class="flex-1 overflow-auto bg-gray-50 flex items-center justify-center relative">
-
+                <div v-else class="h-full w-full bg-gray-50 flex">
+                    <div class="flex-1 overflow-auto flex items-center justify-center">
                         <PDFViewerWorker :pdfBytes64="previewUrl" />
+                    </div>
 
+                    <div v-if="settings"
+                        class="w-80 shadow-lg border border-gray-300 rounded bg-white z-50 flex flex-col">
+                        <div class=" flex-1 overflow-y-auto">
+                            <div v-for="(section, sectionKey) in preference" :key="sectionKey"
+                                class="bg-white rounded-md p-3">
+                                <h3 class="text-sm font-semibold text-gray-600 mb-2 capitalize">{{ formatKey(sectionKey)
+                                }}</h3>
+                                <div class="flex flex-wrap gap-3 justify-center">
+                                    <div v-for="(value, key) in section" :key="key" class="flex flex-col">
+                                        <label class="text-gray-500 capitalize text-xs">{{ formatKey(key) }}</label>
+                                        <InputforForm type="number" step="0.01" class="w-full"
+                                            v-model="preference[sectionKey][key]" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-12 border-t border-gray-300 flex items-center justify-center">
+                            <button @click="setSettingsState(false)"
+                                class="w-full h-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition flex items-center justify-center">
+                                <font-awesome-icon icon="fa-solid fa-gear" class="mr-2 text-base" />
+                                Close Configuration
+                            </button>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -1089,6 +1122,7 @@ import Input from '../../components/essentials/inputs/Input.vue'
 import { onClickOutside } from '@vueuse/core'
 import FormModal from '../../components/Form/FormModal.vue'
 import { useToast } from '../../lib/useToast.js'
+import FormLayoutSettings from '../../components/Form/FormLayoutSettings.vue'
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 
@@ -1100,6 +1134,9 @@ const toast = useToast()
 
 
 
+function formatKey(key) {
+    return key.replace(/_/g, ' ')
+}
 
 
 
@@ -1187,6 +1224,15 @@ const settings = ref(false)
 let transactions = reactive({ ...useTransactionDetails });
 let available = reactive({ ...useAvailableForm });
 let destroyed = reactive({ ...useRegisteredPeriod })
+
+const setSettingsState = (state) => {
+    if (typeof state !== "boolean") {
+        console.error("Invalid state: must be a boolean");
+        return;
+    }
+    settings.value = state;
+};
+
 
 /**
  * All Forms FormData
