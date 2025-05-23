@@ -9,7 +9,7 @@
         </div>
 
         <!-- Controls Section -->
-        <div class="flex items-center gap-4 px-4  bg-gray-200/50 border-b shadow-inner">
+        <div class="flex items-center gap-4 px-4  bg-gray-200 border-b shadow-inner">
             <slot name="control"></slot>
         </div>
 

@@ -72,7 +72,7 @@
 
 
 
-        <FormModal title="Create New Form" v-if="isFormOpen" @exit-modal="closeModal()">
+        <FormModal :title="`Create New Form ${selectedType}`" v-if="isFormOpen" @exit-modal="closeModal()">
             <template v-slot:control>
                 <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm"
                     v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook">
@@ -101,7 +101,7 @@
 
                     <div class="ml-auto flex gap-2">
                         <button @click="setSettingsState(true)"
-                            class="h-8 px-4 bg-gray-200 border border-gray-300 hover:bg-gray-300 text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                            class="h-8 px-4 bg-white border border-gray-300 hover:bg-gray-300 text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
                             <font-awesome-icon icon="fa-solid fa-gear" class="mr-2 text-base" />
                             Configuration
                         </button>
@@ -1395,7 +1395,7 @@ const preference = reactive({
 })
 
 
-watch(isPreview, () => {
+watch(selectedType.value, () => {
     if (selectedType.value.includes('A')) {
         preference.authentication.y = 280
         preference.logo.right_y = 797.75
@@ -1417,11 +1417,14 @@ watch(isPreview, () => {
     }
 })
 
+
+
 watch(preference, () => {
     if (isPreview.value) {
         previewForm()
     }
 }, { deep: true })
+
 
 watch(() => transactions.is_other_remarks, (newValue) => {
     if (newValue) {
@@ -1730,7 +1733,6 @@ function resetFormData() {
     Object.assign(Form1A, useForm1A);
     Object.assign(Form2A, useForm2A);
     Object.assign(Form3A, useForm3A);
-    Object.assign(preference, initialPref);
 
     formID.value = null
     isUpdateHook.value = false
@@ -1744,8 +1746,8 @@ const OpenForms = (e) => {
 
 }
 const closeModal = () => {
-    isFormOpen.value = false
     resetFormData()
+    isFormOpen.value = false
     isPreview.value = false
 
 }

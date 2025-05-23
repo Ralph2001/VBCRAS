@@ -77,7 +77,8 @@ export const useScannedDocuments = defineStore('scanned', {
                     )
                     this.loading = false
                     this.scanned_types = response.data
-                    console.log(response)
+                    return  this.scanned_types
+                   
                 } else {
                     this.loading = false
                     this.isError = true

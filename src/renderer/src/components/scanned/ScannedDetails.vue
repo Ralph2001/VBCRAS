@@ -19,9 +19,9 @@
         <div class="flex items-center justify-between px-4 py-3 bg-gray-100 border-b shadow text-sm text-gray-600">
             <div class="flex items-center space-x-2">
                 <button @click="isFilterOpen = !isFilterOpen" :disabled="isCertifiedTrueCopy"
-                    :class="isFilterOpen ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 hover:bg-gray-300'"
-                    class="px-3 py-1.5 rounded  text-gray-800 font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
-                    Filter Tab
+                    :class="isFilterOpen ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 hover:bg-gray-400'"
+                    class="px-3 py-1.5 rounded  text-gray-800 font-medium  disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed">
+                    Filter
                 </button>
                 <button @click="selectedPreset = 'Normal'" :disabled="isCertifiedTrueCopy"
                     v-if="selectedPreset !== 'Normal'"
@@ -42,6 +42,10 @@
                     class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white">
                     Next
                 </button>
+                <button @click="rotate" class="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 text-white"
+                    title="Rotate">
+                    <font-awesome-icon icon="fa-solid fa-rotate-right" />
+                </button>
             </div>
 
             <div class="flex items-center space-x-2">
@@ -59,6 +63,7 @@
                     <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
                     Print
                 </button>
+
             </div>
         </div>
 
@@ -208,7 +213,7 @@ const stampColor = ref('#000080');
 const predefinedColors = ['#000080'];
 
 
-watch(isCertifiedTrueCopy, async (val) => {
+watchEffect(isCertifiedTrueCopy, async (val) => {
     if (val) {
         scale.value = 1.0
     }
@@ -278,7 +283,7 @@ const boxes = ref([
     { x: 360, y: 832, width: 200, height: 120, page: 1 }
 ])
 
-watch(() => {
+watchEffect(() => {
     if (position.value) {
         const selectedPosition = predefinedPositions.find(pos => pos.value === position.value);
         if (selectedPosition) {
@@ -428,6 +433,13 @@ const prevPage = async () => {
     }
 }
 
+const rotationAngle = ref(0);
+
+const rotate = async () => {
+    rotationAngle.value = (rotationAngle.value + 90) % 360;
+    await renderPdf();
+};
+
 
 const renderPdf = async () => {
     if (!pdfDoc || currentPageNum.value < 1 || currentPageNum.value > totalPages.value) return
@@ -435,7 +447,12 @@ const renderPdf = async () => {
     const page = await pdfDoc.getPage(currentPageNum.value)
     currentPage = page
 
-    const viewport = page.getViewport({ scale: scale.value })
+    const viewport = page.getViewport({
+        scale: scale.value,
+        rotation: rotationAngle.value
+    });
+
+    // const viewport = page.getViewport({ scale: scale.value })
     const canvas = pdfCanvas.value
     const context = canvas.getContext('2d')
 

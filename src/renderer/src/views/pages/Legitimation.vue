@@ -46,142 +46,128 @@
         </div>
 
         <div v-if="legitimation_modal"
-            class="fixed top-0 bottom-0 left-0 right-0 z-50 w-full p-4 h-full flex items-center justify-center backdrop-blur-sm backdrop-brightness-50">
-            <div class="max-w-screen-xl w-full bg-white border h-full shadow rounded p-4 flex flex-row gap-2">
-                <div class="flex-1  flex flex-col gap-2 py-4 px-2 h-full overflow-y-auto">
-                    <p class="text-center font-bold mb-auto text-lg">{{ title }}
-                    </p>
+            class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm backdrop-brightness-50 p-4">
+            <div class="max-w-screen-xl w-full h-full bg-white shadow rounded-xl flex overflow-hidden border">
+                <!-- Left Section: Form Content -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <h2 class="text-lg font-bold text-center text-gray-800">{{ title }}</h2>
 
-                    <div class="w-full bg-blue-300 px-2">
-                        <p class="font-semibold text-sm text-gray-900">LEGAL INSTRUMENT</p>
-                    </div>
-                    <div class="grid grid-cols-1 gap-2 ">
+                    <!-- Legal Instrument -->
+                    <SectionHeader title="Legal Instrument" />
+                    <FormGrid>
                         <InputLabel label="Date of Registration">
-                            :
                             <InputforForm width="100%" v-model="formData.date_registration" />
                         </InputLabel>
                         <InputLabel label="Registry Number">
-                            :
                             <InputforForm width="100%" v-model="formData.registry_number" />
                         </InputLabel>
-                    </div>
-                    <div class="w-full bg-blue-300 px-2">
-                        <p class="font-semibold text-sm text-gray-900">PARENTS INFORMATION</p>
-                    </div>
-                    <div class="flex flex-col gap-2" v-if="formData.parent_is === '18 years old and Above'">
-                        <InputLabel label="Father's Name">
-                            :
-                            <InputforForm width="100%" v-model="formData.name_father" isUpperCase />
-                        </InputLabel>
-                        <InputLabel label="Mother's Name">
-                            :
-                            <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
-                        </InputLabel>
-                    </div>
+                    </FormGrid>
+
+                    <!-- Parent Information -->
+                    <SectionHeader title="Parents Information" />
+                    <template v-if="formData.parent_is === '18 years old and Above'">
+                        <FormGrid>
+                            <InputLabel label="Father's Name">
+                                <InputforForm width="100%" v-model="formData.name_father" isUpperCase />
+                            </InputLabel>
+                            <InputLabel label="Mother's Name">
+                                <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
+                            </InputLabel>
+                        </FormGrid>
+                    </template>
 
                     <InputLabel label="Name" v-if="formData.parent_is === 'Surviving Spouse'">
-                        :
                         <InputforForm width="100%" v-model="formData.name_father" isUpperCase />
                     </InputLabel>
                     <InputLabel label="Citizenship">
-                        :
                         <InputforForm width="100%" v-model="formData.citizenship" />
                     </InputLabel>
-
                     <InputLabel label="Postal Address">
-                        :
                         <InputforForm width="100%" v-model="formData.postal_address" />
                     </InputLabel>
 
-                    <div class="w-full bg-blue-300 px-2" v-if="formData.parent_is === 'Surviving Spouse'">
-                        <p class="font-semibold text-sm text-gray-900">DECEASED PARENT INFORMATION</p>
-                    </div>
-                    <div class="flex flex-col gap-2" v-if="formData.parent_is === 'Surviving Spouse'">
+                    <!-- Deceased Info -->
+                    <template v-if="formData.parent_is === 'Surviving Spouse'">
+                        <SectionHeader title="Deceased Parent Information" />
+                        <FormGrid>
+                            <InputLabel label="Name of Deceased Spouse">
+                                <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
+                            </InputLabel>
+                            <InputLabel label="Date of Death">
+                                <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
+                            </InputLabel>
+                            <InputLabel label="Place of Death">
+                                <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
+                            </InputLabel>
+                        </FormGrid>
+                    </template>
 
-
-                        <InputLabel label="Name of deceased spouse">
-                            :
-                            <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
+                    <!-- Child Info -->
+                    <SectionHeader title="Child Information" />
+                    <FormGrid>
+                        <InputLabel label="Name of Child">
+                            <InputforForm width="100%" v-model="formData.child_name" isUpperCase />
                         </InputLabel>
-
-                        <InputLabel label="Date of Death">
-                            :
-                            <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
+                        <InputLabel label="Sex">
+                            <InputforForm width="100%" v-model="formData.child_name" isUpperCase />
                         </InputLabel>
-                        <InputLabel label="Place of Death">
-                            :
-                            <InputforForm width="100%" v-model="formData.name_mother" isUpperCase />
+                        <InputLabel label="Date of Birth">
+                            <InputforForm width="100%" v-model="formData.date_birth" />
                         </InputLabel>
+                        <InputLabel label="Place of Birth">
+                            <InputforForm width="100%" v-model="formData.place_birth" />
+                        </InputLabel>
+                    </FormGrid>
 
-                    </div>
-                    <div class="w-full bg-blue-300 px-2">
-                        <p class="font-semibold text-sm text-gray-900">CHILD INFORMATION</p>
-                    </div>
-                    <InputLabel label="Name of Child">
-                        :
-                        <InputforForm width="100%" v-model="formData.child_name" isUpperCase />
-                    </InputLabel>
-                    <InputLabel label="Sex">
-                        :
-                        <InputforForm width="100%" v-model="formData.child_name" isUpperCase />
-                    </InputLabel>
-                    <InputLabel label="Date of Birth">
-                        :
-                        <InputforForm width="100%" v-model="formData.date_birth" />
-                    </InputLabel>
-                    <InputLabel label="Place of Birth">
-                        :
-                        <InputforForm width="100%" v-model="formData.place_birth" />
-                    </InputLabel>
-
-                    <div class="w-full bg-blue-300 px-2">
-                        <p class="font-semibold text-sm text-gray-900">MARRIAGE INFORMATION </p>
-                    </div>
-                    <InputLabel label="Legally Married on">
-                        :
-                        <InputforForm width="100%" v-model="formData.date_marriage" />
-                    </InputLabel>
-                    <InputLabel label="Legally Married at">
-                        :
-                        <InputforForm width="100%" v-model="formData.place_marriage" />
-                    </InputLabel>
-                    <InputLabel label="Solemenized by">
-                        :
-                        <InputforForm width="100%" v-model="formData.before_by" />
-                    </InputLabel>
-                    <InputLabel label="Marriage was Registered at">
-                        :
-                        <InputforForm width="100%" v-model="formData.registered_at" />
-                    </InputLabel>
-                    <InputLabel label="Marriage had been duly registered with">
-                        :
-                        <InputforForm width="100%" v-model="formData.registered_at" />
-                    </InputLabel>
-
+                    <!-- Marriage Info -->
+                    <SectionHeader title="Marriage Information" />
+                    <FormGrid>
+                        <InputLabel label="Legally Married on">
+                            <InputforForm width="100%" v-model="formData.date_marriage" />
+                        </InputLabel>
+                        <InputLabel label="Legally Married at">
+                            <InputforForm width="100%" v-model="formData.place_marriage" />
+                        </InputLabel>
+                        <InputLabel label="Solemnized by">
+                            <InputforForm width="100%" v-model="formData.before_by" />
+                        </InputLabel>
+                        <InputLabel label="Marriage Registered At">
+                            <InputforForm width="100%" v-model="formData.registered_at" />
+                        </InputLabel>
+                        <InputLabel label="Marriage Duly Registered With">
+                            <InputforForm width="100%" v-model="formData.registered_at" />
+                        </InputLabel>
+                    </FormGrid>
                 </div>
-                <div class="w-[20rem] h-full flex-col bg-gray-100 p-4 border-l flex ">
-                    <!-- <label for="" class="font-medium text-xs mb-2">Parent/s is</label> -->
-                    <select v-model="formData.parent_is" class="border border-gray-300 rounded mb-10 font-medium">
-                        <option value="Minor" class="font-medium">Minor</option>
-                        <option value="18 years old and Above" class="font-medium">18 years old and above</option>
-                        <option value="Surviving Spouse" class="font-medium">Surviving Spouse</option>
-                    </select>
-                    <div class="flex flex-col gap-2 w-full mt-auto">
-                        <label for="" class="font-medium text-xs mb-2">Filling Informarion</label>
+
+                <!-- Right Sidebar -->
+                <aside class="w-[20rem] bg-gray-50 border-l p-6 flex flex-col justify-between">
+                    <div>
+                        <label class="text-sm font-medium mb-2 block">Parent/s Is</label>
+                        <select v-model="formData.parent_is" class="w-full border rounded p-2">
+                            <option value="Minor">Minor</option>
+                            <option value="18 years old and Above">18 years old and Above</option>
+                            <option value="Surviving Spouse">Surviving Spouse</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="text-sm font-medium mb-2 block">Filing Information</label>
                         <InputforForm skip unbordered width="100%" v-model="formData.date_filed" />
                         <InputforForm skip unbordered width="100%" v-model="formData.place_filed" />
                     </div>
-                    <div class=" mt-6 flex flex-col gap-1">
-                        <button @click="legitimation_modal = false" tabindex="-1"
-                            class="border w-full font-bold  py-1.5 px-2 border-gray-300  bg-white hover:bg-red-400 hover:text-white text-gray-800 ml-auto">
+
+                    <div class="mt-6 space-y-2">
+                        <button @click="legitimation_modal = false"
+                            class="w-full py-2 font-semibold border text-gray-700 hover:bg-red-500 hover:text-white">
                             Exit
                         </button>
                         <button @click="genereate_legitimation"
-                            class="border w-full font-bold  py-1.5 px-2 border-gray-300 bg-white text-gray-800 active:bg-blue-600 focus:bg-blue-600 hover:bg-blue-600 active:text-white focus:text-white hover:text-white ml-auto">
+                            class="w-full py-2 font-semibold border text-gray-700 hover:bg-blue-600 hover:text-white">
                             Create
                         </button>
                     </div>
-                </div>
+                </aside>
             </div>
         </div>
 
