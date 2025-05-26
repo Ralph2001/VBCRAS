@@ -1,6 +1,6 @@
 <template>
     <div tabindex="-1"
-        class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center  relative bg-[#1B263B] overflow-y-auto py-20">
+        class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center  relative bg-[#282828] overflow-y-auto py-20">
         <!-- Loading State -->
         <div v-if="isLoading" class="z-50 h-full items-center justify-center w-full flex">Loading...</div>
 

@@ -6,6 +6,7 @@
         <ScannedSearch v-model="searchQuery" />
         <div class="ml-auto w-32 flex items-center justify-center">
           <button @click="emits('openNewTypeModal')"
+            v-if="selected_type === null "
             class="rounded-md w-fit px-2.5 h-fit bg-blue-600 text-white  py-1.5 text-xs font-medium">Add
             Type</button>
 
@@ -33,9 +34,9 @@
         <button v-for="type in props.types" :key="type.id" @click="handleSelect(type.id)"
           class="group flex flex-col items-center justify-center space-y-2 p-3  rounded-lg border border-transparent hover:border-gray-200 hover:bg-gray-100 transition duration-150">
           <div class="relative w-14 h-14 flex items-center justify-center">
-            <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400 text-5xl z-10" />
             <font-awesome-icon icon="fa-solid fa-folder"
               class="absolute top-0.5 left-0.5 text-yellow-300 text-5xl z-0" />
+            <font-awesome-icon icon="fa-solid fa-folder" class="text-yellow-400 text-5xl z-10" />
           </div>
           <p class="text-xs text-center font-medium text-gray-800 leading-tight truncate w-full max-w-[6rem]">
             {{ type.name }}
@@ -52,7 +53,7 @@
 
       <div v-if="filteredFiles.length <= 0 && selected_type !== null && !documents.loading && !documents.isError"
         class="w-full h-full flex items-center justify-center">
-        <p class="text-lg text-gray-600">No files found...</p>
+        <p class="text-lg text-gray-600 font-mono">No files found...</p>
       </div>
 
     </div>

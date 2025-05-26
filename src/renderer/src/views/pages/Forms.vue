@@ -11,13 +11,26 @@
             </div>
         </Header>
 
-        <div v-if="isViewLocalOpen"
-            class="fixed top-0 bottom-0 left-0 right-0 w-full h-full flex items-center p-10                  justify-center z-50 backdrop-blur-sm backdrop-brightness-50">
-            <div class=" bg-white rounded h-full w-full ">
-                <PDFViewerWorker :scale="1.5" :pdfBytes64="previewUrl" @update:pdfBytes64="previewUrl = $event" />
-            </div>
-        </div>
 
+
+        <FormModal :title="`View Document`" v-if="isViewLocalOpen" @exit-modal="handleCloseViewLocal">
+            <template v-slot:control>
+                <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm">
+                    <div class="ml-auto">
+                        <button @click="printDocument"
+                            class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                            <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
+                            Print Document
+                        </button>
+                    </div>
+                </div>
+            </template>
+            <template v-slot:content>
+                <div class="w-full h-full">
+                    <PDFViewerWorker :scale="1.5" :pdfBytes64="localPdf" @update:pdfBytes64="previewUrl = $event" />
+                </div>
+            </template>
+        </FormModal>
 
         <!-- <FormLayoutSettings  /> -->
 
@@ -62,13 +75,14 @@
                     <Input label="Search" v-model="search" />
                 </div>
             </div>
-            <!-- <p class="italic font-thin text-sm  font-mono">Table Here</p> -->
+
 
             <div class="h-full">
                 <TableGrid :data="filteredRowData" :dataColumns="colDefs" :suppressRowTransform="true" />
             </div>
 
         </div>
+
 
 
 
@@ -92,7 +106,8 @@
                     <div class="ml-auto text-sm text-gray-500 italic"></div>
                 </div>
 
-                <div v-else class="flex flex-row items-center gap-3 p-2 rounded-md shadow-sm w-full">
+                <div v-if="isPreview && !isUpdateHook"
+                    class="flex flex-row items-center gap-3 p-2 rounded-md shadow-sm w-full">
                     <button @click="isPreview = false"
                         class="h-8 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
                         <font-awesome-icon icon="fa-solid fa-edit" class="mr-2 text-base" />
@@ -105,7 +120,7 @@
                             <font-awesome-icon icon="fa-solid fa-gear" class="mr-2 text-base" />
                             Configuration
                         </button>
-                        <button @click="previewForm"
+                        <button @click="printDocument"
                             class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
                             <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
                             Print Document
@@ -578,9 +593,13 @@
 
                             <div class="ml-auto flex items-center justify-center gap-2">
 
-                                <button
+                                <button v-if="!isUpdateHook"
                                     class="bg-blue-600 hover:bg-blue-700 text-white border focus:ring-2 focus:ring-blue-700 focus:bg-blue-700 focus:border-2 outline-none px-10 font-medium  py-2.5 rounded-md "
                                     @click="previewForm">Next</button>
+
+                                <button v-if="isUpdateHook"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white border focus:ring-2 focus:ring-blue-700 focus:bg-blue-700 focus:border-2 outline-none px-10 font-medium  py-2.5 rounded-md "
+                                    @click="handleUpdate">Update Information</button>
 
 
                             </div>
@@ -593,514 +612,47 @@
                         <PDFViewerWorker :pdfBytes64="previewUrl" />
                     </div>
 
-                    <div v-if="settings"
-                        class="w-80 shadow-lg border border-gray-300 rounded bg-white z-50 flex flex-col">
-                        <div class=" flex-1 overflow-y-auto">
-                            <div v-for="(section, sectionKey) in preference" :key="sectionKey"
-                                class="bg-white rounded-md p-3">
-                                <h3 class="text-sm font-semibold text-gray-600 mb-2 capitalize">{{ formatKey(sectionKey)
-                                }}</h3>
-                                <div class="flex flex-wrap gap-3 justify-center">
-                                    <div v-for="(value, key) in section" :key="key" class="flex flex-col">
-                                        <label class="text-gray-500 capitalize text-xs">{{ formatKey(key) }}</label>
+                    <div v-if="settings" class="w-96 bg-gray-100  shadow-md border border-gray-200 flex flex-col z-50">
+                        <!-- Preferences Section -->
+                        <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
+                            <div v-for="(section, sectionKey) in preference" :key="sectionKey" class="p-4">
+                                <h3 class="text-sm font-medium text-gray-700 mb-3 capitalize">
+                                    {{ formatKey(sectionKey) }}
+                                </h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div v-for="(value, key) in section" :key="key" class="flex flex-col gap-1">
+                                        <label class="text-xs text-gray-500 capitalize">
+                                            {{ formatKey(key) }}
+                                        </label>
                                         <InputforForm type="number" step="0.01" class="w-full"
                                             v-model="preference[sectionKey][key]" />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="h-12 border-t border-gray-300 flex items-center justify-center">
+
+                        <!-- Footer Button -->
+                        <div class="border-t border-gray-100 px-4 py-3">
                             <button @click="setSettingsState(false)"
-                                class="w-full h-full bg-gray-200 hover:bg-gray-300 text-sm font-medium transition flex items-center justify-center">
-                                <font-awesome-icon icon="fa-solid fa-gear" class="mr-2 text-base" />
+                                class="w-full text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 py-2 rounded-md transition">
+                                <font-awesome-icon icon="fa-solid fa-gear" class="mr-2" />
                                 Close Configuration
                             </button>
                         </div>
                     </div>
+
                 </div>
             </template>
         </FormModal>
 
 
-        <Modal footerBG="bg-white" v-if="null" :footer="false">
-            <template v-slot:header>
-                <div class="flex flex-row w-full">
 
-
-                    <div class="flex items-center flex-row gap-2 ml-auto"
-                        v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook">
-                        <button @click="toggleForm(`${type}`)" v-for="type in FormTypes" :key="type"
-                            :class="[selectedType === type ? 'text-white bg-green-500 ' : '']"
-                            class="p-2 h-7 w-fit    hover:bg-green-600 transition-all duration-100 flex items-center text-xs justify-center  text-neutral-200 hover:text-neutral-300  rounded">
-                            Form {{ type }}
-                        </button>
-                    </div>
-                    <div v-else-if="isPreview" class="ml-auto px-2">
-                        <button class="text-white hover:underline" @click="settings = !settings">Settings</button>
-                    </div>
-                </div>
-            </template>
-
-            <div v-if="!isPreview"
-                class="w-full h-full grid grid-cols-1 lg:grid-cols-[55%_45%]  py-1.5 bg-white overflow-y-auto">
-
-
-                <div v-if="unsavedDataMessage"
-                    class="fixed top-0 flex items-center justify-center bottom-0 left-0 right-0 backdrop-blur-sm z-50 backdrop-brightness-75">
-                    <div class="w-[40rem]  bg-white rounded flex flex-col  p-4">
-                        <p class="font-bold text-red-400  text-lg">Are you sure you want to close the form?</p>
-                        <p class="text-justify text-pretty mt-4">It looks like you have unsaved changes in the form. If
-                            you
-                            close this
-                            window now, any data
-                            you've entered
-                            <span class="font-medium"> will be lost</span>. If you'd
-                            like to keep
-                            your information, please save before closing.
-                        </p>
-
-                        <div class="mt-6 ml-auto gap-2 flex">
-
-                            <button
-                                class="py-1 w-24 rounded border px-2 hover:bg-red-400 hover:text-white transition-colors">Exit</button>
-                            <button @click="unsavedDataMessage = false"
-                                class="py-1 w-24 rounded border px-2 hover:bg-gray-200">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- Page 1, Main Page -->
-                <div class="flex flex-col gap-1 px-4 py-4">
-                    <div class="flex items-center justify-end">
-                        <div class="w-[15rem]">
-                            <InputforForm middle width="full" v-model="transactions.date_filed" />
-                        </div>
-
-                    </div>
-                    <p class="px-9 italic font-semibold font-serif text-sm">TO WHOM IT MAY CONCERN: </p>
-
-                    <div class="flex flex-col gap-1 h-full " v-if="selectedType.includes('A')">
-
-                        <div class="text-sm w-full px-10 my-auto flex justify-center">
-                            <p class=" relative text-pretty  tracking-widest indent-8 leading-8 text-neutral-900">We
-                                certify that among others, the following facts of {{ fact_of }} appear in our Register
-
-                                of <br>{{
-                                    register_of }} on page
-                                <InputforForm middle width="6rem" bold v-model="available.page_number" />
-                                of book number
-                                <InputforForm middle width="6rem" bold v-model="available.book_number" />
-                                .
-                            </p>
-                        </div>
-                        <!-- For Form 3A -->
-
-                        <div v-if="selectedType === '3A'" class="flex flex-col mt-4 gap-2 w-full">
-                            <InputLabel label="Name" twoInput>
-                                :
-                                <InputforForm width="100%" v-model="Form3A.groom_name" />
-                                :
-                                <InputforForm width="100%" v-model="Form3A.bride_name" />
-                            </InputLabel>
-                            <InputLabel label="Age" twoInput>
-                                :
-                                <InputforForm width="100%" v-model="Form3A.groom_age" />
-                                :
-                                <InputforForm width="100%" v-model="Form3A.bride_age" />
-                            </InputLabel>
-
-                            <InputLabel label="Citizenship" twoInput>
-                                :
-                                <InputforForm width="100%" v-model="Form3A.groom_citizenship" />
-                                :
-                                <InputforForm width="100%" v-model="Form3A.bride_citizenship" />
-                            </InputLabel>
-
-                            <InputLabel label="Civil Status" twoInput>
-                                :
-                                <InputforForm width="100%" v-model="Form3A.groom_civil_status" />
-                                :
-                                <InputforForm width="100%" v-model="Form3A.bride_civil_status" />
-                            </InputLabel>
-                            <InputLabel label="Mother" twoInput>
-                                :
-                                <InputforForm width="100%" v-model="Form3A.groom_mother" />
-                                :
-                                <InputforForm width="100%" v-model="Form3A.bride_mother" />
-                            </InputLabel>
-
-                            <InputLabel label="Father" twoInput>
-                                :
-                                <InputforForm width="100%" v-model="Form3A.groom_father" />
-                                :
-                                <InputforForm width="100%" v-model="Form3A.bride_father" />
-                            </InputLabel>
-                        </div>
-
-                        <div class="flex flex-col  gap-2">
-                            <InputLabel label="Registry Number">
-                                :
-                                <InputforForm width="100%" v-model="available.registry_number" />
-                            </InputLabel>
-
-                            <InputLabel label="Date of Registration">
-                                :
-                                <InputforForm width="100%" v-model="available.date_registration" />
-                            </InputLabel>
-
-
-                        </div>
-                        <!-- Required for Available Form -->
-
-                        <div v-if="selectedType === '3A'" class="flex flex-col  gap-2 mb-auto">
-                            <InputLabel label="Date of Marriage">
-                                :
-                                <InputforForm width="100%" v-model="Form3A.date_marriage" />
-
-                            </InputLabel>
-                            <InputLabel label="Place of Marriage">
-                                :
-                                <InputforForm width="100%" v-model="Form3A.place_marriage" />
-
-                            </InputLabel>
-
-                        </div>
-
-                        <!-- For Form 1A -->
-                        <div v-if="selectedType === '1A'" class="flex flex-col mb-auto gap-2">
-                            <InputLabel label="Name of Child">
-                                :
-                                <InputforForm isUpperCase width="100%" bold v-model="Form1A.name_child" />
-                            </InputLabel>
-                            <InputLabel label="Sex">
-                                :
-                                <!-- <InputforForm width="100%" v-model="Form1A.sex" /> -->
-                                <InputforFormSuggestions width="100%" v-model="Form1A.sex"
-                                    :options="['Male', 'Female']" />
-                                <!-- <InputforFormSuggestions width="100%" v-model="Form1A.sex" /> -->
-                            </InputLabel>
-                            <InputLabel label="Date of birth">
-                                :
-                                <InputforForm width="100%" v-model="Form1A.date_birth" isDate />
-                            </InputLabel>
-                            <InputLabel label="Place of birth">
-                                :
-
-                                <InputforFormSuggestions width="100%" v-model="Form1A.place_birth" isPlace />
-                            </InputLabel>
-                            <InputLabel label="Name of Mother">
-                                :
-                                <InputforForm width="100%" v-model="Form1A.name_mother" />
-                            </InputLabel>
-                            <InputLabel label="Citizenship of Mother">
-                                :
-                                <InputforFormSuggestions width="100%" v-model="Form1A.citizenship_mother"
-                                    :options="citizenshipOptions" />
-
-                            </InputLabel>
-                            <InputLabel label="Name of Father">
-                                :
-                                <InputforForm width="100%" v-model="Form1A.name_father" />
-                            </InputLabel>
-                            <InputLabel label="Citizenship of Father">
-                                :
-
-                                <InputforFormSuggestions width="100%" v-model="Form1A.citizenship_father"
-                                    :options="citizenshipOptions" />
-                            </InputLabel>
-                            <InputLabel label="Date of Marriage">
-                                :
-                                <InputforForm width="100%" v-model="Form1A.date_marriage_parents" />
-                            </InputLabel>
-                            <InputLabel label="Place of Marriage of parents">
-                                :
-                                <InputforFormSuggestions width="100%" v-model="Form1A.place_marriage_parents" isPlace />
-                                <!-- <InputforForm width="100%" v-model="Form1A.place_marriage_parents" /> -->
-                            </InputLabel>
-                        </div>
-                        <!-- For Form 2A -->
-                        <div v-if="selectedType === '2A'" class="flex flex-col gap-2 mb-auto">
-                            <InputLabel label="Name of deceased">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.name_deceased" />
-                            </InputLabel>
-                            <InputLabel label="Sex">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.sex" />
-                            </InputLabel>
-                            <InputLabel label="Age">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.deceased_age" />
-                            </InputLabel>
-                            <InputLabel label="Civil Status">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.deceased_civil_status" />
-                            </InputLabel>
-                            <InputLabel label="Citizenship">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.deceased_citizenship" />
-                            </InputLabel>
-                            <InputLabel label="Date of Death">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.date_of_death" />
-                            </InputLabel>
-
-                            <InputLabel label="Place of Death">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.place_of_death" />
-                            </InputLabel>
-                            <InputLabel label="Cause of Death">
-                                :
-                                <InputforForm width="100%" v-model="Form2A.cause_of_death" />
-                            </InputLabel>
-                        </div>
-
-
-
-                    </div>
-
-                    <!-- Forms with `B` -->
-                    <div class="flex flex-col gap-2 mt-auto mb-auto" v-if="selectedType.includes('B')">
-
-                        <div class="mt-10 px-10">
-                            <p class="indent-8 text-pretty leading-10 tracking-wider text-justify">We certify that
-                                this
-                                office
-                                has
-                                no
-                                record of {{ records_of }} of
-                                <InputforForm width="30rem" bold isUpperCase middle v-model="formData.name_of" /> who
-                                is
-                                alleged
-                                to have {{ alleged_to }} on
-                                <InputforForm width="10rem" bold middle v-model="formData.date_of" /> in this
-                                municipality, <span v-if="selectedType === '1B'"> of parents
-                                    <InputforForm width="18rem" bold middle v-if="selectedType === '1B'" /> and
-                                    <InputforForm width="18rem" bold v-if="selectedType === '1B'" middle />.
-                                </span> Hence, we cannot issue,
-                                as
-                                requested, a true
-                                copy of his/her Certificate of {{ register_of }} or transcription from the Register
-                                of
-                                {{ transcription_register_of }}.
-                            </p>
-                        </div>
-
-                        <div class="mt-10 px-10 ">
-                            <p class="indent-8 text-pretty tracking-wider text-justify"> We also certify that the
-                                records of
-                                {{ records_of }} for the year
-                                <InputforForm width="6rem" bold middle v-model="formData.records_of_year" /> are
-                                still
-                                intact in the
-                                archives of
-                                this office.
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <!-- Forms with `C` -->
-                    <div class="flex flex-col gap-2 mt-auto mb-auto" v-if="selectedType.includes('C')">
-
-                        <p class="indent-8 text-pretty leading-10 tracking-wider text-justify"> We certify that the
-                            records
-                            of
-                            {{ records_of }}
-                            filed in the archives of this office include those, which were registered from
-                            <InputforForm width="6rem" middle v-model="formData.registered_from" /> to
-                            present.
-                            However, the records of {{ records_of }} during period
-                            <InputforForm width="6rem" v-model="formData.period_from" />
-                            to
-                            <InputforForm width="6rem" v-model="formData.period_to" />
-                            were totally destroyed by
-                            <InputforForm width="20rem" v-model="formData.destroyed_by" />
-                            Hence, we cannot issue as requested, a true transcription from the Register of
-                            {{ register_of }} or
-                            true
-                            copy of the Certification of {{ register_of }} of
-                            <InputforForm width="15rem" v-model="formData.name_of" /> who
-                            is alleged
-                            to have {{ alleged_to }} on
-                            <InputforForm width="10rem" v-model="formData.date_of" /> in
-                            this
-                            municipality.
-                        </p>
-
-                    </div>
-                </div>
-
-                <!-- Page 2,  Other Side -->
-                <!-- This is Required for all Forms -->
-                <div class="flex flex-col gap-2 px-4 py-4">
-                    <div
-                        class="flex items-center justify-center relative text-sm font-sans flex-row text-nowrap lg:text-wrap lg:flex-col">
-                        This certification is issued to <div class="px-2">
-                            <InputforForm width="30rem" middle bold v-model="transactions.certification_issued_to" />
-                        </div> upon his/her request.
-                    </div>
-
-
-
-                    <div class="flex flex-col gap-2 " v-if="is_with_remarks">
-                        <div class="flex flex-row gap-2 items-center">
-                            <input type="checkbox" v-model="transactions.is_reconstructed"
-                                class="border rounded-sm border-gray-400" id="is_reconstructed">
-                            <label class="text-md font-medium text-neutral-800 text-sm"
-                                for="is_reconstructed">Reconstructed
-                                Copy</label>
-                        </div>
-
-                        <div class="flex flex-row gap-2 items-center">
-                            <input type="checkbox" v-model="transactions.is_other_remarks"
-                                class="border rounded-sm border-gray-400" id="is_other_remarks">
-                            <label class="text-md font-medium text-neutral-800 text-sm" for="is_other_remarks">Other
-                                Remarks</label>
-                        </div>
-                        <!-- <p class="font-medium text-xs">Add Remarks</p> -->
-
-                        <div class="flex flex-col py-2 w-full gap-2" v-show="transactions.is_other_remarks">
-                            <div class="w-full flex flex-col gap-1 bg-white">
-                                <QuillEditor @ready="handleEditorReady" theme="snow" :toolbar="['bold', 'italic']"
-                                    v-model:content="available.remarks" contentType="delta" content="delta" />
-                            </div>
-                        </div>
-
-                        <!-- {{ available.remarks }} -->
-                    </div>
-                    <div class="mt-auto grid grid-cols-2   mb-4">
-                        <!-- <div class="absolute -right-[15rem]">
-                            <button class="text-xs text-blue-500 border rounded-sm p-2 hover:bg-white">
-                                <p>
-                                    ADD <span class="italic">"For and in the
-                                        absence:"</span>
-                                </p>
-                            </button>
-                        </div> -->
-                        <div class="flex flex-col ">
-                            <p class="italic mb-10">Verified by:</p>
-                            <div class="pl-0 flex flex-col items-center gap-[0.10rem]">
-                                <InputforForm skip width="100%" bold middle v-model="transactions.verified_by"
-                                    isUpperCase />
-                                <InputforForm skip width="100%" middle italic unbordered isTransparent
-                                    v-model="transactions.verifier_position" />
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center gap-[0.10rem]">
-                            <p v-if="transactions.for_and_in_the_absence" class="italic font-medium text-sm">For and in
-                                the absence
-                                of:</p>
-                            <InputforForm skip middle width="100%" bold v-model="transactions.civil_registrar"
-                                isUpperCase />
-                            <InputforForm skip width="100%" middle italic unbordered isTransparent
-                                v-model="transactions.civil_registrar_position" />
-                            <div v-if="transactions.for_and_in_the_absence"
-                                class="mt-4 flex flex-col items-center gap-[0.10rem] ">
-                                <InputforForm skip width="20rem" bold middle v-model="transactions.absence_verified_by"
-                                    @input="transactions.absence_verified_by = $event.target.value.toUpperCase()" />
-                                <InputforForm skip width="20rem" middle italic unbordered isTransparent
-                                    v-model="transactions.absence_verifier_position" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-2  w-[60%]">
-                        <InputLabel label="Amount Paid ">
-                            <InputforForm width="100%" v-model="transactions.amount_paid" skip />
-                        </InputLabel>
-
-                        <InputLabel label="O.R. Number">
-                            <InputforForm width="100%" v-model="transactions.or_number" />
-                        </InputLabel>
-                        <InputLabel label="Date Paid">
-                            <InputforForm width="100%" v-model="transactions.date_paid" />
-                        </InputLabel>
-                    </div>
-                    <div class="flex flex-row gap-2 p-4   items-center justify-center bg-gray-100 ">
-
-                        <div class="flex flex-col gap-1">
-                            <div class="flex flex-row gap-2 items-center">
-                                <input type="checkbox" v-model="transactions.is_with_authentication" name=""
-                                    id="with_authentication" class="border rounded-sm border-gray-600">
-                                <label for="with_authentication" class="text-md font-medium text-neutral-800">With
-                                    Authentication</label>
-                            </div>
-                            <div class="flex flex-row gap-2 items-center">
-                                <input v-model="transactions.for_and_in_the_absence" type="checkbox"
-                                    id="for_and_in_the_absence" class="border rounded-sm border-gray-600">
-                                <label for="for_and_in_the_absence" class="text-md font-medium text-neutral-800">For and
-                                    in
-                                    the absence
-                                    of</label>
-                            </div>
-
-                        </div>
-
-
-                        <div class="ml-auto flex items-center justify-center gap-2">
-                            <button tabindex="-1"
-                                class="border bg-white hover:bg-red-500 focus:bg-red-500 active:bg-red-500 hover:text-white px-10 font-medium  py-2.5 rounded-md "
-                                @click="closeModal">Exit</button>
-                            <button
-                                class="bg-blue-600 hover:bg-blue-700 text-white border focus:ring-2 focus:ring-blue-700 focus:bg-blue-700 focus:border-2 outline-none px-10 font-medium  py-2.5 rounded-md "
-                                @click="previewForm">Next</button>
-
-
-                            <!-- <button @click="saveForm()"
-                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 font-medium  py-3.5 rounded-md ">Create</button> -->
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-
-            <div v-else class="h-full w-full relative bg-gray-50">
-                <!-- PDF Viewer -->
-                <div class="flex h-full w-full ">
-                    <PDFViewerWorker :scale="1.5" :pdfBytes64="previewUrl" />
-
-                </div>
-                <!-- Action Buttons -->
-                <div
-                    class="fixed bottom-0 bg-gradient-to-r from-blue-900 to-blue-700 h-16 gap-4 w-full shadow-xl z-40 flex items-center justify-between px-6">
-
-                    <!-- Edit Form Button -->
-                    <button @click="isPreview = false"
-                        class="bg-gray-800 hover:bg-gray-600 text-white shadow-md rounded-md outline-none font-semibold px-5 py-2 tracking-wide flex items-center">
-                        <font-awesome-icon icon="fa-solid fa-edit" class="mr-2 text-lg" />
-                        Edit Form
-                    </button>
-
-                    <!-- Print Document Button -->
-                    <button @click="saveForm()"
-                        class="text-white hover:text-white hover:bg-green-600 gap-3 text-sm bg-green-500 shadow-md rounded-md outline-none font-semibold px-5 py-3 tracking-wide flex items-center">
-                        <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-lg" />
-                        <div class="flex flex-col items-start">
-                            <p>Print Document</p>
-                        </div>
-                    </button>
-
-                    <!-- Exit Button (Conditional) -->
-                    <button @click="closeModal" v-if="formID !== null && isUpdateHook"
-                        class="bg-red-500 hover:bg-red-400 text-white shadow-md rounded-md outline-none font-semibold px-5 py-2 tracking-wide flex items-center">
-                        <font-awesome-icon icon="fa-solid fa-times" class="mr-2 text-lg" />
-                        Exit
-                    </button>
-                </div>
-            </div>
-
-
-        </Modal>
 
     </div>
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, onMounted, reactive, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, reactive, ref, toRaw, watch } from 'vue'
 import BtnDrop from '../../components/essentials/buttons/BtnDrop.vue'
 import Header from '../../components/essentials/header.vue'
 import InputforForm from '../../components/Form/InputforForm.vue'
@@ -1123,6 +675,7 @@ import { onClickOutside } from '@vueuse/core'
 import FormModal from '../../components/Form/FormModal.vue'
 import { useToast } from '../../lib/useToast.js'
 import FormLayoutSettings from '../../components/Form/FormLayoutSettings.vue'
+
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 
@@ -1473,22 +1026,16 @@ const saveForm = async () => {
     };
 
     if (formAvailableMapping[form_type]) {
-        const main_data = reactive({
-            form_type,
-            ...preference,
-            ...transactions,
-            ...(form_type.endsWith('A') ? available : {}),
-            ...(form_type.endsWith('C') ? destroyed : {}),
-            ...formAvailableMapping[form_type],
-        });
 
         available.remarks = ''
         available.remarks = remarksNotDelta.value
 
 
         const formData = reactive({
+            form_type,
             ...transactions,
             ...(form_type.endsWith('A') ? available : {}),
+            ...(form_type.endsWith('C') ? destroyed : {}),
             ...formAvailableMapping[form_type],
         });
 
@@ -1532,6 +1079,48 @@ const saveForm = async () => {
 };
 
 
+const printDocument = async () => {
+    const formType = selectedType.value?.toUpperCase();
+
+    const formAvailableMapping = {
+        '1A': Form1A,
+        '2A': Form2A,
+        '3A': Form3A,
+        '1B': Form1B,
+        '2B': Form2B,
+        '3B': Form3B,
+        '1C': Form1C,
+        '2C': Form2C,
+        '3C': Form3C,
+    };
+
+    if (!formType || !formAvailableMapping[formType]) {
+        console.warn(`Invalid or unsupported form type selected: "${formType}"`);
+        return;
+    }
+
+    try {
+        const baseData = {
+            form_type: formType,
+            ...toRaw(preference),
+            ...toRaw(transactions),
+            ...toRaw(destroyed),
+            ...(formType.endsWith('A') ? toRaw(available) : {}),
+            ...formAvailableMapping[formType],
+        };
+
+        const preview = await window?.FormApi?.PreviewFormPDF(JSON.stringify(baseData));
+        const pdfBase64 = preview?.result?.pdfbase64;
+
+        if (!pdfBase64) {
+            throw new Error('Failed to generate PDF preview');
+        }
+
+        await window?.LocalCivilApi?.printPDFBase64(pdfBase64);
+    } catch (error) {
+        console.error('Failed to print document:', error);
+    }
+};
 
 
 
@@ -1641,11 +1230,6 @@ const fetchFormData = async (item) => {
 
 
 
-
-
-const Modal = defineAsyncComponent(() =>
-    import("../../components/client/modal/Modal.vue")
-)
 const options = ref(
     [
         'Form 1 (Birth)',
@@ -1803,9 +1387,41 @@ const EditMap = (data) => {
 
 const isViewLocalOpen = ref(false)
 const isOnEdit = ref(false)
-const handleViewLocal = (data) => {
-    isViewLocalOpen.value = true
-}
+
+const localPdf = ref(null)
+
+const handleViewLocal = async (data) => {
+    try {
+        if (typeof data !== 'object' || data === null) {
+            console.warn('Invalid data: expected a non-null object');
+            return;
+        }
+        const main_data = {
+            ...preference,
+            ...data,
+        };
+
+
+        const preview = await window.FormApi.PreviewFormPDF(JSON.stringify(main_data));
+        if (preview.result.status) {
+
+            isViewLocalOpen.value = true;
+            localPdf.value = preview.result.pdfbase64;
+        }
+
+    } catch (error) {
+        localPdf.value = null;
+        console.error('Failed to generate PDF preview:', error);
+    }
+};
+
+const handleCloseViewLocal = () => {
+    isViewLocalOpen.value = false;
+    localPdf.value = null;
+};
+
+
+
 const handleRemove = async (id) => {
     try {
         await formsStore.delete_form1a(id)
@@ -1823,6 +1439,18 @@ const handleEdit = async (data) => {
     formData.form_type = '1A'
     isPreview.value = false
 }
+const handleUpdate = async () => {
+    // if (hasValue.value) {
+    //     await saveForm()
+    // } else {
+    //     toast.fire({
+    //         icon: 'warning',
+    //         title: 'Please fill in the required fields before updating.',
+    //         duration: 5000,
+    //     })
+    // }
+}
+
 const handleCopy = async (data) => {
     EditMap(data)
 
@@ -1830,7 +1458,7 @@ const handleCopy = async (data) => {
         transactions.or_number = '',
         transactions.date_paid = format(new Date(), "MMMM dd, yyyy"),
 
-        // Optional Value per event
+
         transactions.for_and_in_the_absence = false
     transactions.absence_verified_by = ''
     transactions.absence_verifier_position = ''
@@ -1869,14 +1497,14 @@ const colDefs = ref([])
 const columnPresets = {
     // -------------------- Available --------------------
     'Birth Available': [
-        { field: "name_child", headerName: "Child Name", flex: 1, pinned: 'left', filter: true },
+        { field: "name_child", headerName: "Child Name", flex: 1, filter: true, cellClass: 'font-medium' },
         // { field: "sex", headerName: "Sex" },
         { field: "date_birth", headerName: "Date of Birth" },
         { field: "place_birth", headerName: "Place of Birth" },
         // { field: "name_mother", headerName: "Mother's Name" },
         // { field: "name_father", headerName: "Father's Name" },
         // { field: "date_marriage_parents", headerName: "Parents' Marriage Date" },
-        { field: "registry_number", headerName: "Registry Number" },
+        { field: "registry_number", headerName: "Registry Number", flex: 1 },
         { field: "date_registration", headerName: "Date of Registration" },
         // { field: "remarks", headerName: "Remarks" },
         // { field: "amount_paid", headerName: "Amount Paid" },

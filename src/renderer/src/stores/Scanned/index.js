@@ -67,25 +67,18 @@ export const useScannedDocuments = defineStore('scanned', {
         },
         async getScannedType() {
             try {
-                if (!this.isFetched) {
-                    const hostAdd = localStorage.getItem('host')
-                    let tokenStr = localStorage.getItem('token')
-                    this.loading = true
-                    const response = await axios.get(
-                        `http://${hostAdd}:1216/get-scanned-type`,
-                        { headers: { Authorization: `Bearer ${tokenStr}` } }
-                    )
-                    this.loading = false
-                    this.scanned_types = response.data
-                    return  this.scanned_types
-                   
-                } else {
-                    this.loading = false
-                    this.isError = true
-                    this.errorMessage =
-                        'Something went wrong... try again later'
-                    console.log('Error')
-                }
+
+                const hostAdd = localStorage.getItem('host')
+                let tokenStr = localStorage.getItem('token')
+                this.loading = true
+                const response = await axios.get(
+                    `http://${hostAdd}:1216/get-scanned-type`,
+                    { headers: { Authorization: `Bearer ${tokenStr}` } }
+                )
+                this.loading = false
+                this.scanned_types = response.data
+                return this.scanned_types
+
             } catch (error) {
                 this.loading = false
                 this.isError = true

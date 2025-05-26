@@ -2,8 +2,8 @@
     <div class="w-full flex flex-col items-center justify-center h-full relative ">
 
         <button type="button" @click="dropdown = !dropdown" ref="mainBtn"
-            :class="{ 'bg-gray-600 text-white hover:bg-gray-700': dropdown, 'text-gray-900 bg-white hover:bg-gray-100': !dropdown }"
-            class="px-3 py-1 text-sm tracking-wide hover:border-gray-400 active:scale-95  font-medium text-center  rounded-sm  border transition-all focus:outline-none">
+            :class="{ 'bg-[#3255AB]/80 text-white': dropdown, 'bg-[#3255AB] hover:bg-[#3255AB]/80 text-white': !dropdown }"
+            class="px-3 py-1 text-sm tracking-wide  active:scale-95  font-medium text-center  rounded   transition-all focus:outline-none">
             Manage
         </button>
 
@@ -17,20 +17,10 @@
 
                 </div>
                 <div class="flex-1  flex text-start px-1">
-                    Local Local
+                    View Document
                 </div>
             </button>
-            <button type="button"
-                class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
-                <div class="w-10 ">
-                    <font-awesome-icon icon="fa-solid fa-database" />
 
-
-                </div>
-                <div class="flex-1  flex text-start px-1">
-                 Load Data
-                </div>
-            </button>
             <button type="button" @click="props.params.onCopy(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
@@ -39,7 +29,7 @@
 
                 </div>
                 <div class="flex-1  flex text-start px-1">
-                   Copy
+                    Copy
                 </div>
             </button>
             <button type="button" @click="props.params.onEdit(props.params.data)"

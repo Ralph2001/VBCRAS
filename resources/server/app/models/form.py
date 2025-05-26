@@ -16,6 +16,7 @@ class BaseCertificate(db.Model):
     for_and_in_the_absence = db.Column(db.Boolean, default=False)
     absence_verified_by= db.Column(db.String(255))
     absence_verifier_position= db.Column(db.String(255))
+    form_type = db.Column(db.String(50), nullable=False)
 
 class AvailableMixin:
     """Fields for forms with available records"""
