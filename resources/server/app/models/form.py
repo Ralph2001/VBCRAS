@@ -121,15 +121,17 @@ class DeathIntact(BaseCertificate, PaymentMixin):
 class MarriageIntact(BaseCertificate, PaymentMixin):
     __tablename__ = 'marriage_intact'
     no_record_marriage_of = db.Column(db.String(255))
+    married_with = db.Column(db.String(255))
     married_on = db.Column(db.String(155))
     intact_marriage_year = db.Column(db.String(155))
-
 
 # -------------------- C-Series Forms --------------------
 class BirthDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
     __tablename__ = 'birth_destroyed'
     birth_name = db.Column(db.String(255))
     born_on = db.Column(db.String(155))
+    mother_name = db.Column(db.String(255))
+    father_name = db.Column(db.String(255))
 
 class DeathDestroyed(BaseCertificate, PaymentMixin, RegisteredPeriodMixin):
     __tablename__ = 'death_destroyed'

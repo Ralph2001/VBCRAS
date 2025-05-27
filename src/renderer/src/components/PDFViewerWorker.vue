@@ -1,6 +1,6 @@
 <template>
     <div tabindex="-1"
-        class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 flex flex-col items-center  relative bg-[#282828] overflow-y-auto py-20">
+        class="h-full w-full ring-0 outline-none focus:outline-none focus:ring-0 no-scrollbar flex flex-col items-center  relative bg-[#282828] overflow-y-auto py-20">
         <!-- Loading State -->
         <div v-if="isLoading" class="z-50 h-full items-center justify-center w-full flex">Loading...</div>
 
@@ -9,7 +9,7 @@
             {{ errorMessage }}
         </div>
 
-        <div v-else class="h-fit">
+        <div v-else class="h-fit ">
             <div v-for="(page, index) in pages" :key="index" class="mb-4">
                 <canvas :ref="el => pdfCanvas[index] = el"
                     class="h-auto w-auto shadow-2xl transition-transform duration-200 ease-in-out"

@@ -12,8 +12,9 @@
         </Header>
 
 
-
-        <FormModal :title="`View Document`" v-if="isViewLocalOpen" @exit-modal="handleCloseViewLocal">
+        <!-- For Viewing -->
+        <FormModal :title="`View Document - ${documentOwner}`" v-if="isViewLocalOpen"
+            @exit-modal="handleCloseViewLocal">
             <template v-slot:control>
                 <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm">
                     <div class="ml-auto">
@@ -32,8 +33,7 @@
             </template>
         </FormModal>
 
-        <!-- <FormLayoutSettings  /> -->
-
+        <!-- Main Content -->
         <div class="h-[calc(100vh-200px)] flex flex-col gap-4">
             <div class="flex flex-row items-center">
                 <div class="relative w-60">
@@ -86,7 +86,9 @@
 
 
 
+        <!-- Main Modal, Creating, Copying, Updating Document -->
         <FormModal :title="`Create New Form ${selectedType}`" v-if="isFormOpen" @exit-modal="closeModal()">
+            <!-- Control -->
             <template v-slot:control>
                 <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm"
                     v-if="!isPreview && !isOnEdit && formID === null && !isUpdateHook">
@@ -135,10 +137,8 @@
                 </div>
             </template>
 
-
+            <!-- Content -->
             <template v-slot:content>
-
-
                 <div v-if="!isPreview" class="flex flex-col w-full overflow-y-auto  h-full items-center">
 
                     <div class="w-full  grid grid-cols-1 max-w-screen-lg  py-1.5 bg-white ">
@@ -390,15 +390,14 @@
                                         alleged
                                         to have {{ selectedType === '1B' ? 'been born' : selectedType === '2B' ? 'died'
                                             : 'been married' }} on
-                                        <InputforForm isUpperCase width="10rem" bold middle
-                                            v-model="intact_date_field" /> in this
+                                        <InputforForm width="10rem" bold middle v-model="intact_date_field" /> in this
                                         municipality,
 
                                         <!-- If Form 1B -->
                                         <span v-if="selectedType === '1B'"> of parents
-                                            <InputforForm isUpperCase width="18rem" bold middle
-                                                v-model="Form1B.father_name" v-if="selectedType === '1B'" /> and
-                                            <InputforForm isUpperCase width="18rem" bold v-model="Form1B.mother_name"
+                                            <InputforForm width="18rem" bold middle v-model="Form1B.father_name"
+                                                v-if="selectedType === '1B'" /> and
+                                            <InputforForm width="18rem" bold v-model="Form1B.mother_name"
                                                 v-if="selectedType === '1B'" middle />.
                                         </span>
 
@@ -419,8 +418,7 @@
                                         the
                                         records of
                                         {{ records_of }} for the year
-                                        <InputforForm isUpperCase width="6rem" bold middle
-                                            v-model="intact_year_field" /> are
+                                        <InputforForm width="6rem" bold middle v-model="intact_year_field" /> are
                                         still
                                         intact in the
                                         archives of
@@ -444,27 +442,29 @@
                                     <InputforForm width="6rem" middle v-model="destroyed.registered_from" /> to
                                     present.
                                     However, the records of {{ records_of }} during period
-                                    <InputforForm width="6rem" v-model="destroyed.from_year" />
+                                    <InputforForm middle width="6rem" v-model="destroyed.from_year" />
                                     to
-                                    <InputforForm width="6rem" v-model="destroyed.to_year" />
+                                    <InputforForm middle width="6rem" v-model="destroyed.to_year" />
                                     were totally destroyed by
-                                    <InputforForm width="20rem" v-model="destroyed.destroyed_by" />
+                                    <InputforForm middle width="20rem" v-model="destroyed.destroyed_by" />
                                     Hence, we cannot issue as requested, a true transcription from the Register of
                                     {{ register_of }} or
                                     true
                                     copy of the Certification of {{ register_of }} of
-                                    <InputforForm width="25rem" v-if="selectedType === '1C' && selectedType === '2C'"
-                                        v-model="destroyed_name_field" /> <span v-if="selectedType === '3C'">
-                                        <InputforForm width="25rem" v-model="Form3C.groom_name" /> and
-                                        <InputforForm width="25rem" v-model="Form3C.bride_name" />
+                                    <InputforForm middle width="25rem"
+                                        v-if="selectedType === '1C' || selectedType === '2C'"
+                                        v-model="destroyed_name_field" />
+                                    <span v-if="selectedType === '3C'">
+                                        <InputforForm middle width="25rem" v-model="Form3C.groom_name" /> and
+                                        <InputforForm middle width="25rem" v-model="Form3C.bride_name" />
                                     </span> who
                                     is alleged
                                     to have {{ alleged_to }} on
-                                    <InputforForm width="10rem" v-model="destroyed_date_field" /> in
+                                    <InputforForm middle width="10rem" v-model="destroyed_date_field" /> in
                                     this
                                     municipality <span v-if="selectedType === '1C'">of parents
-                                        <InputforForm width="25rem" v-model="Form1C.father_name" /> and
-                                        <InputforForm width="25rem" v-model="Form1C.mother_name" />
+                                        <InputforForm middle width="25rem" v-model="Form1C.father_name" /> and
+                                        <InputforForm middle width="25rem" v-model="Form1C.mother_name" />
                                     </span>.
                                 </p>
 
@@ -612,7 +612,7 @@
                         <PDFViewerWorker :pdfBytes64="previewUrl" />
                     </div>
 
-                    <div v-if="settings" class="w-96 bg-gray-100  shadow-md border border-gray-200 flex flex-col z-50">
+                    <div v-if="settings" class="w-[30rem] bg-gray-100  shadow-md border border-gray-200 flex flex-col z-50">
                         <!-- Preferences Section -->
                         <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
                             <div v-for="(section, sectionKey) in preference" :key="sectionKey" class="p-4">
@@ -663,35 +663,54 @@ import { citizenshipOptions } from '../../utils/nationality.js';
 
 import PDFViewerWorker from '../../components/PDFViewerWorker.vue';
 import { useForms } from '../../stores/forms.js'
-import ControlButton from '../../components/ControlButton.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import { useAvailableForm, useForm1A, useForm1B, useForm1C, useForm2A, useForm2B, useForm2C, useForm3A, useForm3B, useForm3C, useRegisteredPeriod, useTransactionDetails } from '../../lib/FormProps.js'
-import { dumb_maker } from '../../lib/lala.js'
 import ManageBtn from '../../components/Form/ManageBtn.vue'
 import InputforFormSuggestions from '../../components/Form/InputforFormSuggestions.vue'
-import { formMunicipalityProvinceAddress, municipalityProvinceAddress } from '../../utils/Address/index.js'
 import Input from '../../components/essentials/inputs/Input.vue'
 import { onClickOutside } from '@vueuse/core'
 import FormModal from '../../components/Form/FormModal.vue'
 import { useToast } from '../../lib/useToast.js'
-import FormLayoutSettings from '../../components/Form/FormLayoutSettings.vue'
 
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
-
 const search = ref(null)
 
 
-
+// Toast Here
 const toast = useToast()
 
 
+// Helper
 
+// Helper Settings
 function formatKey(key) {
     return key.replace(/_/g, ' ')
 }
 
+const register_of = computed(() => {
+    if (selectedType.value) {
+        if (selectedType.value.includes('1')) return 'Births';
+        if (selectedType.value.includes('2')) return 'Deaths';
+        if (selectedType.value.includes('3')) return 'Marriages';
+    }
+})
 
+const records_of = computed(() => {
+    if (selectedType.value) {
+        if (selectedType.value.includes('1')) return 'Births';
+        if (selectedType.value.includes('2')) return 'Deaths';
+        if (selectedType.value.includes('3')) return 'Marriages';
+    }
+})
+
+const alleged_to = computed(() => {
+    if (selectedType.value) {
+        if (selectedType.value.includes('1')) return 'been born';
+        if (selectedType.value.includes('2')) return 'died';
+        if (selectedType.value.includes('3')) return 'been married';
+    }
+})
 
 
 const formToRender = computed(() => {
@@ -700,7 +719,7 @@ const formToRender = computed(() => {
         case 'Birth Available':
             render = "form1a"
             break
-        case 'Birth Not Available':
+        case 'Birth Intact':
             render = "form1b"
             break
         case 'Birth Destroyed':
@@ -709,7 +728,7 @@ const formToRender = computed(() => {
         case 'Death Available':
             render = "form2a"
             break
-        case 'Death Not Available':
+        case 'Death Intact':
             render = "form2b"
             break
         case 'Death Destroyed':
@@ -718,16 +737,21 @@ const formToRender = computed(() => {
         case 'Marriage Available':
             render = "form3a"
             break
-        case 'Marriage Not Available':
+        case 'Marriage Intact':
             render = "form3b"
             break
+        case 'Marriage Destroyed':
+            render = "form3c"
+            break
         default:
-            console.log('Unknown form type:', item)
-            return
+            console.warn('Unknown form type:', menu.value)
+            return null
     }
 
     return render
 })
+
+
 
 const filteredRowData = computed(() => {
     if (!search.value) return formsStore[formToRender.value]; // Use formToRender.value here
@@ -739,45 +763,58 @@ const filteredRowData = computed(() => {
 });
 
 
+/**
+ * @description 
+ * Menu 
+ */
+
 const menu = ref("Birth Available")
+
 const isMenuOpen = ref(false)
 const MenuBox = ref(null)
+
 onClickOutside(isMenuOpen, event => isMenuOpen.value = false)
 const openMenu = () => {
     isMenuOpen.value = !isMenuOpen.value
 }
 
-
 const menuItems = ref([
     {
         label: 'Birth',
-        items: ['Birth Available', 'Birth Not Available', 'Birth Destroyed'],
+        items: ['Birth Available', 'Birth Intact', 'Birth Destroyed'],
     },
     {
         label: 'Death',
-        items: ['Death Available', 'Death Not Available', 'Death Destroyed'],
+        items: ['Death Available', 'Death Intact', 'Death Destroyed'],
     },
     {
         label: 'Marriage',
-        items: ['Marriage Available', 'Marriage Not Available', 'Marriage Destroyed'],
+        items: ['Marriage Available', 'Marriage Intact', 'Marriage Destroyed'],
     }
 ])
+
 const changeMenu = (item) => {
+
+    console.log(item)
     menu.value = item;
     isMenuOpen.value = false;
-
-
-    Object.assign(preference, initialPref);  // Resetting preference to initial defaults
-
-
+    Object.assign(preference, initialPref);
     fetchFormData(item);
 };
 
-const settings = ref(false)
+
+
+
 let transactions = reactive({ ...useTransactionDetails });
 let available = reactive({ ...useAvailableForm });
 let destroyed = reactive({ ...useRegisteredPeriod })
 
+
+/**
+ * Settings State
+ */
+
+const settings = ref(false)
 const setSettingsState = (state) => {
     if (typeof state !== "boolean") {
         console.error("Invalid state: must be a boolean");
@@ -796,18 +833,18 @@ const setSettingsState = (state) => {
 // Form A's
 let Form1A = reactive({ ...useForm1A });
 
-let Form2A = reactive(useForm2A)
-let Form3A = reactive(useForm3A)
+let Form2A = reactive({...useForm2A})
+let Form3A = reactive({...useForm3A})
 
 // Form B's
-let Form1B = reactive(useForm1B)
-let Form2B = reactive(useForm2B)
-let Form3B = reactive(useForm3B)
+let Form1B = reactive({...useForm1B})
+let Form2B = reactive({...useForm2B})
+let Form3B = reactive({...useForm3B})
 
 // Form C's
-let Form1C = reactive(useForm1C)
-let Form2C = reactive(useForm2C)
-let Form3C = reactive(useForm3C)
+let Form1C = reactive({...useForm1C})
+let Form2C = reactive({...useForm2C})
+let Form3C = reactive({...useForm3C})
 
 
 
@@ -879,17 +916,18 @@ const destroyed_date_field = computed({
 });
 
 
-
+/**
+ * States
+ */
 const selectedType = ref(null)
 const isPreview = ref(false)
 const previewUrl = ref('')
-const for_and_in_the_absence = ref(false)
 const unsavedDataMessage = ref(false)
-const hasValue = computed(() => {
-    return Object.values(Form1A).some(value => value !== '');
-})
-
 const fact_of = ref('')
+
+/**
+ * Preferences
+ */
 
 const initialPref = {
     logo: {
@@ -948,16 +986,16 @@ const preference = reactive({
 })
 
 
-watch(selectedType.value, () => {
-    if (selectedType.value.includes('A')) {
+watch(selectedType, (newVal) => {
+    if (newVal?.includes('A')) {
         preference.authentication.y = 280
         preference.logo.right_y = 797.75
         preference.logo.left_y = 797.75
     } else {
-        if (selectedType.value.includes('B')) {
+        if (newVal?.includes('B')) {
             preference.body_data.y = 500
             preference.concern.y = 200
-        } else if (selectedType.value.includes('C')) {
+        } else if (newVal?.includes('C')) {
             preference.body_data.y = 570
             preference.concern.y = 160
         } else {
@@ -969,6 +1007,7 @@ watch(selectedType.value, () => {
         preference.logo.left_y = 703.75
     }
 })
+
 
 
 
@@ -999,11 +1038,11 @@ function handleEditorReady(editor) {
     });
 }
 
+
+
 // Hooks for Updates
 const formID = ref(null)
 const isUpdateHook = ref(false)
-
-
 
 
 const saveForm = async () => {
@@ -1123,7 +1162,6 @@ const printDocument = async () => {
 };
 
 
-
 const previewForm = async () => {
     const form_type = selectedType.value;
 
@@ -1164,14 +1202,9 @@ const previewForm = async () => {
 
 
 
-
-
-
 const is_with_remarks = computed(() => {
     return formData.form_type.includes('A') ? true : false
 })
-
-const is_remarks_check = ref(false)
 
 
 onMounted(() => {
@@ -1179,55 +1212,40 @@ onMounted(() => {
 });
 
 
-const available_forms = ref(['Form 1A', 'Form 2A', 'Form 3A'])
-const no_record_forms = ref(['Form 1B', 'Form 2B', 'Form 3B'])
-const destroyed_forms = ref(['Form 1C', 'Form 2C', 'Form 3C'])
 
 const selectedForm = ref(null)
-const selectedFormData = ref(null)
 const formsStore = useForms()
 
 const fetchFormData = async (item) => {
     let fetchAction
+    const selectedItem = item
 
-    switch (item) {
-        case 'Birth Available':
-            fetchAction = formsStore.get_all_form1a
-            break
-        case 'Birth Not Available':
-            fetchAction = formsStore.get_all_form2a
-            break
-        case 'Birth Destroyed':
-            fetchAction = formsStore.get_all_form3a
-            break
-        case 'Death Available':
-            fetchAction = formsStore.get_all_form1b
-            break
-        case 'Death Not Available':
-            fetchAction = formsStore.get_all_form2b
-            break
-        case 'Death Destroyed':
-            fetchAction = formsStore.get_all_form3b
-            break
-        case 'Marriage Available':
-            fetchAction = formsStore.get_all_form1c
-            break
-        case 'Marriage Not Available':
-            fetchAction = formsStore.get_all_form2c
-            break
-        default:
-            console.log('Unknown form type:', item)
-            return
+    const itemMap = {
+        'Birth Available': formsStore.get_all_form1a,
+        'Birth Intact': formsStore.get_all_form1b,
+        'Birth Destroyed': formsStore.get_all_form1c,
+        'Death Available': formsStore.get_all_form2a,
+        'Death Intact': formsStore.get_all_form2b,
+        'Death Destroyed': formsStore.get_all_form2c,
+        'Marriage Available': formsStore.get_all_form3a,
+        'Marriage Intact': formsStore.get_all_form3b,
+        'Marriage Destroyed': formsStore.get_all_form3c,
+    }
+
+    fetchAction = itemMap[selectedItem]
+
+    if (!fetchAction) {
+        console.log('Unknown form type:', selectedItem)
+        return
     }
 
     try {
         const data = await fetchAction()
-
+        console.log('Data fetched successfully:', data)
     } catch (error) {
-        console.log(' fetching data:', error)
+        console.log('Error fetching data:', error)
     }
 }
-
 
 
 const options = ref(
@@ -1239,40 +1257,13 @@ const options = ref(
 )
 
 
-
 const FormTypes = ref([])
 const isFormOpen = ref(false)
-
-const transcription_register_of = computed(() => {
-    const selected = selectedType.value
-    return selected === "1A" || selected === "1B" || selected === "1C" ? 'Births' :
-        selected === "2A" || selected === "2B" || selected === "2C" ? 'Deaths' :
-            selected === "3A" || selected === "3B" || selected === "3C" ? 'Marriages' : ''
-})
-const records_of = computed(() => {
-    const selected = selectedType.value
-    return selected === "1A" || selected === "1B" || selected === "1C" ? 'births' :
-        selected === "2A" || selected === "2B" || selected === "2C" ? 'deaths' :
-            selected === "3A" || selected === "3B" || selected === "3C" ? 'marriages' : ''
-})
-const register_of = computed(() => {
-    const selected = selectedType.value
-    return selected === "1A" || selected === "1B" || selected === "1C" ? 'Live Birth' :
-        selected === "2A" || selected === "2B" || selected === "2C" ? 'Death' : selected === "3A" || selected === "3B" || selected === "3C" ? 'Marriage' : ''
-})
-const alleged_to = computed(() => {
-    const selected = selectedType.value
-    return selected === "1A" || selected === "1B" || selected === "1C" ? 'born' :
-        selected === "2A" || selected === "2B" || selected === "2C" ? 'died' : selected === "3A" || selected === "3B" || selected === "3C" ? 'married' : ''
-})
-
-
 
 
 const initialFormData = {
 
-    is_with_authentication: '', // Is Abroad??
-
+    is_with_authentication: '',
     date_filed: format(new Date(), "MMMM dd, yyyy"),
     page_number: '',
     book_number: '',
@@ -1324,11 +1315,28 @@ function resetFormData() {
 
 
 const OpenForms = (e) => {
-    e === 'Form 1 (Birth)' ? [FormTypes.value = ['1A', '1B', '1C'], selectedType.value = "1A", formData.form_type = "1A"] : e === 'Form 2 (Death)' ? [FormTypes.value = ['2A', '2B', '2C'], selectedType.value = "2A", formData.form_type = "2A"] : e === 'Form 3 (Marriage)' ? [FormTypes.value = ['3A', '3B', '3C'], selectedType.value = "3A", formData.form_type = "3A"] : null
+    switch (e) {
+        case 'Form 1 (Birth)':
+            FormTypes.value = ['1A', '1B', '1C']
+            selectedType.value = '1A'
+            formData.form_type = '1A'
+            break
+        case 'Form 2 (Death)':
+            FormTypes.value = ['2A', '2B', '2C']
+            selectedType.value = '2A'
+            formData.form_type = '2A'
+            break
+        case 'Form 3 (Marriage)':
+            FormTypes.value = ['3A', '3B', '3C']
+            selectedType.value = '3A'
+            formData.form_type = '3A'
+            break
+    }
+
     isFormOpen.value = true
     selectedForm.value = e
-
 }
+
 const closeModal = () => {
     resetFormData()
     isFormOpen.value = false
@@ -1339,15 +1347,7 @@ const toggleForm = (val) => {
     resetFormData()
     selectedType.value = val
     formData.form_type = val
-    nodateforparentsmarriage.value = false
-
 }
-
-
-
-
-const nodateforparentsmarriage = ref(false)
-
 
 const EditMap = (data) => {
     transactions.date_filed = data.date_filed
@@ -1389,6 +1389,7 @@ const isViewLocalOpen = ref(false)
 const isOnEdit = ref(false)
 
 const localPdf = ref(null)
+const documentOwner = ref(null)
 
 const handleViewLocal = async (data) => {
     try {
@@ -1396,6 +1397,21 @@ const handleViewLocal = async (data) => {
             console.warn('Invalid data: expected a non-null object');
             return;
         }
+
+
+        //Set Document Owner in Viewer
+        documentOwner.value = data.name_child ||
+            data.name_deceased ||
+            data.groom_name ||
+            data.bride_name ||
+            data.no_record_birth_of ||
+            data.no_record_death_of ||
+            data.no_record_marriage_of ||
+            data.birth_name ||
+            data.death_name ||
+            '';
+
+
         const main_data = {
             ...preference,
             ...data,
@@ -1421,7 +1437,6 @@ const handleCloseViewLocal = () => {
 };
 
 
-
 const handleRemove = async (id) => {
     try {
         await formsStore.delete_form1a(id)
@@ -1429,6 +1444,7 @@ const handleRemove = async (id) => {
         console.log('Error removing record:', error)
     }
 }
+
 const handleEdit = async (data) => {
     formID.value = data.id
     isUpdateHook.value = true
@@ -1440,15 +1456,7 @@ const handleEdit = async (data) => {
     isPreview.value = false
 }
 const handleUpdate = async () => {
-    // if (hasValue.value) {
-    //     await saveForm()
-    // } else {
-    //     toast.fire({
-    //         icon: 'warning',
-    //         title: 'Please fill in the required fields before updating.',
-    //         duration: 5000,
-    //     })
-    // }
+
 }
 
 const handleCopy = async (data) => {
@@ -1542,10 +1550,10 @@ const columnPresets = {
 
     // -------------------- Intact --------------------
     'Birth Intact': [
-        { field: "no_record_birth_of", headerName: "No Record Birth Of", flex: 1, pinned: 'left' },
+        { field: "no_record_birth_of", headerName: "No Record Birth Of", flex: 2 },
         { field: "born_on", headerName: "Born On" },
-        // { field: "mother_name", headerName: "Mother's Name" },
-        // { field: "father_name", headerName: "Father's Name" },
+        { field: "mother_name", headerName: "Mother's Name" },
+        { field: "father_name", headerName: "Father's Name" },
         { field: "intact_birth_year", headerName: "Intact Year" },
         // { field: "amount_paid", headerName: "Amount Paid" },
         // { field: "or_number", headerName: "OR Number" },
@@ -1621,8 +1629,6 @@ watch(menu, (newVal) => {
         ]
     }
 }, { immediate: true })
-
-
 
 
 

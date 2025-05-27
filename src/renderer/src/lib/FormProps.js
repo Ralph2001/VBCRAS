@@ -86,8 +86,6 @@ export const useForm1B = {
 export const useForm2B = {
     no_record_death_of: '',
     died_on: '',
-    mother_name: '',
-    father_name: '',
     intact_death_year: '',
 }
 export const useForm3B = {
@@ -116,7 +114,6 @@ export const useForm2C = {
 
 }
 export const useForm3C = {
-    // marriage_name: '',
     married_on: '',
     groom_name: '',
     bride_name: '',
