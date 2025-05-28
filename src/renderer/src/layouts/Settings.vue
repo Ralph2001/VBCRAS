@@ -1,7 +1,7 @@
 <template>
   <div class="h-full w-full">
-    <SideBar />
-    <div class="h-full w-full p-10 bg-slate-200 overflow-y-auto">
+    <Sidebar />
+    <div class="h-full w-full p-10 bg-gray-100 overflow-y-auto">
       <router-view v-slot="{ Component }">
         <transition mode="out-in">
           <component :is="Component" />
@@ -14,7 +14,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import SideBar from '../views/pages/Settings/component/SideBar.vue';
+import Sidebar from '../views/pages/Settings/component/Sidebar.vue';
 
 const route = useRoute();
 

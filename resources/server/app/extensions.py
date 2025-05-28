@@ -16,7 +16,7 @@ from sqlalchemy.sql import func
 from marshmallow import fields
 from sqlalchemy import desc
 from flask_migrate import Migrate
-
+from sqlalchemy.exc import SQLAlchemyError
 
 migrate = Migrate()
 ma = Marshmallow()

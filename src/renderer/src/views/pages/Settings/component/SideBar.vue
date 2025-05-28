@@ -3,8 +3,8 @@
         class="fixed top-0 left-0 z-40 w-64 border-r hidden md:block border-gray-300 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
         <div class="h-full  px-3 py-4 overflow-y-auto flex flex-col bg-gray-50 dark:bg-gray-800">
-            <p class="text-center font-bold text-gray-600 py-10 font-mono">VBRAS</p>
-            <ul class="font-medium flex flex-col  h-full gap-2">
+            <p class="text-center font-bold text-gray-600 py-4 font-mono">VBRAS</p>
+            <ul class="font-medium flex flex-col  h-full gap-2 py-2">
                 <li>
                     <router-link to="/settings/dashboard" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
                         class="flex items-center p-2 text-gray-900 rounded  ">
@@ -45,11 +45,18 @@
                         <span class="flex-1 ms-3 text-left">Legitimation</span>
                     </router-link>
                 </li>
+                <li class="mt-auto">
+                    <router-link to="system_setting" active-class="bg-[#695CFD] text-white group hover:bg-blue-600"
+                        class="flex items-center p-2 text-gray-900 rounded  bg-gray-100 hover:bg-gray-200 border border-gray-400 justify-center gap-2">
+                        <font-awesome-icon icon="fa-solid fa-gear" c />
+                        <span class="">System Setting</span>
+                    </router-link>
+                </li>
             </ul>
             <div class="w-full flex items-center justify-center">
                 <router-link to="/pages/welcome"
-                    class="border w-full p-2 font-medium rounded-lg  text-md justify-center items-center flex flex-row gap-4 bg-gray-200  text-gray-600 hover:bg-red-400 hover:text-white">
-                    <font-awesome-icon icon="fa-solid fa-right-from-bracket" /> Return
+                    class=" w-full p-2 font-medium rounded text-md justify-center items-center flex flex-row gap-4 bg-gray-100  text-gray-900 border border-gray-400 hover:bg-green-400 hover:text-white">
+                    <font-awesome-icon icon="fa-solid fa-right-from-bracket" /> View All Apps
                 </router-link>
 
             </div>

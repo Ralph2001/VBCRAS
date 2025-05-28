@@ -43,7 +43,7 @@
                     Edit Information
                 </div>
             </button>
-            <button type="button" @click="props.params.onRemove(props.params.data.id)"
+            <button type="button" @click="props.params.onRemove(props.params.data)"
                 class="disabled:bg-gray-100 disabled:hover:cursor-not-allowed flex items-start text-md font-medium hover:bg-gray-100 w-full">
                 <div class="w-10 ">
                     <font-awesome-icon icon="fa-solid fa-trash" />

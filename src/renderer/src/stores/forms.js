@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import makeRequest from '../axios'
 
+import { useActivityLog } from './logs'
+
 const formKeys = [
     'form1a', 'form2a', 'form3a',
     'form1b', 'form2b', 'form3b',
@@ -26,9 +28,9 @@ export const useForms = defineStore('forms', {
     actions: Object.assign(
         {},
         ...formKeys.map(formKey => {
-
-            // Kahit wag na to pero system pang console log natin maya may sira dun sa formkey na yun
+            // Kahit wag na to pero pang console log natin maya may sira dun sa formkey na yun
             const formattedFormName = formKey.charAt(0).toUpperCase() + formKey.slice(1)
+            const activityLog = useActivityLog()
 
             // AHHHHHH LALA
 
@@ -40,7 +42,7 @@ export const useForms = defineStore('forms', {
              * @description Fetches all forms of the specified type from the server and updates the state.
              */
 
-            
+
             return {
                 [`get_all_${formKey}`]: async function () {
                     try {
@@ -54,10 +56,27 @@ export const useForms = defineStore('forms', {
 
                 [`get_${formKey}_by_id`]: async function (id) {
                     try {
+                        await activityLog.createNewLog(
+                            'VIEW',
+                            'Forms',
+                            `User viewed a record from  ${formattedFormName}. Form ID: ${id}`,
+                            'SUCCESS'
+                        )
+
                         return await makeRequest('GET', `${formKey}/${id}`)
+
+
                     } catch (error) {
                         console.error(`Error fetching ${formKey} by ID:`, error)
                         this.errorMessage = `Failed to fetch ${formattedFormName} details. Please try again later.`
+
+                        await activityLog.createNewLog(
+                            'VIEW',
+                            'Forms',
+                            `Failed to view a record from ${formattedFormName}. Form ID: ${id}`,
+                            'FAILED'
+                        )
+
                     }
                 },
 
@@ -66,10 +85,27 @@ export const useForms = defineStore('forms', {
                         const response = await makeRequest('POST', formKey, data)
                         this[formKey].push(response)
                         this.errorMessage = null
+
+                        await activityLog.createNewLog(
+                            'CREATE',
+                            'Forms',
+                            `Created a new record in ${formattedFormName}. Form ID: ${response.id}`,
+                            'SUCCESS'
+                        )
+
+
                         return { status: true, id: response.id }
                     } catch (error) {
                         console.error(`Error adding ${formKey}:`, error)
                         this.errorMessage = `Failed to add ${formattedFormName}. Please try again later.`
+
+                        await activityLog.createNewLog(
+                            'CREATE',
+                            'Forms',
+                            `Attempted to create a new record in ${formattedFormName} but failed.`,
+                            'FAILED'
+                        )
+
                     }
                 },
 
@@ -79,9 +115,24 @@ export const useForms = defineStore('forms', {
                         const index = this[formKey].findIndex(form => form.id === id)
                         if (index !== -1) this[formKey][index] = updatedForm
                         this.errorMessage = null
+
+                        await activityLog.createNewLog(
+                            'UPDATE',
+                            'Forms',
+                            `Updated record in ${formattedFormName}. Form ID: ${id}`,
+                            'SUCCESS'
+                        )
+
                     } catch (error) {
                         console.error(`Error updating ${formKey}:`, error)
                         this.errorMessage = `Failed to update ${formattedFormName}. Please try again later.`
+
+                        await activityLog.createNewLog(
+                            'UPDATE',
+                            'Forms',
+                            `Attempted to update record in ${formattedFormName} but failed.`,
+                            'FAILED'
+                        )
                     }
                 },
 
@@ -90,10 +141,25 @@ export const useForms = defineStore('forms', {
                         await makeRequest('DELETE', `${formKey}/${id}`)
                         this[formKey] = this[formKey].filter(form => form.id !== id)
                         this.errorMessage = null
+
+                        await activityLog.createNewLog(
+                            'DELETE',
+                            'Forms',
+                            `Deleted a record from ${formattedFormName}.\n\nForm ID: ${id}`,
+                            'SUCCESS'
+                        )
                         return true
                     } catch (error) {
                         console.error(`Error deleting ${formKey}:`, error)
                         this.errorMessage = `Failed to delete ${formattedFormName}. Please try again later.`
+
+                        await activityLog.createNewLog(
+                            'DELETE',
+                            'Forms',
+                            `Attempted to delete a record from ${formattedFormName} but failed. Form ID: ${id}`,
+                            'FAILED'
+                        )
+
                         return false
                     }
                 }

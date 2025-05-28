@@ -223,7 +223,13 @@ const router = createRouter({
                     component: () => import('../views/pages/Settings/pages/SystemSettings.vue'),
                     beforeEnter: navGuard
                 },
-                
+                {
+                    path: 'system-settings-activity-logs',
+                    name: 'system_settings_activity_logs',
+                    component: () => import('../views/pages/Settings/pages/ActivityReport.vue'),
+                    beforeEnter: navGuard
+                },
+
             ],
         },
 

@@ -15,6 +15,9 @@ from .routes.forms.DestroyedRecords import formDestroyedRecords
 from .routes.scanned import scans
 from .routes.petition import petitions
 from .routes.application_marriage_license import application_marriage_license
+
+
+from .routes.log import activity_bp
 from .extensions import migrate
 
 def get_database_path():
@@ -56,6 +59,10 @@ def create_app():
     app.register_blueprint(formAvailableRoute)
     app.register_blueprint(formItactRecords)
     app.register_blueprint(formDestroyedRecords)
+
+    #Activity Logs Blueprint
+
+    app.register_blueprint(activity_bp)
     
     
     # Models
@@ -67,7 +74,9 @@ def create_app():
     from .models.civil_registry_corrections import Petitions
     from .models.application_marriage_license import ApplicationMarriageLicense
     from .models.form import BirthAvailable, DeathAvailable, MarriageAvailable, BirthIntact, DeathIntact, MarriageIntact, BirthDestroyed, DeathDestroyed, MarriageDestroyed
-     
+    from .models.logs import ActivityLog
+
+
     with app.app_context():
         db.create_all()
         create_admin()

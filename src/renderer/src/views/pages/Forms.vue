@@ -511,6 +511,8 @@
                                         <QuillEditor @ready="handleEditorReady" theme="snow"
                                             :toolbar="['bold', 'italic']" v-model:content="available.remarks"
                                             contentType="delta" content="delta" />
+                                        <!-- {{ available.remarks }} -->
+
                                     </div>
                                 </div>
 
@@ -612,7 +614,8 @@
                         <PDFViewerWorker :pdfBytes64="previewUrl" />
                     </div>
 
-                    <div v-if="settings" class="w-[30rem] bg-gray-100  shadow-md border border-gray-200 flex flex-col z-50">
+                    <div v-if="settings"
+                        class="w-[30rem] bg-gray-100  shadow-md border border-gray-200 flex flex-col z-50">
                         <!-- Preferences Section -->
                         <div class="flex-1 overflow-y-auto divide-y divide-gray-100">
                             <div v-for="(section, sectionKey) in preference" :key="sectionKey" class="p-4">
@@ -833,18 +836,18 @@ const setSettingsState = (state) => {
 // Form A's
 let Form1A = reactive({ ...useForm1A });
 
-let Form2A = reactive({...useForm2A})
-let Form3A = reactive({...useForm3A})
+let Form2A = reactive({ ...useForm2A })
+let Form3A = reactive({ ...useForm3A })
 
 // Form B's
-let Form1B = reactive({...useForm1B})
-let Form2B = reactive({...useForm2B})
-let Form3B = reactive({...useForm3B})
+let Form1B = reactive({ ...useForm1B })
+let Form2B = reactive({ ...useForm2B })
+let Form3B = reactive({ ...useForm3B })
 
 // Form C's
-let Form1C = reactive({...useForm1C})
-let Form2C = reactive({...useForm2C})
-let Form3C = reactive({...useForm3C})
+let Form1C = reactive({ ...useForm1C })
+let Form2C = reactive({ ...useForm2C })
+let Form3C = reactive({ ...useForm3C })
 
 
 
@@ -1034,7 +1037,8 @@ const remarksNotDelta = ref()
 
 function handleEditorReady(editor) {
     editor.on('text-change', () => {
-        remarksNotDelta.value = editor.getText()
+        // remarksNotDelta.value = editor.getText()
+        remarksNotDelta.value = JSON.stringify(available.remarks)
     });
 }
 
@@ -1102,9 +1106,6 @@ const saveForm = async () => {
                 isUpdateHook.value = true
             }
         }
-
-        // Save PDF locally 
-        // const save = await window.FormApi.SaveFormPDF(JSON.stringify(main_data));
 
         closeModal()
         toast.fire({
@@ -1300,6 +1301,7 @@ const initialFormData = {
 const formData = reactive({ ...initialFormData })
 
 function resetFormData() {
+
     Object.assign(formData, initialFormData);
     Object.assign(preference, initialPref)
 
@@ -1349,6 +1351,8 @@ const toggleForm = (val) => {
     formData.form_type = val
 }
 
+
+
 const EditMap = (data) => {
     transactions.date_filed = data.date_filed
     transactions.certification_issued_to = data.certification_issued_to
@@ -1371,7 +1375,13 @@ const EditMap = (data) => {
     available.page_number = data.page_number
     available.book_number = data.book_number
     available.registry_number = data.registry_number
-    available.remarks = data.remarks
+
+    // available.remarks = {
+    //     ops: [{ insert: (data.remarks || '') + '\n' }]
+    // };
+    available.remarks = data.remarks ? JSON.parse(data.remarks) : '';
+
+
 
     Form1A.name_child = data.name_child
     Form1A.sex = data.sex
@@ -1437,13 +1447,58 @@ const handleCloseViewLocal = () => {
 };
 
 
-const handleRemove = async (id) => {
-    try {
-        await formsStore.delete_form1a(id)
-    } catch (error) {
-        console.log('Error removing record:', error)
+const handleRemove = async (data) => {
+    const { form_type, id } = data || {};
+
+    if (!id) {
+        console.warn('No ID provided for deletion');
+        return;
     }
-}
+
+    if (!form_type || typeof form_type !== 'string') {
+        console.warn('Invalid form_type');
+        return;
+    }
+
+    const removeMapping = {
+        // For Form A's
+        '1A': formsStore.delete_form1a,
+        '2A': formsStore.delete_form2a,
+        '3A': formsStore.delete_form3a,
+
+        // For Form B's
+        '1B': formsStore.delete_form1b,
+        '2B': formsStore.delete_form2b,
+        '3B': formsStore.delete_form3b,
+
+        // For Form C's
+        '1C': formsStore.delete_form1c,
+        '2C': formsStore.delete_form2c,
+        '3C': formsStore.delete_form3c,
+    };
+
+    const removeAction = removeMapping[form_type];
+
+    if (typeof removeAction !== 'function') {
+        console.error(`No delete function found for form_type: ${form_type}`);
+        return;
+    }
+
+    const confirmDelete = window.confirm('Are you sure you want to delete this record?');
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+        await removeAction(id);
+        console.log(`Record with ID ${id} deleted successfully.`);
+    } catch (error) {
+        console.error('Error removing record:', error);
+    }
+};
+
+
+
 
 const handleEdit = async (data) => {
     formID.value = data.id
