@@ -1,5 +1,5 @@
 <template>
-    <div class="md:ml-64 p-6 h-auto space-y-8    ">
+    <div class="ml-80 p-6 h-auto space-y-8    ">
         <!-- Header -->
         <header class="flex justify-between items-center">
             <div>
@@ -43,9 +43,17 @@
         <section>
             <h2 class="text-lg font-medium text-gray-800 mb-4">Apps</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <AppCard icon="lucide-file-pen" title="Correction" desc="Create Petition for Clerical Error" />
-                <AppCard icon="lucide-file-text" title="Forms" desc="Create Local Copy" />
-                <AppCard icon="lucide-heart" title="Marriage License" desc="Make application for marriage license" />
+                <AppCard icon="lucide-file-pen" title="Correction"
+                    desc="File a petition for clerical or typographical errors in civil registry documents." />
+                <AppCard icon="lucide-file-text" title="Forms"
+                    desc="Generate and manage local copies of birth, death, and marriage certificates." />
+                <AppCard icon="lucide-heart" title="Marriage License"
+                    desc="Submit and track applications for marriage licenses." />
+                <AppCard icon="lucide-archive" title="Scanned Documents"
+                    desc="Access and review all uploaded scanned civil documents." />
+                <AppCard icon="lucide-scale" title="Legal Instruments"
+                    desc="Manage legitimation, acknowledgment, and other legal instruments." />
+
             </div>
         </section>
     </div>

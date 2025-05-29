@@ -170,12 +170,14 @@
               <Box title="Document Owner & Relationship to the Owner" width="w-full">
                 <div class=" grid grid-cols-1 w-full gap-2">
                   <div class="w-full flex flex-col gap-2">
-                    <p v-if="formData.petitioner_error_in === 'my'" class="text-xs text-gray-700"><span
-                        class="font-medium">Note:</span> If the petitioner's name differs from the one on the birth
+                    <!-- v-if="formData.petitioner_error_in === 'my'"  -->
+                    <p v-if="null" class="text-xs text-gray-700"><span class="font-medium">Note:</span> If the
+                      petitioner's
+                      name differs from the one on the birth
                       certificate, please enter the name exactly as it appears on the birth certificate in this field.
                       If the
                       names match, leave the box checked.</p>
-                    <div v-if="formData.petitioner_error_in === 'my'" class="flex flex-row gap-2 items-center">
+                    <div v-if="null" class="flex flex-row gap-2 items-center">
                       <CheckBox v-model="is_same_as_petitioner_name" @change="changes_document_owner" />
                       <p class="text-xs font-medium">Same as Petitioner Name</p>
                     </div>
@@ -210,6 +212,7 @@
                           ? true
                           : false || formData.petitioner_error_in === ''
                           " />
+                    <span class="italic text-sm "  v-if="formData.petitioner_error_in === 'the'" :error="v$.relation_owner.$error">* (relation of owner to the petitioner)</span>
                   </div>
                 </div>
               </Box>

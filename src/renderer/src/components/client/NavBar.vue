@@ -55,11 +55,14 @@
                   <li>
                     <button class="w-full px-4 py-2 hover:bg-gray-100">{{ auth.user }}</button>
                   </li>
-                  <li>
+
+                  <li v-if="auth?.user_role === 1">
                     <router-link to="/settings/dashboard"
-                      class="w-full block px-4 py-2 hover:bg-gray-100 font-medium text-center">System
-                      Overview</router-link>
+                      class="w-full block px-4 py-2 hover:bg-gray-100 font-medium text-center">
+                      System Overview
+                    </router-link>
                   </li>
+
                 </ul>
                 <button @click="logout"
                   class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-500 hover:text-white rounded-b-lg">

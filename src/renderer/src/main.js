@@ -105,7 +105,10 @@ import {
     faRetweet,
     faShare,
     faX,
-    faY
+    faY,
+    faGauge,
+    faHeart,
+    faHandshake
     
 
 
@@ -115,6 +118,9 @@ import { faEye, faUser, faWindowMaximize, faFloppyDisk, faClock } from '@fortawe
 
 /* add icons to the library */
 library.add(
+    faHandshake,
+    faHeart,
+    faGauge,
     faTrash,
     faUserSecret,
     faPowerOff,

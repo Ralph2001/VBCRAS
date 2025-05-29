@@ -57,12 +57,14 @@ const formData = reactive({
     confirmPassword: '',
 });
 
+const passwordValue = computed(() => formData.password);
+
 const rules = computed(() => ({
     username: { required },
     password: { required },
     confirmPassword: {
         required,
-        sameAsPassword: sameAs(() => formData.password),
+        sameAsPassword: sameAs(passwordValue, 'Passwords must match'),
     },
 }));
 
@@ -78,6 +80,7 @@ const disconnect = () => {
 
 const signup = async () => {
     v$.value.$touch();
+    console.log(v$.value)
     if (v$.value.$error) return;
 
     loader.value = true;

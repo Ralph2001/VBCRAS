@@ -218,6 +218,12 @@ const router = createRouter({
                     beforeEnter: navGuard
                 },
                 {
+                    path: 'scanned-report',
+                    name: 'scanned_report',
+                    component: () => import('../views/pages/Settings/pages/ScannedReport.vue'),
+                    beforeEnter: navGuard
+                },
+                {
                     path: 'system-settings-report',
                     name: 'system_settings_report',
                     component: () => import('../views/pages/Settings/pages/SystemSettings.vue'),

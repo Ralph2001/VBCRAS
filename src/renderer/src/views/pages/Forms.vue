@@ -674,10 +674,16 @@ import Input from '../../components/essentials/inputs/Input.vue'
 import { onClickOutside } from '@vueuse/core'
 import FormModal from '../../components/Form/FormModal.vue'
 import { useToast } from '../../lib/useToast.js'
-
+import { useActivityLog } from '../../stores/logs.js'
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 const search = ref(null)
+
+
+/**
+ * For Logging
+ */
+const activityLog = useActivityLog()
 
 
 // Toast Here
@@ -1151,12 +1157,20 @@ const printDocument = async () => {
 
         const preview = await window?.FormApi?.PreviewFormPDF(JSON.stringify(baseData));
         const pdfBase64 = preview?.result?.pdfbase64;
-
+        const or_number = baseData.or_number ? baseData.or_number : ''
         if (!pdfBase64) {
             throw new Error('Failed to generate PDF preview');
         }
 
         await window?.LocalCivilApi?.printPDFBase64(pdfBase64);
+
+        await activityLog.createNewLog(
+            'PRINT',
+            'Forms',
+            `User printed a ${formType} form with O.R. Number ${or_number || 'N/A'}. The form was successfully generated as a PDF and sent to the printer.`,
+            'SUCCESS'
+        );
+
     } catch (error) {
         console.error('Failed to print document:', error);
     }
