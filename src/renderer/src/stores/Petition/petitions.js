@@ -5,6 +5,8 @@ export const usePetitions = defineStore('petitions', {
     state: () => ({
         petitions: [],
         latest: null,
+        cce_latest: null,
+        cfn_latest: null,
         petitionData: [],
         relation_to_document_owner: ['Brother', 'Mother', 'Father', 'Sister'],
         saved_supporting: [],
@@ -20,7 +22,7 @@ export const usePetitions = defineStore('petitions', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.petitions = response.data
-            
+
             } catch (error) {
                 console.error('Error fetching data:', error)
                 this.router.push('/login')
@@ -53,7 +55,7 @@ export const usePetitions = defineStore('petitions', {
                         }
                     }
                 )
-            
+
                 this.refresh()
             } catch (error) {
                 console.error('Error inserting data:', error)
@@ -89,6 +91,8 @@ export const usePetitions = defineStore('petitions', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.latest = response
+                this.cce_latest = response
+
                 return response
             } catch (error) {
                 return false
@@ -103,6 +107,7 @@ export const usePetitions = defineStore('petitions', {
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
                 this.latest = response
+                this.cfn_latest = response
                 return response
             } catch (error) {
                 return false
@@ -119,7 +124,7 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petition/${id}`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-          
+
                 this.refresh()
                 return true
             } catch (error) {
@@ -146,7 +151,7 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petitions/supporting-documents`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-             
+
                 this.saved_supporting = response.data.supporting_documents
                 return true
             } catch (error) {
@@ -161,7 +166,7 @@ export const usePetitions = defineStore('petitions', {
                     `http://${hostAdd}:1216/petitions/clerical-errors`,
                     { headers: { Authorization: `Bearer ${tokenStr}` } }
                 )
-       
+
                 this.saved_clerical = response.data.clerical_errors
                 return true
             } catch (error) {

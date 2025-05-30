@@ -68,14 +68,14 @@
     <RegenerateMessage v-if="is_regen" @proceed="handleRegenerate" @cancel="is_regen = false" :data="regen_data" />
 
 
-    <Modal large footerBG="bg-white  border-t  border-gray-300" v-if="petition_modal">
-      <template v-slot:header>
+    <Modal large footerBG="bg-white  border-t  border-gray-300" title="Create New Petition" v-if="petition_modal" @exit-modal="close_modal">
+      <!-- <template v-slot:header>
 
         <button
           class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
           @click="close_modal"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
-        <!-- <ModalCloseButton @click="close_modal()" /> -->
-      </template>
+    
+      </template> -->
 
 
       <!-- Input Fields -->
@@ -185,8 +185,10 @@
                     {{ formData.petitioner_error_in }}
                     {{ formData.event_type }}
                     {{ is_same_as_petitioner_name }} -->
+                    <!-- {{ formData.petitioner_error_in }}
+                    {{ formData.event_type }} -->
                     <Input v-if="formData.petitioner_error_in"
-                      :readonly="(formData.petitioner_error_in === 'my' && formData.event_type === 'Birth' || formData.event_type === 'Marriage') && is_same_as_petitioner_name ? true : false"
+                      :readonly="(formData.petitioner_error_in === 'my' && (formData.event_type === 'Birth' || formData.event_type === 'Marriage'))"
                       :error="v$.document_owner.$error" label="Document Owner" v-model="formData.document_owner"
                       @input="formData.document_owner = $event.target.value.toUpperCase()" />
                     <p v-else class="text-sm italic text-gray-700">Please choose an option. </p>
@@ -212,7 +214,8 @@
                           ? true
                           : false || formData.petitioner_error_in === ''
                           " />
-                    <span class="italic text-sm "  v-if="formData.petitioner_error_in === 'the'" :error="v$.relation_owner.$error">* (relation of owner to the petitioner)</span>
+                    <span class="italic text-sm " v-if="formData.petitioner_error_in === 'the'"
+                      :error="v$.relation_owner.$error">* (relation of owner to the petitioner)</span>
                   </div>
                 </div>
               </Box>
@@ -1241,11 +1244,12 @@ function change_event_selected_error_in() {
   changes_document_owner()
   formData.event_type === 'Birth' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'N/A') :
     formData.event_type === 'Death' ? (formData.petitioner_error_in = 'the', formData.document_owner = '', formData.relation_owner = '') :
-      formData.event_type === 'Marriage' ? (formData.petitioner_error_in = 'my', formData.document_owner = '', formData.relation_owner = 'Spouse') : ''
+      formData.event_type === 'Marriage' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'Spouse') : ''
 }
+
 function change_document_owner_relation() {
   if (formData.event_type === 'Marriage' && formData.petitioner_error_in === 'my') {
-    formData.document_owner = ''
+    formData.document_owner = 'N/A'
     formData.relation_owner = 'Spouse'
     return
   }

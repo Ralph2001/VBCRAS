@@ -7,8 +7,15 @@
         : 'h-full'
     ]">
       <!-- Header -->
-      <div class="bg-gray-900 text-white px-4 py-2 flex items-center">
+      <!-- <div class="bg-gray-900 text-white px-4 py-2 flex items-center">
         <slot name="header" />
+      </div> -->
+
+      <div class="p-4 border-b flex items-center justify-between bg-gray-900 text-white">
+        <h2 class="font-bold text-base ">{{ title }}</h2>
+        <button @click="emits('exit-modal')" class="">
+          <font-awesome-icon icon="fa-solid fa-xmark" class="text-xl" />
+        </button>
       </div>
 
       <!-- Content -->
@@ -25,7 +32,15 @@
 </template>
 
 
-<script setup>const props = defineProps({
+<script setup>
+
+const emits = defineEmits(['exit-modal'])
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: true
+  },
   label: {
     type: String,
   },

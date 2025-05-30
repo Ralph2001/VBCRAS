@@ -1,11 +1,11 @@
 <template>
     <aside id="sidebar-multi-level-sidebar"
-        class="fixed top-0 left-0 z-40 w-80 hidden md:block h-screen transition-transform -translate-x-full sm:translate-x-0"
+        class=" fixed left-0 w-80  h-full transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
         <div class="h-full px-4 py-6 overflow-y-auto flex flex-col bg-[#0D1B2A] text-white">
             <!-- Logo/Header -->
 
-            
+
             <p class="text-center text-lg font-bold tracking-wide mb-6">VBRAS</p>
 
             <!-- Navigation Links -->

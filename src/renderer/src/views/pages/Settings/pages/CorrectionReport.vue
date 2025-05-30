@@ -1,11 +1,26 @@
 <template>
-    <div class="flex flex-col ml-80 p-6 h-auto space-y-6 bg-gray-100 min-h-screen">
+    <div class="flex flex-col gap-5 ml-80">
         <div>
             <h1 class="text-3xl font-semibold text-gray-800 font-sans">Correction of Clerical Errors
             </h1>
             <p class="text-gray-600 mt-1 text-sm">
                 Overview and reporting for CCE & CFN petitions.
             </p>
+        </div>
+
+        <div class="w-full flex">
+            <router-link to="/pages/cce"
+                class="px-6 py-2.5 bg-blue-600 w-80 ml-auto hover:bg-blue-700 text-white font-semibold rounded-md shadow-lg  transition duration-200 ease-in-out flex flex-row items-center justify-center text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                <svg class="w-5 h-5 mr-2 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M3 6a3 3 0 013-3h10a2 2 0 012 2v8a2 2 0 01-2 2H6a3 3 0 01-3-3V6zm4 0a1 1 0 011-1h2a1 1 0 110 2H8a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H8z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <p>
+                    Open Application
+
+                </p>
+            </router-link>
         </div>
 
         <div class="flex justify-end flex-row items-center w-full">
@@ -40,6 +55,9 @@
             </div>
         </div>
 
+
+
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white p-5 shadow-lg rounded-lg col-span-1 ">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Petitions by Status</h3>
@@ -67,6 +85,46 @@
             </div>
         </div>
 
+        <div class="border-2 border-dashed border-green-400 my-10"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div
+                class="bg-white p-6 shadow-md rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-200 ease-in-out">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-medium text-gray-600">Latest CCE Petition</h3>
+                    <svg class="h-6 w-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                </div>
+                <p class="mt-2 text-2xl font-extrabold text-gray-900 truncate">
+                    {{ petitionStore.cce_latest?.data.petition_number || 'N/A' }}
+
+                </p>
+                <p class="mt-1 text-sm text-gray-500">Clerical Error Correction</p>
+            </div>
+
+            <div
+                class="bg-white p-6 shadow-md rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-200 ease-in-out">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-medium text-gray-600">Latest CFN Petition</h3>
+                    <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                        </path>
+                    </svg>
+                </div>
+                <p class="mt-2 text-2xl font-extrabold text-gray-900 truncate">
+                    {{ petitionStore.cfn_latest?.data.petition_number || 'N/A' }}
+
+                </p>
+                <p class="mt-1 text-sm text-gray-500">Change of First Name</p>
+            </div>
+        </div>
+
         <div class="bg-white p-6 shadow-lg rounded-lg">
             <div class="flex flex-col md:flex-row justify-between md:items-center mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-3 md:mb-0">Filter Data & Export</h2>
@@ -83,70 +141,115 @@
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-end">
-
-
-                <div>
-                    <label for="filterPetitionType" class="block text-sm font-medium text-gray-700 mb-1">Petition
-                        Year</label>
-                    <select id="filterPetitionType" v-model="filters.petitionType"
-                        class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">Year</option>
-                        <option v-for="year in uniqueYears" :key="year" :year="year">{{ year }}</option>
-                    </select>
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+                <div class="relative flex-grow w-full sm:w-auto">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="w-5 h-5 text-gray-400">
+                            <path fill-rule="evenodd"
+                                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <input v-model="search" type="text" placeholder="Search petitions by keyword, type, etc..."
+                        class="w-full pl-10 pr-4 py-2.5 font-medium border border-gray-300 rounded-md shadow-sm text-sm text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out" />
                 </div>
-                <div>
-                    <label for="filterPetitionType" class="block text-sm font-medium text-gray-700 mb-1">
-                        Month</label>
-                    <select id="filterPetitionType" v-model="filters.petitionType"
-                        class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">Month</option>
-                        <option v-for="month in months" :key="month.value" :value="month.value">{{ month.value }}
-                        </option>
-                    </select>
-                </div>
-                <div>
-                    <label for="filterPetitionType" class="block text-sm font-medium text-gray-700 mb-1">Petition
-                        Type</label>
-                    <select id="filterPetitionType" v-model="filters.petitionType"
-                        class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">All Types</option>
-                        <option value="CCE">CCE (Clerical Error)</option>
-                        <option value="CFN">CFN (Change of First Name)</option>
-                    </select>
-                </div>
+                <button @click="clearFilters"
+                    class="w-full sm:w-auto px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-md shadow-sm hover:shadow-md transition duration-150 ease-in-out flex items-center justify-center text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                        class="w-5 h-5 mr-2">
+                        <path
+                            d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                    </svg>
+                    Clear Filters
+                </button>
+            </div>
 
-                <div>
-                    <label for="filterEventType" class="block text-sm font-medium text-gray-700 mb-1">Event Type</label>
-                    <select id="filterEventType" v-model="filters.eventType"
-                        class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">All Event Types</option>
-                        <option value="Birth">Birth</option>
-                        <option value="Death">Death</option>
-                        <option value="Marriage">Marriage</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="filterStatus" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select id="filterStatus" v-model="filters.status"
-                        class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">All Statuses</option>
-                        <option value="PENDING">Pending</option>
-                        <option value="APPROVED">Approved</option>
-                    </select>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+                <div class="space-y-4">
+                    <p class="text-sm font-semibold text-gray-700">Date Range</p>
+                    <div>
+                        <label for="filterPetitionYear" class="block text-sm font-medium text-gray-700 mb-1">Petition
+                            Year</label>
+                        <select id="filterPetitionYear" v-model="filters.year"
+                            class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Years</option>
+                            <option v-for="year in uniqueYears" :key="year" :value="year">{{ year }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filterPetitionMonth" class="block text-sm font-medium text-gray-700 mb-1">
+                            Month</label>
+                        <select id="filterPetitionMonth" v-model="filters.month"
+                            class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Months</option>
+                            <option v-for="month in months" :key="month.value" :value="month.value">{{ month.label }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="flex space-x-2">
-                    <button @click="applyFilters"
-                        class="w-full mt-4 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm text-sm">Apply
-                        Filters</button>
-                    <button @click="clearFilters"
-                        class="w-full mt-4 px-5 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-md shadow-sm text-sm">Clear
-                        Filters</button>
+                <div class="space-y-4">
+                    <p class="text-sm font-semibold text-gray-700">Petition Details</p>
+                    <div>
+                        <label for="filterPetitionType" class="block text-sm font-medium text-gray-700 mb-1">Petition
+                            Type</label>
+                        <select id="filterPetitionType" v-model="filters.petitionType"
+                            class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Types</option>
+                            <option value="CCE">CCE (Clerical Error)</option>
+                            <option value="CFN">CFN (Change of First Name)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filterEventType" class="block text-sm font-medium text-gray-700 mb-1">Event
+                            Type</label>
+                        <select id="filterEventType" v-model="filters.eventType"
+                            class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Event Types</option>
+                            <option value="Birth">Birth</option>
+                            <option value="Death">Death</option>
+                            <option value="Marriage">Marriage</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-sm font-semibold text-gray-700">Administrative</p>
+                    <div>
+                        <label for="filterStatus" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                        <select id="filterStatus" v-model="filters.status"
+                            class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Statuses</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="FINISHED">Approved</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filterUser" class="block text-sm font-medium text-gray-700 mb-1">User</label>
+                        <select id="filterUser" v-model="filters.user"
+                            class="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">All Users</option>
+                            <option v-for="user in uniqueUsers" :key="user" :value="user">{{ user }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
+
+            <hr class="my-6 border-gray-200">
+
+            <div class="flex items-center justify-between mb-4">
+                <p class="font-semibold text-gray-700">Total Records: <span class="text-blue-600 text-lg">{{
+                    filteredRowData.length }}</span></p>
+            </div>
+
+            <div class="h-[30rem] w-full flex flex-col gap-2 ">
+                <ag-grid-vue :rowData="filteredRowData" :columnDefs="colDefs" class="ag-theme-quartz h-full"
+                    :pagination="true" :paginationPageSize="20" :paginationPageSizeSelector="true">
+                </ag-grid-vue>
+            </div>
         </div>
+
 
     </div>
 </template>
@@ -157,9 +260,149 @@ import { Line, Pie, Bar } from 'vue-chartjs';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, LineElement, PointElement, LinearScale, CategoryScale, BarElement } from 'chart.js'
 import { usePetitions } from '../../../../stores/Petition/petitions';
 import { watch } from 'vue';
+import TableGrid from '../../../../components/TableGrid.vue';
+import PetitionNumberRenderer from '../../../../components/PetitionNumberRenderer.vue';
+import DocumentStatus from '../../../../components/essentials/buttons/table/DocumentStatus.vue';
+import "ag-grid-community/styles/ag-grid.css"
+import "ag-grid-community/styles/ag-theme-quartz.css"
+import { AgGridVue } from "ag-grid-vue3"
+import { isValid, parseISO } from 'date-fns';
+
 
 const petitionStore = usePetitions()
 ChartJS.register(ArcElement, Tooltip, Legend, Title, LineElement, PointElement, LinearScale, CategoryScale, BarElement)
+
+
+
+
+const search = ref(null)
+const filteredRowData = computed(() => {
+
+    return petitionStore.petitions.filter(petition => {
+        const date = parseISO(petition.date_filed)
+        const matchesSearch = !search.value || Object.values(petition).some(value =>
+            String(value).toLowerCase().includes(search.value.toLowerCase())
+        )
+
+        const matchUserCreated = !filters.user || petition.created_by_user?.username === filters.user
+        const matchPetitionType = !filters.petitionType || petition.petition_type === filters.petitionType
+        const matchEventType = !filters.eventType || petition.event_type === filters.eventType
+        const matchStatusType = !filters.status || petition.status === filters.status
+
+        const matchesYear = !filters.year || (isValid(date) && date.getFullYear().toString() === filters.year)
+        const matchesMonth = !filters.month || (isValid(date) && (date.getMonth() + 1).toString().padStart(2, '0') === filters.month)
+
+        return matchesSearch && matchUserCreated && matchPetitionType && matchEventType && matchStatusType && matchesYear && matchesMonth
+    });
+
+
+});
+
+
+
+const baseFilter = {
+    year: '',
+    month: '',
+    petitionType: '',
+    eventType: '',
+    status: '',
+    user: '',
+}
+const filters = reactive({ ...baseFilter })
+
+const clearFilters = () => {
+    Object.assign(filters, baseFilter)
+    search.value = null
+}
+
+const colDefs = ref([
+    {
+        field: "petition_number",
+        headerName: "Petitioner Number",
+        flex: 2,
+
+        pinned: "left",
+        lockPinned: true,
+        cellStyle: { border: "none" },
+        width: 240,
+        cellRenderer: PetitionNumberRenderer,
+    },
+    {
+        field: "petitioner_name",
+        headerName: "Petitioner Name",
+        flex: 1,
+        cellClass: "font-medium tracking-wider w-full text-gray-600",
+
+    },
+    {
+        field: "document_owner",
+        cellClass: "font-medium tracking-wider w-full text-gray-900",
+        headerName: "Document Owner",
+        flex: 1,
+
+    },
+
+    {
+        field: "petition_type",
+        cellClass: "font-medium tracking-wider w-full text-gray-600",
+        headerName: "Petition Type",
+        flex: 1,
+
+    },
+    {
+        field: "event_type",
+        cellClass: "font-medium tracking-wider w-full text-gray-600",
+        headerName: "Document Type",
+        flex: 1,
+
+    },
+    {
+        field: "date_filed",
+        headerName: "Date Filed",
+        flex: 1,
+
+        cellClass: "font-medium tracking-wider w-full text-gray-600",
+    },
+    {
+        field: "created_by_user.username",
+        cellClass: "font-medium tracking-wider w-full text-gray-600",
+        headerName: "Prepared by",
+        flex: 1,
+
+    },
+    {
+        headerName: "Document Status",
+        flex: 2,
+        pinned: "right",
+        lockPinned: true,
+        resizable: false,
+        cellRenderer: DocumentStatus,
+        cellClass: "text-center",
+        cellStyle: { overflow: "visible", border: "none" },
+        sortable: false,
+    },
+    //   {
+    //     headerName: "Action",
+    //     cellStyle: { border: "none" },
+    //     pinned: "right",
+    //     width: 100,
+    //     lockPinned: true,
+    //     resizable: true,
+    //     sortable: false,
+    //     cellStyle: { overflow: "visible", border: "none" },
+    //     cellRenderer: ViewBTn,
+    //     cellRendererParams: {
+    //       onClick: handleEdit,
+    //       onRegenerate: openRegenerate,
+    //     },
+    //   },
+
+]);
+
+
+const uniqueUsers = computed(() =>
+    [...new Set(petitionStore.petitions.map(petition => petition.created_by_user?.username))].filter(Boolean)
+)
 
 
 
@@ -171,6 +414,8 @@ const formData = reactive({
 // Fetch all petitions on component mount
 onMounted(() => {
     petitionStore.get_all_petitions()
+    petitionStore.get_latest_cce()
+    petitionStore.get_latest_cfn()
 })
 
 // Watch for changes in yearData and re-fetch/filter petitions
@@ -230,36 +475,6 @@ onMounted(() => {
 });
 
 
-
-const Linedata = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-    datasets: [
-        {
-            label: 'Petitions',
-            backgroundColor: '#008000',
-            data: [40, 39, 10, 40, 39, 80, 40, 0, 0, 0, 0, 0]
-        }
-    ]
-}
-
-const chartData = {
-    labels: ['CCE', 'CFN'],
-    datasets: [
-        {
-            label: 'Type',
-            backgroundColor: '#f87979',
-            data: [40, 20]
-        }
-    ]
-}
-
-
-const options = {
-
-    responsive: true,
-    maintainAspectRatio: false
-
-}
 
 const StatusChartData = computed(() => {
     const pendingCount = pendingPetitions.value;
@@ -473,24 +688,6 @@ const months = [
     { value: "11", label: "November" },
     { value: "12", label: "December" }
 ]
-
-
-const filters = ref({
-    dateFrom: '',
-    dateTo: '',
-    petitionType: '',
-    eventType: '',
-    status: '',
-    municipality: ''
-});
-
-const kpiData = ref({
-    totalPetitions: 0,
-    pendingPetitions: 0,
-    approvedPetitions: 0,
-    migrantPetitions: 0,
-    indigentPetitions: 0,
-});
 
 
 
