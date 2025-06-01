@@ -28,6 +28,9 @@ export function grantedText(data) {
         const formattedOutput =
             errorStrings.join("; ") + (errorStrings.length ? " and " : "") + lastItem;
 
-        return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} is hereby ${change_correct}.`;
+        // Use "are" if more than one clerical error, otherwise "is"
+        const verb = (data.value.clerical_errors.length > 1) ? "are" : "is";
+
+        return `Finding the petition sufficient in form and substance, the same is hereby GRANTED, ${formattedOutput} ${verb} hereby ${change_correct}.`;
     }
 }

@@ -3,9 +3,9 @@
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
       <div class="w-full gap-2 flex flex-col md:flex-row items-end justify-end">
         <Button label="Create New Petition" isActive :class="`rounded`" @click="open_modal()" />
-        <button @click="quick_settings = !quick_settings"
+        <!-- <button @click="quick_settings = !quick_settings"
           class="rounded-md border border-gray-300 px-3 py-1 h-8 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95">
-          <font-awesome-icon icon="fa-solid fa-gear" /></button>
+          <font-awesome-icon icon="fa-solid fa-gear" /></button> -->
         <HowTo />
       </div>
     </Header>
@@ -68,7 +68,8 @@
     <RegenerateMessage v-if="is_regen" @proceed="handleRegenerate" @cancel="is_regen = false" :data="regen_data" />
 
 
-    <Modal large footerBG="bg-white  border-t  border-gray-300" title="Create New Petition" v-if="petition_modal" @exit-modal="close_modal">
+    <Modal large footerBG="bg-white  border-t  border-gray-300" title="Create New Petition" v-if="petition_modal"
+      @exit-modal="close_modal">
       <!-- <template v-slot:header>
 
         <button
@@ -241,7 +242,7 @@
                   <InputAutoComplete :skip="!formData.is_migrant" :error="v$.event_province.$error" label="Province"
                     @change="formData.event_municipality = ''" v-model="formData.event_province"
                     :suggestion_data="province" />
-                  <InputAutoComplete skip="!formData.is_migrant" :error="v$.event_municipality.$error"
+                  <InputAutoComplete :skip="!formData.is_migrant" :error="v$.event_municipality.$error"
                     label="Municipality" v-model="formData.event_municipality" :suggestion_data="municipality" />
                   <!-- <Input label="Country" v-model="formData.event_country" skip /> -->
                   <!-- <Input label="Province" v-model="formData.event_province" /> -->
@@ -699,7 +700,8 @@
 
           <!-- Right: Submit Button -->
           <button type="button" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" @click="submitForm()"
-            class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            class="flex items-center gap-2 px-5 py-2 text-base focus:animate-pulse font-bold text-white bg-blue-600 rounded-md shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-white focus:border-blue-800 focus:shadow-xl transition-all"
+            style="transition: box-shadow 0.2s;">
             <font-awesome-icon icon="fa-solid fa-right-to-bracket" />
             {{ !is_document_edit_mode ? 'Submit' : 'Update' }}
           </button>
@@ -868,6 +870,7 @@ const open_modal = async () => {
   if (is_document_edit_mode.value || is_document_regenerating.value) {
     return
   }
+
   const cce = await petitions.get_latest_cce()
 
   if (cce) {
@@ -878,18 +881,12 @@ const open_modal = async () => {
     is_default_petitioner_number.value = '0001'
   }
 
-
   formData.notice_posting = add_date_notice().toString()
   formData.certificate_posting_start = add_date_certificate_start().toString()
   formData.certificate_posting_end = add_date_certificate_end().toString()
   formData.petition_date_issued = add_date_issued().toString()
   formData.petition_date_granted = add_date_granted().toString()
   formData.action_taken_date = add_date_granted().toString()
-
-
-}
-
-function publication_date_setter() {
 
 }
 
@@ -1283,14 +1280,14 @@ function change_migrant() {
   }
   else {
 
-    formData.administering_officer_name = system_setting.defaults[0].petition_default_administering_officer_name || ''
-    formData.administering_officer_position = system_setting.defaults[0].petition_default_administering_officer_position || ''
-    formData.event_province = system_setting.defaults[0].petition_default_filling_province || ''
-    formData.event_municipality = system_setting.defaults[0].petition_default_filling_municipality || ''
+    formData.administering_officer_name = system_setting.defaults.civil_registrar || '', 
+    formData.administering_officer_position = 'Municipal Civil Registrar'
+    formData.event_province =  system_setting.defaults.province || ''
+    formData.event_municipality = system_setting.defaults.municipality || ''
 
     formData.action_taken_date = add_date_granted().toString()
-    formData.header_province = system_setting.defaults[0].header_province || ''
-    formData.header_municipality = system_setting.defaults[0].header_municipality || ''
+    formData.header_province = system_setting.defaults.province.toUpperCase() || ''
+    formData.header_municipality ='MUNICIPALITY OF ' + system_setting.defaults.municipality.toUpperCase() || ''
 
   }
 }

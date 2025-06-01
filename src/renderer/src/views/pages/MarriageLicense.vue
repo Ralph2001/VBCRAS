@@ -128,10 +128,10 @@
                     <div
                         class="flex-1 overflow-y-auto p-4 h-full  flex-col gap-6  w-full max-w-screen-2xl py-8  bg-gray-100 flex ">
 
-                        <div class="flex flex-col gap-2 max-w-screen-xl mx-auto w-full">
+                        <div class="flex flex-col gap-4 max-w-screen-xl mx-auto w-full">
                             <div v-if="currentStep === 0 || form_mode === 1"
                                 class="flex flex-col px-10  gap-2 justify-center">
-                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[0]
@@ -164,7 +164,7 @@
                                 class="flex flex-col px-10 justify-center  ">
                                 <div class="grid grid-cols-1 gap-2">
 
-                                    <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                    <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                         <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
@@ -282,7 +282,7 @@
                                 class="flex flex-col gap-2 px-10 justify-center">
 
 
-                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[2]
@@ -395,7 +395,7 @@
 
                                 <div class="grid grid-cols-1 gap-2">
 
-                                    <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                    <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                         <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
@@ -511,7 +511,7 @@
                             <div v-if="currentStep === 4 || form_mode === 1"
                                 class="flex flex-col gap-2 px-10 justify-center">
 
-                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[4]
@@ -618,7 +618,7 @@
                             <div v-if="currentStep === 5 || form_mode === 1"
                                 class="flex flex-col gap-2 px-10 justify-center">
 
-                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[5]
@@ -647,7 +647,7 @@
                             <div v-if="currentStep === 6 || form_mode === 1"
                                 class="flex flex-col gap-2 px-10 justify-center mt-10">
 
-                                <div class="flex flex-col gap-0" v-if="form_mode === 1">
+                                <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
                                         }}
                                     </p>
@@ -737,7 +737,7 @@
                                 </div>
 
                                 <p class="italic mt-4 text-sm font-medium text-green-500">Copy Furnished:</p>
-                                <div class="w-[40%] pl-4 flex flex-col gap-0">
+                                <div class="w-[40%] pl-4 flex flex-col gap-1">
                                     <InputMarriage v-model="formData.notice_copy_furnished1" />
                                     <InputMarriage v-model="formData.notice_copy_furnished2" />
                                     <InputMarriage v-model="formData.notice_copy_furnished3" />
@@ -820,10 +820,10 @@
                                 <!-- Step 2: Document Preview -->
                                 <div>
                                     <label class="font-semibold mt-4">3. Document Preview</label>
-                                    <div class="mt-2 bg-gray-50 rounded-xl  shadow-inner flex items-center justify-center h-96 relative"
+                                    <div class="mt-2 bg-gray-50 rounded-xl  shadow-inner flex items-center justify-center h-[30rem] relative"
                                         ref="pdfContainer">
                                         <button
-                                            class="absolute top-2 right-4 z-10 bg-white shadow px-3 py-1 rounded text-sm hover:bg-gray-100"
+                                            class="absolute top-2  right-4 z-10 bg-white shadow px-3 py-1 rounded text-sm hover:bg-gray-100"
                                             @click="toggleFullScreen">
                                             {{ isFullScreen ? 'Exit Full Screen' : 'Full Screen' }}
 
@@ -834,7 +834,7 @@
                                         <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
                                         <p v-if="!pdf_content && !isLoadingPrev"
                                             class="italic text-gray-500 flex items-center gap-2">
-                                            <font-awesome-icon icon="fa-regular fa-file-pdf" class="text-xl" />
+                                           
                                             Select a document above to see a preview.
                                         </p>
                                     </div>
