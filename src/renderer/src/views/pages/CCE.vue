@@ -1,12 +1,13 @@
 <template>
   <div class="flex flex-col relative justify-center w-full p-10 CCEMAIN ">
     <Header label="FILED CORRECTION OF CLERICAL ERROR & CHANGE OF FIRST NAME">
-      <div class="w-full gap-2 flex flex-col md:flex-row items-end justify-end">
+      <div class="w-full gap-2 flex flex-col md:flex-row items-center justify-center">
         <Button label="Create New Petition" isActive :class="`rounded`" @click="open_modal()" />
         <!-- <button @click="quick_settings = !quick_settings"
           class="rounded-md border border-gray-300 px-3 py-1 h-8 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95">
           <font-awesome-icon icon="fa-solid fa-gear" /></button> -->
         <HowTo />
+        <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'VBCRAS\\Correction of Clerical Error'"/>
       </div>
     </Header>
 
@@ -782,6 +783,7 @@ import RegenerateMessage from "../../components/Correction/RegenerateMessage.vue
 import { MarriageRules } from "../../lib/marriage/rules.js";
 import HowTo from "../../components/Form/HowTo.vue";
 import DocumentStatusModal from "../../components/Correction/DocumentStatusModal.vue";
+import IsPathAccessible from "../../components/IsPathAccessible.vue";
 // import { useRouter } from "vue-router";
 
 // const router = useRouter();

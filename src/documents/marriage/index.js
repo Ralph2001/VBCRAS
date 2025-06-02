@@ -1,9 +1,10 @@
-
 import { PageSizes, PDFDocument, StandardFonts, TextAlignment } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import { format, parse } from 'date-fns'
 const path = require('path')
 const fs = require('fs')
+
+const fsp = require('fs').promises
 
 const MARRIAGE_TEMPLATE_PATHS = {
     NOTICE: path
@@ -259,7 +260,7 @@ async function generate_marriage_notice(formData, image) {
         bride_mother.setText(data.notice_bride_mother)
         bride_mother.updateAppearances(ArialFont)
 
-        const parsedDate = new Date(data.notice_date_posting);
+        const parsedDate = new Date(data.notice_date_posting)
         date_posting.setText(format(parsedDate, 'MMMM dd, yyyy'))
         date_posting.updateAppearances(ArialFont)
         civil_registrar.setText(data.civil_registrar)
@@ -286,7 +287,6 @@ async function generate_marriage_notice(formData, image) {
     }
 }
 
-
 async function generate_marriage_license(formData) {
     try {
         // Check if the necessary files exist
@@ -305,148 +305,143 @@ async function generate_marriage_license(formData) {
         // Parse the form data
         const data = JSON.parse(formData)
 
-
         const updateBirthDateField = (birthDate, prefix) => {
             // Add validation
             if (!birthDate || isNaN(new Date(birthDate).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, birthDate);
-                return;
+                console.error(`Invalid date for ${prefix}:`, birthDate)
+                return
             }
 
             // Parse date using ISO format
-            const parsedDate = new Date(birthDate);
+            const parsedDate = new Date(birthDate)
 
             // Validate parsed date
             if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, birthDate);
-                return;
+                console.error(`Failed to parse date for ${prefix}:`, birthDate)
+                return
             }
 
-            const dayField = form.getTextField(`${prefix}_day`);
-            const monthField = form.getTextField(`${prefix}_month`);
-            const yearField = form.getTextField(`${prefix}_year`);
+            const dayField = form.getTextField(`${prefix}_day`)
+            const monthField = form.getTextField(`${prefix}_month`)
+            const yearField = form.getTextField(`${prefix}_year`)
 
             try {
-                dayField.setText(format(parsedDate, 'dd'));
-                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
-                yearField.setText(format(parsedDate, 'yyyy'));
-
-                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+                dayField.setText(format(parsedDate, 'dd'))
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
+                yearField.setText(format(parsedDate, 'yyyy'))
+                ;[dayField, monthField, yearField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             } catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
+                console.error(`Error formatting date for ${prefix}:`, error)
             }
-        };
+        }
 
         // Groom
-        updateBirthDateField(data.groom_date_birth, 'groom');
+        updateBirthDateField(data.groom_date_birth, 'groom')
 
         // Bride
-        updateBirthDateField(data.bride_date_birth, 'bride');
-
-
+        updateBirthDateField(data.bride_date_birth, 'bride')
 
         const updateDateFormat = (date, prefix) => {
             // Add validation
             if (!date || isNaN(new Date(date).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, date);
-                return;
+                console.error(`Invalid date for ${prefix}:`, date)
+                return
             }
 
-            const parsedDate = new Date(date);
+            const parsedDate = new Date(date)
 
             if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, date);
-                return;
+                console.error(`Failed to parse date for ${prefix}:`, date)
+                return
             }
-            const dateField = form.getTextField(`${prefix}`);
+            const dateField = form.getTextField(`${prefix}`)
             try {
-                dateField.setText(format(parsedDate, 'MMMM dd, yyyy'));
+                dateField.setText(format(parsedDate, 'MMMM dd, yyyy'))
                 dateField.updateAppearances(helveticaFont)
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error)
             }
-            catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
-            }
-
         }
 
-
         updateDateFormat(data.date_of_receipt, 'date_of_receipt')
-        updateDateFormat(data.date_issuance_marriage_license, 'date_issuance_marriage_license')
+        updateDateFormat(
+            data.date_issuance_marriage_license,
+            'date_issuance_marriage_license'
+        )
 
         // Helper function to add ordinal suffix
         const getOrdinalSuffix = (day) => {
             const j = day % 10,
-                k = day % 100;
-            if (j === 1 && k !== 11) return 'ST';
-            if (j === 2 && k !== 12) return 'ND';
-            if (j === 3 && k !== 13) return 'RD';
-            return 'TH';
-        };
+                k = day % 100
+            if (j === 1 && k !== 11) return 'ST'
+            if (j === 2 && k !== 12) return 'ND'
+            if (j === 3 && k !== 13) return 'RD'
+            return 'TH'
+        }
 
         const updateSSDateField = (date, prefix) => {
             if (!date || isNaN(new Date(date).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, date);
-                return;
+                console.error(`Invalid date for ${prefix}:`, date)
+                return
             }
 
-            const parsedDate = new Date(date);
+            const parsedDate = new Date(date)
 
             if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, date);
-                return;
+                console.error(`Failed to parse date for ${prefix}:`, date)
+                return
             }
 
-            const dayField = form.getTextField(`${prefix}_ss_day`);
-            const monthField = form.getTextField(`${prefix}_ss_month`);
-            const yearField = form.getTextField(`${prefix}_ss_year`);
+            const dayField = form.getTextField(`${prefix}_ss_day`)
+            const monthField = form.getTextField(`${prefix}_ss_month`)
+            const yearField = form.getTextField(`${prefix}_ss_year`)
 
             try {
-                const day = parsedDate.getDate();
-                const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
+                const day = parsedDate.getDate()
+                const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`
 
-                dayField.setText(dayWithSuffix);
-                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
-                yearField.setText(format(parsedDate, 'yyyy'));
-
-                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+                dayField.setText(dayWithSuffix)
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
+                yearField.setText(format(parsedDate, 'yyyy'))
+                ;[dayField, monthField, yearField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             } catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
+                console.error(`Error formatting date for ${prefix}:`, error)
             }
-        };
-
-
+        }
 
         // Subscribe and Sworn
 
         updateSSDateField(data.date_of_receipt, 'groom')
         updateSSDateField(data.date_of_receipt, 'bride')
 
-
         const updateCTCDate = (date, prefix) => {
             if (!date || isNaN(new Date(date).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, date);
-                return;
+                console.error(`Invalid date for ${prefix}:`, date)
+                return
             }
             // Parse date using ISO format
-            const parsedDate = new Date(date);
+            const parsedDate = new Date(date)
 
             // Validate parsed date
             if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, date);
-                return;
+                console.error(`Failed to parse date for ${prefix}:`, date)
+                return
             }
 
-            const dateField = form.getTextField(`${prefix}_ctc_on`);
+            const dateField = form.getTextField(`${prefix}_ctc_on`)
             try {
                 const date = format(parsedDate, 'dd MMMM yyyy').toUpperCase()
-                dateField.setText(date);
-
-                [dateField].forEach(field => field.updateAppearances(helveticaFont));
+                dateField.setText(date)
+                ;[dateField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             } catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
+                console.error(`Error formatting date for ${prefix}:`, error)
             }
-
-
         }
 
         // Community Tax Certificate
@@ -454,68 +449,83 @@ async function generate_marriage_license(formData) {
         updateCTCDate(data.groom_ctc_on, 'groom')
         updateCTCDate(data.bride_ctc_on, 'bride')
 
-
-
         const setDissolvedPlace = (prefix) => {
-            const municipality = data[`${prefix}_place_dissolved_municipality`];
-            const province = data[`${prefix}_place_dissolved_province`];
-            const country = data[`${prefix}_place_dissolved_country`];
+            const municipality = data[`${prefix}_place_dissolved_municipality`]
+            const province = data[`${prefix}_place_dissolved_province`]
+            const country = data[`${prefix}_place_dissolved_country`]
 
-            const allAreNA = [municipality, province, country].every(value => value === 'N/A');
+            const allAreNA = [municipality, province, country].every(
+                (value) => value === 'N/A'
+            )
 
             if (allAreNA) {
-                const fullPlaceField = form.getTextField(`${prefix}_place_dissolved`);
-                fullPlaceField.setText('N/A');
-                fullPlaceField.updateAppearances(helveticaFont);
+                const fullPlaceField = form.getTextField(
+                    `${prefix}_place_dissolved`
+                )
+                fullPlaceField.setText('N/A')
+                fullPlaceField.updateAppearances(helveticaFont)
             } else {
-                const municipalityField = form.getTextField(`${prefix}_place_dissolved_municipality`);
-                const provinceField = form.getTextField(`${prefix}_place_dissolved_province`);
-                const countryField = form.getTextField(`${prefix}_place_dissolved_country`);
+                const municipalityField = form.getTextField(
+                    `${prefix}_place_dissolved_municipality`
+                )
+                const provinceField = form.getTextField(
+                    `${prefix}_place_dissolved_province`
+                )
+                const countryField = form.getTextField(
+                    `${prefix}_place_dissolved_country`
+                )
 
-                municipalityField.setText(municipality || '');
-                provinceField.setText(province || '');
-                countryField.setText(country || '');
-
-                [municipalityField, provinceField, countryField].forEach(field => field.updateAppearances(helveticaFont));
+                municipalityField.setText(municipality || '')
+                provinceField.setText(province || '')
+                countryField.setText(country || '')
+                ;[municipalityField, provinceField, countryField].forEach(
+                    (field) => field.updateAppearances(helveticaFont)
+                )
             }
-        };
-
+        }
 
         setDissolvedPlace('groom')
         setDissolvedPlace('bride')
 
-
-
         const setDissolvedDate = (dateStr, prefix) => {
             if (!dateStr || dateStr === 'N/A') {
-                const fullDateField = form.getTextField(`${prefix}_date_dissolved`);
-                fullDateField.setText('N/A');
-                fullDateField.updateAppearances(helveticaFont);
+                const fullDateField = form.getTextField(
+                    `${prefix}_date_dissolved`
+                )
+                fullDateField.setText('N/A')
+                fullDateField.updateAppearances(helveticaFont)
             } else {
-                const monthField = form.getTextField(`${prefix}_date_dissolved_month`);
-                const dayField = form.getTextField(`${prefix}_date_dissolved_day`);
-                const yearField = form.getTextField(`${prefix}_date_dissolved_year`);
+                const monthField = form.getTextField(
+                    `${prefix}_date_dissolved_month`
+                )
+                const dayField = form.getTextField(
+                    `${prefix}_date_dissolved_day`
+                )
+                const yearField = form.getTextField(
+                    `${prefix}_date_dissolved_year`
+                )
 
                 try {
-                    const parsedDate = parse(dateStr, 'yyyy-MM-dd', new Date());
+                    const parsedDate = parse(dateStr, 'yyyy-MM-dd', new Date())
 
-                    const month = format(parsedDate, 'MMMM').toUpperCase();
-                    const day = format(parsedDate, 'dd');
-                    const year = format(parsedDate, 'yyyy');
+                    const month = format(parsedDate, 'MMMM').toUpperCase()
+                    const day = format(parsedDate, 'dd')
+                    const year = format(parsedDate, 'yyyy')
 
-                    monthField.setText(month);
-                    dayField.setText(day);
-                    yearField.setText(year);
+                    monthField.setText(month)
+                    dayField.setText(day)
+                    yearField.setText(year)
                 } catch (error) {
-
-                    monthField.setText('');
-                    dayField.setText('');
-                    yearField.setText('');
+                    monthField.setText('')
+                    dayField.setText('')
+                    yearField.setText('')
                 }
 
-                [monthField, dayField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+                ;[monthField, dayField, yearField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             }
-        };
+        }
 
         setDissolvedDate(data.groom_date_dissolved, 'groom')
         setDissolvedDate(data.bride_date_dissolved, 'bride')
@@ -613,7 +623,7 @@ async function generate_marriage_license(formData) {
             'groom_father_residence',
             'bride_mother_residence',
             'bride_person_who_gave_consent',
-            'bride_person_who_gave_consent_residence',
+            'bride_person_who_gave_consent_residence'
         ]
 
         fields.forEach((fieldName) => {
@@ -693,13 +703,15 @@ async function adjustTextFieldSizeAndFit(
         field.setFontSize(fontSize)
         field.enableMultiline()
 
-        console.log(field.getName() + 'Does it Print? ' + field.setText(fieldValue))
+        console.log(
+            field.getName() + ' Does it Print? ' + field.setText(fieldValue)
+        )
 
-        if (field.getName() === 'groom_contract_marriage_with' || field.getName() === 'bride_contract_marriage_with'
-        ) {
-            field.setAlignment(TextAlignment.Right)
-            return
-        }
+        // if (field.getName() === 'groom_contract_marriage_with' || field.getName() === 'bride_contract_marriage_with'
+        // ) {
+        //     field.setAlignment(TextAlignment.Right)
+        //     return
+        // }
 
         if (
             fieldValue.length > 40 ||
@@ -708,12 +720,10 @@ async function adjustTextFieldSizeAndFit(
             field.getName() === 'bride_person_who_gave_consent' ||
             field.getName() === 'bride_person_who_gave_consent_residence'
         ) {
-            field.setAlignment(TextAlignment.Left);
+            field.setAlignment(TextAlignment.Left)
         } else {
-            field.setAlignment(TextAlignment.Center);
+            field.setAlignment(TextAlignment.Center)
         }
-
-
     } catch (error) {
         console.error(
             `Error adjusting text field size for "${field.getName()}":`,
@@ -740,220 +750,201 @@ async function print_decided_license(formData, params) {
         // Parse the form data
         const data = JSON.parse(formData)
 
-        // 
+        //
         const adjustments = JSON.parse(params)
 
-
         const updateBirthDateField = (birthDate, prefix) => {
-            // Add validation
             if (!birthDate || isNaN(new Date(birthDate).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, birthDate);
-                return;
+                console.error(`Invalid date for ${prefix}:`, birthDate)
+                return
             }
-
-            // Parse date using ISO format
-            const parsedDate = new Date(birthDate);
-
-            // Validate parsed date
+            const parsedDate = new Date(birthDate)
             if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, birthDate);
-                return;
+                console.error(`Failed to parse date for ${prefix}:`, birthDate)
+                return
             }
-
-            const dayField = form.getTextField(`${prefix}_day`);
-            const monthField = form.getTextField(`${prefix}_month`);
-            const yearField = form.getTextField(`${prefix}_year`);
-
+            const dayField = form.getTextField(`${prefix}_day`)
+            const monthField = form.getTextField(`${prefix}_month`)
+            const yearField = form.getTextField(`${prefix}_year`)
             try {
-                dayField.setText(format(parsedDate, 'dd'));
-                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
-                yearField.setText(format(parsedDate, 'yyyy'));
-
-                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+                dayField.setText(format(parsedDate, 'dd'))
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
+                yearField.setText(format(parsedDate, 'yyyy'))
+                ;[dayField, monthField, yearField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             } catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
+                console.error(`Error formatting date for ${prefix}:`, error)
             }
-        };
-
-        // Groom
-        updateBirthDateField(data.groom_date_birth, 'groom');
-
-        // Bride
-        updateBirthDateField(data.bride_date_birth, 'bride');
-
-
-
-        const updateDateFormat = (date, prefix) => {
-            // Add validation
-            if (!date || isNaN(new Date(date).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, date);
-                return;
-            }
-
-            const parsedDate = new Date(date);
-
-            if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, date);
-                return;
-            }
-            const dateField = form.getTextField(`${prefix}`);
-            try {
-                dateField.setText(format(parsedDate, 'MMMM dd, yyyy'));
-                dateField.updateAppearances(helveticaFont)
-            }
-            catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
-            }
-
         }
 
+        // Groom
+        updateBirthDateField(data.groom_date_birth, 'groom')
+        // Bride
+        updateBirthDateField(data.bride_date_birth, 'bride')
+
+        const updateDateFormat = (date, prefix) => {
+            if (!date || isNaN(new Date(date).getTime())) {
+                console.error(`Invalid date for ${prefix}:`, date)
+                return
+            }
+            const parsedDate = new Date(date)
+            if (isNaN(parsedDate.getTime())) {
+                console.error(`Failed to parse date for ${prefix}:`, date)
+                return
+            }
+            const dateField = form.getTextField(`${prefix}`)
+            try {
+                dateField.setText(format(parsedDate, 'MMMM dd, yyyy'))
+                dateField.updateAppearances(helveticaFont)
+            } catch (error) {
+                console.error(`Error formatting date for ${prefix}:`, error)
+            }
+        }
 
         updateDateFormat(data.date_of_receipt, 'date_of_receipt')
-        updateDateFormat(data.date_issuance_marriage_license, 'date_issuance_marriage_license')
+        updateDateFormat(
+            data.date_issuance_marriage_license,
+            'date_issuance_marriage_license'
+        )
 
         // Helper function to add ordinal suffix
         const getOrdinalSuffix = (day) => {
             const j = day % 10,
-                k = day % 100;
-            if (j === 1 && k !== 11) return 'ST';
-            if (j === 2 && k !== 12) return 'ND';
-            if (j === 3 && k !== 13) return 'RD';
-            return 'TH';
-        };
+                k = day % 100
+            if (j === 1 && k !== 11) return 'ST'
+            if (j === 2 && k !== 12) return 'ND'
+            if (j === 3 && k !== 13) return 'RD'
+            return 'TH'
+        }
 
         const updateSSDateField = (date, prefix) => {
             if (!date || isNaN(new Date(date).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, date);
-                return;
+                console.error(`Invalid date for ${prefix}:`, date)
+                return
             }
-
-            const parsedDate = new Date(date);
-
+            const parsedDate = new Date(date)
             if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, date);
-                return;
+                console.error(`Failed to parse date for ${prefix}:`, date)
+                return
             }
-
-            const dayField = form.getTextField(`${prefix}_ss_day`);
-            const monthField = form.getTextField(`${prefix}_ss_month`);
-            const yearField = form.getTextField(`${prefix}_ss_year`);
-
+            const dayField = form.getTextField(`${prefix}_ss_day`)
+            const monthField = form.getTextField(`${prefix}_ss_month`)
+            const yearField = form.getTextField(`${prefix}_ss_year`)
             try {
-                const day = parsedDate.getDate();
-                const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
-
-                dayField.setText(dayWithSuffix);
-                monthField.setText(format(parsedDate, 'MMMM').toUpperCase());
-                yearField.setText(format(parsedDate, 'yyyy'));
-
-                [dayField, monthField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+                const day = parsedDate.getDate()
+                const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`
+                dayField.setText(dayWithSuffix)
+                monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
+                yearField.setText(format(parsedDate, 'yyyy'))
+                ;[dayField, monthField, yearField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             } catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
+                console.error(`Error formatting date for ${prefix}:`, error)
             }
-        };
-
-
+        }
 
         // Subscribe and Sworn
-
         updateSSDateField(data.date_of_receipt, 'groom')
         updateSSDateField(data.date_of_receipt, 'bride')
 
-
         const updateCTCDate = (date, prefix) => {
             if (!date || isNaN(new Date(date).getTime())) {
-                console.error(`Invalid date for ${prefix}:`, date);
-                return;
+                console.error(`Invalid date for ${prefix}:`, date)
+                return
             }
-            // Parse date using ISO format
-            const parsedDate = new Date(date);
-
-            // Validate parsed date
+            const parsedDate = new Date(date)
             if (isNaN(parsedDate.getTime())) {
-                console.error(`Failed to parse date for ${prefix}:`, date);
-                return;
+                console.error(`Failed to parse date for ${prefix}:`, date)
+                return
             }
-
-            const dateField = form.getTextField(`${prefix}_ctc_on`);
+            const dateField = form.getTextField(`${prefix}_ctc_on`)
             try {
                 const date = format(parsedDate, 'dd MMMM yyyy').toUpperCase()
-                dateField.setText(date);
-
-                [dateField].forEach(field => field.updateAppearances(helveticaFont));
+                dateField.setText(date)
+                ;[dateField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             } catch (error) {
-                console.error(`Error formatting date for ${prefix}:`, error);
+                console.error(`Error formatting date for ${prefix}:`, error)
             }
-
-
         }
 
         // Community Tax Certificate
-
         updateCTCDate(data.groom_ctc_on, 'groom')
         updateCTCDate(data.bride_ctc_on, 'bride')
 
-
-
         const setDissolvedPlace = (prefix) => {
-            const municipality = data[`${prefix}_place_dissolved_municipality`];
-            const province = data[`${prefix}_place_dissolved_province`];
-            const country = data[`${prefix}_place_dissolved_country`];
-
-            const allAreNA = [municipality, province, country].every(value => value === 'N/A');
-
+            const municipality = data[`${prefix}_place_dissolved_municipality`]
+            const province = data[`${prefix}_place_dissolved_province`]
+            const country = data[`${prefix}_place_dissolved_country`]
+            const allAreNA = [municipality, province, country].every(
+                (value) => value === 'N/A'
+            )
             if (allAreNA) {
-                const fullPlaceField = form.getTextField(`${prefix}_place_dissolved`);
-                fullPlaceField.setText('N/A');
-                fullPlaceField.updateAppearances(helveticaFont);
+                const fullPlaceField = form.getTextField(
+                    `${prefix}_place_dissolved`
+                )
+                fullPlaceField.setText('N/A')
+                fullPlaceField.updateAppearances(helveticaFont)
             } else {
-                const municipalityField = form.getTextField(`${prefix}_place_dissolved_municipality`);
-                const provinceField = form.getTextField(`${prefix}_place_dissolved_province`);
-                const countryField = form.getTextField(`${prefix}_place_dissolved_country`);
-
-                municipalityField.setText(municipality || '');
-                provinceField.setText(province || '');
-                countryField.setText(country || '');
-
-                [municipalityField, provinceField, countryField].forEach(field => field.updateAppearances(helveticaFont));
+                const municipalityField = form.getTextField(
+                    `${prefix}_place_dissolved_municipality`
+                )
+                const provinceField = form.getTextField(
+                    `${prefix}_place_dissolved_province`
+                )
+                const countryField = form.getTextField(
+                    `${prefix}_place_dissolved_country`
+                )
+                municipalityField.setText(municipality || '')
+                provinceField.setText(province || '')
+                countryField.setText(country || '')
+                ;[municipalityField, provinceField, countryField].forEach(
+                    (field) => field.updateAppearances(helveticaFont)
+                )
             }
-        };
-
+        }
 
         setDissolvedPlace('groom')
         setDissolvedPlace('bride')
 
-
-
         const setDissolvedDate = (dateStr, prefix) => {
             if (!dateStr || dateStr === 'N/A') {
-                const fullDateField = form.getTextField(`${prefix}_date_dissolved`);
-                fullDateField.setText('N/A');
-                fullDateField.updateAppearances(helveticaFont);
+                const fullDateField = form.getTextField(
+                    `${prefix}_date_dissolved`
+                )
+                fullDateField.setText('N/A')
+                fullDateField.updateAppearances(helveticaFont)
             } else {
-                const monthField = form.getTextField(`${prefix}_date_dissolved_month`);
-                const dayField = form.getTextField(`${prefix}_date_dissolved_day`);
-                const yearField = form.getTextField(`${prefix}_date_dissolved_year`);
-
+                const monthField = form.getTextField(
+                    `${prefix}_date_dissolved_month`
+                )
+                const dayField = form.getTextField(
+                    `${prefix}_date_dissolved_day`
+                )
+                const yearField = form.getTextField(
+                    `${prefix}_date_dissolved_year`
+                )
                 try {
-                    const parsedDate = parse(dateStr, 'yyyy-MM-dd', new Date());
-
-                    const month = format(parsedDate, 'MMMM').toUpperCase();
-                    const day = format(parsedDate, 'dd');
-                    const year = format(parsedDate, 'yyyy');
-
-                    monthField.setText(month);
-                    dayField.setText(day);
-                    yearField.setText(year);
+                    const parsedDate = parse(dateStr, 'yyyy-MM-dd', new Date())
+                    const month = format(parsedDate, 'MMMM').toUpperCase()
+                    const day = format(parsedDate, 'dd')
+                    const year = format(parsedDate, 'yyyy')
+                    monthField.setText(month)
+                    dayField.setText(day)
+                    yearField.setText(year)
                 } catch (error) {
-
-                    monthField.setText('');
-                    dayField.setText('');
-                    yearField.setText('');
+                    monthField.setText('')
+                    dayField.setText('')
+                    yearField.setText('')
                 }
-
-                [monthField, dayField, yearField].forEach(field => field.updateAppearances(helveticaFont));
+                ;[monthField, dayField, yearField].forEach((field) =>
+                    field.updateAppearances(helveticaFont)
+                )
             }
-        };
+        }
 
         setDissolvedDate(data.groom_date_dissolved, 'groom')
         setDissolvedDate(data.bride_date_dissolved, 'bride')
@@ -1051,7 +1042,7 @@ async function print_decided_license(formData, params) {
             'groom_father_residence',
             'bride_mother_residence',
             'bride_person_who_gave_consent',
-            'bride_person_who_gave_consent_residence',
+            'bride_person_who_gave_consent_residence'
         ]
 
         fields.forEach((fieldName) => {
@@ -1103,12 +1094,17 @@ async function print_decided_license(formData, params) {
         // Embed the copied page onto the new page
         const embeddedPage = await newPdfDoc.embedPage(firstDonorPage)
 
-        // Optional: Adjust positioning with given x and y offsets
-        const x_axis_adjustments = (Number(adjustments.x)) ? Number(adjustments.x) : 0;
-        const y_axis_adjustments = (Number(adjustments.y)) ? Number(adjustments.y) : 0;
-        
-        console.log(`Drawing page with adjustments - X: ${x_axis_adjustments}, Y: ${y_axis_adjustments}`);
-        
+        // Make the adjustment more noticeable by multiplying by a factor (e.g., 5)
+        const x_axis_adjustments = Number(adjustments.x)
+            ? Number(adjustments.x) * 5
+            : 0
+        const y_axis_adjustments = Number(adjustments.y)
+            ? Number(adjustments.y) * 5
+            : 0
+
+        console.log(
+            `Drawing page with adjustments - X: ${x_axis_adjustments}, Y: ${y_axis_adjustments}`
+        )
 
         newPage.drawPage(embeddedPage, {
             x: x_axis_adjustments,
@@ -1135,116 +1131,204 @@ async function print_decided_license(formData, params) {
 */
 async function save_marriage_license_and_notice(formData, image) {
     try {
-        // Parse the form data and image paths
-        const data = JSON.parse(formData);
-        const images = JSON.parse(image);
+        // Validate input types
+        if (typeof formData !== 'string' || typeof image !== 'string') {
+            return {
+                status: false,
+                message:
+                    'Invalid input: formData and image must be JSON strings.'
+            }
+        }
 
-        if (!data || !images) {
-            throw new Error('Invalid formData or image data.');
+        // Parse the form data and image paths
+        let data, images
+        try {
+            data = JSON.parse(formData)
+            images = JSON.parse(image)
+        } catch (parseError) {
+            return {
+                status: false,
+                message: 'Invalid JSON in formData or image.'
+            }
+        }
+
+        // Validate required fields
+        if (!data || typeof data !== 'object') {
+            return {
+                status: false,
+                message: 'Parsed formData is not an object.'
+            }
+        }
+        if (!Array.isArray(images)) {
+            return { status: false, message: 'Parsed image is not an array.' }
         }
 
         if (!data.groom_first_name || !data.bride_first_name) {
-            throw new Error('Both Groom and Bride names are required');
+            return {
+                status: false,
+                message: 'Both Groom and Bride first names are required.'
+            }
         }
 
-        // Generate the marriage license and notice
-        const marriageLicense = await generate_marriage_license(formData);
-        const marriageNotice = await generate_marriage_notice(formData, image);
+        // Generate the marriage license and notice in parallel
+        let marriageLicense, marriageNotice
+        try {
+            ;[marriageLicense, marriageNotice] = await Promise.all([
+                generate_marriage_license(formData),
+                generate_marriage_notice(formData, image)
+            ])
+        } catch (genError) {
+            return {
+                status: false,
+                message: 'Error generating documents: ' + genError.message
+            }
+        }
 
         if (!marriageLicense?.pdfbase64 || !marriageNotice?.pdfbase64) {
-            throw new Error('Failed to generate one or both documents.');
+            return {
+                status: false,
+                message: 'Failed to generate one or both documents.'
+            }
         }
 
         // Decode base64 strings to binary
-        const marriageLicenseBuffer = Buffer.from(marriageLicense.pdfbase64.split(',')[1], 'base64');
-        const marriageNoticeBuffer = Buffer.from(marriageNotice.pdfbase64.split(',')[1], 'base64');
+        let marriageLicenseBuffer, marriageNoticeBuffer
+        try {
+            const getBase64Data = (base64String) => {
+                if (typeof base64String !== 'string') return ''
+                const commaIdx = base64String.indexOf(',')
+                return commaIdx !== -1
+                    ? base64String.split(',')[1]
+                    : base64String
+            }
+            marriageLicenseBuffer = Buffer.from(
+                getBase64Data(marriageLicense.pdfbase64),
+                'base64'
+            )
+            marriageNoticeBuffer = Buffer.from(
+                getBase64Data(marriageNotice.pdfbase64),
+                'base64'
+            )
+        } catch (decodeError) {
+            return {
+                status: false,
+                message: 'Failed to decode PDF base64 data.'
+            }
+        }
 
-        const groomLastName = data.groom_last_name ? data.groom_last_name : '(nolastname)';
-        const brideLastName = data.bride_last_name ? data.bride_last_name : '(nolastname)';
+        const groomLastName = data.groom_last_name
+            ? data.groom_last_name
+            : '(nolastname)'
+        const brideLastName = data.bride_last_name
+            ? data.bride_last_name
+            : '(nolastname)'
 
-        // Define folder paths
-        const sanitize = (str) => str.replace(/[<>:"/\\|?*]/g, '');
+        // --- Output Path Section ---
+        // This section defines the output directory for generated PDF files and images.
+        // All output image files will go to the "Gallery" subfolder under the main output directory.
 
-        const folderName = sanitize(`${data.groom_first_name} ${groomLastName} & ${data.bride_first_name} ${brideLastName}`);
+        const sanitize = (str) => str.replace(/[<>:"/\\|?*]/g, '').trim()
 
+        let folderName = sanitize(
+            `${data.groom_first_name} ${groomLastName} & ${data.bride_first_name} ${brideLastName}`
+        )
+
+        if (!folderName) {
+            return {
+                status: false,
+                message:
+                    'Folder name could not be generated from provided names.'
+            }
+        }
         if (folderName.length > 100) {
-            folderName = folderName.slice(0, 100);
+            folderName = folderName.slice(0, 100)
         }
 
-        // Get current year and month for dynamic folder creation
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
+        // All output images will go to the "Gallery" subfolder inside the main output directory
+        const galleryPath = path.join('Gallery', folderName)
 
-        // Array of month names (index 0 = January, index 1 = February, ...)
-        const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
+        // Example: data.file_path = C:/VBCRAS/Application for Marriage License/2025/June
+        const outputDir = path.resolve(data.file_path, folderName)
+        const userPicturesDir = path.resolve(data.file_path, galleryPath)
 
-        const month = monthNames[currentDate.getMonth()];
-
-        const outputDir = path.resolve(__dirname, `../../output/${folderName}`).replace('app.asar', 'app.asar.unpacked');
-
-        const userPicturesDir = path.resolve(
-            process.env.USERPROFILE || process.env.HOME,
-            'Pictures', 'Marriage Pictures', year.toString(), month, folderName
-        );
-
-
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir, { recursive: true });
-        }
-        if (!fs.existsSync(userPicturesDir)) {
-            fs.mkdirSync(userPicturesDir, { recursive: true });
+        try {
+            await fsp.mkdir(outputDir, { recursive: true })
+            await fsp.mkdir(userPicturesDir, { recursive: true })
+        } catch (dirError) {
+            return {
+                status: false,
+                message:
+                    'Failed to create output directories: ' + dirError.message
+            }
         }
 
-        // Define file paths for PDF files
-        const marriageLicensePath = path.join(outputDir, 'Application for Marriage License.pdf');
-        const marriageNoticePath = path.join(outputDir, 'Notice.pdf');
+        const marriageLicensePath = path.join(
+            outputDir,
+            'Application for Marriage License.pdf'
+        )
+        const marriageNoticePath = path.join(outputDir, 'Notice.pdf')
 
-        // Write PDF files to the folder
-        fs.writeFileSync(marriageLicensePath, marriageLicenseBuffer);
-        fs.writeFileSync(marriageNoticePath, marriageNoticeBuffer);
+        // Write PDF files asynchronously
+        try {
+            await Promise.all([
+                fsp.writeFile(marriageLicensePath, marriageLicenseBuffer),
+                fsp.writeFile(marriageNoticePath, marriageNoticeBuffer)
+            ])
+        } catch (writeError) {
+            return {
+                status: false,
+                message: 'Failed to write PDF files: ' + writeError.message
+            }
+        }
 
+        // Save images if provided (asynchronously and in parallel)
         if (images && images.length > 0) {
-            images.forEach((imagePath, index) => {
-                if (!imagePath) {
-                    console.log(`Skipping invalid image path at index ${index}`);
-                    return; // Skip this iteration if imagePath is null or undefined
+            const imageSavePromises = images.map(async (imagePath, index) => {
+                if (!imagePath || typeof imagePath !== 'string') {
+                    return
                 }
 
-                let imageFileName;
-
-                // If the image is base64-encoded, use a fixed extension (e.g., .jpg)
-                if (imagePath.startsWith('data:image')) {
-                    imageFileName = `Photo-${index + 1}.jpg`; // Save as .jpg
-                    const base64Data = imagePath.split(',')[1]; // Remove the "data:image/jpeg;base64," part
-                    const imageBuffer = Buffer.from(base64Data, 'base64');
-                    const destPath = path.join(userPicturesDir, imageFileName);
-                    fs.writeFileSync(destPath, imageBuffer);
-                    console.log(`Saved base64 image to ${destPath}`);
-                } else {
-                    // If the image is a file path, use its original extension
-                    imageFileName = `Photo-${index + 1}${path.extname(imagePath)}`; // Use original extension from path
-                    const destPath = path.join(userPicturesDir, imageFileName);
-                    fs.copyFileSync(imagePath, destPath);
-                    console.log(`Copied image from ${imagePath} to ${destPath}`);
+                let imageFileName
+                try {
+                    if (imagePath.startsWith('data:image')) {
+                        const ext = imagePath.startsWith('data:image/png')
+                            ? '.png'
+                            : '.jpg'
+                        imageFileName = `Photo-${index + 1}${ext}`
+                        const base64Data = imagePath.split(',')[1]
+                        if (!base64Data) return
+                        const imageBuffer = Buffer.from(base64Data, 'base64')
+                        const destPath = path.join(
+                            userPicturesDir,
+                            imageFileName
+                        )
+                        await fsp.writeFile(destPath, imageBuffer)
+                    } else {
+                        imageFileName = `Photo-${index + 1}${path.extname(imagePath)}`
+                        const destPath = path.join(
+                            userPicturesDir,
+                            imageFileName
+                        )
+                        await fsp.copyFile(imagePath, destPath)
+                    }
+                } catch (imgError) {
+                    return {
+                        status: false,
+                        message: `Error saving image at index ${index}:`
+                    }
                 }
-            });
-        } else {
-            console.log('No images provided, skipping image saving.');
+            })
+            await Promise.allSettled(imageSavePromises)
         }
 
-
-        console.log('Marriage license, notice, and images (if provided) saved successfully.');
         return { status: true, filepath: outputDir }
-
     } catch (error) {
-        console.error('Error saving marriage license, notice, or images:', error.message);
+        return {
+            status: false,
+            message: 'An unexpected error occurred: ' + error.message
+        }
     }
 }
-
-
 export {
     generate_marriage_notice,
     generate_marriage_license,

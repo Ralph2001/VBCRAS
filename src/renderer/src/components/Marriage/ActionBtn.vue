@@ -113,25 +113,6 @@ const close_modal = () => {
     preview.value = false
 }
 
-const openPreview = async (id) => {
-    try {
-        preview.value = true
-        const getDetails = await marriage.getApplicationMarriageLicenseById(id)
-        if (getDetails.status === 200) {
-            const data = getDetails.data
-            const main_data = JSON.stringify({ ...data })
-            const previewData = await window.MarriageApi.previewMarriage(main_data);
-            if (previewData.status) {
-                console.log(previewData)
-                isDocReady.value = true
-                pdf_content.value = previewData.pdfbase64;
-            }
-        }
-
-    } catch (error) {
-        console.log(error)
-    }
-}
 
 const openFolder = async (path) => {
     try {

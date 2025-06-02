@@ -15,28 +15,22 @@ if (process.contextIsolated) {
     window.api = api
 }
 
-
-
 contextBridge.exposeInMainWorld('getPathApi', {
     showFilePath(file) {
         try {
-            return webUtils.getPathForFile(file);
+            return webUtils.getPathForFile(file)
         } catch (err) {
-            console.error("Error in showFilePath function:", err);
-            return;
+            console.error('Error in showFilePath function:', err)
+            return
         }
     }
-});
+})
 contextBridge.exposeInMainWorld('LegitimationApi', {
     createLegitimationDocument: async (formData) => {
-        const result = await ipcRenderer.invoke(
-            'createLegitimation', formData
-        )
+        const result = await ipcRenderer.invoke('createLegitimation', formData)
         return result
     }
-});
-
-
+})
 
 contextBridge.exposeInMainWorld('ClericalApi', {
     CreateAnnotated: async (formData) => {
@@ -272,6 +266,14 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
         if (result) {
             return true
         }
+    },
+    validatePath: async (filePath) => {
+        const result = await ipcRenderer.invoke('validate-path', filePath)
+        return result
+    },
+    readPdfFile: async (filePath) => {
+        const result = await ipcRenderer.invoke('read-pdf-file', filePath)
+        return result
     }
 })
 

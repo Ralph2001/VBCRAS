@@ -4,10 +4,15 @@
             <div class="w-full gap-2 flex flex-row items-center justify-center">
                 <Button label="Create New Application" isActive :class="`rounded`" @click="open_model" />
                 <button @click="show_application_marriage"
-                    class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
-                        icon="fa-solid fa-info" /></button>
+                    class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95">
+                    <font-awesome-icon icon="fa-solid fa-gear" />
+                </button>
+
+                <IsPathAccessible :filePath="system_setting.defaults.file_path"
+                    :subFolder="'VBCRAS\\Application for Marriage Licence\\'" />
             </div>
         </Header>
+
 
         <div class="h-[calc(100vh-200px)]">
             <TableGrid :data="apl.application_marriage_license" :dataColumns="colDefs" :suppressRowTransform="true" />
@@ -26,20 +31,19 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 mt-4">
-                        <InputMarriage label="Header Province" v-model="formData.header_province" />
-                        <InputMarriage label="Header Municipality" v-model="formData.header_municipality" />
+                        <InputMarriage label="Header Province" v-model="userConfig.header_province" />
+                        <InputMarriage label="Header Municipality" v-model="userConfig.header_municipality" />
                     </div>
-
                     <div class="mt-4">
-                        <InputMarriage label="Civil Registrar" v-model="formData.civil_registrar" />
+                        <InputMarriage label="Civil Registrar" v-model="userConfig.civil_registrar" />
                     </div>
 
                     <!-- Optional: Default Filepath or Template Path -->
                     <div class="mt-4">
-                        <InputMarriage label="Default Filepath for Saved Forms (AFML & Notice of Posting)"
-                            v-model="formData.default_filepath" placeholder="/documents/marriage-licenses/" />
+                        <InputMarriage readonly label="Default Filepath (AFML & Notice of Posting)" v-model="file_path"
+                            placeholder="/documents/marriage-licenses/" />
                         <p class="text-xs text-gray-500 mt-1">This is where generated documents will be saved by
-                            default.</p>
+                            default. <span class="text-blue-500 font-medium">(Only Admin can change this.)</span></p>
                     </div>
 
                     <!-- Optional: Tooltip or Hint -->
@@ -56,7 +60,11 @@
                             class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition">
                             Cancel
                         </button>
-                        <button @click="saveSettings"
+                        <button @click="resetConfig"
+                            class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition">
+                            Reset
+                        </button>
+                        <button @click="saveUserConfig"
                             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition">
                             Save
                         </button>
@@ -68,33 +76,57 @@
 
         <!-- Delete Modal -->
         <transition name="fade-scale">
-            <div v-if="isToRemove"
-                class="fixed inset-0 w-full h-full flex justify-center items-center z-50 backdrop-blur-sm backdrop-brightness-75">
-                <div class="max-w-screen-sm w-full bg-white rounded-md border shadow-lg p-6 relative h-80">
-                    <h2 class="text-2xl font-semibold text-red-600 mb-4">Confirm Deletion</h2>
-                    <p class="text-gray-700 mb-2">
-                        Are you sure you want to delete this record? This action is <strong
-                            class="text-red-500">permanent</strong> and cannot be undone.
+            <div v-if="isToRemove" class="fixed inset-0 flex items-center justify-center z-50 bg-black/40"
+                aria-modal="true" role="dialog" tabindex="-1">
+                <div
+                    class="bg-white rounded-lg shadow-xl border max-w-md w-full p-8 relative flex flex-col items-center">
+                    <!-- Warning Icon -->
+                    <div class="mb-4">
+                        <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-red-600 mb-2 text-center">Delete Record?</h2>
+                    <p class="text-gray-700 text-center mb-2">
+                        This action <span class="font-semibold text-red-500">cannot be undone</span>.
                     </p>
-                    <p class="text-gray-600 mb-6">
-                        All associated data will be permanently removed. Please confirm if you wish to proceed.
+                    <p class="text-gray-500 text-center mb-6">
+                        All data associated with this record will be permanently removed.
                     </p>
-
-                    <!-- Buttons -->
-                    <div class="flex justify-end space-x-3 absolute bottom-6 right-6">
+                    <div v-if="!showPasswordInput" class="flex justify-center gap-3 w-full mt-auto">
                         <button @click="cancelRemove"
-                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition">
+                            class="px-5 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition"
+                            autofocus>
                             Cancel
                         </button>
-                        <button @click="proceedRemoveRecord(idToRemove)"
-                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition">
-                            Delete
+                        <button @click="showPasswordInput = true"
+                            class="px-5 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold transition">
+                            Yes, Delete
                         </button>
+                    </div>
+                    <div v-else class="w-full flex  flex-col items-center mt-2">
+                     
+                        <input v-model="deletePassword" type="password" placeholder="Enter your password"
+                            class="w-full border rounded px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            @keyup.enter="confirmDeleteWithPassword" />
+                        <div class="flex justify-center gap-3 mt-4 w-full">
+                            <button @click="cancelRemove"
+                                class="px-5 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition">
+                                Cancel
+                            </button>
+                            <button @click="confirmDeleteWithPassword"
+                                class="px-5 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold transition"
+                                :disabled="!deletePassword">
+                                Confirm Delete
+                            </button>
+                        </div>
+                        <p v-if="deleteError" class="text-red-500 text-sm mt-2">{{ deleteError }}</p>
                     </div>
                 </div>
             </div>
         </transition>
-
 
 
         <!-- Add, Edit Modal -->
@@ -105,29 +137,24 @@
 
                 <div
                     class="w-full  h-full max-h-screen flex flex-col justify-center items-center outline-none ring-0 bg-gray-100  relative overflow-hidden">
-
                     <div
                         class="flex items-center h-14   flex-row gap-0 border py-2 px-4 w-full bg-white max-w-screen-2xl">
                         <div class="flex flex-col ml-auto justify-center items-center">
-                            <h2 class="font-bold text-lg uppercase text-gray-800 leading-tight">Application for Marriage
+                            <h2 class="font-bold text-lg uppercase text-gray-700 leading-tight">Application for Marriage
                                 License
                             </h2>
-                            <h2 class="font-semibold text-xs  text-gray-800 ">Municipal Form No. 90 (Form No. 2)</h2>
+                            <h2 class="font-semibold text-xs  text-gray-600 ">Municipal Form No. 90 (Form No. 2)</h2>
                         </div>
 
                         <button @click="close_modal"
                             class="ml-auto border rounded w-16 hover:bg-red-600 bg-red-500 text-white"><font-awesome-icon
                                 icon="fa-solid fa-xmark" /></button>
-
-
                     </div>
 
-
-
-
                     <div
-                        class="flex-1 overflow-y-auto p-4 h-full  flex-col gap-6  w-full max-w-screen-2xl py-8  bg-gray-100 flex ">
+                        class="flex-1 overflow-y-auto p-4 h-full flex-col gap-6 w-full max-w-screen-2xl py-8 bg-[#f7fafc] flex">
 
+                        <!-- Main Content -->
                         <div class="flex flex-col gap-4 max-w-screen-xl mx-auto w-full">
                             <div v-if="currentStep === 0 || form_mode === 1"
                                 class="flex flex-col px-10  gap-2 justify-center">
@@ -679,21 +706,22 @@
                                         <p class="font-medium text-sm italic text-gray-600">Groom:</p>
                                         <div class="flex flex-col grow gap-0 w-full">
                                             <div class="flex flex-row gap-1 items-center">
-                                                <InputMarriage holder="Name" v-model="formData.notice_groom_name"
+                                                <InputMarriage skip holder="Name" v-model="formData.notice_groom_name"
                                                     :error="v$.notice_groom_name.$error" />
                                                 <div class="w-[50%]">
-                                                    <InputMarriage holder="Age" v-model="formData.notice_groom_age"
+                                                    <InputMarriage skip holder="Age" v-model="formData.notice_groom_age"
                                                         :error="v$.notice_groom_age.$error" />
                                                 </div>
                                             </div>
-                                            <InputMarriage holder="Birth Place"
+                                            <InputMarriage skip holder="Birth Place"
                                                 v-model="formData.notice_groom_birthplace"
                                                 :error="v$.notice_groom_birthplace.$error" />
-                                            <InputMarriage holder="Residence" v-model="formData.notice_groom_residence"
+                                            <InputMarriage skip holder="Residence"
+                                                v-model="formData.notice_groom_residence"
                                                 :error="v$.notice_groom_residence.$error" />
-                                            <InputMarriage holder="Father" v-model="formData.notice_groom_father"
+                                            <InputMarriage skip holder="Father" v-model="formData.notice_groom_father"
                                                 :error="v$.notice_groom_father.$error" />
-                                            <InputMarriage holder="Mother" v-model="formData.notice_groom_mother"
+                                            <InputMarriage skip holder="Mother" v-model="formData.notice_groom_mother"
                                                 :error="v$.notice_groom_mother.$error" />
 
                                         </div>
@@ -715,21 +743,22 @@
                                         <p class="font-medium text-sm italic text-gray-600">Bride:</p>
                                         <div class="flex flex-col grow gap-0 w-full">
                                             <div class="flex flex-row gap-1 items-center">
-                                                <InputMarriage holder="Name" v-model="formData.notice_bride_name"
+                                                <InputMarriage skip holder="Name" v-model="formData.notice_bride_name"
                                                     :error="v$.notice_bride_name.$error" />
                                                 <div class="w-[50%]">
-                                                    <InputMarriage holder="Age" v-model="formData.notice_bride_age"
+                                                    <InputMarriage skip holder="Age" v-model="formData.notice_bride_age"
                                                         :error="v$.notice_bride_age.$error" />
                                                 </div>
                                             </div>
-                                            <InputMarriage holder="Birth Place"
+                                            <InputMarriage skip holder="Birth Place"
                                                 v-model="formData.notice_bride_birthplace"
                                                 :error="v$.notice_bride_birthplace.$error" />
-                                            <InputMarriage holder="Residence" v-model="formData.notice_bride_residence"
+                                            <InputMarriage skip holder="Residence"
+                                                v-model="formData.notice_bride_residence"
                                                 :error="v$.notice_bride_residence.$error" />
-                                            <InputMarriage holder="Father" v-model="formData.notice_bride_father"
+                                            <InputMarriage skip holder="Father" v-model="formData.notice_bride_father"
                                                 :error="v$.notice_bride_father.$error" />
-                                            <InputMarriage holder="Mother" v-model="formData.notice_bride_mother"
+                                            <InputMarriage skip holder="Mother" v-model="formData.notice_bride_mother"
                                                 :error="v$.notice_bride_mother.$error" />
 
                                         </div>
@@ -745,7 +774,6 @@
                                 </div>
 
                             </div>
-
                             <div v-if="currentStep === 7 || form_mode === 1"
                                 class="px-4 h-full gap-4 flex flex-col mt-8 mb-2">
                                 <!-- Section Header -->
@@ -797,11 +825,13 @@
                                                 <div class="flex flex-col mt-2">
                                                     <div class="flex flex-row items-center gap-4">
                                                         <font-awesome-icon icon="fa-solid fa-x" class="text-xs w-10" />
-                                                        <InputMarriage v-model="pdf_settings.x" type="number" />
+                                                        <InputMarriage v-model="pdf_settings.x" type="number"
+                                                            step="0.1" />
                                                     </div>
                                                     <div class="flex flex-row items-center gap-4">
                                                         <font-awesome-icon icon="fa-solid fa-y" class="text-xs w-10" />
-                                                        <InputMarriage v-model="pdf_settings.y" type="number" />
+                                                        <InputMarriage v-model="pdf_settings.y" type="number"
+                                                            step="0.1" />
                                                     </div>
                                                     <button class="w-full rounded-md mt-4 bg-blue-500 h-10 text-white"
                                                         @click="saveAFMLSetting()">Save</button>
@@ -834,7 +864,7 @@
                                         <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
                                         <p v-if="!pdf_content && !isLoadingPrev"
                                             class="italic text-gray-500 flex items-center gap-2">
-                                           
+
                                             Select a document above to see a preview.
                                         </p>
                                     </div>
@@ -847,22 +877,23 @@
 
                         </div>
 
-
                     </div>
 
 
                     <div
-                        class="h-14 flex flex-row gap-2 p-2 border-t items-center bg-gray-100 shadow-xl justify-center py-2 w-full max-w-screen-2xl">
-                        <div class="flex flex-row gap-2 ml-auto">
+                        class="h-16 flex flex-row gap-4 p-4 border-t items-center bg-gradient-to-t from-blue-50 via-white to-white shadow-2xl justify-center w-full max-w-screen-2xl">
+                        <div class="flex flex-row gap-4 ml-auto">
                             <button @click="submit()"
                                 v-if="(currentStep + 1 === steps.length || form_mode === 1) && !isUpdating"
-                                class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 w-52 rounded shadow">Save
-                                Record</button>
+                                class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-1.5 w-56 rounded-lg shadow-lg ring-2 ring-green-300 focus:outline-none focus:ring-4 focus:ring-green-400 transition-all duration-150 text-lg tracking-wide">
+                                Save Record
+                            </button>
 
                             <button @click="updateRecord()"
                                 v-if="(currentStep + 1 === steps.length || form_mode === 1) && isUpdating"
-                                class="bg-green-500 hover:bg-green-600 text-white font-semibold py-1.5 w-52 rounded shadow">Update
-                                Record</button>
+                                class="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold py-1.5 w-56 rounded-lg shadow-lg ring-2 ring-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-400 transition-all duration-150 text-lg tracking-wide">
+                                Update Record
+                            </button>
                         </div>
                     </div>
 
@@ -896,7 +927,8 @@
 
                 <!-- Print Buttons -->
                 <div v-if="previewPage === 1" class="flex items-center gap-2 ml-auto">
-                    <button @click="handlePreviewPrint()" class="bg-green-500 text-white px-4 py-2 rounded">
+                    <button @click="handlePreviewPrint()"
+                        class="bg-green-500 hoverbg-green-600 text-white px-4 py-2 rounded">
                         <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
                         Print Application
                     </button>
@@ -907,7 +939,7 @@
                     </button>
                 </div>
 
-                <button v-if="previewPage === 2" @click="printNoticePosting()"
+                <button v-if="previewPage === 2" @click="handlePreviewPrint()"
                     class="bg-green-500 text-white px-4 py-2 rounded ml-auto">
                     <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
                     Print Notice
@@ -915,18 +947,21 @@
             </div>
 
             <!-- Settings Panel -->
-            <div v-if="afml_setting" class="absolute right-4 top-20 bg-white border shadow-md rounded-md p-4 w-64 z-50">
+            <div v-if="afml_setting" class="absolute right-4 top-20 bg-white border shadow-xl rounded-md p-4 w-64 z-50">
                 <h3 class="text-center font-semibold mb-2">Print Position Adjustment</h3>
-                <div class="flex flex-col gap-3">
-                    <div class="flex items-center gap-3">
-                        <font-awesome-icon icon="fa-solid fa-x" class="w-5 text-gray-600" />
-                        <InputMarriage v-model="pdf_settings.x" type="number" />
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4">
+                        <span class="w-fit text-nowrap text-gray-500 text-sm">X Offset</span>
+                        <InputMarriage v-model="pdf_settings.x" type="number" step="0.1" class="w-12" />
                     </div>
-                    <div class="flex items-center gap-3">
-                        <font-awesome-icon icon="fa-solid fa-y" class="w-5 text-gray-600" />
-                        <InputMarriage v-model="pdf_settings.y" type="number" />
+                    <div class="flex items-center gap-4">
+                        <span class="w-fit text-nowrap text-gray-500 text-sm">Y Offset</span>
+                        <InputMarriage v-model="pdf_settings.y" type="number" step="0.1" class="w-12" />
                     </div>
-                    <button class="bg-blue-600 text-white rounded mt-3 py-2" @click="saveAFMLSetting()">Save</button>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md py-2 transition"
+                        @click="saveAFMLSetting()">
+                        Save
+                    </button>
                 </div>
             </div>
 
@@ -967,8 +1002,81 @@ import ResidenceSuggestions from '../../components/Marriage/ResidenceSuggestions
 import { useBrideResidenceSuggestions, useGroomResidenceSuggestions } from '../../composables/marriage/useResidenceSuggestions.js';
 import { useMarriageWatcher } from '../../composables/marriage/useMarriageWatcher';
 import { addDays, format, isFriday, isValid, nextMonday, parseISO } from 'date-fns';
+import { useSetup } from '../../stores/Setting/setup.js';
+import IsPathAccessible from '../../components/IsPathAccessible.vue';
+
+
+const system_setting = useSetup()
+const file_path = ref(null)
+
+
+
+
+
+onMounted(async () => {
+    system_setting.getSystemSetting()
+    const now = new Date()
+    const current_year = now.getFullYear()
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
+    const current_month = monthNames[now.getMonth()]
+    file_path.value = system_setting.defaults.file_path + 'VBCRAS\\Application for Marriage Licence\\' + current_year + '\\' + current_month
+})
+
+
+const getUserConfigFromStorage = () => {
+    const saved = localStorage.getItem('marriage_user_config')
+    if (saved) {
+        try {
+            return JSON.parse(saved)
+        } catch (e) {
+
+        }
+    }
+    return {
+        header_province: system_setting.defaults.province.toUpperCase(),
+        header_municipality: system_setting.defaults.municipality.toUpperCase(),
+        civil_registrar: system_setting.defaults.civil_registrar.toUpperCase(),
+    }
+}
+
+const userConfig = reactive(getUserConfigFromStorage())
+
+const saveUserConfig = () => {
+    localStorage.setItem('marriage_user_config', JSON.stringify({
+        header_province: userConfig.header_province,
+        header_municipality: userConfig.header_municipality,
+        civil_registrar: userConfig.civil_registrar,
+    }))
+    hide_application_marriage()
+    toast.fire({
+        icon: 'success',
+        title: 'Settings saved successfully.',
+        duration: 5000,
+    })
+}
+
+const resetConfig = () => {
+    userConfig.header_province = system_setting.defaults.province.toUpperCase()
+    userConfig.header_municipality = system_setting.defaults.municipality.toUpperCase()
+    userConfig.civil_registrar = system_setting.defaults.civil_registrar.toUpperCase()
+    localStorage.setItem('marriage_user_config', JSON.stringify({
+        header_province: userConfig.header_province,
+        header_municipality: userConfig.header_municipality,
+        civil_registrar: userConfig.civil_registrar,
+    }))
+    hide_application_marriage()
+    toast.fire({
+        icon: 'success',
+        title: 'Settings reset to default.',
+        duration: 5000,
+    })
+}
 
 const show_application_marriage_settings = ref(false)
+
 const show_application_marriage = () => {
     show_application_marriage_settings.value = true
 }
@@ -1108,10 +1216,10 @@ const open_model = () => {
 
 const initialForm = {
 
-    header_province: 'PANGASINAN',
-    header_municipality: 'BAYAMBANG',
+    header_province: system_setting.defaults.province.toUpperCase() || '',
+    header_municipality: system_setting.defaults.municipality.toUpperCase() || '',
     registry_number: '',
-    received_by: 'ISMAEL D. MALICDEM, JR.',
+    received_by: system_setting.defaults.civil_registrar || '',
     date_of_marriage: '', //ADD
     date_of_receipt: new Date().toISOString().split('T')[0],
 
@@ -1122,7 +1230,7 @@ const initialForm = {
 
     place_of_marriage: '', // ADD
 
-    civil_registrar: 'ISMAEL D. MALICDEM, JR.',
+    civil_registrar: system_setting.defaults.civil_registrar || '',
 
     groom_first_name: '',
     groom_middle_name: '',
@@ -1167,7 +1275,7 @@ const initialForm = {
     groom_ss_day: '',
     groom_ss_month: '',
     groom_ss_year: '',
-    groom_ss_at: 'BAYAMBANG, PANGASINAN',
+    groom_ss_at: system_setting.defaults.municipality.toUpperCase() + ', ' + system_setting.defaults.province.toUpperCase() || '',
     groom_ctc_number: '',
     groom_ctc_on: '',
     groom_ctc_at: '',
@@ -1214,7 +1322,7 @@ const initialForm = {
     bride_ss_day: '',
     bride_ss_month: '',
     bride_ss_year: '',
-    bride_ss_at: 'BAYAMBANG, PANGASINAN',
+    bride_ss_at: system_setting.defaults.municipality.toUpperCase() + ', ' + system_setting.defaults.province.toUpperCase() || '',
     bride_ctc_number: '',
     bride_ctc_on: '',
     bride_ctc_at: '',
@@ -1226,8 +1334,8 @@ const initialForm = {
      */
 
 
-    notice_province: 'PANGASINAN',
-    notice_municipality: 'BAYAMBANG',
+    notice_province: system_setting.defaults.province.toUpperCase() || '',
+    notice_municipality: system_setting.defaults.municipality.toUpperCase() || '',
     notice_office: 'LOCAL CIVIL REGISTRY OFFICE',
 
     notice_groom_name: '',
@@ -1649,17 +1757,15 @@ const submit = async () => {
     if (!(await validateForm())) return
 
     const images = getBrideGroomImages();
-    const main_data = JSON.stringify({ ...formData })
+    const main_data = JSON.stringify({ ...formData, file_path: file_path.value, })
 
     const save_local = await window.MarriageApi.saveMarriageApplicationEntry(main_data, images)
-
-    if (save_local?.status) {
+    if (save_local && save_local.filepath) {
         const dataToSave = {
             ...formData,
-            file_path: '',
+            file_path: save_local.filepath,
             created_by: auth.user_id
         }
-
         await apl.addApplicationMarriageLicense(dataToSave)
         close_modal()
         toast.fire({
@@ -1667,10 +1773,13 @@ const submit = async () => {
             title: 'Marriage license application has been successfully added.',
             duration: 5000,
         })
-
-
+    } else {
+        toast.fire({
+            icon: 'error',
+            title: 'Failed to save application. Please check the file path or try again.',
+            duration: 5000,
+        })
     }
-
 }
 
 
@@ -1735,14 +1844,35 @@ const updateRecord = async () => {
  */
 
 const isToRemove = ref(false)
+const showPasswordInput = ref(false)
+const deletePassword = ref('')
+const deleteError = ref('')
+
 const handleDelete = (data) => {
     isToRemove.value = true
     idToRemove.value = data.id
     console.log(idToRemove.value)
 }
 const cancelRemove = () => {
-    isToRemove.value = false;
-    idToRemove.value = null;
+    isToRemove.value = false
+    idToRemove.value = null
+    showPasswordInput.value = false
+    deletePassword.value = ''
+    deleteError.value = ''
+}
+
+const confirmDeleteWithPassword = async () => {
+    deleteError.value = ''
+   
+    const isValid = await auth.validatePassword(deletePassword.value)
+    if (!isValid) {
+        deleteError.value = 'Incorrect password. Please try again.'
+        return
+    }
+    await proceedRemoveRecord(idToRemove.value)
+    showPasswordInput.value = false
+    deletePassword.value = ''
+    deleteError.value = ''
 }
 
 const idToRemove = ref(null)
@@ -1782,6 +1912,7 @@ const previewPage = ref(1)
 const previewPdfContent = ref(null)
 const isDocReady = ref(false)
 const selectedRecord = ref(null)
+const selectedPreviewPage = ref(1)
 
 const handlePreviewModal = () => {
     isPreview.value = true
@@ -1795,31 +1926,46 @@ const closePreviewModal = () => {
 }
 
 const loadPreview = async () => {
-    if (!selectedRecord.value) return
+    if (!selectedRecord.value?.id) return;
 
-    isDocReady.value = false
-    previewPdfContent.value = null
+    isDocReady.value = false;
+    previewPdfContent.value = null;
 
     try {
-        const response = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id)
-        if (response.status === 200) {
-            const data = response.data
-            const main_data = JSON.stringify({ ...data })
+        const { data } = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id);
+        if (!data || !data.file_path) {
+            throw new Error('No file path found for the selected record.');
+        }
 
-            // 👇 Pass document type to backend to determine what to generate
-            const previewData = await window.MarriageApi.previewMarriage(main_data, previewPage.value)
+        let fileName = '';
+        if (previewPage.value === 1) {
+            fileName = 'Application for Marriage License.pdf';
+        } else if (previewPage.value === 2) {
+            fileName = 'Notice.pdf';
+        } else {
+            throw new Error('Invalid preview page selection.');
+        }
 
-            if (previewData.status) {
-                previewPdfContent.value = previewData.pdfbase64
-                isDocReady.value = true
-            }
+        const filePath = `${data.file_path}\\${fileName}`;
+        const readFileAsPdf = await window.LocalCivilApi.readPdfFile(filePath);
+
+        if (readFileAsPdf?.fileUrl) {
+            previewPdfContent.value = readFileAsPdf.fileUrl;
+            isDocReady.value = true;
+        } else {
+            throw new Error('Failed to load PDF file.');
         }
     } catch (error) {
-        console.error('Preview Error:', error)
+        isDocReady.value = false;
+        previewPdfContent.value = null;
+        console.error('Preview Error:', error);
+        toast.fire({
+            icon: 'error',
+            title: 'Failed to load document preview.',
+            duration: 5000,
+        });
     }
-
-
-}
+};
 
 const handlePreview = async (record_data) => {
     selectedRecord.value = record_data
@@ -1833,26 +1979,50 @@ watch(previewPage, () => {
 
 
 const handlePreviewPrint = async () => {
-    if (!selectedRecord.value || !selectedRecord.value.id) {
-        console.warn("No selected record to print.");
+    if (!selectedRecord.value?.id) {
+        console.warn("No record selected for printing.");
         return;
     }
     try {
-        const getDetails = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id)
-        if (getDetails.status === 200) {
-            const data = getDetails.data
-            const main_data = JSON.stringify({ ...data })
-            const settings = JSON.stringify({ ...pdf_settings })
-            const preview = await window.MarriageApi.printMarriage(main_data, settings);
+        const { data } = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id);
+        if (!data) {
+            toast.fire({
+                icon: 'error',
+                title: 'Unable to retrieve record details.',
+                duration: 5000,
+            });
+            return;
+        }
 
-            console.log(preview)
-
+        if (previewPage.value === 1) {
+            // Print Application for Marriage License
+            const mainData = JSON.stringify({ ...data });
+            const settings = JSON.stringify({ ...pdf_settings });
+            await window.MarriageApi.printMarriage(mainData, settings);
+        } else if (previewPage.value === 2) {
+            // Print Notice of Posting
+            const fileName = 'Notice.pdf';
+            const filePath = `${data.file_path}\\${fileName}`;
+            const pdfResult = await window.LocalCivilApi.readPdfFile(filePath);
+            if (pdfResult?.fileUrl) {
+                await window.LocalCivilApi.printPDFBase64(pdfResult.fileUrl);
+            } else {
+                toast.fire({
+                    icon: 'error',
+                    title: 'Failed to load Notice of Posting for printing.',
+                    duration: 5000,
+                });
+            }
         }
     } catch (error) {
-
-        console.log(error)
+        console.error("Print error:", error);
+        toast.fire({
+            icon: 'error',
+            title: 'An error occurred while printing the document.',
+            duration: 5000,
+        });
     }
-}
+};
 
 
 

@@ -108,7 +108,9 @@ import {
     faY,
     faGauge,
     faHeart,
-    faHandshake
+    faHandshake,
+    faCircleXmark,
+    faFolderTree
     
 
 
@@ -204,7 +206,9 @@ library.add(
     faRetweet,
     faShare,
     faX,
-    faY
+    faY,
+    faCircleXmark,
+    faFolderTree
     
  
 

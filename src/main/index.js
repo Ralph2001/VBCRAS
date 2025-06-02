@@ -7,6 +7,7 @@ import {
     Notification
 } from 'electron'
 import { join } from 'path'
+
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png'
 
@@ -30,6 +31,8 @@ import { create_publication_letter } from '../documents/clerical/create_publicat
 import { generate_legitimation } from '../documents/legitimation/generatelegma'
 
 const log = require('electron-log')
+const path = require('path')
+
 autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info' // Set log level
 
@@ -44,6 +47,64 @@ const os = require('os')
 const username = os.userInfo().username
 const fse = require('fs-extra')
 const fs = require('fs')
+
+/**
+ * Helper Functions
+ */
+
+ipcMain.handle('validate-path', async (_, filePath) => {
+    try {
+        if (!filePath || typeof filePath !== 'string') {
+            return { status: false, error: 'Invalid path type.' }
+        }
+
+        // Prevent directory traversal attacks
+        if (filePath.includes('..') || filePath.includes('~')) {
+            return { status: false, error: 'Path contains invalid characters.' }
+        }
+
+        const resolvePath = path.resolve(filePath)
+
+        // Check if path exists
+        if (!fs.existsSync(resolvePath)) {
+            return { status: false, error: 'Path does not exist.' }
+        }
+
+        // Check if path is a directory and not a file
+        const stat = fs.statSync(resolvePath)
+        if (!stat.isDirectory()) {
+            return { status: false, error: 'Path is not a directory.' }
+        }
+
+        // Check read access
+        try {
+            fs.accessSync(resolvePath, fs.constants.R_OK)
+        } catch (err) {
+            return { status: false, error: 'No read access to directory.' }
+        }
+
+        return { status: true, error: null }
+    } catch (error) {
+        return { status: false, error: error.message || error }
+    }
+})
+
+ipcMain.handle('read-pdf-file', async (_, filePath) => {
+    try {
+        if (!filePath || typeof filePath !== 'string') {
+            return { status: false, error: 'Invalid path type.' }
+        }
+        // const resolvePath = path.resolve(filePath)
+        const data = fs.readFileSync(filePath)
+        if (data) {
+            return { status: true, fileUrl: data.toString('base64') }
+        }
+        return { status: false, fileUrl: null }
+    } catch (error) {
+        console.log(error)
+        return { status: false, fileUrl: null }
+    }
+})
 
 /**
  * Main Printer Opener
@@ -88,44 +149,43 @@ function generateRandomString(length) {
  * @param {string} sumatraPath - Path to the SumatraPDF executable
  */
 async function printPDF(base64Data, sumatraPath, paperSize = 'none') {
-    let pdfPath; // Declare here for cleanup later
+    let pdfPath // Declare here for cleanup later
     try {
-        const randomFileName = `temp_${generateRandomString(20)}.pdf`;
+        const randomFileName = `temp_${generateRandomString(20)}.pdf`
         pdfPath = join(
             __dirname,
             '../../resources/temp/',
             randomFileName
-        ).replace('app.asar', 'app.asar.unpacked');
+        ).replace('app.asar', 'app.asar.unpacked')
 
         // Write the PDF file
-        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'));
+        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'))
 
         // Add explicit page range handling
         const args = [
             '-print-dialog',
             '-exit-when-done',
             pdfPath // Explicitly specify the file to print
-        ];
+        ]
 
-        const printProcess = spawn(sumatraPath, args);
+        const printProcess = spawn(sumatraPath, args)
 
         // Delay cleanup until printing completes
         printProcess.on('exit', async (code) => {
-            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
+            await new Promise((resolve) => setTimeout(resolve, 5000)) // Wait 5 seconds
             try {
-                await fs.promises.unlink(pdfPath);
-                console.log('Temp PDF deleted successfully');
+                await fs.promises.unlink(pdfPath)
+                console.log('Temp PDF deleted successfully')
             } catch (err) {
-                console.error('Error deleting temp file:', err);
+                console.error('Error deleting temp file:', err)
             }
-        });
-
+        })
     } catch (error) {
         // Cleanup if error occurs
         if (pdfPath) {
-            await fs.promises.unlink(pdfPath).catch(console.error);
+            await fs.promises.unlink(pdfPath).catch(console.error)
         }
-        console.error('Error printing PDF:', error);
+        console.error('Error printing PDF:', error)
     }
 }
 
@@ -188,7 +248,6 @@ ipcMain.handle('previewFormPDF', async (event, formData) => {
 /////////////
 /////////////
 
-
 ipcMain.handle('createLegitimation', async (event, formData) => {
     try {
         const Legitimation = generate_legitimation(formData)
@@ -196,7 +255,6 @@ ipcMain.handle('createLegitimation', async (event, formData) => {
         console.log(error)
     }
 })
-
 
 /////////////
 /////////////
@@ -364,7 +422,8 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
 
         const outputDirectory = join(
             data.path_where_to_save,
-            'Petitions',
+            'VBCRAS',
+            'Corrections of Clerical Error',
             prepared_by,
             republicAct,
             petitionType,
