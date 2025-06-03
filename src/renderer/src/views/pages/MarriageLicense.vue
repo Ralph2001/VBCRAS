@@ -107,7 +107,7 @@
                         </button>
                     </div>
                     <div v-else class="w-full flex  flex-col items-center mt-2">
-                     
+
                         <input v-model="deletePassword" type="password" placeholder="Enter your password"
                             class="w-full border rounded px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-red-400"
                             @keyup.enter="confirmDeleteWithPassword" />
@@ -162,7 +162,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[0]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-1 gap-2 mb-auto">
@@ -196,7 +196,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[1]
-                                            }}
+                                        }}
                                         </p>
                                     </div>
 
@@ -313,7 +313,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[2]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-3 gap-1 items-end">
@@ -427,7 +427,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[3]
-                                            }}
+                                        }}
                                         </p>
                                     </div>
                                     <div class="grid grid-cols-3 gap-1 items-end">
@@ -542,7 +542,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[4]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
 
@@ -649,7 +649,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[5]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
 
@@ -676,11 +676,11 @@
 
                                 <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
-                                        }}
+                                    }}
                                     </p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                                         steps[6]
-                                        }} Details
+                                    }} Details
                                     </p>
                                 </div>
                                 <div class="w-80 mt-8">
@@ -1004,7 +1004,9 @@ import { useMarriageWatcher } from '../../composables/marriage/useMarriageWatche
 import { addDays, format, isFriday, isValid, nextMonday, parseISO } from 'date-fns';
 import { useSetup } from '../../stores/Setting/setup.js';
 import IsPathAccessible from '../../components/IsPathAccessible.vue';
+import { useComputerStore } from '../../stores/computer.js';
 
+const computer = useComputerStore()
 
 const system_setting = useSetup()
 const file_path = ref(null)
@@ -1015,6 +1017,8 @@ const file_path = ref(null)
 
 onMounted(async () => {
     system_setting.getSystemSetting()
+    computer.getUserName()
+
     const now = new Date()
     const current_year = now.getFullYear()
     const monthNames = [
@@ -1022,7 +1026,7 @@ onMounted(async () => {
         "July", "August", "September", "October", "November", "December"
     ]
     const current_month = monthNames[now.getMonth()]
-    file_path.value = system_setting.defaults.file_path + 'VBCRAS\\Application for Marriage Licence\\' + current_year + '\\' + current_month
+    file_path.value = 'C:\\Users\\' + computer.desktop_name + '\\' + system_setting.defaults.file_path + '\\VBCRAS\\Application for Marriage Licence\\' + current_year + '\\' + current_month
 })
 
 
@@ -1863,7 +1867,7 @@ const cancelRemove = () => {
 
 const confirmDeleteWithPassword = async () => {
     deleteError.value = ''
-   
+
     const isValid = await auth.validatePassword(deletePassword.value)
     if (!isValid) {
         deleteError.value = 'Incorrect password. Please try again.'

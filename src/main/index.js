@@ -44,6 +44,8 @@ const { spawn } = require('child_process')
 const { dialog } = require('electron')
 
 const os = require('os')
+
+const userBasePath = os.homedir()
 const username = os.userInfo().username
 const fse = require('fs-extra')
 const fs = require('fs')
@@ -63,7 +65,9 @@ ipcMain.handle('validate-path', async (_, filePath) => {
             return { status: false, error: 'Path contains invalid characters.' }
         }
 
-        const resolvePath = path.resolve(filePath)
+        // Use os.homedir() to get the user's home directory, which is robust to drive letter or username changes
+        const userBasePath = path.join(os.homedir(), filePath)
+        const resolvePath = path.resolve(userBasePath)
 
         // Check if path exists
         if (!fs.existsSync(resolvePath)) {
@@ -305,7 +309,7 @@ function saveBase64AsPDF(base64Data, path, fileName) {
 
 ipcMain.handle('CreateAnnotated', async (event, formData) => {
     try {
-        const user = 'C:\\Users\\' + username
+        const user = os.homedir()
         const generate_document = await CreateAnnotated(user, formData)
         return {
             status: generate_document.status,
@@ -845,8 +849,9 @@ ipcMain.handle('open-scanned-sidebar', async (event, source) => {
      *  Convert to base64
      */
     try {
-        const fiepath = 'C:\\Users\\' + username + '\\' + source
-        const data = fs.readFileSync(fiepath)
+        // const fiepath = 'C:\\Users\\' + username + '\\' + source
+        const filepath = path.join(userBasePath, source)
+        const data = fs.readFileSync(filepath)
         if (data) {
             return { status: true, fileUrl: data.toString('base64') }
         }
