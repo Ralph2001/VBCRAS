@@ -7,7 +7,9 @@
                 <BtnDrop label="Create New Form" :options="options" @open-modal="OpenForms" />
                 <button
                     class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
-                        icon="fa-solid fa-info" /></button>
+                        icon="fa-solid fa-gear" /></button>
+                <IsPathAccessible :filePath="system_setting.defaults.file_path"
+                    :subFolder="'VBCRAS\\Forms\\'" />
             </div>
         </Header>
 
@@ -675,11 +677,18 @@ import { onClickOutside } from '@vueuse/core'
 import FormModal from '../../components/Form/FormModal.vue'
 import { useToast } from '../../lib/useToast.js'
 import { useActivityLog } from '../../stores/logs.js'
+import IsPathAccessible from '../../components/IsPathAccessible.vue'
+import { useSetup } from '../../stores/Setting/setup.js'
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 const search = ref(null)
 
 
+const system_setting = useSetup()
+
+onMounted(() => {
+    system_setting.getSystemSetting()
+})
 /**
  * For Logging
  */
