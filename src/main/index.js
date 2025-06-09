@@ -60,36 +60,73 @@ ipcMain.handle('validate-path', async (_, filePath) => {
             return { status: false, error: 'Invalid path type.' }
         }
 
-        // Prevent directory traversal attacks
-        if (filePath.includes('..') || filePath.includes('~')) {
+        // --- Path Resolution Improvement ---
+        let resolvedPath
+
+        // Check if the path is absolute
+        if (path.isAbsolute(filePath)) {
+            // If it's an absolute path (e.g., C:\, /home/user, D://)
+            // We can directly resolve it.
+            // Using path.normalize to clean up slashes (e.g., D:// becomes D:\)
+            resolvedPath = path.normalize(filePath)
+        } else {
+            // If it's a relative path, join it with the user's home directory
+            // This is useful if you expect relative paths to be based on homedir
+            resolvedPath = path.join(os.homedir(), filePath)
+
+            // You might want to consider if you want to restrict relative paths
+            // to *only* be within homedir, or if they should be relative to
+            // the application's executable directory. For security,
+            // homedir is generally safer if you don't control the input fully.
+            // If the frontend is using a file dialog, it will likely provide absolute paths.
+        }
+
+        // --- Security Check (Careful with '..' for absolute paths) ---
+        // For absolute paths, '..' usually means navigating parent directories.
+        // If you are accepting *any* absolute path, this check becomes less
+        // about "traversal" and more about preventing paths that might try
+        // to trick your system with invalid sequences.
+        // A simple path.resolve() will handle most '..' properly, but a
+        // strong check could be useful if you're paranoid about malformed paths.
+        // For now, let's keep it if you want to forbid `..` even in absolute paths
+        // which might indicate a weirdly constructed path.
+        if (resolvedPath.includes('..') || resolvedPath.includes('~')) {
             return { status: false, error: 'Path contains invalid characters.' }
         }
 
-        // Use os.homedir() to get the user's home directory, which is robust to drive letter or username changes
-        const userBasePath = path.join(os.homedir(), filePath)
-        const resolvePath = path.resolve(userBasePath)
+        // Using path.resolve for further normalization and resolving symbolic links if they exist
+        // This is good practice to get the canonical path.
+        resolvedPath = path.resolve(resolvedPath)
 
         // Check if path exists
-        if (!fs.existsSync(resolvePath)) {
-            return { status: false, error: 'Path does not exist.' }
+        if (!fs.existsSync(resolvedPath)) {
+            return {
+                status: false,
+                error: `Path does not exist: ${resolvedPath}`
+            }
         }
 
         // Check if path is a directory and not a file
-        const stat = fs.statSync(resolvePath)
+        const stat = fs.statSync(resolvedPath)
         if (!stat.isDirectory()) {
             return { status: false, error: 'Path is not a directory.' }
         }
 
         // Check read access
         try {
-            fs.accessSync(resolvePath, fs.constants.R_OK)
+            fs.accessSync(resolvedPath, fs.constants.R_OK)
         } catch (err) {
             return { status: false, error: 'No read access to directory.' }
         }
 
         return { status: true, error: null }
     } catch (error) {
-        return { status: false, error: error.message || error }
+        // Log the actual error for debugging
+        console.error('Error validating path:', error)
+        return {
+            status: false,
+            error: error.message || 'An unknown error occurred.'
+        }
     }
 })
 

@@ -105,21 +105,20 @@
 
             </div>
         </div>
-        <div v-if="auth.user_role === 2"
-            class="h-full w-full flex flex-row flex-wrap gap-5 items-center justify-center relative">
-            <div class=" basis-[45%]">
-                <p class="font-mono text-4xl">VBCRAS</p>
-                <p class="font-mono">The system has not been configured yet. The administrator needs to set it up.</p>
-            </div>
+<div v-if="auth.user_role === 2" class="flex flex-col items-center justify-center h-full w-full p-8 text-center bg-white">
+  <div class="mb-8">
+    <SetupSVG class="w-64 h-64 text-green-500 " />
+  </div>
 
-            <div class="basis-[45%] ">
-                <SetupSVG />
-            </div>
-            <div class="absolute bottom-10 px-4 right-0 ">
-                <button @click="auth.logout"
-                    class="border px-4 py-1.5 hover:bg-red-400 rounded shadow-sm hover:text-white">Logout</button>
-            </div>
-        </div>
+  <h2 class="text-4xl font-semibold text-gray-800 mb-3">Setup Required</h2>
+  <p class="text-lg text-gray-600 max-w-lg">The system needs to be configured by an administrator before you can proceed.</p>
+
+  <div class="mt-12">
+    <button @click="auth.logout" class="px-8 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-red-500 hover:text-white transition duration-300 ease-in-out shadow-md">
+      Sign Out
+    </button>
+  </div>
+</div>
     </div>
 </template>
 
