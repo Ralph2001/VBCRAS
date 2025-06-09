@@ -31,10 +31,10 @@
               <router-link to="/pages/marriage-license" active-class="text-white bg-[#1B263B]"
                 class="p-2 h-10  w-24 hover:bg-[#1B263B]/50 text-neutral-200 rounded">Marriage License</router-link>
             </li>
-            <li>
+            <!-- <li>
               <router-link to="/pages/Legitimation" active-class="text-white bg-[#1B263B]"
                 class="p-2 h-10  w-24 hover:bg-[#1B263B]/50 text-neutral-200 rounded">Legal Instrument</router-link>
-            </li>
+            </li> -->
             <li>
               <router-link to="/pages/scanned" active-class="text-white bg-[#1B263B]"
                 class="p-2 h-10  w-24 hover:bg-[#1B263B]/50 text-neutral-200 rounded">Scanned Documents</router-link>

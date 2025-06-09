@@ -54,51 +54,32 @@ const fs = require('fs')
  * Helper Functions
  */
 
-ipcMain.handle('validate-path', async (_, filePath) => {
+/**
+ * Validates whether the given file path is a readable directory.
+ * @param {string} filePath - The path to validate.
+ * @returns {{status: boolean, error: string|null, resolvedPath?: string}}
+ */
+function validateDirectoryPath(filePath) {
     try {
         if (!filePath || typeof filePath !== 'string') {
             return { status: false, error: 'Invalid path type.' }
         }
 
-        // --- Path Resolution Improvement ---
         let resolvedPath
 
-        // Check if the path is absolute
+        // Normalize and resolve the path
         if (path.isAbsolute(filePath)) {
-            // If it's an absolute path (e.g., C:\, /home/user, D://)
-            // We can directly resolve it.
-            // Using path.normalize to clean up slashes (e.g., D:// becomes D:\)
             resolvedPath = path.normalize(filePath)
         } else {
-            // If it's a relative path, join it with the user's home directory
-            // This is useful if you expect relative paths to be based on homedir
             resolvedPath = path.join(os.homedir(), filePath)
-
-            // You might want to consider if you want to restrict relative paths
-            // to *only* be within homedir, or if they should be relative to
-            // the application's executable directory. For security,
-            // homedir is generally safer if you don't control the input fully.
-            // If the frontend is using a file dialog, it will likely provide absolute paths.
         }
 
-        // --- Security Check (Careful with '..' for absolute paths) ---
-        // For absolute paths, '..' usually means navigating parent directories.
-        // If you are accepting *any* absolute path, this check becomes less
-        // about "traversal" and more about preventing paths that might try
-        // to trick your system with invalid sequences.
-        // A simple path.resolve() will handle most '..' properly, but a
-        // strong check could be useful if you're paranoid about malformed paths.
-        // For now, let's keep it if you want to forbid `..` even in absolute paths
-        // which might indicate a weirdly constructed path.
         if (resolvedPath.includes('..') || resolvedPath.includes('~')) {
             return { status: false, error: 'Path contains invalid characters.' }
         }
 
-        // Using path.resolve for further normalization and resolving symbolic links if they exist
-        // This is good practice to get the canonical path.
         resolvedPath = path.resolve(resolvedPath)
 
-        // Check if path exists
         if (!fs.existsSync(resolvedPath)) {
             return {
                 status: false,
@@ -106,28 +87,25 @@ ipcMain.handle('validate-path', async (_, filePath) => {
             }
         }
 
-        // Check if path is a directory and not a file
         const stat = fs.statSync(resolvedPath)
         if (!stat.isDirectory()) {
             return { status: false, error: 'Path is not a directory.' }
         }
 
-        // Check read access
-        try {
-            fs.accessSync(resolvedPath, fs.constants.R_OK)
-        } catch (err) {
-            return { status: false, error: 'No read access to directory.' }
-        }
+        fs.accessSync(resolvedPath, fs.constants.R_OK)
 
-        return { status: true, error: null }
+        return { status: true, error: null, resolvedPath }
     } catch (error) {
-        // Log the actual error for debugging
         console.error('Error validating path:', error)
         return {
             status: false,
             error: error.message || 'An unknown error occurred.'
         }
     }
+}
+
+ipcMain.handle('validate-path', async (_, filePath) => {
+    return validateDirectoryPath(filePath)
 })
 
 ipcMain.handle('read-pdf-file', async (_, filePath) => {
@@ -248,6 +226,63 @@ ipcMain.handle('previewFormPDF', async (event, formData) => {
         console.log(error)
     }
 })
+
+ipcMain.handle(
+    'saveFormPDF',
+    async (_, { data, form_type, documentOwner, basePath }) => {
+        const timestamp = Date.now()
+        const sanitizedOwner = documentOwner.replace(/[<>:"/\\|?*]+/g, '_')
+        const fileName = `${sanitizedOwner}_${timestamp}.pdf`
+
+        const year = new Date().getFullYear()
+        const month = new Date().toLocaleString('default', { month: 'long' })
+
+        // Validate the basePath
+        const validation = validateDirectoryPath(basePath)
+
+        let finalBasePath = basePath
+        let usedFallback = false
+
+        if (!validation.status) {
+            // fallback to local backup path (userData or a relative path)
+            finalBasePath = path.join(__dirname, 'Backups')
+
+            usedFallback = true
+        }
+
+        const folderPath = path.join(
+            finalBasePath,
+            'VBCRAS',
+            'FORMS',
+            year.toString(),
+            month,
+            `Form ${form_type}`
+        )
+
+        const fullFilePath = path.join(folderPath, fileName)
+
+        try {
+            const pdfBuffer = await generateFormPDF(data, true, fullFilePath)
+            console.log(pdfBuffer)
+            if (pdfBuffer.status) {
+                return {
+                    status: true,
+                    filePath: fullFilePath,
+                    usedFallback,
+                    message: usedFallback
+                        ? 'Base path inaccessible. PDF saved to backup location.'
+                        : 'PDF saved successfully.'
+                }
+            }
+        } catch (err) {
+            console.error('Failed to save PDF:', err)
+            return {
+                status: false,
+                error: err.message || 'Unknown error occurred while saving PDF.'
+            }
+        }
+    }
+)
 
 // ipcMain.handle('createPdfForm', async (event, formData) => {
 //     try {

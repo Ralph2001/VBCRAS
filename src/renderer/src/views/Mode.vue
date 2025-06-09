@@ -1,8 +1,8 @@
 <template>
     <div class="flex flex-col w-full min-h-screen  flex-grow justify-center p-4 items-center relative bg-gray-100">
-        <ConnectModal @close-connect-modal="connect_modal = false" v-if="connect_modal">
+        <ConnectModal @close-connect-modal="unsetConnectMode" v-if="connect_modal">
             <template v-slot:body>
-                <div class="w-full mb-5">
+                <div class=" w-full mb-5">
                     <ul class="list-disc list-inside">
                         <li class="text-sm font-mono text-gray-800">Make sure to use the host address given by the
                             admin.</li>
@@ -44,7 +44,7 @@
         <Transition mode="out-in">
             <div v-if="more_option" ref="start_server_ref"
                 class="absolute flex  flex-col gap-2 top-10 right-4 items-center justify-center border shadow-md  rounded bg-white h-[10rem] w-[20rem]">
-                <button @click="[connect_modal = true, more_option = false]"
+                <button @click="setSetupConnect"
                     class="rounded-full border w-20 h-20 text-xs font-mono bg-white
                     font-bold shadow-sm
                      border-[#1cbfff] hover:bg-blue-500 hover:text-white active:scale-95 transition-all">Connect</button>
@@ -77,7 +77,27 @@ import { useHostStore } from '../stores/Connection';
 
 import { useServerStore } from '../stores/ServerApp';
 import { useRouter } from 'vue-router';
+import { decrypt, encrypt } from '../lib/crypto';
 
+onMounted(() => {
+    const isLastSetupConnect = localStorage.getItem('isLastSetupConnectMode') === 'true';
+
+    if (isLastSetupConnect) {
+        connect_modal.value = true;
+    }
+    return
+})
+
+const setSetupConnect = () => {
+    connect_modal.value = true
+    more_option.value = false
+    localStorage.setItem('isLastSetupConnectMode', true)
+}
+
+const unsetConnectMode = () => {
+    connect_modal.value = false
+    localStorage.setItem('isLastSetupConnectMode', false)
+}
 
 const router = useRouter()
 const mode = useModeStore();
@@ -96,8 +116,17 @@ const server_stat = ref('Start')
 onClickOutside(start_server_ref, event => more_option.value = false)
 
 const data = reactive({
-    host: ''
+    host: decrypt(localStorage.getItem('lastTryHost')) || null
 })
+
+// const privateIpAddress = (value) => {
+//     const privateRanges = [
+//         /^192\.168\.\d{1,3}\.\d{1,3}$/,
+//         /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
+//         /^172\.(1[6-9]|2[0-9]|3[01])\.\d{1,3}\.\d{1,3}$/,
+//     ];
+//     return privateRanges.some((regex) => regex.test(value));
+// };
 
 
 const rules = computed(() => {
@@ -109,7 +138,10 @@ const rules = computed(() => {
 
 const v$ = useVuelidate(rules, data);
 
+
+
 const connect_host = async () => {
+    localStorage.setItem('lastTryHost', encrypt(data.host))
     connection_error.value = false
     connection_status.value = 'Connecting'
     is_connecting.value = true

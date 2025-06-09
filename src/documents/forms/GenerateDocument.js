@@ -23,72 +23,98 @@ const CONFIG = {
 }
 
 // Main function to generate the PDF form
-export async function generateFormPDF(main_data) {
+export async function generateFormPDF(
+    main_data,
+    isToSave = false,
+    filePath = null
+) {
     const data = JSON.parse(main_data)
     const pdfDoc = await PDFDocument.create()
 
-    // Load and embed fonts
+    // Embed fonts
     const fonts = {
         regular: await pdfDoc.embedFont(StandardFonts.TimesRoman),
         bold: await pdfDoc.embedFont(StandardFonts.TimesRomanBold),
         boldItalic: await pdfDoc.embedFont(StandardFonts.TimesRomanBoldItalic),
         italic: await pdfDoc.embedFont(StandardFonts.TimesRomanItalic)
     }
+
     const FORM_TYPE = data.form_type
+    const sizeX = FORM_TYPE.includes('A') ? 612 : 595.44
+    const sizeY = FORM_TYPE.includes('A') ? 936 : 841.68
+    const page = pdfDoc.addPage([sizeX, sizeY])
+    const { height } = page.getSize()
 
-    const size_of_paper_by_type_x = FORM_TYPE.includes('A') ? 612 : 595.44
-    const size_of_paper_by_type_y = FORM_TYPE.includes('A') ? 936 : 841.68
-    const page = pdfDoc.addPage([
-        size_of_paper_by_type_x,
-        size_of_paper_by_type_y
-    ])
-
-    const { width, height } = page.getSize()
-    // Set document metadata
+    // Draw document content
     document_metadata(pdfDoc, data)
-
-    // Draw logos
     await document_logo(data, page, pdfDoc)
-
-    // Draw header
     document_header(data, page, fonts, height, CONFIG.FONT_SIZE)
-
-    // Draw base content (date, verification info, billing, etc.)
     document_base(data, page, fonts, height, CONFIG.FONT_SIZE)
 
     if (data.is_with_authentication) {
         await createAuthenticationForm(pdfDoc, data, fonts, CONFIG.FONT_SIZE)
     }
 
-
-    // Assuming the `data` and `page` objects, and other necessary constants are already set
-    if (data.form_type.includes('A')) {
-        // If form type includes 'A', create "we certify" text and handle available documents
-        create_we_clerify(data, page, height, CONFIG.FONT_SIZE, fonts);
-        document_body_available(data, page, height, CONFIG.FONT_SIZE, fonts);
+    if (FORM_TYPE.includes('A')) {
+        create_we_clerify(data, page, height, CONFIG.FONT_SIZE, fonts)
+        document_body_available(data, page, height, CONFIG.FONT_SIZE, fonts)
+    } else if (FORM_TYPE.includes('B')) {
+        document_body_intact(
+            data,
+            page,
+            height,
+            CONFIG.FONT_SIZE,
+            fonts.regular,
+            fonts.bold
+        )
+    } else if (FORM_TYPE.includes('C')) {
+        document_body_destroyed(
+            data,
+            page,
+            height,
+            CONFIG.FONT_SIZE,
+            fonts.regular,
+            fonts.bold
+        )
     } else {
-        // Handle form types 'B' and 'C'
-        if (data.form_type.includes('B')) {
-            // Form type 'B' is for intact records
-            document_body_intact(data, page, height, CONFIG.FONT_SIZE, fonts.regular, fonts.bold);
-        } else if (data.form_type.includes('C')) {
-            // Form type 'C' is for destroyed records
-            document_body_destroyed(data, page, height, CONFIG.FONT_SIZE, fonts.regular, fonts.bold);
-        } else {
-            // If the form type is not 'A', 'B', or 'C', log an error
-            console.log('Invalid form type');
-        }
+        console.error('Invalid form type:', FORM_TYPE)
     }
 
-
-    // Draw Remarks if Available
     if (data.is_reconstructed || data.is_other_remarks) {
         createRemarks(pdfDoc, data, page, fonts, CONFIG.FONT_SIZE)
     }
 
-    // Save the PDF as a Base64 string
-    const pdfBytes = await pdfDoc.saveAsBase64()
-    return { status: true, pdfbase64: pdfBytes }
+    // Save the PDF as base64
+    const pdfBase64 = await pdfDoc.saveAsBase64({ dataUri: false })
+
+    if (isToSave) {
+        if (filePath && typeof filePath === 'string' && filePath.trim()) {
+            try {
+             
+                const buffer = Buffer.from(pdfBase64, 'base64')
+                const resolvedPath = path.resolve(filePath)
+                const dir = path.dirname(resolvedPath)
+
+                // Ensure directory exists
+                if (!fs.existsSync(dir)) {
+                    fs.mkdirSync(dir, { recursive: true })
+                }
+
+                fs.writeFileSync(resolvedPath, buffer)
+                return { status: true, message: 'PDF saved successfully.' }
+            } catch (err) {
+                return {
+                    status: false,
+                    message: `Error saving PDF: ${err.message}`
+                }
+            }
+        } else {
+            return { status: false, message: 'No valid file path provided.' }
+        }
+    }
+
+    // Return base64 only if not saving
+    return { status: true, pdfbase64: pdfBase64 }
 }
 
 // Set PDF metadata
@@ -224,16 +250,18 @@ function document_base(data, page, fonts, height, fontSize) {
         font: fonts.boldItalic
     })
 
-    const sanitizedIssuedTo = data.certification_issued_to
-        .replace(/"(.*?)"/g, '“$1”');
+    const sanitizedIssuedTo = data.certification_issued_to.replace(
+        /"(.*?)"/g,
+        '“$1”'
+    )
 
     const certificationParts = [
         { text: 'This certification is issued to', isBold: false },
         { text: ` ${sanitizedIssuedTo} `, isBold: true },
         { text: ' upon his/her request.', isBold: false }
-    ];
+    ]
 
-    const fullCertification = `This certification is issued to ${sanitizedIssuedTo} upon his/her request.`;
+    const fullCertification = `This certification is issued to ${sanitizedIssuedTo} upon his/her request.`
     const totalWidth = fonts.regular.widthOfTextAtSize(
         fullCertification,
         fontSize
@@ -416,18 +444,18 @@ function create_we_clerify(data, page, height, fontSize, fonts) {
         data.form_type === '1A'
             ? 'birth'
             : data.form_type === '2A'
-                ? 'death'
-                : data.form_type === '3A'
-                    ? 'marriage'
-                    : ''
+              ? 'death'
+              : data.form_type === '3A'
+                ? 'marriage'
+                : ''
     const typeofdocument =
         data.form_type === '1A'
             ? 'Births'
             : data.form_type === '2A'
-                ? 'Deaths'
-                : data.form_type === '3A'
-                    ? 'Marriage'
-                    : ''
+              ? 'Deaths'
+              : data.form_type === '3A'
+                ? 'Marriage'
+                : ''
 
     page.drawText(
         `We certify that among others the following facts of ${type} appear in our Register of`,
@@ -535,10 +563,10 @@ function document_body_available(data, page, height, fontSize, fonts) {
     const table = data.form_type.includes('1A')
         ? table_for_1
         : data.form_type.includes('2A')
-            ? table_for_2
-            : data.form_type.includes('3A')
-                ? table_for_3
-                : []
+          ? table_for_2
+          : data.form_type.includes('3A')
+            ? table_for_3
+            : []
 
     let tableGap = 0
     const tablePositionX = Number(data.body_data.x)
@@ -546,9 +574,9 @@ function document_body_available(data, page, height, fontSize, fonts) {
 
     // Function to check and adjust the font size for long text
     function getFontSizeBasedOnLength(text) {
-        if (text.length > 50) return fontSize * 0.8;  // 20% reduction
-        if (text.length > 40) return fontSize * 0.9;  // 10% reduction
-        return fontSize;                              // Original size
+        if (text.length > 50) return fontSize * 0.8 // 20% reduction
+        if (text.length > 40) return fontSize * 0.9 // 10% reduction
+        return fontSize // Original size
     }
 
     for (const item of table) {
@@ -556,18 +584,18 @@ function document_body_available(data, page, height, fontSize, fonts) {
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 145
                 : data.form_type.includes('3A') && item.another_data
-                    ? 72
-                    : data.form_type.includes('3A')
-                        ? 107
-                        : 0
+                  ? 72
+                  : data.form_type.includes('3A')
+                    ? 107
+                    : 0
         const xAdderForData =
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 155
                 : data.form_type.includes('3A') && item.another_data
-                    ? 79
-                    : data.form_type.includes('3A')
-                        ? 127
-                        : 0
+                  ? 79
+                  : data.form_type.includes('3A')
+                    ? 127
+                    : 0
 
         // Get the appropriate font size for each piece of data
         const dataFontSize = getFontSizeBasedOnLength(item.data)
@@ -615,65 +643,70 @@ function document_body_available(data, page, height, fontSize, fonts) {
     }
 }
 
-
-function document_body_intact(data, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
+function document_body_intact(
+    data,
+    page,
+    height,
+    fontSize,
+    timesRomanFont,
+    timesRomanFontBold
+) {
     const record_of = data.form_type.includes('1')
         ? 'of birth of '
         : data.form_type.includes('2')
-            ? 'of death of'
-            : data.form_type.includes('3')
-                ? 'of marriage between'
-                : ''
+          ? 'of death of'
+          : data.form_type.includes('3')
+            ? 'of marriage between'
+            : ''
     const have_b = data.form_type.includes('1')
         ? 'have been born'
         : data.form_type.includes('2')
-            ? 'have died'
-            : data.form_type.includes('3')
-                ? 'have been married'
-                : ''
+          ? 'have died'
+          : data.form_type.includes('3')
+            ? 'have been married'
+            : ''
     const is_for_1 = data.form_type.includes('1')
         ? `, of parents {{${data.father_name}}}${data.mother_name ? ` and {{${data.mother_name}}}` : ''}`
-        : '';
+        : ''
 
     const the_who_b =
         data.form_type.includes('1') || data.form_type.includes('2')
             ? 'who is'
             : 'who were'
-    const is_for_3 = data.form_type.includes('3') && data.married_with
-        ? ` and {{${data.married_with}}}`
-        : '';
+    const is_for_3 =
+        data.form_type.includes('3') && data.married_with
+            ? ` and {{${data.married_with}}}`
+            : ''
 
     const certificate_of = data.form_type.includes('1')
         ? 'Live Birth'
         : data.form_type.includes('2')
-            ? 'Death'
-            : data.form_type.includes('3')
-                ? 'Marriage'
-                : ''
+          ? 'Death'
+          : data.form_type.includes('3')
+            ? 'Marriage'
+            : ''
     const register_of = data.form_type.includes('1')
         ? 'Births'
         : data.form_type.includes('2')
-            ? 'Deaths'
-            : data.form_type.includes('3')
-                ? 'Marriages'
-                : ''
+          ? 'Deaths'
+          : data.form_type.includes('3')
+            ? 'Marriages'
+            : ''
 
     const document_owner = data.form_type.includes('1')
         ? data.no_record_birth_of
         : data.form_type.includes('2')
-            ? data.no_record_death_of
-            : data.form_type.includes('3')
-                ? data.no_record_marriage_of
-                : ''
+          ? data.no_record_death_of
+          : data.form_type.includes('3')
+            ? data.no_record_marriage_of
+            : ''
     const date_field = data.form_type.includes('1')
         ? data.born_on
         : data.form_type.includes('2')
-            ? data.died_on
-            : data.form_type.includes('3')
-                ? data.married_on
-                : ''
-
-
+          ? data.died_on
+          : data.form_type.includes('3')
+            ? data.married_on
+            : ''
 
     const we_clerify_for_b = `We certify that this office has no record ${record_of} {{${document_owner}}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{${date_field}}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
 
@@ -714,17 +747,17 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
     const we_also_certify_records_of_b = data.form_type.includes('1')
         ? 'births'
         : data.form_type.includes('2')
-            ? 'deaths'
-            : data.form_type.includes('3')
-                ? 'marriage'
-                : ''
+          ? 'deaths'
+          : data.form_type.includes('3')
+            ? 'marriage'
+            : ''
     const intact_year = data.form_type.includes('1')
         ? data.intact_birth_year
         : data.form_type.includes('2')
-            ? data.intact_death_year
-            : data.form_type.includes('3')
-                ? data.intact_marriage_year
-                : ''
+          ? data.intact_death_year
+          : data.form_type.includes('3')
+            ? data.intact_marriage_year
+            : ''
     const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{${intact_year}}} are still intact in the archives of this office`
 
     const we_also_certify_with_break = add_line_break(
@@ -745,7 +778,8 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
     let we_also_gap = 0
 
     const minustoCertify = 100
-    const WeAlsoCertifyPositionY = Number(data.body_data.y) - Number(minustoCertify)
+    const WeAlsoCertifyPositionY =
+        Number(data.body_data.y) - Number(minustoCertify)
     for (const items of we_also_certify_distribute) {
         const add_tab = not_first_certify ? 0 : 36
         for (const item of items) {
@@ -764,62 +798,68 @@ function document_body_intact(data, page, height, fontSize, timesRomanFont, time
     }
 }
 
-function document_body_destroyed(data, page, height, fontSize, timesRomanFont, timesRomanFontBold) {
-
+function document_body_destroyed(
+    data,
+    page,
+    height,
+    fontSize,
+    timesRomanFont,
+    timesRomanFontBold
+) {
     const document_owner = data.form_type.includes('1')
         ? `${data.birth_name}`
         : data.form_type.includes('2')
-            ? `${data.death_name}`
-            : data.form_type.includes('3')
-                ? `${data.groom_name} and ${data.bride_name}`
-                : '';
+          ? `${data.death_name}`
+          : data.form_type.includes('3')
+            ? `${data.groom_name} and ${data.bride_name}`
+            : ''
 
     const date_field = data.form_type.includes('1')
         ? `${data.born_on}`
         : data.form_type.includes('2')
-            ? `${data.died_on}`
-            : data.form_type.includes('3')
-                ? `${data.married_on}`
-                : '';
+          ? `${data.died_on}`
+          : data.form_type.includes('3')
+            ? `${data.married_on}`
+            : ''
 
-    const isBirth = data.form_type.includes('1') && data.father_name
-        ? ` of parents {{${data.father_name}}}${data.mother_name ? ` and {{${data.mother_name}}}` : ''}`
-        : '';
-
+    const isBirth =
+        data.form_type.includes('1') && data.father_name
+            ? ` of parents {{${data.father_name}}}${data.mother_name ? ` and {{${data.mother_name}}}` : ''}`
+            : ''
 
     const eventPlural = data.form_type.includes('1')
         ? 'births'
         : data.form_type.includes('2')
-            ? 'deaths'
-            : data.form_type.includes('3')
-                ? 'marriages'
-                : '';
+          ? 'deaths'
+          : data.form_type.includes('3')
+            ? 'marriages'
+            : ''
 
     const eventRegister = data.form_type.includes('1')
         ? 'Register of Births'
         : data.form_type.includes('2')
-            ? 'Register of Deaths'
-            : data.form_type.includes('3')
-                ? 'Register of Marriages'
-                : '';
+          ? 'Register of Deaths'
+          : data.form_type.includes('3')
+            ? 'Register of Marriages'
+            : ''
 
     const certificateType = data.form_type.includes('1')
         ? 'Certificate of Live Birth'
         : data.form_type.includes('2')
-            ? 'Certificate of Death'
-            : data.form_type.includes('3')
-                ? 'Certificate of Marriage'
-                : '';
+          ? 'Certificate of Death'
+          : data.form_type.includes('3')
+            ? 'Certificate of Marriage'
+            : ''
 
     const eventVerb = data.form_type.includes('1')
         ? 'born'
         : data.form_type.includes('2')
-            ? 'died'
-            : data.form_type.includes('3')
-                ? 'married'
-                : '';
+          ? 'died'
+          : data.form_type.includes('3')
+            ? 'married'
+            : ''
 
-    const we_clerify_for_c = `We certify that the records of ${eventPlural} filed in the archives of this office, include those which were registered from {{${data.registered_from}}} to present. However, the records of ${eventPlural} during the period {{${data.from_year} to ${data.to_year}}} were totally destroyed by {{${data.destroyed_by}}}. Hence, we cannot issue as requested a true transcription from the ${eventRegister} or true copy of the ${certificateType} of {{${document_owner}}} who was alleged to have been ${eventVerb} on {{${date_field}}} in this municipality${isBirth}.`;
+    const we_clerify_for_c = `We certify that the records of ${eventPlural} filed in the archives of this office, include those which were registered from {{${data.registered_from}}} to present. However, the records of ${eventPlural} during the period {{${data.from_year} to ${data.to_year}}} were totally destroyed by {{${data.destroyed_by}}}. Hence, we cannot issue as requested a true transcription from the ${eventRegister} or true copy of the ${certificateType} of {{${document_owner}}} who was alleged to have been ${eventVerb} on {{${date_field}}} in this municipality${isBirth}.`
 
     const we_certify_with_line_break = add_line_break(
         we_clerify_for_c,
@@ -875,7 +915,8 @@ function document_body_destroyed(data, page, height, fontSize, timesRomanFont, t
     let we_also_gap = 0
 
     const minustoCertify = 150
-    const WeAlsoCertifyPositionY = Number(data.body_data.y) - Number(minustoCertify)
+    const WeAlsoCertifyPositionY =
+        Number(data.body_data.y) - Number(minustoCertify)
     for (const items of we_also_certify_distribute) {
         const add_tab = not_first_certify ? 0 : 36
         for (const item of items) {
@@ -893,7 +934,6 @@ function document_body_destroyed(data, page, height, fontSize, timesRomanFont, t
         we_also_gap = 0
     }
 }
-
 
 /**
  * Create Authenticated Form
@@ -1130,7 +1170,6 @@ async function createRemarks(pdfDoc, data, page, fonts, fontSize) {
             font: fonts.italic
         })
 
-
     if (data.is_other_remarks) {
         remark_annotation_maker(data, data.remarks, fonts, page, pdfDoc)
     }
@@ -1138,154 +1177,170 @@ async function createRemarks(pdfDoc, data, page, fonts, fontSize) {
 
 /**
  * Remarks Formatter
- * 
+ *
  * @todo
  * double check this function since this is not fully tested
- * 
+ *
  */
 
 async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
-    let currentY = Number(config.remarks_config.y);
-    const maxWidth = Number(config.remarks_config.width); // A4 width minus margins
+    let currentY = Number(config.remarks_config.y)
+    const maxWidth = Number(config.remarks_config.width) // A4 width minus margins
 
-    const words = [];
+    const words = []
     for (const main_value of data.ops) {
-        const attributes = main_value.attributes || {};
+        const attributes = main_value.attributes || {}
         const fontType =
             attributes.bold && attributes.italic
                 ? fonts.boldItalic
                 : attributes.bold
-                    ? fonts.bold
-                    : attributes.italic
-                        ? fonts.italic
-                        : fonts.regular
+                  ? fonts.bold
+                  : attributes.italic
+                    ? fonts.italic
+                    : fonts.regular
 
+        const fontSize = Number(config.remarks_config.font)
 
-        const fontSize = Number(config.remarks_config.font);
-
-        const insertText = main_value.insert || '';
-        const lines = insertText.split('\n');
+        const insertText = main_value.insert || ''
+        const lines = insertText.split('\n')
         for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-            const line = lines[lineIdx];
-            const splitWords = line.split(/\s+/).filter(word => word.length > 0);
+            const line = lines[lineIdx]
+            const splitWords = line
+                .split(/\s+/)
+                .filter((word) => word.length > 0)
             for (const wordText of splitWords) {
                 words.push({
                     text: wordText,
                     font: fontType,
                     size: fontSize // Store font size with each word
-                });
+                })
             }
             if (lineIdx < lines.length - 1) {
-                words.push({ isNewLine: true });
+                words.push({ isNewLine: true })
             }
         }
     }
 
-    let currentLine = [];
-    let currentLineWidth = 0;
-    let currentLineMaxFontSize = 0;
+    let currentLine = []
+    let currentLineWidth = 0
+    let currentLineMaxFontSize = 0
 
     for (const word of words) {
         if (word.isNewLine) {
-
             if (currentLine.length > 0) {
-                const lineHeight = calculateLineHeight(currentLineMaxFontSize);
-                drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, true);
-                currentY -= lineHeight;
+                const lineHeight = calculateLineHeight(currentLineMaxFontSize)
+                drawLine(
+                    currentLine,
+                    Number(config.remarks_config.x),
+                    currentY,
+                    maxWidth,
+                    page,
+                    true
+                )
+                currentY -= lineHeight
             } else {
-
-                const lineHeight = calculateLineHeight(currentLineMaxFontSize || 12);
-                currentY -= lineHeight;
+                const lineHeight = calculateLineHeight(
+                    currentLineMaxFontSize || 12
+                )
+                currentY -= lineHeight
             }
 
-
-            currentLine = [];
-            currentLineWidth = 0;
-            currentLineMaxFontSize = 0;
-
+            currentLine = []
+            currentLineWidth = 0
+            currentLineMaxFontSize = 0
 
             if (currentY < 72) {
-                page = pdfDoc.addPage();
-                currentY = page.getHeight() - 72;
+                page = pdfDoc.addPage()
+                currentY = page.getHeight() - 72
             }
-            continue;
+            continue
         }
 
-        const wordWidth = word.font.widthOfTextAtSize(word.text, word.size);
-        const spaceWidth = word.font.widthOfTextAtSize(' ', word.size);
+        const wordWidth = word.font.widthOfTextAtSize(word.text, word.size)
+        const spaceWidth = word.font.widthOfTextAtSize(' ', word.size)
 
-
-        let tentativeWidth = currentLineWidth +
+        let tentativeWidth =
+            currentLineWidth +
             (currentLine.length > 0 ? spaceWidth : 0) +
-            wordWidth;
+            wordWidth
 
         if (tentativeWidth > maxWidth) {
-
-            const lineHeight = calculateLineHeight(currentLineMaxFontSize);
-            drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, false);
-            currentY -= lineHeight;
+            const lineHeight = calculateLineHeight(currentLineMaxFontSize)
+            drawLine(
+                currentLine,
+                Number(config.remarks_config.x),
+                currentY,
+                maxWidth,
+                page,
+                false
+            )
+            currentY -= lineHeight
 
             if (currentY < 72) {
-                page = pdfDoc.addPage();
-                currentY = page.getHeight() - 72;
+                page = pdfDoc.addPage()
+                currentY = page.getHeight() - 72
             }
 
-
-            currentLine = [word];
-            currentLineWidth = wordWidth;
-            currentLineMaxFontSize = word.size;
+            currentLine = [word]
+            currentLineWidth = wordWidth
+            currentLineMaxFontSize = word.size
         } else {
-
-            if (currentLine.length > 0) currentLineWidth += spaceWidth;
-            currentLine.push(word);
-            currentLineWidth += wordWidth;
+            if (currentLine.length > 0) currentLineWidth += spaceWidth
+            currentLine.push(word)
+            currentLineWidth += wordWidth
             if (word.size > currentLineMaxFontSize) {
-                currentLineMaxFontSize = word.size;
+                currentLineMaxFontSize = word.size
             }
         }
     }
 
-
     if (currentLine.length > 0) {
-        const lineHeight = calculateLineHeight(currentLineMaxFontSize);
-        drawLine(currentLine, Number(config.remarks_config.x), currentY, maxWidth, page, true);
+        const lineHeight = calculateLineHeight(currentLineMaxFontSize)
+        drawLine(
+            currentLine,
+            Number(config.remarks_config.x),
+            currentY,
+            maxWidth,
+            page,
+            true
+        )
     }
 }
 
 // Helper function for dynamic line height
 function calculateLineHeight(fontSize) {
-    return fontSize * 1.2;
+    return fontSize * 1.2
 }
 
 function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
-    if (lineWords.length === 0) return;
+    if (lineWords.length === 0) return
 
-    let totalWidth = 0;
-    const spaceWidths = [];
+    let totalWidth = 0
+    const spaceWidths = []
 
     // Calculate widths with dynamic font sizes
     lineWords.forEach((word, index) => {
-        const wordWidth = word.font.widthOfTextAtSize(word.text, word.size);
-        totalWidth += wordWidth;
+        const wordWidth = word.font.widthOfTextAtSize(word.text, word.size)
+        totalWidth += wordWidth
         if (index < lineWords.length - 1) {
-            const spaceWidth = word.font.widthOfTextAtSize(' ', word.size);
-            spaceWidths.push(spaceWidth);
-            totalWidth += spaceWidth;
+            const spaceWidth = word.font.widthOfTextAtSize(' ', word.size)
+            spaceWidths.push(spaceWidth)
+            totalWidth += spaceWidth
         }
-    });
+    })
 
     // Calculate justification
-    let extraSpace = 0;
+    let extraSpace = 0
     if (!isLastLine && spaceWidths.length > 0) {
-        extraSpace = (maxWidth - totalWidth) / spaceWidths.length;
+        extraSpace = (maxWidth - totalWidth) / spaceWidths.length
     }
 
     // Draw words
-    let currentX = xStart;
+    let currentX = xStart
     lineWords.forEach((word, index) => {
         if (index > 0) {
-            const spaceAdjustment = spaceWidths[index - 1] + extraSpace;
-            currentX += spaceAdjustment;
+            const spaceAdjustment = spaceWidths[index - 1] + extraSpace
+            currentX += spaceAdjustment
         }
 
         page.drawText(word.text, {
@@ -1293,10 +1348,10 @@ function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
             y: y - (calculateLineHeight(word.size) - word.size), // Vertical alignment
             font: word.font,
             size: word.size
-        });
+        })
 
-        currentX += word.font.widthOfTextAtSize(word.text, word.size);
-    });
+        currentX += word.font.widthOfTextAtSize(word.text, word.size)
+    })
 }
 
 /**
@@ -1304,7 +1359,7 @@ function drawLine(lineWords, xStart, y, maxWidth, page, isLastLine) {
  * @FOR
  * @FORM_B
  * @FORM_C
- * 
+ *
  * @todo
  * double check this function, not fully tested
  */
@@ -1335,10 +1390,10 @@ function add_line_break(
         item.includes('{{') && item.includes('}}')
             ? (isBold = false)
             : item.includes('{{')
-                ? (isBold = true)
-                : item.includes('}}')
-                    ? (isBold = false)
-                    : ''
+              ? (isBold = true)
+              : item.includes('}}')
+                ? (isBold = false)
+                : ''
 
         const tell_the_max_space =
             this_is_not_the_first || item !== 'archives' ? 415 : 415

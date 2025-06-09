@@ -119,6 +119,16 @@ contextBridge.exposeInMainWorld('FormApi', {
     PreviewFormPDF: async (data) => {
         const result = await ipcRenderer.invoke('previewFormPDF', data)
         return { result }
+    },
+    SaveFormPDF: async (data, formType, documentOwner, basePath) => {
+        const result = await ipcRenderer.invoke(
+            'saveFormPDF',
+            data,
+            formType,
+            documentOwner,
+            basePath
+        )
+        return { result }
     }
     // CreateForm: async (formData) => {
     //     const result = await ipcRenderer.invoke('createForm', formData)

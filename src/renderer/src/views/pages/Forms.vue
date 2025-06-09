@@ -8,8 +8,7 @@
                 <button
                     class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
                         icon="fa-solid fa-gear" /></button>
-                <IsPathAccessible :filePath="system_setting.defaults.file_path"
-                    :subFolder="'VBCRAS\\Forms\\'" />
+                <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'VBCRAS\\Forms\\'" />
             </div>
         </Header>
 
@@ -1067,71 +1066,109 @@ const isUpdateHook = ref(false)
 const saveForm = async () => {
     const form_type = selectedType.value;
     const formAvailableMapping = {
-        // For Form A's
-        '1A': Form1A,
-        '2A': Form2A,
-        '3A': Form3A,
-
-        // For Form B's
-        '1B': Form1B,
-        '2B': Form2B,
-        '3B': Form3B,
-
-        // For Form C's
-        '1C': Form1C,
-        '2C': Form2C,
-        '3C': Form3C,
+        '1A': Form1A, '2A': Form2A, '3A': Form3A,
+        '1B': Form1B, '2B': Form2B, '3B': Form3B,
+        '1C': Form1C, '2C': Form2C, '3C': Form3C,
     };
 
-    if (formAvailableMapping[form_type]) {
+    const formFunctions = {
+        '1A': formsStore.add_form1a, '1B': formsStore.add_form1b, '1C': formsStore.add_form1c,
+        '2A': formsStore.add_form2a, '2B': formsStore.add_form2b, '2C': formsStore.add_form2c,
+        '3A': formsStore.add_form3a, '3B': formsStore.add_form3b, '3C': formsStore.add_form3c,
+    };
 
-        available.remarks = ''
-        available.remarks = remarksNotDelta.value
+    const formDataRef = formAvailableMapping[form_type];
+    if (!formDataRef) return console.error('Invalid form type selected');
 
+    available.remarks = remarksNotDelta.value;
 
-        const formData = reactive({
+    const documentOwner = (() => {
+        switch (form_type) {
+            case '1A': return Form1A.name_child;
+            case '1B': return Form1B.no_record_birth_of;
+            case '2A': return Form2A.name_deceased;
+            case '2B': return Form2B.no_record_death_of;
+            case '3A': return `${Form3A.groom_name} & ${Form3A.bride_name}`;
+            case '3B': return `${Form3B.no_record_marriage_of} & ${Form3B.married_with}`;
+            case '1C': return Form1C.birth_name;
+            case '2C': return Form2C.death_name;
+            case '3C': return `${Form3C.groom_name} & ${Form3C.bride_name}`;
+            default: return '';
+        }
+    })();
+
+    const baseData = {
+        form_type,
+        ...toRaw(preference),
+        ...toRaw(transactions),
+        ...(form_type.endsWith('C') ? toRaw(destroyed) : {}),
+        ...(form_type.endsWith('A') ? toRaw(available) : {}),
+        ...formDataRef
+    };
+
+    let filePath = null;
+
+    if (system_setting?.defaults?.file_path?.trim()) {
+        const saveResult = await window.FormApi.SaveFormPDF({
+            data: JSON.stringify(baseData),
             form_type,
-            ...transactions,
-            ...(form_type.endsWith('A') ? available : {}),
-            ...(form_type.endsWith('C') ? destroyed : {}),
-            ...formAvailableMapping[form_type],
+            documentOwner,
+            basePath: system_setting.defaults.file_path + 'dd'
         });
 
-        if (formID.value !== null && isUpdateHook.value) {
-            await formsStore.edit_form1a(formID.value, formData)
+        if (saveResult.result.status) {
+            filePath = saveResult.result.filePath;
+
+            if (saveResult.result.usedFallback) {
+                toast.fire({
+                    icon: 'warning',
+                    title: 'Base path was not accessible. PDF saved to backup location.',
+                    text: saveResult.result.filePath,
+                    duration: 8000,
+                });
+            }
+        } else {
+            toast.fire({
+                icon: 'error',
+                title: 'Failed to save PDF',
+                text: saveResult.result.error,
+            });
+            return;
         }
-        else {
-            const formFunctions = {
-                "1A": formsStore.add_form1a,
-                "1B": formsStore.add_form1b,
-                "1C": formsStore.add_form1c,
+    }
 
-                "2A": formsStore.add_form2a,
-                "2B": formsStore.add_form2b,
-                "2C": formsStore.add_form2c,
+    // Include file path in the final form data
+    const formData = reactive({
+        form_type,
+        file_path: filePath,
+        ...transactions,
+        ...(form_type.endsWith('A') ? available : {}),
+        ...(form_type.endsWith('C') ? destroyed : {}),
+        ...formDataRef,
+    });
 
-                "3A": formsStore.add_form3a,
-                "3B": formsStore.add_form3b,
-                "3C": formsStore.add_form3c,
-            };
-            // Save it to databse
-            const add = formFunctions[selectedType.value] ? formFunctions[selectedType.value](formData) : "";
-            if (add.status) {
-                formID.value = add.id
-                isUpdateHook.value = true
+    // Save or update
+    if (formID.value && isUpdateHook.value) {
+        await formsStore[`edit_form${form_type.toLowerCase()}`](formID.value, formData);
+    } else {
+        const saveFunc = formFunctions[form_type];
+        if (saveFunc) {
+            const response = await saveFunc(formData);
+            if (response.status) {
+                formID.value = response.id;
+                isUpdateHook.value = true;
             }
         }
-
-        closeModal()
-        toast.fire({
-            icon: 'success',
-            title: `Form ${form_type} has been successfully added.`,
-            duration: 5000,
-        })
-    } else {
-        console.log('Invalid form type selected');
     }
+
+    closeModal();
+    toast.fire({
+        icon: 'success',
+        title: `Form ${form_type} has been successfully added.`,
+        duration: 5000,
+    });
 };
+
 
 
 const printDocument = async () => {
