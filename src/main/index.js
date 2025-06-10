@@ -59,7 +59,7 @@ const fs = require('fs')
  * @param {string} filePath - The path to validate.
  * @returns {{status: boolean, error: string|null, resolvedPath?: string}}
  */
-function validateDirectoryPath(filePath) {
+async function validateDirectoryPath(filePath) {
     try {
         if (!filePath || typeof filePath !== 'string') {
             return { status: false, error: 'Invalid path type.' }
@@ -105,7 +105,7 @@ function validateDirectoryPath(filePath) {
 }
 
 ipcMain.handle('validate-path', async (_, filePath) => {
-    return validateDirectoryPath(filePath)
+    return await validateDirectoryPath(filePath)
 })
 
 ipcMain.handle('read-pdf-file', async (_, filePath) => {
@@ -238,7 +238,7 @@ ipcMain.handle(
         const month = new Date().toLocaleString('default', { month: 'long' })
 
         // Validate the basePath
-        const validation = validateDirectoryPath(basePath)
+        const validation = await validateDirectoryPath(basePath)
 
         let finalBasePath = basePath
         let usedFallback = false
@@ -477,27 +477,39 @@ function executeCommand(executable, originalDirectory, outputDirectory, args) {
 
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
-        const data = JSON.parse(formData)
+        const data = JSON.parse(formData);
 
         const executable = join(
             __dirname,
             '../../resources/tools/converter/app/dist/convert.exe'
-        ).replace('app.asar', 'app.asar.unpacked')
+        ).replace('app.asar', 'app.asar.unpacked');
 
-        const petition_number = data.petition_number
-        const originalDirectory = data.orignal_path
-        const petitionType = data.petition_type + ' ' + data.event_type
-        const prepared_by = data.prepared_by
-        const republicAct = data.republic_act_number
-        const documentOwner =
-            data.document_owner === 'N/A'
-                ? data.petitioner_name
-                : data.document_owner
-        const date_filed = data.date_filed
-        const year = new Date(date_filed).getFullYear().toString()
+        const petition_number = data.petition_number;
+        const originalDirectory = data.orignal_path;
+        const petitionType = `${data.petition_type} ${data.event_type}`;
+        const prepared_by = data.prepared_by;
+        const republicAct = data.republic_act_number;
+        const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
+        const date_filed = data.date_filed;
+        const year = new Date(date_filed).getFullYear().toString();
 
+        // STEP 1: Validate the custom path
+        let basePath = join(userBasePath, data.path_where_to_save);
+        const validation = await validateDirectoryPath(basePath);
+
+        let usedFallback = false;
+
+        if (!validation.status) {
+            basePath = path.join(__dirname, 'Backups');
+            usedFallback = true;
+
+            // Ensure backup path exists
+            fs.mkdirSync(basePath, { recursive: true });
+        }
+
+        // STEP 2: Construct full output directory path
         const outputDirectory = join(
-            data.path_where_to_save,
+            basePath,
             'VBCRAS',
             'Corrections of Clerical Error',
             prepared_by,
@@ -505,48 +517,53 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             petitionType,
             year,
             `${petition_number} - ${documentOwner}`
-        )
+        );
 
-        if (!fs.existsSync(outputDirectory)) {
-            fs.mkdirSync(outputDirectory, { recursive: true })
-        }
+        fs.mkdirSync(outputDirectory, { recursive: true });
 
-        const deleteOriginal = 'true'
+        const deleteOriginal = 'true';
 
+        // STEP 3: Call external conversion tool
         const conversionResult = await executeCommand(
             executable,
             originalDirectory,
             outputDirectory,
             deleteOriginal
-        )
+        );
 
-        return { status: true, filepath: outputDirectory, message: 'Success' }
+        return {
+            status: true,
+            filepath: outputDirectory,
+            usedFallback,
+            message: usedFallback
+                ? 'Path not accessible. Saved to fallback location.'
+                : 'Success'
+        };
+
     } catch (error) {
-        console.error('Error during file conversion:', error)
+        console.error('Error during file conversion:', error);
 
         if (error.message.includes('Failed to start process')) {
             return {
                 status: false,
                 filepath: null,
-                message:
-                    'Failed to start the conversion process. Please check the executable and try again.'
-            }
+                message: 'Failed to start the conversion process. Please check the executable and try again.'
+            };
         } else if (error.message.includes('Process failed with code')) {
             return {
                 status: false,
                 filepath: null,
                 message: 'Conversion failed. You can retry the conversion.'
-            }
+            };
         } else {
             return {
                 status: false,
                 filepath: null,
-                message:
-                    'An unexpected error occurred during the conversion process. Please try again later.'
-            }
+                message: 'An unexpected error occurred during the conversion process. Please try again later.'
+            };
         }
     }
-})
+});
 
 ipcMain.handle('createFinality', async (event, formData) => {
     try {

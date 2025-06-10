@@ -3,6 +3,9 @@ import fontkit from '@pdf-lib/fontkit'
 import { format, parse } from 'date-fns'
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
+
+const userBasePath = os.homedir()
 
 const fsp = require('fs').promises
 
@@ -329,9 +332,9 @@ async function generate_marriage_license(formData) {
                 dayField.setText(format(parsedDate, 'dd'))
                 monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
                 yearField.setText(format(parsedDate, 'yyyy'))
-                ;[dayField, monthField, yearField].forEach((field) =>
-                    field.updateAppearances(helveticaFont)
-                )
+                    ;[dayField, monthField, yearField].forEach((field) =>
+                        field.updateAppearances(helveticaFont)
+                    )
             } catch (error) {
                 console.error(`Error formatting date for ${prefix}:`, error)
             }
@@ -405,9 +408,9 @@ async function generate_marriage_license(formData) {
                 dayField.setText(dayWithSuffix)
                 monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
                 yearField.setText(format(parsedDate, 'yyyy'))
-                ;[dayField, monthField, yearField].forEach((field) =>
-                    field.updateAppearances(helveticaFont)
-                )
+                    ;[dayField, monthField, yearField].forEach((field) =>
+                        field.updateAppearances(helveticaFont)
+                    )
             } catch (error) {
                 console.error(`Error formatting date for ${prefix}:`, error)
             }
@@ -436,9 +439,9 @@ async function generate_marriage_license(formData) {
             try {
                 const date = format(parsedDate, 'dd MMMM yyyy').toUpperCase()
                 dateField.setText(date)
-                ;[dateField].forEach((field) =>
-                    field.updateAppearances(helveticaFont)
-                )
+                    ;[dateField].forEach((field) =>
+                        field.updateAppearances(helveticaFont)
+                    )
             } catch (error) {
                 console.error(`Error formatting date for ${prefix}:`, error)
             }
@@ -478,9 +481,9 @@ async function generate_marriage_license(formData) {
                 municipalityField.setText(municipality || '')
                 provinceField.setText(province || '')
                 countryField.setText(country || '')
-                ;[municipalityField, provinceField, countryField].forEach(
-                    (field) => field.updateAppearances(helveticaFont)
-                )
+                    ;[municipalityField, provinceField, countryField].forEach(
+                        (field) => field.updateAppearances(helveticaFont)
+                    )
             }
         }
 
@@ -770,9 +773,9 @@ async function print_decided_license(formData, params) {
                 dayField.setText(format(parsedDate, 'dd'))
                 monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
                 yearField.setText(format(parsedDate, 'yyyy'))
-                ;[dayField, monthField, yearField].forEach((field) =>
-                    field.updateAppearances(helveticaFont)
-                )
+                    ;[dayField, monthField, yearField].forEach((field) =>
+                        field.updateAppearances(helveticaFont)
+                    )
             } catch (error) {
                 console.error(`Error formatting date for ${prefix}:`, error)
             }
@@ -837,9 +840,9 @@ async function print_decided_license(formData, params) {
                 dayField.setText(dayWithSuffix)
                 monthField.setText(format(parsedDate, 'MMMM').toUpperCase())
                 yearField.setText(format(parsedDate, 'yyyy'))
-                ;[dayField, monthField, yearField].forEach((field) =>
-                    field.updateAppearances(helveticaFont)
-                )
+                    ;[dayField, monthField, yearField].forEach((field) =>
+                        field.updateAppearances(helveticaFont)
+                    )
             } catch (error) {
                 console.error(`Error formatting date for ${prefix}:`, error)
             }
@@ -863,9 +866,9 @@ async function print_decided_license(formData, params) {
             try {
                 const date = format(parsedDate, 'dd MMMM yyyy').toUpperCase()
                 dateField.setText(date)
-                ;[dateField].forEach((field) =>
-                    field.updateAppearances(helveticaFont)
-                )
+                    ;[dateField].forEach((field) =>
+                        field.updateAppearances(helveticaFont)
+                    )
             } catch (error) {
                 console.error(`Error formatting date for ${prefix}:`, error)
             }
@@ -901,9 +904,9 @@ async function print_decided_license(formData, params) {
                 municipalityField.setText(municipality || '')
                 provinceField.setText(province || '')
                 countryField.setText(country || '')
-                ;[municipalityField, provinceField, countryField].forEach(
-                    (field) => field.updateAppearances(helveticaFont)
-                )
+                    ;[municipalityField, provinceField, countryField].forEach(
+                        (field) => field.updateAppearances(helveticaFont)
+                    )
             }
         }
 
@@ -1248,8 +1251,10 @@ async function save_marriage_license_and_notice(formData, image) {
         const galleryPath = path.join('Gallery', folderName)
 
         // Example: data.file_path = C:/VBCRAS/Application for Marriage License/2025/June
-        const outputDir = path.resolve(data.file_path, folderName)
-        const userPicturesDir = path.resolve(data.file_path, galleryPath)
+        const cleanFilePath = path.normalize(+'\\' + data.file_path || '')
+        const outputDir = path.resolve(userBasePath, cleanFilePath, folderName)
+        const userPicturesDir = path.resolve(userBasePath, cleanFilePath, galleryPath)
+
 
         try {
             await fsp.mkdir(outputDir, { recursive: true })

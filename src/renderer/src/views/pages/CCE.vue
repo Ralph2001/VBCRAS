@@ -7,7 +7,7 @@
           class="rounded-md border border-gray-300 px-3 py-1 h-8 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95">
           <font-awesome-icon icon="fa-solid fa-gear" /></button> -->
         <HowTo />
-        <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'VBCRAS\\Correction of Clerical Error'"/>
+        <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'\\VBCRAS\\Correction of Clerical Error'"/>
       </div>
     </Header>
 

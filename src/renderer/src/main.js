@@ -110,7 +110,8 @@ import {
     faHeart,
     faHandshake,
     faCircleXmark,
-    faFolderTree
+    faFolderTree,
+    faSpinner
     
 
 
@@ -208,7 +209,8 @@ library.add(
     faX,
     faY,
     faCircleXmark,
-    faFolderTree
+    faFolderTree,
+    faSpinner
     
  
 

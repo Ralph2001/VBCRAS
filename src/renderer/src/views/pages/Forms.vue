@@ -8,7 +8,7 @@
                 <button
                     class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
                         icon="fa-solid fa-gear" /></button>
-                <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'VBCRAS\\Forms\\'" />
+                <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'\\VBCRAS\\Forms\\'" />
             </div>
         </Header>
 
@@ -1113,7 +1113,7 @@ const saveForm = async () => {
             data: JSON.stringify(baseData),
             form_type,
             documentOwner,
-            basePath: system_setting.defaults.file_path + 'dd'
+            basePath: system_setting.defaults.file_path
         });
 
         if (saveResult.result.status) {
