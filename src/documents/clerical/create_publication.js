@@ -4,6 +4,7 @@ const Docxtemplater = require('docxtemplater')
 const fs = require('fs')
 const path = require('path')
 const dateFns = require('date-fns')
+const os = require('os')
 
 const PATHS = {
     PUBLICATION_LETTER_CFN: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Publication/CFN.docx').replace('app.asar', 'app.asar.unpacked'),
@@ -31,15 +32,31 @@ export async function create_publication_letter(data) {
     }
 }
 
+
 // FUNCTION THAT SAVE THE DOCUMENT
 function saveDocument(doc, fileName, folderPath) {
-    main_folder_path = path.join(folderPath, fileName)
+    const userBasePath = os.homedir()
+
+    // Ensure folderPath is absolute, resolve from userBasePath if not
+    const finalFolderPath = path.isAbsolute(folderPath)
+        ? folderPath
+        : path.join(userBasePath, folderPath)
+
+    // Ensure directory exists
+    fs.mkdirSync(finalFolderPath, { recursive: true })
+
+    main_folder_path = folderPath
+    const fullPath = path.join(finalFolderPath, fileName)
+
     const buf = doc.getZip().generate({
         type: 'nodebuffer',
         compression: 'DEFLATE'
     })
-    fs.writeFileSync(path.join(folderPath, fileName), buf)
+
+    fs.writeFileSync(fullPath, buf)
 }
+
+
 
 async function publication_letter(data, content) {
     const zip = new PizZip(content)

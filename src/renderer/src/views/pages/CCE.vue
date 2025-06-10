@@ -1803,6 +1803,7 @@ const create_validated_document = async () => {
 
   const check = await window.ClericalApi.proceedCreatePetition(JSON.stringify(settings));
 
+  console.log(check)
   if (!check.status) {
     is_validating.value = true
     is_creating.value = false

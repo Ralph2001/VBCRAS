@@ -353,23 +353,27 @@ ipcMain.handle('createAUSF', async (event, formData) => {
     }
 })
 
-/////////////
-/////////////
-// Clerical
-/////////////
-/////////////
 
-function saveBase64AsPDF(base64Data, path, fileName) {
-    // Remove the prefix if it exists (data:application/pdf;base64,)
+// ==============================
+// Clerical Section
+// ==============================
+
+function saveBase64AsPDF(base64Data, folderPath, fileName) {
     const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '')
-
-    // Convert base64 to a buffer
     const buffer = Buffer.from(base64, 'base64')
 
-    // Define the path where the PDF will be saved
-    const filePath = join(path, fileName)
 
-    // Write the buffer to a file
+
+    // Ensure folderPath is absolute — if not, resolve it relative to userBasePath
+    const finalFolderPath = path.isAbsolute(folderPath)
+        ? folderPath
+        : path.join(userBasePath, folderPath)
+
+    // Ensure folder exists
+    fs.mkdirSync(finalFolderPath, { recursive: true })
+
+    const filePath = path.join(finalFolderPath, fileName)
+
     fs.writeFile(filePath, buffer, (err) => {
         if (err) {
             console.error('Error saving PDF:', err)
@@ -507,7 +511,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             fs.mkdirSync(basePath, { recursive: true });
         }
 
-        // STEP 2: Construct full output directory path
+
         const outputDirectory = join(
             basePath,
             'VBCRAS',
@@ -531,9 +535,20 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             deleteOriginal
         );
 
+        // Return the relative path instead of the absolute path.
+        // This allows users on different machines (e.g., connected to a Synology NAS)
+        // to access the file using their own base user path.
+        // For example, if the file is saved on a shared Synology folder,
+        // any user with access to that folder can open the file by combining their own user base path with this relative path.
+
+
+        const relativeFilePath = outputDirectory.startsWith(userBasePath)
+            ? path.relative(userBasePath, outputDirectory)
+            : outputDirectory;
+
         return {
             status: true,
-            filepath: outputDirectory,
+            filepath: relativeFilePath,
             usedFallback,
             message: usedFallback
                 ? 'Path not accessible. Saved to fallback location.'
@@ -565,6 +580,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     }
 });
 
+
 ipcMain.handle('createFinality', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
@@ -577,6 +593,8 @@ ipcMain.handle('createFinality', async (event, formData) => {
                 __dirname,
                 '../../resources/tools/converter/app/dist/convert.exe'
             ).replace('app.asar', 'app.asar.unpacked')
+
+
             const outputDirectory = data.file_path
 
             const conversionResult = await executeCommand(
@@ -600,15 +618,20 @@ ipcMain.handle('createFinality', async (event, formData) => {
     }
 })
 
+// Open it with userBasePath
+
 ipcMain.handle('create_certificate_filing', async (event, data) => {
     try {
         const create_certificate_filing = await certificate_filing(data)
-        const filefolder = await shell.openExternal(
-            create_certificate_filing.filepath
-        )
+
+        const resolvedPath = path.isAbsolute(create_certificate_filing.filepath)
+            ? create_certificate_filing.filepath
+            : path.resolve(userBasePath, create_certificate_filing.filepath)
+
+        const filefolder = await shell.openExternal(resolvedPath)
 
         if (!filefolder) {
-            await shell.openPath(create_certificate_filing.filepath)
+            await shell.openPath(resolvedPath)
             return true
         }
 
@@ -617,17 +640,23 @@ ipcMain.handle('create_certificate_filing', async (event, data) => {
         return false
     }
 })
+
+
+// Open it with userBasePath
+
 ipcMain.handle('create_publication_letter', async (event, data) => {
     try {
         const publication_letter = await create_publication_letter(data)
-        const filefolder = await shell.openExternal(publication_letter.filepath)
+        const resolvedPath = path.isAbsolute(publication_letter.filepath)
+            ? publication_letter.filepath
+            : path.resolve(userBasePath, publication_letter.filepath)
+
+        const filefolder = await shell.openExternal(resolvedPath)
 
         if (!filefolder) {
-            await shell.openPath(publication_letter.filepath)
+            await shell.openPath(resolvedPath)
             return true
         }
-
-        return true
     } catch (error) {
         return false
     }
@@ -635,25 +664,41 @@ ipcMain.handle('create_publication_letter', async (event, data) => {
 
 ipcMain.handle('open-clerical', async (event, source) => {
     try {
-        console.log('This is Source' + source)
-        const filefolder = await shell.openExternal(source)
-        return true
+        const resolvedPath = path.isAbsolute(source)
+            ? source
+            : path.resolve(userBasePath, source);
+
+        console.log(`[open-clerical] Attempting to open source: "${source}"`);
+        console.log(`[open-clerical] Absolute resolved path: "${resolvedPath}"`);
+        console.log(`[open-clerical] User base path: "${userBasePath}"`);
+
+        const filefolder = await shell.openPath(resolvedPath);
+
+        return true;
     } catch (error) {
-        console.log(error)
-        return false
+        console.error('[open-clerical] Error:', error);
+        return false;
     }
 })
 
 ipcMain.handle('open-clerical-folder', async (event, source) => {
     try {
-        console.log('This is Source ' + source)
-        const filefolder = await shell.openPath(source)
-        return true
+        const resolvedPath = path.isAbsolute(source)
+            ? source
+            : path.resolve(userBasePath, source);
+
+        console.log(`[open-folder] Attempting to open source: "${source}"`);
+        console.log(`[open-folder] Absolute resolved path: "${resolvedPath}"`);
+        console.log(`[open-folder] User base path: "${userBasePath}"`);
+
+        const filefolder = await shell.openPath(resolvedPath);
+
+        return true;
     } catch (error) {
-        console.log(error)
-        return false
+        console.error('[open-clerical-folder] Error:', error);
+        return false;
     }
-})
+});
 
 ipcMain.handle('remove-item', async (event, path) => {
     try {
@@ -673,6 +718,10 @@ ipcMain.handle('remove-item', async (event, path) => {
 
 ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
     try {
+        const resolvedMainDir = path.isAbsolute(mainDirectory)
+            ? mainDirectory
+            : path.resolve(userBasePath, mainDirectory)
+
         // Define the required and optional files
         const requiredFiles = [
             'Petition.pdf',
@@ -690,41 +739,36 @@ ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
 
         // Check for required files
         for (const requiredFile of requiredFiles) {
-            const filePath = join(mainDirectory, requiredFile)
+            const filePath = path.join(resolvedMainDir, requiredFile)
 
-            // Check if the required file exists before reading
             if (fs.existsSync(filePath)) {
                 const fileData = fs.readFileSync(filePath, 'base64')
-                const name = requiredFile.substring(
-                    0,
-                    requiredFile.lastIndexOf('.')
-                )
+                const name = requiredFile.replace(/\.pdf$/, '')
                 data.push({ name, link: fileData })
             }
         }
 
-        // Check for optional files
-        const optionalData = [] // Use a new array for optional files
+        // Optional files
+        const optionalData = []
         for (const optionalFile of optionalFiles) {
-            const filePath = join(mainDirectory, optionalFile)
+            const filePath = path.join(resolvedMainDir, optionalFile)
 
-            // Check if the optional file exists before reading
             if (fs.existsSync(filePath)) {
                 const fileData = fs.readFileSync(filePath, 'base64')
-                const name = optionalFile.substring(
-                    0,
-                    optionalFile.lastIndexOf('.')
-                )
-                optionalData.push({ name, link: fileData }) // Push to optionalData
+                const name = optionalFile.replace(/\.pdf$/, '')
+                optionalData.push({ name, link: fileData })
             }
         }
 
-        // Combine required and optional data
         return [...data, ...optionalData]
     } catch (error) {
+        console.error('Error opening clerical files:', error)
         return { error: 'Failed to open clerical files' }
     }
 })
+
+
+
 ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
     try {
         const generate = await generate_by_month_year(formData)
