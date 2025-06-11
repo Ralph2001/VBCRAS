@@ -208,6 +208,130 @@ async function printPDF(base64Data, sumatraPath, paperSize = 'none') {
     }
 }
 
+
+ipcMain.handle('get-printers', async (event) => {
+    // This needs to be called after the app is ready and a browser window is created,
+    // as it relies on Chromium's printer capabilities.
+    const webContents = BrowserWindow.getAllWindows()[0]?.webContents; // Get the webContents of an existing window
+    if (webContents) {
+        return webContents.getPrintersAsync();
+    }
+    return []; // Return an empty array if no webContents found
+});
+
+// In main process IPC handler
+ipcMain.handle('print-pdf-electron-custom-size', async (event, base64Data, printerName, optionsJson) => {
+    let options;
+    try {
+        options = JSON.parse(optionsJson);
+    } catch (err) {
+        console.error('[PRINT] Failed to parse options:', err);
+        return { success: false, message: 'Invalid print options.' };
+    }
+
+    console.log('[PRINT] Start printing');
+    console.log('[PRINT] Printer:', printerName);
+    console.log('[PRINT] Options:', options);
+    console.log('[PRINT] Base64 (first 50 chars):', base64Data.slice(0, 50));
+
+    let win = null;
+
+
+    win = new BrowserWindow({ show: true });
+
+    // const predefinedSizes = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'Legal', 'Letter', 'Tabloid'];
+    // const inchesToMicrons = (inches) => Math.round(inches * 25400);
+
+    // let effectivePageSize = 'A4';
+    // if (options.pageSize) {
+    //     const ps = options.pageSize;
+    //     if (typeof ps === 'string' && predefinedSizes.includes(ps)) {
+    //         effectivePageSize = ps;
+    //     } else if (typeof ps === 'object') {
+    //         if (ps.width && ps.height) {
+    //             effectivePageSize = {
+    //                 width: ps.width,
+    //                 height: ps.height,
+    //             };
+    //         } else if (ps.widthIn && ps.heightIn) {
+    //             effectivePageSize = {
+    //                 width: inchesToMicrons(ps.widthIn),
+    //                 height: inchesToMicrons(ps.heightIn),
+    //             };
+    //         } else {
+    //             console.warn('[PRINT] Invalid pageSize object. Falling back to A4.');
+    //         }
+    //     }
+    // }
+
+    const b64 = `data:application/pdf;base64,${base64Data}`;
+    await win.loadURL(b64);
+
+    const printOptions = {
+        silent: options.silent ?? true,
+        deviceName: printerName,
+        printBackground: options.printBackground ?? false,
+        color: options.color ?? true,
+        margins: options.margins ?? { marginType: 'default' },
+        landscape: options.landscape ?? false,
+        scaleFactor: options.scaleFactor,
+        pagesPerSheet: options.pagesPerSheet ?? 1,
+        collate: options.collate ?? true,
+        copies: 1,
+        pageSize: 'A4',
+    };
+
+
+    console.log('[PRINT] Passing to webContents');
+
+    win.webContents.on('did-finish-load', () => {
+        setTimeout(() => {
+            win.webContents.print({
+                silent: true,
+                color: true,
+                copies: 1,
+                pageSize: 'A4',
+                printBackground: false,
+                collate: true,
+                margins: {
+                    marginType: 'default'
+                },
+                duplexMode: 'simplex',
+                dpi: {
+                    horizontal: 600,
+                    vertical: 600
+                },
+                landscape: false,
+                pagesPerSheet: 1,
+            }, (success, failureReason) => {
+                if (!success) {
+                    console.log(failureReason);
+                    win.close();
+                    return;
+                }
+
+                console.info('Document printed');
+
+                setTimeout(() => {
+                    win.close();
+                }, 5000); // maybe a fix (to be sure it does not close too fast)
+            });
+        }, 3000); // fix
+    });
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     await printPDF(base64Data, sumatraPath)
 })

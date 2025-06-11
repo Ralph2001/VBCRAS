@@ -284,6 +284,25 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     readPdfFile: async (filePath) => {
         const result = await ipcRenderer.invoke('read-pdf-file', filePath)
         return result
+    },
+    getPrinters: async () => {
+        try {
+            const result = await ipcRenderer.invoke('get-printers');
+            return result;
+        } catch (error) {
+            console.error('Error in preload getPrinters:', error);
+            return { success: false, message: error.message };
+        }
+    },
+
+    printPDF: async ( base64Data, printerName, optionsJson) => {
+        try {
+            const result = await ipcRenderer.invoke('print-pdf-electron-custom-size', base64Data, printerName, optionsJson);
+            return result;
+        } catch (error) {
+            console.error('Error in preload printPDFBase64:', error);
+            return { success: false, message: error.message };
+        }
     }
 })
 
