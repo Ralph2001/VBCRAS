@@ -219,117 +219,137 @@ ipcMain.handle('get-printers', async (event) => {
     return []; // Return an empty array if no webContents found
 });
 
+
 // In main process IPC handler
-ipcMain.handle('print-pdf-electron-custom-size', async (event, base64Data, printerName, optionsJson) => {
-    let options;
-    try {
-        options = JSON.parse(optionsJson);
-    } catch (err) {
-        console.error('[PRINT] Failed to parse options:', err);
-        return { success: false, message: 'Invalid print options.' };
+ipcMain.handle('print-pdf-electron-custom-size', async (_, base64Data, printerName, optionsJson) => {
+
+
+    console.log('[CONFIG] Running this print with Electron Version: ', process.versions.electron)
+    const options = JSON.parse(optionsJson)
+
+    // 1. Initial validation for printerName
+    if (!printerName || printerName === null || printerName === '') {
+        return { status: false, message: 'No printer selected.' };
     }
 
-    console.log('[PRINT] Start printing');
-    console.log('[PRINT] Printer:', printerName);
-    console.log('[PRINT] Options:', options);
-    console.log('[PRINT] Base64 (first 50 chars):', base64Data.slice(0, 50));
+    // 2. Validate if the printerName exists using getPrintersAsync()
+    try {
+        // Create a temporary BrowserWindow to access webContents.getPrintersAsync()
+        const tempWin = new BrowserWindow({ show: false });
+        const printers = await tempWin.webContents.getPrintersAsync();
+        tempWin.destroy(); // Destroy the temporary window immediately after getting printers
 
-    let win = null;
+        const desiredPrinter = printers.find(p => p.name === printerName);
 
+        if (!desiredPrinter) {
+            console.error(`[Print] Target printer "${printerName}" was not found.`);
+            return { status: false, message: `Printer "${printerName}" not found.` };
+        }
+    } catch (error) {
+        console.error('[Print] Failed to retrieve printer list:', error);
+        return { status: false, message: `Failed to retrieve printer list: ${error.message}` };
+    }
 
-    win = new BrowserWindow({ show: true });
+    const INCH_TO_MICRONS = 25400;
 
-    // const predefinedSizes = ['A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'Legal', 'Letter', 'Tabloid'];
-    // const inchesToMicrons = (inches) => Math.round(inches * 25400);
-
-    // let effectivePageSize = 'A4';
-    // if (options.pageSize) {
-    //     const ps = options.pageSize;
-    //     if (typeof ps === 'string' && predefinedSizes.includes(ps)) {
-    //         effectivePageSize = ps;
-    //     } else if (typeof ps === 'object') {
-    //         if (ps.width && ps.height) {
-    //             effectivePageSize = {
-    //                 width: ps.width,
-    //                 height: ps.height,
-    //             };
-    //         } else if (ps.widthIn && ps.heightIn) {
-    //             effectivePageSize = {
-    //                 width: inchesToMicrons(ps.widthIn),
-    //                 height: inchesToMicrons(ps.heightIn),
-    //             };
-    //         } else {
-    //             console.warn('[PRINT] Invalid pageSize object. Falling back to A4.');
-    //         }
-    //     }
-    // }
-
-    const b64 = `data:application/pdf;base64,${base64Data}`;
-    await win.loadURL(b64);
-
-    const printOptions = {
-        silent: options.silent ?? true,
-        deviceName: printerName,
-        printBackground: options.printBackground ?? false,
-        color: options.color ?? true,
-        margins: options.margins ?? { marginType: 'default' },
-        landscape: options.landscape ?? false,
-        scaleFactor: options.scaleFactor,
-        pagesPerSheet: options.pagesPerSheet ?? 1,
-        collate: options.collate ?? true,
-        copies: 1,
-        pageSize: 'A4',
+    const customPaperSizes = {
+        'Long Coupon': {
+            width: Math.round(8.5 * INCH_TO_MICRONS),  // 8.5 inches converted to microns
+            height: Math.round(13 * INCH_TO_MICRONS)    // 13 inches converted to microns
+        },
+        // Add other custom sizes if needed
     };
 
 
-    console.log('[PRINT] Passing to webContents');
+    let paperPageSize = options.pageSize;
+    const PrinterOption = {
+        silent: true,
+        pageRanges: [{ from: 1, to: 1 }],
+        // pageRanges: options.pageRanges,
+        deviceName: printerName, // Use the passed printerName here
+        pageSize: customPaperSizes[paperPageSize] ? customPaperSizes[paperPageSize] : paperPageSize,
+        printBackground: options.printBackground ?? true,
+        color: options.color ?? true,
+        landscape: options.landscape ?? false,
+        copies: options.copies ?? 1,
+        duplexMode: options.duplexMode ?? 'simplex',
+        scaleFactor: options.scaleFactor ?? 1,
+        pagesPerSheet: options.pagesPerSheet ?? 1,
+        collate: options.collate ?? true,
+        margins: options.margins ?? { marginType: 'default', top: 0, bottom: 0, left: 0, right: 0 },
+        dpi: options.dpi ?? { horizontal: 300, vertical: 300 },
+    };
 
-    win.webContents.on('did-finish-load', () => {
-        setTimeout(() => {
-            win.webContents.print({
-                silent: true,
-                color: true,
-                copies: 1,
-                pageSize: 'A4',
-                printBackground: false,
-                collate: true,
-                margins: {
-                    marginType: 'default'
-                },
-                duplexMode: 'simplex',
-                dpi: {
-                    horizontal: 600,
-                    vertical: 600
-                },
-                landscape: false,
-                pagesPerSheet: 1,
-            }, (success, failureReason) => {
-                if (!success) {
-                    console.log(failureReason);
-                    win.close();
-                    return;
+    console.log('[CONFIG] Received Paper Size ', paperPageSize)
+    console.log('[CONFIG] Customized Paper Size ', customPaperSizes[paperPageSize])
+    console.log('-------------------------------------------------------------------')
+    console.log('-------------------------------------------------------------------')
+    console.log('[CONFIG] Page Ranges (raw from options): ', options.pageRanges);
+    console.log('[CONFIG] PrinterOption.pageRanges (passed to print): ', PrinterOption.pageRanges);
+    console.log('-------------------------------------------------------------------')
+    console.log('-------------------------------------------------------------------')
+    console.log('[CONFIG] Printer Options: ', PrinterOption)
+
+
+    return new Promise((resolve, reject) => {
+        const win = new BrowserWindow({
+            show: false, // Keep it hidden for silent printing
+            webPreferences: {
+                plugins: true
+            }
+        });
+
+        const cleanup = () => {
+            if (win && !win.isDestroyed()) {
+                win.destroy();
+            }
+        };
+
+        const b64 = `data:application/pdf;base64,${base64Data}`;
+
+        win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+            console.error(`[Print] PDF window failed to load content: ${errorDescription}`);
+            cleanup();
+            // Reject with an Error object containing the status and message
+            reject({ status: false, message: `PDF content failed to load: ${errorDescription}` });
+        });
+
+        win.webContents.on('did-finish-load', () => {
+            console.log('[Print] "did-finish-load" fired. PDF data is in the window.');
+            console.log('[Print] Waiting 2 seconds for the internal PDF viewer to render...');
+
+            setTimeout(async () => {
+                try {
+                    // The printer has already been validated and confirmed to exist before this Promise.
+                    // So, we can directly use printerName from the function arguments.
+                    console.log(`[Print] Sending print command to "${printerName}".`);
+
+                    win.webContents.print(PrinterOption, (success, failureReason) => {
+                        if (success) {
+                            console.log('[Print] Print job sent successfully to spooler.');
+                            cleanup();
+                            // Resolve with status and message
+                            resolve({ status: true, message: 'Print job sent successfully.' });
+                        } else {
+                            const errorMsg = `Print command failed: ${failureReason}`;
+                            console.error(`[Print] ${errorMsg}`);
+                            cleanup();
+                            // Reject with an Error object containing the status and message
+                            reject({ status: false, message: errorMsg });
+                        }
+                    });
+                } catch (err) {
+                    console.error('[Print] An error occurred during the print process:', err);
+                    cleanup();
+                    // Reject with an Error object containing the status and message
+                    reject({ status: false, message: `An unexpected error occurred during printing: ${err.message}` });
                 }
+            }, 4000);
+        });
 
-                console.info('Document printed');
-
-                setTimeout(() => {
-                    win.close();
-                }, 5000); // maybe a fix (to be sure it does not close too fast)
-            });
-        }, 3000); // fix
+        win.loadURL(b64);
     });
-
-
 });
-
-
-
-
-
-
-
-
-
 
 
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
