@@ -208,149 +208,209 @@ async function printPDF(base64Data, sumatraPath, paperSize = 'none') {
     }
 }
 
-
 ipcMain.handle('get-printers', async (event) => {
     // This needs to be called after the app is ready and a browser window is created,
     // as it relies on Chromium's printer capabilities.
-    const webContents = BrowserWindow.getAllWindows()[0]?.webContents; // Get the webContents of an existing window
+    const webContents = BrowserWindow.getAllWindows()[0]?.webContents // Get the webContents of an existing window
     if (webContents) {
-        return webContents.getPrintersAsync();
+        return webContents.getPrintersAsync()
     }
-    return []; // Return an empty array if no webContents found
-});
-
+    return [] // Return an empty array if no webContents found
+})
 
 // In main process IPC handler
-ipcMain.handle('print-pdf-electron-custom-size', async (_, base64Data, printerName, optionsJson) => {
+ipcMain.handle(
+    'print-pdf-electron-custom-size',
+    async (_, base64Data, printerName, optionsJson) => {
+        console.log(
+            '[CONFIG] Running this print with Electron Version: ',
+            process.versions.electron
+        )
+        const options = JSON.parse(optionsJson)
 
-
-    console.log('[CONFIG] Running this print with Electron Version: ', process.versions.electron)
-    const options = JSON.parse(optionsJson)
-
-    // 1. Initial validation for printerName
-    if (!printerName || printerName === null || printerName === '') {
-        return { status: false, message: 'No printer selected.' };
-    }
-
-    // 2. Validate if the printerName exists using getPrintersAsync()
-    try {
-        // Create a temporary BrowserWindow to access webContents.getPrintersAsync()
-        const tempWin = new BrowserWindow({ show: false });
-        const printers = await tempWin.webContents.getPrintersAsync();
-        tempWin.destroy(); // Destroy the temporary window immediately after getting printers
-
-        const desiredPrinter = printers.find(p => p.name === printerName);
-
-        if (!desiredPrinter) {
-            console.error(`[Print] Target printer "${printerName}" was not found.`);
-            return { status: false, message: `Printer "${printerName}" not found.` };
+        // 1. Initial validation for printerName
+        if (!printerName || printerName === null || printerName === '') {
+            return { status: false, message: 'No printer selected.' }
         }
-    } catch (error) {
-        console.error('[Print] Failed to retrieve printer list:', error);
-        return { status: false, message: `Failed to retrieve printer list: ${error.message}` };
-    }
 
-    const INCH_TO_MICRONS = 25400;
+        // 2. Validate if the printerName exists using getPrintersAsync()
+        try {
+            // Create a temporary BrowserWindow to access webContents.getPrintersAsync()
+            const tempWin = new BrowserWindow({ show: false })
+            const printers = await tempWin.webContents.getPrintersAsync()
+            tempWin.destroy() // Destroy the temporary window immediately after getting printers
 
-    const customPaperSizes = {
-        'Long Coupon': {
-            width: Math.round(8.5 * INCH_TO_MICRONS),  // 8.5 inches converted to microns
-            height: Math.round(13 * INCH_TO_MICRONS)    // 13 inches converted to microns
-        },
-        // Add other custom sizes if needed
-    };
+            const desiredPrinter = printers.find((p) => p.name === printerName)
 
-
-    let paperPageSize = options.pageSize;
-    const PrinterOption = {
-        silent: true,
-        pageRanges: [{ from: 1, to: 1 }],
-        // pageRanges: options.pageRanges,
-        deviceName: printerName, // Use the passed printerName here
-        pageSize: customPaperSizes[paperPageSize] ? customPaperSizes[paperPageSize] : paperPageSize,
-        printBackground: options.printBackground ?? true,
-        color: options.color ?? true,
-        landscape: options.landscape ?? false,
-        copies: options.copies ?? 1,
-        duplexMode: options.duplexMode ?? 'simplex',
-        scaleFactor: options.scaleFactor ?? 1,
-        pagesPerSheet: options.pagesPerSheet ?? 1,
-        collate: options.collate ?? true,
-        margins: options.margins ?? { marginType: 'default', top: 0, bottom: 0, left: 0, right: 0 },
-        dpi: options.dpi ?? { horizontal: 300, vertical: 300 },
-    };
-
-    console.log('[CONFIG] Received Paper Size ', paperPageSize)
-    console.log('[CONFIG] Customized Paper Size ', customPaperSizes[paperPageSize])
-    console.log('-------------------------------------------------------------------')
-    console.log('-------------------------------------------------------------------')
-    console.log('[CONFIG] Page Ranges (raw from options): ', options.pageRanges);
-    console.log('[CONFIG] PrinterOption.pageRanges (passed to print): ', PrinterOption.pageRanges);
-    console.log('-------------------------------------------------------------------')
-    console.log('-------------------------------------------------------------------')
-    console.log('[CONFIG] Printer Options: ', PrinterOption)
-
-
-    return new Promise((resolve, reject) => {
-        const win = new BrowserWindow({
-            show: false, // Keep it hidden for silent printing
-            webPreferences: {
-                plugins: true
-            }
-        });
-
-        const cleanup = () => {
-            if (win && !win.isDestroyed()) {
-                win.destroy();
-            }
-        };
-
-        const b64 = `data:application/pdf;base64,${base64Data}`;
-
-        win.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-            console.error(`[Print] PDF window failed to load content: ${errorDescription}`);
-            cleanup();
-            // Reject with an Error object containing the status and message
-            reject({ status: false, message: `PDF content failed to load: ${errorDescription}` });
-        });
-
-        win.webContents.on('did-finish-load', () => {
-            console.log('[Print] "did-finish-load" fired. PDF data is in the window.');
-            console.log('[Print] Waiting 2 seconds for the internal PDF viewer to render...');
-
-            setTimeout(async () => {
-                try {
-                    // The printer has already been validated and confirmed to exist before this Promise.
-                    // So, we can directly use printerName from the function arguments.
-                    console.log(`[Print] Sending print command to "${printerName}".`);
-
-                    win.webContents.print(PrinterOption, (success, failureReason) => {
-                        if (success) {
-                            console.log('[Print] Print job sent successfully to spooler.');
-                            cleanup();
-                            // Resolve with status and message
-                            resolve({ status: true, message: 'Print job sent successfully.' });
-                        } else {
-                            const errorMsg = `Print command failed: ${failureReason}`;
-                            console.error(`[Print] ${errorMsg}`);
-                            cleanup();
-                            // Reject with an Error object containing the status and message
-                            reject({ status: false, message: errorMsg });
-                        }
-                    });
-                } catch (err) {
-                    console.error('[Print] An error occurred during the print process:', err);
-                    cleanup();
-                    // Reject with an Error object containing the status and message
-                    reject({ status: false, message: `An unexpected error occurred during printing: ${err.message}` });
+            if (!desiredPrinter) {
+                console.error(
+                    `[Print] Target printer "${printerName}" was not found.`
+                )
+                return {
+                    status: false,
+                    message: `Printer "${printerName}" not found.`
                 }
-            }, 4000);
-        });
+            }
+        } catch (error) {
+            console.error('[Print] Failed to retrieve printer list:', error)
+            return {
+                status: false,
+                message: `Failed to retrieve printer list: ${error.message}`
+            }
+        }
 
-        win.loadURL(b64);
-    });
-});
+        const INCH_TO_MICRONS = 25400
 
+        const customPaperSizes = {
+            'Long Coupon': {
+                width: Math.round(8.5 * INCH_TO_MICRONS), // 8.5 inches converted to microns
+                height: Math.round(13 * INCH_TO_MICRONS) // 13 inches converted to microns
+            }
+            // Add other custom sizes if needed
+        }
+
+        let paperPageSize = options.pageSize
+        const PrinterOption = {
+            silent: true,
+            pageRanges: [{ from: 1, to: 1 }],
+            // pageRanges: options.pageRanges,
+            deviceName: printerName, // Use the passed printerName here
+            pageSize: customPaperSizes[paperPageSize]
+                ? customPaperSizes[paperPageSize]
+                : paperPageSize,
+            printBackground: options.printBackground ?? true,
+            color: options.color ?? true,
+            landscape: options.landscape ?? false,
+            copies: options.copies ?? 1,
+            duplexMode: options.duplexMode ?? 'simplex',
+            scaleFactor: options.scaleFactor ?? 1,
+            pagesPerSheet: options.pagesPerSheet ?? 1,
+            collate: options.collate ?? true,
+            margins: options.margins ?? {
+                marginType: 'default',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0
+            },
+            dpi: options.dpi ?? { horizontal: 300, vertical: 300 }
+        }
+
+        console.log('[CONFIG] Received Paper Size ', paperPageSize)
+        console.log(
+            '[CONFIG] Customized Paper Size ',
+            customPaperSizes[paperPageSize]
+        )
+        console.log(
+            '-------------------------------------------------------------------'
+        )
+        console.log(
+            '-------------------------------------------------------------------'
+        )
+        console.log(
+            '[CONFIG] Page Ranges (raw from options): ',
+            options.pageRanges
+        )
+        console.log(
+            '[CONFIG] PrinterOption.pageRanges (passed to print): ',
+            PrinterOption.pageRanges
+        )
+        console.log(
+            '-------------------------------------------------------------------'
+        )
+        console.log(
+            '-------------------------------------------------------------------'
+        )
+        console.log('[CONFIG] Printer Options: ', PrinterOption)
+
+        return new Promise((resolve, reject) => {
+            const win = new BrowserWindow({
+                show: false, // Keep it hidden for silent printing
+                webPreferences: {
+                    plugins: true
+                }
+            })
+
+            const cleanup = () => {
+                if (win && !win.isDestroyed()) {
+                    win.destroy()
+                }
+            }
+
+            const b64 = `data:application/pdf;base64,${base64Data}`
+
+            win.webContents.on(
+                'did-fail-load',
+                (event, errorCode, errorDescription) => {
+                    console.error(
+                        `[Print] PDF window failed to load content: ${errorDescription}`
+                    )
+                    cleanup()
+                    // Reject with an Error object containing the status and message
+                    reject({
+                        status: false,
+                        message: `PDF content failed to load: ${errorDescription}`
+                    })
+                }
+            )
+
+            win.webContents.on('did-finish-load', () => {
+                console.log(
+                    '[Print] "did-finish-load" fired. PDF data is in the window.'
+                )
+                console.log(
+                    '[Print] Waiting 2 seconds for the internal PDF viewer to render...'
+                )
+
+                setTimeout(async () => {
+                    try {
+                        // The printer has already been validated and confirmed to exist before this Promise.
+                        // So, we can directly use printerName from the function arguments.
+                        console.log(
+                            `[Print] Sending print command to "${printerName}".`
+                        )
+
+                        win.webContents.print(
+                            PrinterOption,
+                            (success, failureReason) => {
+                                if (success) {
+                                    console.log(
+                                        '[Print] Print job sent successfully to spooler.'
+                                    )
+                                    cleanup()
+                                    // Resolve with status and message
+                                    resolve({
+                                        status: true,
+                                        message: 'Print job sent successfully.'
+                                    })
+                                } else {
+                                    const errorMsg = `Print command failed: ${failureReason}`
+                                    console.error(`[Print] ${errorMsg}`)
+                                    cleanup()
+                                    // Reject with an Error object containing the status and message
+                                    reject({ status: false, message: errorMsg })
+                                }
+                            }
+                        )
+                    } catch (err) {
+                        console.error(
+                            '[Print] An error occurred during the print process:',
+                            err
+                        )
+                        cleanup()
+                        // Reject with an Error object containing the status and message
+                        reject({
+                            status: false,
+                            message: `An unexpected error occurred during printing: ${err.message}`
+                        })
+                    }
+                }, 4000)
+            })
+
+            win.loadURL(b64)
+        })
+    }
+)
 
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     await printPDF(base64Data, sumatraPath)
@@ -497,7 +557,6 @@ ipcMain.handle('createAUSF', async (event, formData) => {
     }
 })
 
-
 // ==============================
 // Clerical Section
 // ==============================
@@ -505,8 +564,6 @@ ipcMain.handle('createAUSF', async (event, formData) => {
 function saveBase64AsPDF(base64Data, folderPath, fileName) {
     const base64 = base64Data.replace(/^data:application\/pdf;base64,/, '')
     const buffer = Buffer.from(base64, 'base64')
-
-
 
     // Ensure folderPath is absolute — if not, resolve it relative to userBasePath
     const finalFolderPath = path.isAbsolute(folderPath)
@@ -623,38 +680,74 @@ function executeCommand(executable, originalDirectory, outputDirectory, args) {
  *  para i convert na ito
  */
 
+function validateAndSanitizeWhitespace(input, options = {}) {
+    const {
+        requireNonEmpty = false // Optional: true if you want to ensure it's not just whitespace
+    } = options
+
+    if (typeof input !== 'string') {
+        throw new TypeError('Input must be a string')
+    }
+
+    // Step 1: Trim leading/trailing whitespace
+    let sanitized = input.trim()
+
+    // Step 2: Replace multiple whitespace characters with a single space
+    sanitized = sanitized.replace(/\s+/g, ' ')
+
+    // Step 3: Optional validation
+    if (requireNonEmpty && sanitized.length === 0) {
+        return {
+            valid: false,
+            sanitized: '',
+            message: 'Input must not be empty or only whitespace.'
+        }
+    }
+
+    return sanitized
+}
+
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
-        const data = JSON.parse(formData);
+        const data = JSON.parse(formData)
 
         const executable = join(
             __dirname,
             '../../resources/tools/converter/app/dist/convert.exe'
-        ).replace('app.asar', 'app.asar.unpacked');
+        ).replace('app.asar', 'app.asar.unpacked')
 
-        const petition_number = data.petition_number;
-        const originalDirectory = data.orignal_path;
-        const petitionType = `${data.petition_type} ${data.event_type}`;
-        const prepared_by = data.prepared_by;
-        const republicAct = data.republic_act_number;
-        const documentOwner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner;
-        const date_filed = data.date_filed;
-        const year = new Date(date_filed).getFullYear().toString();
+        const petition_number = validateAndSanitizeWhitespace(
+            data.petition_number
+        )
+        const originalDirectory = data.orignal_path
+
+        const petitionType = validateAndSanitizeWhitespace(
+            `${data.petition_type} ${data.event_type}`
+        )
+        const prepared_by = validateAndSanitizeWhitespace(data.prepared_by)
+        const republicAct = validateAndSanitizeWhitespace(
+            data.republic_act_number
+        )
+        const documentOwner =
+            data.document_owner === 'N/A'
+                ? validateAndSanitizeWhitespace(data.petitioner_name)
+                : validateAndSanitizeWhitespace(data.document_owner)
+        const date_filed = data.date_filed
+        const year = new Date(date_filed).getFullYear().toString()
 
         // STEP 1: Validate the custom path
-        let basePath = join(userBasePath, data.path_where_to_save);
-        const validation = await validateDirectoryPath(basePath);
+        let basePath = join(userBasePath, data.path_where_to_save)
+        const validation = await validateDirectoryPath(basePath)
 
-        let usedFallback = false;
+        let usedFallback = false
 
         if (!validation.status) {
-            basePath = path.join(__dirname, 'Backups');
-            usedFallback = true;
+            basePath = path.join(__dirname, 'Backups')
+            usedFallback = true
 
             // Ensure backup path exists
-            fs.mkdirSync(basePath, { recursive: true });
+            fs.mkdirSync(basePath, { recursive: true })
         }
-
 
         const outputDirectory = join(
             basePath,
@@ -665,11 +758,11 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             petitionType,
             year,
             `${petition_number} - ${documentOwner}`
-        );
+        )
 
-        fs.mkdirSync(outputDirectory, { recursive: true });
+        fs.mkdirSync(outputDirectory, { recursive: true })
 
-        const deleteOriginal = 'true';
+        const deleteOriginal = 'true'
 
         // STEP 3: Call external conversion tool
         const conversionResult = await executeCommand(
@@ -677,7 +770,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             originalDirectory,
             outputDirectory,
             deleteOriginal
-        );
+        )
 
         // Return the relative path instead of the absolute path.
         // This allows users on different machines (e.g., connected to a Synology NAS)
@@ -685,10 +778,9 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         // For example, if the file is saved on a shared Synology folder,
         // any user with access to that folder can open the file by combining their own user base path with this relative path.
 
-
         const relativeFilePath = outputDirectory.startsWith(userBasePath)
             ? path.relative(userBasePath, outputDirectory)
-            : outputDirectory;
+            : outputDirectory
 
         return {
             status: true,
@@ -697,33 +789,33 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             message: usedFallback
                 ? 'Path not accessible. Saved to fallback location.'
                 : 'Success'
-        };
-
+        }
     } catch (error) {
-        console.error('Error during file conversion:', error);
+        console.error('Error during file conversion:', error)
 
         if (error.message.includes('Failed to start process')) {
             return {
                 status: false,
                 filepath: null,
-                message: 'Failed to start the conversion process. Please check the executable and try again.'
-            };
+                message:
+                    'Failed to start the conversion process. Please check the executable and try again.'
+            }
         } else if (error.message.includes('Process failed with code')) {
             return {
                 status: false,
                 filepath: null,
                 message: 'Conversion failed. You can retry the conversion.'
-            };
+            }
         } else {
             return {
                 status: false,
                 filepath: null,
-                message: 'An unexpected error occurred during the conversion process. Please try again later.'
-            };
+                message:
+                    'An unexpected error occurred during the conversion process. Please try again later.'
+            }
         }
     }
-});
-
+})
 
 ipcMain.handle('createFinality', async (event, formData) => {
     try {
@@ -737,7 +829,6 @@ ipcMain.handle('createFinality', async (event, formData) => {
                 __dirname,
                 '../../resources/tools/converter/app/dist/convert.exe'
             ).replace('app.asar', 'app.asar.unpacked')
-
 
             const outputDirectory = data.file_path
 
@@ -785,7 +876,6 @@ ipcMain.handle('create_certificate_filing', async (event, data) => {
     }
 })
 
-
 // Open it with userBasePath
 
 ipcMain.handle('create_publication_letter', async (event, data) => {
@@ -810,18 +900,18 @@ ipcMain.handle('open-clerical', async (event, source) => {
     try {
         const resolvedPath = path.isAbsolute(source)
             ? source
-            : path.resolve(userBasePath, source);
+            : path.resolve(userBasePath, source)
 
-        console.log(`[open-clerical] Attempting to open source: "${source}"`);
-        console.log(`[open-clerical] Absolute resolved path: "${resolvedPath}"`);
-        console.log(`[open-clerical] User base path: "${userBasePath}"`);
+        console.log(`[open-clerical] Attempting to open source: "${source}"`)
+        console.log(`[open-clerical] Absolute resolved path: "${resolvedPath}"`)
+        console.log(`[open-clerical] User base path: "${userBasePath}"`)
 
-        const filefolder = await shell.openPath(resolvedPath);
+        const filefolder = await shell.openPath(resolvedPath)
 
-        return true;
+        return true
     } catch (error) {
-        console.error('[open-clerical] Error:', error);
-        return false;
+        console.error('[open-clerical] Error:', error)
+        return false
     }
 })
 
@@ -829,20 +919,20 @@ ipcMain.handle('open-clerical-folder', async (event, source) => {
     try {
         const resolvedPath = path.isAbsolute(source)
             ? source
-            : path.resolve(userBasePath, source);
+            : path.resolve(userBasePath, source)
 
-        console.log(`[open-folder] Attempting to open source: "${source}"`);
-        console.log(`[open-folder] Absolute resolved path: "${resolvedPath}"`);
-        console.log(`[open-folder] User base path: "${userBasePath}"`);
+        console.log(`[open-folder] Attempting to open source: "${source}"`)
+        console.log(`[open-folder] Absolute resolved path: "${resolvedPath}"`)
+        console.log(`[open-folder] User base path: "${userBasePath}"`)
 
-        const filefolder = await shell.openPath(resolvedPath);
+        const filefolder = await shell.openPath(resolvedPath)
 
-        return true;
+        return true
     } catch (error) {
-        console.error('[open-clerical-folder] Error:', error);
-        return false;
+        console.error('[open-clerical-folder] Error:', error)
+        return false
     }
-});
+})
 
 ipcMain.handle('remove-item', async (event, path) => {
     try {
@@ -910,8 +1000,6 @@ ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
         return { error: 'Failed to open clerical files' }
     }
 })
-
-
 
 ipcMain.handle('generateReportByMonthYear', async (event, formData) => {
     try {

@@ -482,15 +482,7 @@
                 </div>
               </Box>
             </div>
-            <div class="basis-[40%] h-max">
-              <Box title="filing this petition at the LCRO of " width="w-auto">
-                <div class="grid sm:grid-cols-1 lg:grid-cols-1 justify-center gap-2 w-full">
-                  <Input label="City/Municipality" :error="v$.filing_city_municipality.$error" skip
-                    v-model="formData.filing_city_municipality" />
-                  <Input label="Province " :error="v$.filing_province.$error" skip v-model="formData.filing_province" />
-                </div>
-              </Box>
-            </div>
+
           </div>
 
           <!-- 9th  Page 2 Starts-->
