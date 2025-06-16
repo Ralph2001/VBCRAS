@@ -270,9 +270,14 @@ ipcMain.handle(
         }
 
         let paperPageSize = options.pageSize
+
+        const ranges = (options.pageRanges || [])
+            .map((r) => `${r.from}-${r.to}`)
+            .join(',')
+
         const PrinterOption = {
             silent: true,
-            pageRanges: [{ from: 1, to: 1 }],
+            pageRanges: ranges,
             // pageRanges: options.pageRanges,
             deviceName: printerName, // Use the passed printerName here
             pageSize: customPaperSizes[paperPageSize]
@@ -886,7 +891,8 @@ ipcMain.handle('create_publication_letter', async (event, data) => {
             : path.resolve(userBasePath, publication_letter.filepath)
 
         const filefolder = await shell.openExternal(resolvedPath)
-
+        console.log('[DEBUG  Publication Letter Path]', publication_letter.filepath)
+        console.log('[DEBUG Opening Publication Letter Path]', resolvedPath)
         if (!filefolder) {
             await shell.openPath(resolvedPath)
             return true

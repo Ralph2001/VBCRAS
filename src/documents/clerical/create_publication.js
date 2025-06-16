@@ -7,21 +7,33 @@ const dateFns = require('date-fns')
 const os = require('os')
 
 const PATHS = {
-    PUBLICATION_LETTER_CFN: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Publication/CFN.docx').replace('app.asar', 'app.asar.unpacked'),
-    PUBLICATION_LETTER_10172: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Publication/RA10172.docx').replace('app.asar', 'app.asar.unpacked'),
+    PUBLICATION_LETTER_CFN: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Publication/CFN.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    PUBLICATION_LETTER_10172: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Publication/RA10172.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked')
 }
-
 
 let main_folder_path
 
-
 export async function create_publication_letter(data) {
-    const content = data.petition_type === 'CFN' ? fs.readFileSync(PATHS.PUBLICATION_LETTER_CFN, 'binary') : data.republic_act_number === '10172' ? fs.readFileSync(PATHS.PUBLICATION_LETTER_10172, 'binary') : null
+    const content =
+        data.petition_type === 'CFN'
+            ? fs.readFileSync(PATHS.PUBLICATION_LETTER_CFN, 'binary')
+            : data.republic_act_number === '10172'
+              ? fs.readFileSync(PATHS.PUBLICATION_LETTER_10172, 'binary')
+              : null
 
     if (!content) {
         return { success: false, message: 'Invalid petition type' }
     }
-
 
     try {
         await publication_letter(data, content)
@@ -31,7 +43,6 @@ export async function create_publication_letter(data) {
         return { success: false, message: 'An error occurred' }
     }
 }
-
 
 // FUNCTION THAT SAVE THE DOCUMENT
 function saveDocument(doc, fileName, folderPath) {
@@ -45,7 +56,7 @@ function saveDocument(doc, fileName, folderPath) {
     // Ensure directory exists
     fs.mkdirSync(finalFolderPath, { recursive: true })
 
-    main_folder_path = folderPath
+    main_folder_path = path.join(folderPath, 'Publication Letter.docx')
     const fullPath = path.join(finalFolderPath, fileName)
 
     const buf = doc.getZip().generate({
@@ -56,16 +67,17 @@ function saveDocument(doc, fileName, folderPath) {
     fs.writeFileSync(fullPath, buf)
 }
 
-
-
 async function publication_letter(data, content) {
     const zip = new PizZip(content)
     const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
-        linebreaks: true,
+        linebreaks: true
     })
 
-    const document_owner = data.document_owner === 'N/A' ? data.petitioner_name : data.document_owner
+    const document_owner =
+        data.document_owner === 'N/A'
+            ? data.petitioner_name
+            : data.document_owner
     const petitioner_name = data.petitioner_name
     const first_name = data.first_name_from
     const new_name = data.first_name_to
@@ -85,14 +97,16 @@ async function publication_letter(data, content) {
         publication_end: dateFns.format(data.publication_end, 'dd MMMM yyyy'),
         newspaper_name: data.publication_newspaper,
         place_publication: data.publication_place,
-        publication_from: dateFns.format(data.publication_start, 'MMMM dd, yyyy'),
+        publication_from: dateFns.format(
+            data.publication_start,
+            'MMMM dd, yyyy'
+        ),
         publication_and: dateFns.format(data.publication_and, 'MMMM dd, yyyy'),
 
         civil_registrar: data.municipal_civil_registrar,
-        civil_registrar_position: "Municipal Civil Registrar",
-
+        civil_registrar_position: 'Municipal Civil Registrar'
     })
 
-    saveDocument(doc, 'Certificate of Filing.docx', data.file_path)
+    saveDocument(doc, 'Publication Letter.docx', data.file_path)
     return true
 }

@@ -501,7 +501,7 @@ async function petition(data) {
     // console.log('[DEBUG] JSON output:\n' + JSON.stringify(debug_data, null, 2))
 
     saveDocument(doc, 'Petition.docx', main_folder_path)
-    console.log(saveDocument)
+    // console.log(saveDocument)
     return true
 }
 
@@ -629,10 +629,10 @@ async function notice(data) {
 
     const petitioner_number = data.petition_number
     const date_filed = data.date_filed
-        ? dateFns.format(data.date_filed, 'dd MMMM yyyy')
+        ? dateFns.format(data.date_filed, 'MMMM dd, yyyy')
         : 'N/A'
-    const date_granted = data.date_granted
-        ? dateFns.format(data.petition_date_granted, 'dd MMMM yyyy')
+    const date_granted = data.petition_date_granted
+        ? dateFns.format(data.petition_date_granted, 'MMMM dd, yyyy')
         : 'N/A'
 
     doc.render({

@@ -6,15 +6,17 @@ const path = require('path')
 const dateFns = require('date-fns')
 const os = require('os')
 
-
 const PATHS = {
-    CERTIFICATE_FILING: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/certificate of filing.docx').replace('app.asar', 'app.asar.unpacked'),
+    CERTIFICATE_FILING: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/certificate of filing.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked')
 }
 let main_folder_path
 
-
 export async function certificate_filing(formData) {
-
     try {
         await create_certificate_filing(formData)
     } catch (error) {
@@ -23,7 +25,6 @@ export async function certificate_filing(formData) {
 
     return { success: true, filepath: main_folder_path }
 }
-
 
 // FUNCTION THAT SAVE THE DOCUMENT
 // NEEDED FOR ALL FUNCTION
@@ -38,7 +39,7 @@ function saveDocument(doc, fileName, folderPath) {
     // Ensure directory exists
     fs.mkdirSync(finalFolderPath, { recursive: true })
 
-    main_folder_path = folderPath
+    main_folder_path = path.join(folderPath, 'Certificate of Filing.docx')
     const fullPath = path.join(finalFolderPath, fileName)
 
     const buf = doc.getZip().generate({
@@ -49,18 +50,14 @@ function saveDocument(doc, fileName, folderPath) {
     fs.writeFileSync(fullPath, buf)
 }
 
-
 async function create_certificate_filing(data) {
     const content = fs.readFileSync(PATHS.CERTIFICATE_FILING, 'binary')
-
 
     const zip = new PizZip(content)
     const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
-        linebreaks: true,
+        linebreaks: true
     })
-
-
 
     let petition_type = ''
     if (data.petition_type === 'CCE') {
@@ -85,49 +82,38 @@ async function create_certificate_filing(data) {
         document_owner = data.document_owner
     }
 
-    const date = dateFns.format(
-        new Date(),
-        'MMMM dd, yyyy'
-    )
-    const date_filed = dateFns.format(
-        data.date_filed,
-        'MMMM dd, yyyy'
-    )
+    const date = dateFns.format(new Date(), 'MMMM dd, yyyy')
+    const date_filed = dateFns.format(data.date_filed, 'MMMM dd, yyyy')
 
     let relation = ''
     if (data.petitioner_error_in === 'my') {
         relation = ''
-    }
-    else if (data.petitioner_error_in === 'the') {
+    } else if (data.petitioner_error_in === 'the') {
         relation = data.relation_owner.toLowerCase() + '`s'
     }
 
     const first_name_from = data.first_name_from
     const first_name_to = data.first_name_to
 
-    let clerical_errors;
-    if (data.petition_type === "CCE") {
+    let clerical_errors
+    if (data.petition_type === 'CCE') {
         clerical_errors = data.clerical_errors
-    } else if (data.petition_type === "CFN") {
+    } else if (data.petition_type === 'CFN') {
         const main_value = [
             {
                 description: 'Change of First Name',
                 error_description_from: first_name_from,
-                error_description_to: first_name_to,
+                error_description_to: first_name_to
             }
         ]
 
         clerical_errors = main_value
     }
 
-
-
-
     function capitalizeFirstLetter(value) {
         const str = value.toLowerCase()
-        return str.replace(/\b\w/g, char => char.toUpperCase());
+        return str.replace(/\b\w/g, (char) => char.toUpperCase())
     }
-
 
     doc.render({
         date: date,
@@ -149,4 +135,3 @@ async function create_certificate_filing(data) {
     saveDocument(doc, 'Certificate of Filing.docx', data.file_path)
     return true
 }
-

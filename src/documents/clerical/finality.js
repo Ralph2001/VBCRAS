@@ -4,35 +4,47 @@ const Docxtemplater = require('docxtemplater')
 const fs = require('fs')
 const path = require('path')
 const dateFns = require('date-fns')
-
+const os = require('os')
 
 const PATHS = {
-    FINALITY_PATH: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Finality/finality.docx').replace('app.asar', 'app.asar.unpacked'),
-    ENDORSEMENT_LETTER_PATH: path.resolve(__dirname, '../../resources/documents/RA 9048 RA 10172/Finality/endorsement.docx').replace('app.asar', 'app.asar.unpacked')
+    FINALITY_PATH: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Finality/finality.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked'),
+    ENDORSEMENT_LETTER_PATH: path
+        .resolve(
+            __dirname,
+            '../../resources/documents/RA 9048 RA 10172/Finality/endorsement.docx'
+        )
+        .replace('app.asar', 'app.asar.unpacked')
 }
 
 let main_folder_path
 
-
-
 export async function finality(formData) {
-
-    const folderCreation = await document_folder(formData)
-    const finalityCreation = await create_finality(formData)
-    const endorsementCreation = await create_endorsement(formData)
+    await document_folder(formData)
+    await create_finality(formData)
+    await create_endorsement(formData)
 
     return { success: true, filepath: main_folder_path }
 }
 
-
 // FUNCTION THAT SAVE THE DOCUMENT
 // NEEDED FOR ALL FUNCTION
 function saveDocument(doc, fileName, folderPath) {
+    const userBasePath = os.homedir()
+
+    const finalFolderPath = path.isAbsolute(folderPath)
+        ? folderPath
+        : path.join(userBasePath, folderPath)
+
     const buf = doc.getZip().generate({
         type: 'nodebuffer',
         compression: 'DEFLATE'
     })
-    fs.writeFileSync(path.join(folderPath, fileName), buf)
+    fs.writeFileSync(path.join(finalFolderPath, fileName), buf)
 }
 
 function generateRandomString() {
@@ -73,15 +85,13 @@ async function document_folder(data) {
     return true
 }
 
-
 async function create_finality(data) {
     const content = fs.readFileSync(PATHS.FINALITY_PATH, 'binary')
-
 
     const zip = new PizZip(content)
     const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
-        linebreaks: true,
+        linebreaks: true
     })
 
     let petition_type = ''
@@ -112,8 +122,6 @@ async function create_finality(data) {
         'dd MMMM yyyy'
     )
 
-
-
     const day = dateFns.format(data.date_filed, 'do')
     const monthyear = dateFns.format(data.date_filed, 'MMMM yyyy')
 
@@ -126,7 +134,7 @@ async function create_finality(data) {
         date_granted: date_granted,
         municipal_civil_registrar: data.municipal_civil_registrar,
         day: day,
-        month_year: monthyear,
+        month_year: monthyear
     })
 
     saveDocument(doc, 'Certificate of Finality.docx', main_folder_path)
@@ -139,7 +147,7 @@ async function create_endorsement(data) {
     const zip = new PizZip(content)
     const doc = new Docxtemplater(zip, {
         paragraphLoop: true,
-        linebreaks: true,
+        linebreaks: true
     })
 
     let petition_type = ''
@@ -174,7 +182,6 @@ async function create_endorsement(data) {
         event_type = 'married on'
     }
 
-
     const event_date = dateFns.format(data.event_date, 'dd MMMM yyyy')
     const date_filed = dateFns.format(data.date_filed, 'dd MMMM yyyy')
     const date_granted = dateFns.format(
@@ -185,7 +192,6 @@ async function create_endorsement(data) {
     const monthyear = dateFns.format(data.petition_date_granted, 'MMMM yyyy')
 
     doc.render({
-
         date: date_filed,
         subject_code: data.republic_act_number,
 
@@ -199,7 +205,7 @@ async function create_endorsement(data) {
         date_granted: date_granted,
         municipal_civil_registrar: data.municipal_civil_registrar,
         day: day,
-        month_year: monthyear,
+        month_year: monthyear
     })
 
     saveDocument(doc, 'Finality Endorsement Letter.docx', main_folder_path)
