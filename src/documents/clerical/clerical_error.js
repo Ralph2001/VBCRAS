@@ -113,7 +113,8 @@ async function generate(formData) {
         checkFilesExist([
             ADDITIONAL_FILES_TEMPLATE.ENDORSEMENT_LETTER,
             ADDITIONAL_FILES_TEMPLATE.POSTING,
-            ADDITIONAL_FILES_TEMPLATE.RECORD_SHEET
+            ADDITIONAL_FILES_TEMPLATE.RECORD_SHEET,
+            ADDITIONAL_FILES_TEMPLATE.NOTICE
         ])
 
         // const data = formData
@@ -127,6 +128,7 @@ async function generate(formData) {
             await endorsement_letter(data)
             await record_sheet(data)
             await posting(data)
+            await notice(data)
         } catch (error) {
             console.log(error)
         }
@@ -642,7 +644,7 @@ async function notice(data) {
         date_granted: date_granted
     })
 
-    saveDocument(doc, 'Posting.docx', main_folder_path)
+    saveDocument(doc, 'Notice.docx', main_folder_path)
     return true
 }
 

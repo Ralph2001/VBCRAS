@@ -961,7 +961,8 @@ ipcMain.handle('open-clerical-files', (event, mainDirectory) => {
             'Petition.pdf',
             'Posting.pdf',
             'Endorsement Letter.pdf',
-            'Record Sheet.pdf'
+            'Record Sheet.pdf',
+            'Notice.pdf'
         ]
         const optionalFiles = [
             'Annotation.pdf',
