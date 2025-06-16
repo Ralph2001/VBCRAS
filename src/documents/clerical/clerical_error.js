@@ -415,6 +415,89 @@ async function petition(data) {
         actions: data.petition_actions
     })
 
+    const debug_data = {
+        header_province: data.header_province,
+        header_municipality: data.header_municipality,
+
+        petition_number: petition_num,
+        migrant: migrant_pet,
+
+        petitioner_name: data.petitioner_name,
+        nationality: data.nationality,
+        petitioner_address: data.petitioner_address,
+        my: error_in_my,
+        the: error_in_the,
+
+        // Document Owner and Relation
+        spouse: spouse_name,
+        document_owner: document_owner,
+        relation_owner: relation_owner,
+
+        // Event
+        event_date: event_date,
+        event_country: data.event_country,
+        event_province: data.event_province,
+        event_municipality: data.event_municipality,
+        registry_number: data.registry_number,
+
+        // Clerical Errors
+        clerical: data.clerical_errors,
+        reason: data.reasons[0].reason,
+
+        // decision
+
+        // Supporting Documents
+        supports: data.supporting_documents,
+
+        filing_city: data.filing_city_municipality,
+        filing_province: data.filing_province,
+
+        day_ss: day_ss,
+        month_year_ss: monthyear_ss,
+        subscribe_sworn: data.subscribe_sworn_city_municipality,
+
+        exhibiting_his_her: data.exhibiting_his_her,
+        exhibiting_number: data.exhibiting_number,
+        // community_tax_certificate: data.community_tax_certificate,
+
+        issued_at: data.issued_at,
+        issued_on: issued_on,
+
+        administering_officer: data.administering_officer_name,
+        administering_position: data.administering_officer_position,
+
+        granted: granted,
+        denied: denied,
+
+        action_date: date_granted,
+        decision: toOOXML(solo_action),
+        // decision: '<w:p>' + toOOXML(data.petition_actions[0].action_text) + '</w:p>',
+        municipal_civil_registrar: municipal_civil_registrar,
+
+        o_r_number: data.o_r_number,
+        amount_paid: data.amount_paid,
+        date_paid: date_paid,
+
+        // Change of First Name {{Tags}}
+        from: data.first_name_from,
+        to: data.first_name_to,
+        a: data.ground_a,
+        b: data.ground_b,
+        c: data.ground_c,
+        d: data.ground_d,
+        e: data.ground_e,
+        f: data.ground_f,
+        b_data: data.ground_b_data,
+        f_data: data.ground_f_data,
+
+        // CCE 10172
+        reasons: data.reasons,
+        actions: data.petition_actions
+    }
+
+    // console.log('[DEBUG] Clerical Error: Sending this data:', debug_data)
+    // console.log('[DEBUG] JSON output:\n' + JSON.stringify(debug_data, null, 2))
+
     saveDocument(doc, 'Petition.docx', main_folder_path)
     console.log(saveDocument)
     return true

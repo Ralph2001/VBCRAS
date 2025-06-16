@@ -1,5 +1,5 @@
 function escapeXml(unsafe) {
-    return unsafe.replace(/[<>&"]/g, function (c) {
+    return unsafe.replace(/[<>&]/g, function (c) {
         switch (c) {
             case '<':
                 return '&lt;'
@@ -7,8 +7,6 @@ function escapeXml(unsafe) {
                 return '&gt;'
             case '&':
                 return '&amp;'
-            case '"':
-                return '&quot;'
         }
     })
 }
@@ -64,7 +62,7 @@ export function toOOXML(data) {
                     <w:rFonts w:ascii="Arial"/>
                     <w:sz w:val="22"/>
                 </w:rPr>
-                <w:t xml:space="preserve">${escaped} </w:t>
+           <w:t xml:space="preserve">${escaped}</w:t>
             </w:r>`
         })
         .join('')

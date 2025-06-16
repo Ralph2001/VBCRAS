@@ -3,7 +3,10 @@ dist
 out
 resources/server/env
 resources/server/app/__pycache__/
+resources/**/*.sqlite
+resources/**/*.sqlite3
 resources/server/migrations/
 resources/server/.venv
+resources/temp/
 *.pyc
 *.log*
