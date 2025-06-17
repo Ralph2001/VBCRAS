@@ -66,10 +66,15 @@
             <!-- Action Buttons -->
             <div class="flex justify-end gap-3 pt-3 border-t">
                 <!-- Neutral secondary button -->
-                <button @click="cancel_btn"
+                <button @click="cancel_btn" v-if="!isRegen"
                     class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded text-sm font-medium">
                     Return to Form Editor
                 </button>
+                <button @click="exit_regen" v-if="isRegen"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded text-sm font-medium">
+                    Cancel
+                </button>
+
 
                 <!-- Primary action button -->
                 <button @click="proceed"
@@ -93,11 +98,18 @@ const proceed = () => {
 const cancel_btn = () => {
     emit('cancel')
 }
+const exit_regen = () => {
+    emit('cancel-regen')
+}
 
 const props = defineProps({
     path: String,
     default: '',
     atEdit: {
+        type: Boolean,
+        default: false
+    },
+    isRegen: {
         type: Boolean,
         default: false
     }

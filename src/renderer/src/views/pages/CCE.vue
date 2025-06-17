@@ -7,7 +7,9 @@
           class="rounded-md border border-gray-300 px-3 py-1 h-8 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95">
           <font-awesome-icon icon="fa-solid fa-gear" /></button> -->
         <HowTo />
-        <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'\\VBCRAS\\Correction of Clerical Error'"/>
+        <IsPathAccessible :filePath="system_setting.defaults.file_path"
+          :subFolder="'\\VBCRAS\\Correction of Clerical Error'" />
+
       </div>
     </Header>
 
@@ -35,8 +37,8 @@
 
     <AlertPath v-if="alertmodal" :title="alertmodal_title" :body="alertmodal_body" />
     <!-- v-if="is_validating" -->
-    <ValidateClericalPopup v-if="is_validating" :path="last_saved_filepath" @cancel="cancel_validating_stage"
-      @proceed="create_validated_document" />
+    <ValidateClericalPopup :isRegen="isAtRegen" v-if="is_validating" :path="last_saved_filepath"
+      @cancel="cancel_validating_stage" @proceed="create_validated_document" @cancel-regen="cancel_regen_stage" />
     <!--  v-if="is_validating"  -->
 
     <div class="h-[calc(100vh-250px)] relative">
@@ -1274,14 +1276,14 @@ function change_migrant() {
   }
   else {
 
-    formData.administering_officer_name = system_setting.defaults.civil_registrar || '', 
-    formData.administering_officer_position = 'Municipal Civil Registrar'
-    formData.event_province =  system_setting.defaults.province || ''
+    formData.administering_officer_name = system_setting.defaults.civil_registrar || '',
+      formData.administering_officer_position = 'Municipal Civil Registrar'
+    formData.event_province = system_setting.defaults.province || ''
     formData.event_municipality = system_setting.defaults.municipality || ''
 
     formData.action_taken_date = add_date_granted().toString()
     formData.header_province = system_setting.defaults.province.toUpperCase() || ''
-    formData.header_municipality ='MUNICIPALITY OF ' + system_setting.defaults.municipality.toUpperCase() || ''
+    formData.header_municipality = 'MUNICIPALITY OF ' + system_setting.defaults.municipality.toUpperCase() || ''
 
   }
 }
@@ -1616,13 +1618,32 @@ watch(
     formData.petition_date_granted = newValue;
   }
 );
-const resetForm = () => {
+const resetForm = async() => {
   is_document_edit_mode.value = false
 
   supporting_items.value = [0];
   clerical_errors_items.value = [0];
   Object.assign(formData, { ...initialForm });
   v$.value.$reset();
+
+
+  const cce = await petitions.get_latest_cce()
+
+  if (cce) {
+    const latest = cce.data.petition_number.split('-')
+    is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
+  }
+  else {
+    is_default_petitioner_number.value = '0001'
+  }
+
+  formData.notice_posting = add_date_notice().toString()
+  formData.certificate_posting_start = add_date_certificate_start().toString()
+  formData.certificate_posting_end = add_date_certificate_end().toString()
+  formData.petition_date_issued = add_date_issued().toString()
+  formData.petition_date_granted = add_date_granted().toString()
+  formData.action_taken_date = add_date_granted().toString()
+
 };
 
 
@@ -1631,6 +1652,9 @@ const v$ = useVuelidate(rules, formData);
 
 
 const submitForm = async () => {
+
+  // console.log(formData)
+  //   return
 
 
   v$.value.$touch();
@@ -1946,6 +1970,7 @@ const cancel_validating_stage = async () => {
   await window.ClericalApi.RemoveItem(last_saved_filepath.value)
 }
 
+
 const open_generated = async (path) => {
   const check = await window.ClericalApi.OpenClericalFiles(path);
   console.log(check)
@@ -2102,15 +2127,44 @@ const handleEdit = (data) => {
   petition_modal.value = true;
 };
 const regen_data = ref()
+const isAtRegen = ref(false)
 const openRegenerate = (data) => {
   is_regen.value = true;
   regen_data.value = data;
 };
 
+const cancel_regen_stage = async () => {
+  if (alertmodal.value) { return }
+
+  const is_busy = await window.ClericalApi.IsFileBusy(last_saved_filepath.value + 'petition.docx')
+
+  if (is_busy) {
+    alertmodal.value = true
+    alertmodal_body.value = 'The file is currently open. Please close the file before proceeding.'
+    alertmodal_title.value = 'File Busy'
+
+    setTimeout(() => {
+      alertmodal.value = false
+      alertmodal_body.value = ''
+      alertmodal_title.value = ''
+    }, 3000);
+    return
+  }
+
+  is_regen.value = false;
+  regen_data.value = null;
+  isAtRegen.value = false
+  is_validating.value = false
+  resetForm()
+  await window.ClericalApi.RemoveItem(last_saved_filepath.value)
+}
+
+
 const is_document_regenerating = ref(false)
 const handleRegenerate = async () => {
   resetForm()
   is_regen.value = false
+  isAtRegen.value = true
   const main_data = regen_data.value
   mapDataToForm(main_data);
   is_document_regenerating.value = true
