@@ -10,4 +10,4 @@ def handle_sigterm(sig, frame):
 if __name__ == "__main__":
 
     signal.signal(signal.SIGINT, handle_sigterm)
-    app.run(host="0.0.0.0", port=1216, debug=True)
+    app.run(host="0.0.0.0", port=1216, debug=False)

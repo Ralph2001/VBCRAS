@@ -1924,8 +1924,8 @@ const create_validated_document = async () => {
     petitions.add_petition(petition_.value);
 
   resetForm();
-  router.push('/pages/cce');
-  router.go(0)
+  // router.push('/pages/cce');
+  // router.go(0)
 
   if (check.status) {
     is_creating.value = false;
@@ -1970,13 +1970,6 @@ const close_generated = () => {
   // router.push('/pages/cce');
   // router.go(0)
 
-  const redirectWithReload = () => {
-    window.location.href = router.push('/pages/page_cce')
-  };
-
-  setTimeout(() => {
-    redirectWithReload()
-  }, 100);
 }
 // 
 
