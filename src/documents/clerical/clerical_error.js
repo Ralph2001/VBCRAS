@@ -160,26 +160,43 @@ function generateRandomString() {
 // FIRST CREATE DOCUMENT FOLDER BEFORE
 // GENERATING NEW DOCUMENTS
 // MAKE ADJUSTMENTS IN FILE DIRECTORY
+function sanitizeFileName(name) {
+    return name
+        .replace(/[\\/:*?"<>|.]/g, '')  // Remove invalid Windows filename characters (but allow hyphen)
+        .replace(/\s+/g, ' ')           // Normalize multiple spaces
+        .trim()                         // Trim start/end spaces
+        .replace(/-+$/, '');            // Remove trailing hyphens
+}
+
+
+
 async function document_folder(data) {
-    const petition_type = data.petition_type
-    const republic_act = data.republic_act_number
-    const who_owns_it =
+    const petition_type = data.petition_type;
+    const republic_act = data.republic_act_number;
+
+    const who_owns_it_raw =
         data.document_owner === 'N/A'
             ? data.petitioner_name
-            : data.document_owner
-    var folderCreation = path
+            : data.document_owner;
+
+    const who_owns_it = sanitizeFileName(who_owns_it_raw);
+
+    const folderCreation = path
         .join(
             __dirname,
             `..\\..\\resources\\temp\\Generated\\${generateRandomString()}\\${petition_type} ${republic_act}\\${who_owns_it}\\`
         )
-        .replace('app.asar', 'app.asar.unpacked')
+        .replace('app.asar', 'app.asar.unpacked');
+
     if (!fs.existsSync(folderCreation)) {
-        fs.mkdirSync(folderCreation, { recursive: true })
+        fs.mkdirSync(folderCreation, { recursive: true });
     }
-    main_folder_path = folderCreation
-    console.log(main_folder_path)
-    return true
+
+    main_folder_path = folderCreation;
+    console.log(main_folder_path);
+    return true;
 }
+
 
 // FUNCTION THAT READ THE PETITION FILE BASED ON SELECTED
 // PETITION TYPE, EVENT TYPE AND REPUBLIC ACT NUMBER

@@ -760,7 +760,7 @@ import { grantedText } from "../../utils/GrantedText.js";
 import { factReason } from "../../utils/FactsReasons.js";
 import ValidateClericalPopup from "../../components/ValidateClericalPopup.vue";
 import PDFViewerCCE from "../../components/PDFViewerCCE.vue";
-import Wave from "../../components/Wave.vue";
+
 
 
 import { all_address, complete_municipality, complete_municipality_with_province_with_words, complete_province } from '../../utils/Address/index.js'
@@ -778,9 +778,10 @@ import { MarriageRules } from "../../lib/marriage/rules.js";
 import HowTo from "../../components/Form/HowTo.vue";
 import DocumentStatusModal from "../../components/Correction/DocumentStatusModal.vue";
 import IsPathAccessible from "../../components/IsPathAccessible.vue";
+import { useRouter } from "vue-router";
 // import { useRouter } from "vue-router";
 
-// const router = useRouter();
+const router = useRouter();
 
 const scrollToView = (event) => {
 
@@ -1618,7 +1619,7 @@ watch(
     formData.petition_date_granted = newValue;
   }
 );
-const resetForm = async() => {
+const resetForm = async () => {
   is_document_edit_mode.value = false
 
   supporting_items.value = [0];
@@ -1626,23 +1627,6 @@ const resetForm = async() => {
   Object.assign(formData, { ...initialForm });
   v$.value.$reset();
 
-
-  const cce = await petitions.get_latest_cce()
-
-  if (cce) {
-    const latest = cce.data.petition_number.split('-')
-    is_default_petitioner_number.value = (parseInt(latest[1], 10) + 1).toString().padStart(4, "0")
-  }
-  else {
-    is_default_petitioner_number.value = '0001'
-  }
-
-  formData.notice_posting = add_date_notice().toString()
-  formData.certificate_posting_start = add_date_certificate_start().toString()
-  formData.certificate_posting_end = add_date_certificate_end().toString()
-  formData.petition_date_issued = add_date_issued().toString()
-  formData.petition_date_granted = add_date_granted().toString()
-  formData.action_taken_date = add_date_granted().toString()
 
 };
 
@@ -1940,6 +1924,8 @@ const create_validated_document = async () => {
     petitions.add_petition(petition_.value);
 
   resetForm();
+  router.push('/pages/cce');
+  router.go(0)
 
   if (check.status) {
     is_creating.value = false;
@@ -1981,6 +1967,16 @@ const close_generated = () => {
   console.log('click this')
   pdf_viewer.value = false
   //  router.go(router.currentRoute())
+  // router.push('/pages/cce');
+  // router.go(0)
+
+  const redirectWithReload = () => {
+    window.location.href = router.push('/pages/page_cce')
+  };
+
+  setTimeout(() => {
+    redirectWithReload()
+  }, 100);
 }
 // 
 

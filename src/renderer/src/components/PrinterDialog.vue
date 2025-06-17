@@ -1,6 +1,5 @@
 <template>
-    <div
-        class="fixed inset-0 flex items-center justify-center z-[999999999999999999999999999999999999999999999999999999999999999999999] p-10 bg-black/40 backdrop-blur-sm ">
+    <div class="fixed inset-0 flex items-center justify-center z-[90] p-10 bg-black/40 backdrop-blur-sm ">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-4 gap-2 relative max-h-full flex flex-col">
             <div class="h-12 relative flex items-center">
 
@@ -38,8 +37,10 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div class="flex flex-col gap-1">
                         <label class="text-sm" for="">Pages</label>
-                        <input v-model="pageRange" type="text" placeholder="Pages (e.g., 1,3-5)"
+                        <input v-model="pageRange" type="text" placeholder="Pages (e.g., 1, 2)"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <!-- {{ parsePageRanges(pageRange) }} -->
+
 
                     </div>
 
@@ -162,11 +163,11 @@
 
             <div class="mt-6  flex justify-end space-x-3 h-10">
                 <button @click="emit('close')"
-                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                    class="px-4 py-2 border flex items-center border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                     Cancel
                 </button>
                 <button @click="handlePrint" :disabled="!selectedPrinterName"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="px-4 py-2 bg-blue-600 flex items-center text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
                     Print
                 </button>
             </div>
@@ -176,19 +177,38 @@
 
 <script setup>
 import { ref, onMounted, defineProps, defineEmits, reactive } from 'vue';
+import { useToast } from '../lib/useToast';
+
+const toast = useToast()
+
 
 const props = defineProps({
-    pdfBase64: { type: String, required: true }
+    pdfBase64: { type: String, required: true },
+    defaultPageSize: { type: String, required: true, default: 'Long Coupon' },
+    maxPageRanges: { type: Number, required: true, default: 2 },
 });
 
+
+
 const showAdvancedOptions = ref(false)
+const printers = ref([]);
+const selectedPrinterName = ref('');
+const selectedPaperSize = ref('');
+const pageRange = ref('');
 
 const emit = defineEmits(['close', 'print-initiated']);
 
-const printers = ref([]);
-const selectedPrinterName = ref('');
-const selectedPaperSize = ref('Long Coupon');
-const pageRange = ref('');
+onMounted(() => {
+    selectedPaperSize.value = props.defaultPageSize;
+
+    if (props.maxPageRanges > 1) {
+        pageRange.value = `1-${props.maxPageRanges}`;
+    } else {
+        pageRange.value = '1';
+    }
+});
+
+
 
 const availablePaperSizes = ['A4', 'Letter', 'Legal', 'Long Coupon'];
 
@@ -220,8 +240,43 @@ onMounted(async () => {
 const handlePrint = async () => {
     if (!selectedPrinterName.value) return alert('Select a printer.');
 
-    const pageSize = selectedPaperSize.value
+    const pageSize = selectedPaperSize.value;
+    const rangeInput = pageRange.value.trim();
+    const maxPage = props.maxPageRanges;
+
+    // Simple regex to allow numbers or "n-n" format
+    const pageRangeRegex = /^(\d+)(-(\d+))?$/;
+    const match = rangeInput.match(pageRangeRegex);
+
+    if (!match) {
+        toast.fire({
+            icon: 'error',
+            title: 'Invalid page range format.',
+            text: 'Use formats like "1", "2", or "1-2".',
+            duration: 8000,
+        });
+        return;
+    }
+
+    const start = parseInt(match[1], 10);
+    const end = match[3] ? parseInt(match[3], 10) : null;
+
+    // Validate against maxPageRanges and order
+    if (
+        start < 1 || start > maxPage ||
+        (end !== null && (end < 1 || end > maxPage || start > end))
+    ) {
+        toast.fire({
+            icon: 'error',
+            title: `Page range must be within 1 to ${maxPage}`,
+            text: `Valid examples: "1", "2", "1-${maxPage}"`,
+            duration: 8000,
+        });
+        return;
+    }
+
     const pageRanges = parsePageRanges(pageRange.value);
+    localStorage.setItem('preferredPrinter', selectedPrinterName.value);
 
     const finalOptions = {
         ...options,
@@ -229,30 +284,30 @@ const handlePrint = async () => {
         pageRanges
     };
 
-console.log(finalOptions)
-
     try {
         const optionData = JSON.stringify(finalOptions);
 
-        console.log(optionData)
+        setTimeout(() => {
+            emit('print-initiated');
+            emit('close');
+        }, 500);
 
-        const result = await window.LocalCivilApi.printPDF(
+        const printThis = await window.LocalCivilApi.printPDF(
             props.pdfBase64,
             selectedPrinterName.value,
-            optionData // JSON string
+            optionData
         );
 
-        console.log(result)
+        if (printThis.status) {
+            console.log('Printed successfully')
+        } else {
+            console.warn('Print failed:', printThis.message)
+        }
 
-        // if (result.success) {
-        //     emit('print-initiated');
-        //     emit('close');
-        // } else {
-        //     // alert(`Print error: ${result.message}`);
-        //     console.log(result.message)
-        // }
+
+
+
     } catch (error) {
-        // alert('Unexpected error during print.');
         console.error(error);
     }
 };

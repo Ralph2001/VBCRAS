@@ -9,11 +9,14 @@
                     class="rounded-md border border-gray-300 px-3 py-1 hover:bg-gray-100 transition-all duration-200 text-gray-700 shadow active:scale-95"><font-awesome-icon
                         icon="fa-solid fa-gear" /></button>
                 <IsPathAccessible :filePath="system_setting.defaults.file_path" :subFolder="'\\VBCRAS\\Forms\\'" />
+
+
             </div>
         </Header>
 
 
-        <PrinterDialog v-if="print" :pdfBase64="pdfBase64Value" @close="print = false" />
+        <PrinterDialog v-if="print" :pdfBase64="pdfBase64Value" @close="print = false"
+            :defaultPageSize="defaultPageSize" :maxPageRanges="maxPageRange" />
 
         <!-- For Viewing -->
         <FormModal :title="`View Document - ${documentOwner}`" v-if="isViewLocalOpen"
@@ -991,7 +994,7 @@ const initialPref = {
     },
     authentication: {
         x: 0,
-        y: 280
+        y: 300
     },
     remarks_config: {
         x: 80,
@@ -1599,6 +1602,13 @@ const handleCopy = async (data) => {
     isPreview.value = false
 }
 
+
+const defaultPageSize = computed(() =>
+    selectedType.value.includes('A') ? 'Long Coupon' : 'Letter'
+)
+const maxPageRange = computed(() => {
+    return transactions.is_with_authentication ? 2 : 1
+})
 
 
 // Define your base action column

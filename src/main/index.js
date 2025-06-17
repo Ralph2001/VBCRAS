@@ -29,6 +29,7 @@ import {
 import { generateFormPDF } from '../documents/forms/GenerateDocument'
 import { create_publication_letter } from '../documents/clerical/create_publication'
 import { generate_legitimation } from '../documents/legitimation/generatelegma'
+import { extractPageRange } from '../documents/extract'
 
 const log = require('electron-log')
 const path = require('path')
@@ -221,12 +222,24 @@ ipcMain.handle('get-printers', async (event) => {
 // In main process IPC handler
 ipcMain.handle(
     'print-pdf-electron-custom-size',
-    async (_, base64Data, printerName, optionsJson) => {
+    async (_, base64, printerName, optionsJson) => {
+
+        let base64Data;
+
+
+
         console.log(
             '[CONFIG] Running this print with Electron Version: ',
             process.versions.electron
         )
         const options = JSON.parse(optionsJson)
+
+        if (options.pageRanges?.length) {
+            const { from, to } = options.pageRanges[0]
+            base64Data = await extractPageRange(base64, from, to)
+        } else {
+            base64Data = base64
+        }
 
         // 1. Initial validation for printerName
         if (!printerName || printerName === null || printerName === '') {
@@ -271,14 +284,8 @@ ipcMain.handle(
 
         let paperPageSize = options.pageSize
 
-        const ranges = (options.pageRanges || [])
-            .map((r) => `${r.from}-${r.to}`)
-            .join(',')
-
         const PrinterOption = {
             silent: true,
-            pageRanges: ranges,
-            // pageRanges: options.pageRanges,
             deviceName: printerName, // Use the passed printerName here
             pageSize: customPaperSizes[paperPageSize]
                 ? customPaperSizes[paperPageSize]
@@ -350,12 +357,10 @@ ipcMain.handle(
                     console.error(
                         `[Print] PDF window failed to load content: ${errorDescription}`
                     )
+                    const msg = `PDF content failed to load: ${errorDescription}`
+                    console.error(`[Print] ${msg}`)
                     cleanup()
-                    // Reject with an Error object containing the status and message
-                    reject({
-                        status: false,
-                        message: `PDF content failed to load: ${errorDescription}`
-                    })
+                    resolve({ status: false, message: msg }) // instead of reject
                 }
             )
 
@@ -379,11 +384,8 @@ ipcMain.handle(
                             PrinterOption,
                             (success, failureReason) => {
                                 if (success) {
-                                    console.log(
-                                        '[Print] Print job sent successfully to spooler.'
-                                    )
+                                    console.log('[Print] Print job sent successfully to spooler.')
                                     cleanup()
-                                    // Resolve with status and message
                                     resolve({
                                         status: true,
                                         message: 'Print job sent successfully.'
@@ -392,9 +394,9 @@ ipcMain.handle(
                                     const errorMsg = `Print command failed: ${failureReason}`
                                     console.error(`[Print] ${errorMsg}`)
                                     cleanup()
-                                    // Reject with an Error object containing the status and message
-                                    reject({ status: false, message: errorMsg })
+                                    resolve({ status: false, message: errorMsg }) // changed from reject
                                 }
+
                             }
                         )
                     } catch (err) {
@@ -687,34 +689,42 @@ function executeCommand(executable, originalDirectory, outputDirectory, args) {
 
 function validateAndSanitizeWhitespace(input, options = {}) {
     const {
-        requireNonEmpty = false // Optional: true if you want to ensure it's not just whitespace
-    } = options
+        requireNonEmpty = false,
+        sanitizeForFilename = false
+    } = options;
 
     if (typeof input !== 'string') {
-        throw new TypeError('Input must be a string')
+        throw new TypeError('Input must be a string');
     }
 
-    // Step 1: Trim leading/trailing whitespace
-    let sanitized = input.trim()
+    // Trim and normalize whitespace
+    let sanitized = input.trim().replace(/\s+/g, ' ');
 
-    // Step 2: Replace multiple whitespace characters with a single space
-    sanitized = sanitized.replace(/\s+/g, ' ')
+    if (sanitizeForFilename) {
+        // Allow letters, numbers, spaces, dashes, underscores
+        // Remove forbidden Windows characters and also remove trailing hyphen
+        sanitized = sanitized
+            .replace(/[\\/:*?"<>|.]/g, '')   // Remove invalid Windows characters
+            .replace(/-+$/, '');             // Remove trailing hyphen(s)
+    }
 
-    // Step 3: Optional validation
     if (requireNonEmpty && sanitized.length === 0) {
         return {
             valid: false,
             sanitized: '',
-            message: 'Input must not be empty or only whitespace.'
-        }
+        };
     }
 
-    return sanitized
+    return sanitized;
 }
+
 
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
+
+        console.log('[DEBUG] Proceed Creation of Petition receiving filepath', data.orignal_path)
+
 
         const executable = join(
             __dirname,
@@ -722,21 +732,27 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         ).replace('app.asar', 'app.asar.unpacked')
 
         const petition_number = validateAndSanitizeWhitespace(
-            data.petition_number
+            data.petition_number,
+            { sanitizeForFilename: true }
         )
         const originalDirectory = data.orignal_path
 
         const petitionType = validateAndSanitizeWhitespace(
-            `${data.petition_type} ${data.event_type}`
+            `${data.petition_type} ${data.event_type}`,
+            { sanitizeForFilename: true }
         )
-        const prepared_by = validateAndSanitizeWhitespace(data.prepared_by)
+        const prepared_by = validateAndSanitizeWhitespace(data.prepared_by,
+            { sanitizeForFilename: true })
         const republicAct = validateAndSanitizeWhitespace(
-            data.republic_act_number
+            data.republic_act_number,
+            { sanitizeForFilename: true }
         )
         const documentOwner =
             data.document_owner === 'N/A'
-                ? validateAndSanitizeWhitespace(data.petitioner_name)
-                : validateAndSanitizeWhitespace(data.document_owner)
+                ? validateAndSanitizeWhitespace(data.petitioner_name, { sanitizeForFilename: true })
+                : validateAndSanitizeWhitespace(data.document_owner, { sanitizeForFilename: true })
+
+
         const date_filed = data.date_filed
         const year = new Date(date_filed).getFullYear().toString()
 
@@ -787,6 +803,7 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             ? path.relative(userBasePath, outputDirectory)
             : outputDirectory
 
+        console.log('[DEBUG] Proceed Creation of Petition with returning filepath', relativeFilePath)
         return {
             status: true,
             filepath: relativeFilePath,

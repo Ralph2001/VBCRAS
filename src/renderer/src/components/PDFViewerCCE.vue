@@ -1,9 +1,12 @@
 <template>
     <div class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
+
+        <PrinterDialog v-if="print" :pdfBase64="printBase64" @close="print = false" :defaultPageSize="'Long Coupon'"
+            :maxPageRanges="maxPageRange" />
+
         <div class="w-full bg-[#0D1B2A] flex  absolute  px-4 py-2 top-0 z-[99999]">
             <div class="flex flex-row gap-2 items-center">
                 <p class="text-md  text-gray-100 font-medium  italic">
-
                     Document Viewer
                 </p>
             </div>
@@ -110,6 +113,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import PDFViewerWorker from './PDFViewerWorker.vue';
+import PrinterDialog from './PrinterDialog.vue';
 
 const emit = defineEmits(['cancel-btn', 'save-print', 'exit-btn']);
 const props = defineProps({
@@ -186,10 +190,23 @@ const handleKeydown = (event) => {
         printPDF()
     }
 }
+const print = ref(false)
+const printBase64 = ref(null)
+
+
+const maxPageRange = computed(() => {
+    if (active_pdf.value === 'Petition' || active_pdf.value === 'Posting') {
+        return 2
+    }
+    else {
+        return 1
+    }
+})
 
 const printPDF = async () => {
-    const base64Data = active_pdf_link.value
-    const open = await window.LocalCivilApi.printPDFBase64(base64Data)
+    print.value = true
+    printBase64.value = active_pdf_link.value
+    // const open = await window.LocalCivilApi.printPDFBase64(base64Data)
 }
 
 const openfolder = async (param) => {
