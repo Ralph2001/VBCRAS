@@ -20,13 +20,27 @@ from .routes.application_marriage_license import application_marriage_license
 from .routes.log import activity_bp
 from .extensions import migrate
 
+from pathlib import Path
+
 def get_database_path():
-  
-    if getattr(sys, 'frozen', False):
-        base_path = os.path.dirname(sys.executable)
+    # Get a user-safe writable path like %APPDATA% or ~/.config
+    if os.name == "nt":
+        user_data_dir = Path(os.getenv("APPDATA")) / "VBCRAS"
     else:
-        base_path = os.path.dirname(__file__)
-    return os.path.join(base_path, "vbcras.sqlite3")
+        user_data_dir = Path.home() / ".config" / "VBCRAS"
+    
+    user_data_dir.mkdir(parents=True, exist_ok=True)
+    db_path = user_data_dir / "vbcras.sqlite3"
+
+    # If DB does not exist, copy it from bundled resources (1st run only)
+    if not db_path.exists() and getattr(sys, 'frozen', False):
+        # Assuming the template DB is bundled in the same folder as the EXE
+        bundled_path = Path(sys.executable).parent / "vbcras.sqlite3"
+        if bundled_path.exists():
+            import shutil
+            shutil.copy(bundled_path, db_path)
+
+    return str(db_path)
 
 
 

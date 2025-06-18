@@ -1,50 +1,38 @@
 <template>
     <div class="h-full w-full fixed top-0 bottom-0 right-0 left-0 bg-white items-center flex justify-center z-[99999]">
 
-        <PrinterDialog v-if="print" :pdfBase64="printBase64" @close="print = false" :defaultPageSize="'Long Coupon'"
-            :maxPageRanges="maxPageRange" />
-
-        <div class="w-full bg-[#0D1B2A] flex  absolute  px-4 py-2 top-0 z-[99999]">
+        <div class="w-full bg-[#0D1B2A] flex absolute px-4 py-2 top-0 z-[99999]">
             <div class="flex flex-row gap-2 items-center">
-                <p class="text-md  text-gray-100 font-medium  italic">
+                <p class="text-md text-gray-100 font-medium italic">
                     Document Viewer
                 </p>
             </div>
-            <div class="flex flex-row gap-3 ml-auto">
-                <button
-                    class="text-white hover:text-white hover:bg-green-600 gap-3  text-sm bg-green-500  shadow-sm rounded-sm  outline-none font-medium px-4  py-1.5 tracking-wide flex flex-row  items-center"
-                    v-if="active_pdf_link" @click="printPDF">
-                    <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
-                    <div class="flex flex-col  items-start  ">
-                        <p class="text-xs">Print Active
-                            Document</p>
-                        <p class="text-xs text-gray-50 font-thin">{{ active_pdf }}</p>
+            <div class="flex flex-row gap-3 ml-auto items-center">
 
-                    </div>
+                <PrintManager :active_pdf_link="active_pdf_link" :active_pdf="active_pdf"
+                    :count="document_file_count" />
 
-                </button>
                 <button @click="exit_btn"
-                    class="border  text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 w-20 py-1 tracking-wide">Exit</button>
+                    class="border h-7 text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 w-20 tracking-wide">Exit</button>
             </div>
         </div>
 
         <button @click="sidebar = true"
-            class="absolute left-0 top-0 bottom-0 pt-20 w-fit p-1 z-40 bg-gray-700 hover:bg-gray-800  transition-all outline-none flex items-center justify-center  ">
-            <font-awesome-icon icon="fa-solid fa-angles-right" class=" text-lg  text-white" />
+            class="absolute left-0 top-0 bottom-0 pt-20 w-fit p-1 z-40 bg-gray-700 hover:bg-gray-800 transition-all outline-none flex items-center justify-center">
+            <font-awesome-icon icon="fa-solid fa-angles-right" class="text-lg text-white" />
         </button>
-
 
         <div class="flex flex-row w-full h-full">
             <div v-if="sidebar"
-                class=" w-[20rem] z-40 pt-18 items-center gap-2 bg-[#0D1B2A]  flex flex-col transition-all">
+                class="w-[20rem] z-40 pt-18 items-center gap-2 bg-[#0D1B2A] flex flex-col transition-all">
                 <div class="flex flex-row w-full h-full gap-1 bg-[#0D1B2A]">
                     <div class=" w-full flex flex-col gap-2 items-center h-full pt-20 px-2">
-                        <div class="w-full grid   shadow">
+                        <div class="w-full grid shadow">
                             <button @click="changeMenu('Files')"
                                 :class="[menu === 'Files' ? 'bg-gray-800' : 'hover:bg-gray-800']"
                                 class="font-medium w-full transition-all text-gray-50 ">Documents</button>
                         </div>
-                        <div class="flex flex-col gap-2 items-center justify-center w-full p-3 h-full   "
+                        <div class="flex flex-col gap-2 items-center justify-center w-full p-3 h-full"
                             v-if="menu === 'Files'">
                             <button @click="change_active_pdf(item.name, item.link)" v-for="item in pdfs" :key="item"
                                 :class="[active_pdf === item.name ? 'bg-blue-500 text-white ' : 'bg-white']"
@@ -66,43 +54,34 @@
                                     <font-awesome-icon icon="fa-solid fa-file-word" class="text-[#2B7Cd3]" /> Create
                                     Certificate of Filing
                                 </button>
-
                                 <button v-if="props.details" @click="openfolder(props.details)"
-                                    class="p-2 bg-green-500 hover:bg-green-600 text-white  shadow-inner items-center flex-row gap-2 text-center  justify-center outline-none ring-0 w-full h-8  font-medium text-sm rounded-sm flex ">
+                                    class="p-2 bg-green-500 hover:bg-green-600 text-white shadow-inner items-center flex-row gap-2 text-center justify-center outline-none ring-0 w-full h-8 font-medium text-sm rounded-sm flex ">
                                     Open Folder
                                 </button>
                             </div>
-
                         </div>
                         <div class="flex flex-col gap-2 items-center justify-center w-full h-full p-3">
                             <p class="italic text-[#0D1B2A]">Created by Ralph :)</p>
-
                         </div>
-
                     </div>
-
                     <button @click="sidebar = false"
-                        class="h-full bg-[#0D1B2A] hover:bg-gray-800 z-[99999999999999999999] shadow-md px-2  transition-all outline-none flex items-center  justify-center  ">
-                        <font-awesome-icon icon="fa-solid fa-angles-right " class=" text-lg  text-white rotate-180" />
+                        class="h-full bg-[#0D1B2A] hover:bg-gray-800 z-[99999999999999999999] shadow-md px-2 transition-all outline-none flex items-center justify-center">
+                        <font-awesome-icon icon="fa-solid fa-angles-right " class="text-lg text-white rotate-180" />
                     </button>
-
                 </div>
             </div>
 
-            <div class="absolute right-0 w-[2rem] h-full block bg-[#0D1B2A] ">
-
-            </div>
+            <div class="absolute right-0 w-[2rem] h-full block bg-[#0D1B2A]"></div>
             <div class="h-full w-full bg-[#0D1B2A] items-center flex flex-1 justify-center relative">
-                <div class=" z-[9999999]" v-if="!active_pdf_link">
+                <div class="z-[9999999]" v-if="!active_pdf_link">
                     <p class="text-white italic">Select Option Above</p>
                 </div>
                 <PDFViewerWorker :scale="1.3" v-if="active_pdf_link" :pdfBytes64="active_pdf_link" />
-
                 <div tabindex="-1"
-                    class="absolute top-0 bottom-0 z-50 right-0   w-12 items-center bg-[#1B263B] hover:bg-[#0D1B2A] transition-all duration-400 group justify-center flex flex-col gap-2">
+                    class="absolute top-0 bottom-0 z-50 right-0 w-12 items-center bg-[#1B263B] hover:bg-[#0D1B2A] transition-all duration-400 group justify-center flex flex-col gap-2">
                     <button @click="nextPDF" tabindex="-1" class="w-full h-full" title="Next">
                         <font-awesome-icon icon="fa-solid fa-caret-right"
-                            class="text-white  opacity-30 text-5xl group-hover:opacity-100 outline-none ring-0 focus:outline-none focus:ring-0" />
+                            class="text-white opacity-30 text-5xl group-hover:opacity-100 outline-none ring-0 focus:outline-none focus:ring-0" />
                     </button>
                 </div>
             </div>
@@ -111,52 +90,29 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import PDFViewerWorker from './PDFViewerWorker.vue';
-import PrinterDialog from './PrinterDialog.vue';
+import PrintManager from './PrintManager.vue'; // <-- Import the new component
 
-const emit = defineEmits(['cancel-btn', 'save-print', 'exit-btn']);
+const emit = defineEmits(['exit-btn']);
+
 const props = defineProps({
-    pdf: {
-        type: [String, Object, Array],
-        default: null
-    },
-    status: {
-        type: Boolean,
-        default: false
-    },
-    pdf_data: {
-        type: [Array, Object, String],
+    pdf_data: { type: [Array, Object, String] },
+    details: { type: [String, Object, Array] }
+});
 
-    },
-    details: {
-        type: [String, Object, Array],
-    }
-})
+const pdfs = ref(props.pdf_data);
+const active_pdf = ref(null);
+const active_pdf_link = ref(null);
+const currentIndex = ref(0);
 
+const sidebar = ref(true);
+const menu = ref('Files');
 
-const pdfs = ref(props.pdf_data)
-const active_pdf = ref(null)
-const active_pdf_link = ref(null)
+const changeMenu = (data) => menu.value = data;
 
-const currentIndex = ref(0); // Track the current index of the active PDF
-
-// Compute whether the current index is at the last PDF
-const isLastPDF = computed(() => currentIndex.value === pdfs.value.length - 1);
-
-
-
-const sidebar = ref(true)
-const menu = ref('Files')
-
-
-
-
-function changeMenu(data) {
-    menu.value = data
-}
 onMounted(() => {
-    if (pdfs.value.length > 0) {
+    if (pdfs.value && pdfs.value.length > 0) {
         change_active_pdf(pdfs.value[0].name, pdfs.value[0].link);
     }
 });
@@ -164,78 +120,40 @@ onMounted(() => {
 const nextPDF = () => {
     if (currentIndex.value < pdfs.value.length - 1) {
         currentIndex.value++;
-        change_active_pdf(pdfs.value[currentIndex.value].name, pdfs.value[currentIndex.value].link);
     } else {
         currentIndex.value = 0;
-        change_active_pdf(pdfs.value[currentIndex.value].name, pdfs.value[currentIndex.value].link);
     }
+    change_active_pdf(pdfs.value[currentIndex.value].name, pdfs.value[currentIndex.value].link);
 };
-
 
 const change_active_pdf = (name, link) => {
     active_pdf.value = name;
     active_pdf_link.value = link;
 };
 
-
-const exit_btn = () => {
-    emit('exit-btn')
-}
-const handleKeydown = (event) => {
-    // Check if Ctrl + P is pressed
-    if (event.ctrlKey && event.key === 'p') {
-        event.preventDefault() // Prevent the default action (such as opening print dialog)
-        console.log('Ctrl + P was pressed')
-        // Call your function here
-        printPDF()
-    }
-}
-const print = ref(false)
-const printBase64 = ref(null)
-
-
-const maxPageRange = computed(() => {
+const document_file_count = computed(() => {
     if (active_pdf.value === 'Petition' || active_pdf.value === 'Posting') {
         return 2
     }
-    else {
-        return 1
-    }
-})
+    return 1
+});
 
-const printPDF = async () => {
-    print.value = true
-    printBase64.value = active_pdf_link.value
-    // const open = await window.LocalCivilApi.printPDFBase64(base64Data)
-}
+const exit_btn = () => emit('exit-btn');
 
 const openfolder = async (param) => {
     try {
-        const open = await window.ClericalApi.OpenClerical(param.file_path)
+        await window.ClericalApi.OpenClerical(param.file_path);
     } catch (error) {
-        console.log(error)
-        path_missing.value = true
-        missing_path.value = param.file_path
+        console.log(error);
+        // Handle path missing error
     }
-}
+};
 
 const create_certificate_filing = async (data) => {
-    const create = await window.ClericalApi.CreateCertificateFiling(data)
-}
+    await window.ClericalApi.CreateCertificateFiling(data);
+};
 
 const create_publication_letter = async (data) => {
-    const create = await window.ClericalApi.CreatePublicationLetter(data)
-    console.log(create)
-}
-
-
-onMounted(() => {
-    window.addEventListener('keydown', handleKeydown)
-})
-
-onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleKeydown)
-})
+    await window.ClericalApi.CreatePublicationLetter(data);
+};
 </script>
-
-<style lang="scss" scoped></style>

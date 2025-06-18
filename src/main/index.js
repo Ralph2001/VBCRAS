@@ -30,6 +30,7 @@ import { generateFormPDF } from '../documents/forms/GenerateDocument'
 import { create_publication_letter } from '../documents/clerical/create_publication'
 import { generate_legitimation } from '../documents/legitimation/generatelegma'
 import { extractPageRange } from '../documents/extract'
+import { printPdfMethod1, printPdfMethod2, printPdfMethod3 } from './printer'
 
 const log = require('electron-log')
 const path = require('path')
@@ -50,6 +51,7 @@ const userBasePath = os.homedir()
 const username = os.userInfo().username
 const fse = require('fs-extra')
 const fs = require('fs')
+const fsp = require('fs').promises
 
 /**
  * Helper Functions
@@ -150,64 +152,7 @@ for (let k in interfaces) {
     }
 }
 
-function generateRandomString(length) {
-    const characters =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    let result = ''
-    const charactersLength = characters.length
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(
-            Math.floor(Math.random() * charactersLength)
-        )
-    }
-    return result
-}
 
-/**
- * Function to print a document using SumatraPDF.
- * @param {string} base64Data - PDF document Data
- * @param {string} sumatraPath - Path to the SumatraPDF executable
- */
-async function printPDF(base64Data, sumatraPath, paperSize = 'none') {
-    let pdfPath // Declare here for cleanup later
-    try {
-        const randomFileName = `temp_${generateRandomString(20)}.pdf`
-        pdfPath = join(
-            __dirname,
-            '../../resources/temp/',
-            randomFileName
-        ).replace('app.asar', 'app.asar.unpacked')
-
-        // Write the PDF file
-        await fs.promises.writeFile(pdfPath, Buffer.from(base64Data, 'base64'))
-
-        // Add explicit page range handling
-        const args = [
-            '-print-dialog',
-            '-exit-when-done',
-            pdfPath // Explicitly specify the file to print
-        ]
-
-        const printProcess = spawn(sumatraPath, args)
-
-        // Delay cleanup until printing completes
-        printProcess.on('exit', async (code) => {
-            await new Promise((resolve) => setTimeout(resolve, 5000)) // Wait 5 seconds
-            try {
-                await fs.promises.unlink(pdfPath)
-                console.log('Temp PDF deleted successfully')
-            } catch (err) {
-                console.error('Error deleting temp file:', err)
-            }
-        })
-    } catch (error) {
-        // Cleanup if error occurs
-        if (pdfPath) {
-            await fs.promises.unlink(pdfPath).catch(console.error)
-        }
-        console.error('Error printing PDF:', error)
-    }
-}
 
 ipcMain.handle('get-printers', async (event) => {
     // This needs to be called after the app is ready and a browser window is created,
@@ -223,205 +168,94 @@ ipcMain.handle('get-printers', async (event) => {
 ipcMain.handle(
     'print-pdf-electron-custom-size',
     async (_, base64, printerName, optionsJson) => {
-
-        let base64Data;
-
-
-
-        console.log(
-            '[CONFIG] Running this print with Electron Version: ',
-            process.versions.electron
-        )
-        const options = JSON.parse(optionsJson)
-
-        if (options.pageRanges?.length) {
-            const { from, to } = options.pageRanges[0]
-            base64Data = await extractPageRange(base64, from, to)
-        } else {
-            base64Data = base64
-        }
-
-        // 1. Initial validation for printerName
-        if (!printerName || printerName === null || printerName === '') {
-            return { status: false, message: 'No printer selected.' }
-        }
-
-        // 2. Validate if the printerName exists using getPrintersAsync()
         try {
-            // Create a temporary BrowserWindow to access webContents.getPrintersAsync()
-            const tempWin = new BrowserWindow({ show: false })
-            const printers = await tempWin.webContents.getPrintersAsync()
-            tempWin.destroy() // Destroy the temporary window immediately after getting printers
-
-            const desiredPrinter = printers.find((p) => p.name === printerName)
-
-            if (!desiredPrinter) {
-                console.error(
-                    `[Print] Target printer "${printerName}" was not found.`
-                )
-                return {
-                    status: false,
-                    message: `Printer "${printerName}" not found.`
-                }
-            }
+            return await printPdfElectronCustomSize(base64, printerName, optionsJson);
         } catch (error) {
-            console.error('[Print] Failed to retrieve printer list:', error)
+            // Catch any unexpected rejections from the function
+            console.error('[IPC Main Handle] Uncaught error from printPdfElectronCustomSize:', error);
             return {
                 status: false,
-                message: `Failed to retrieve printer list: ${error.message}`
-            }
+                message: error.message || 'An unhandled error occurred during printing.'
+            };
         }
-
-        const INCH_TO_MICRONS = 25400
-
-        const customPaperSizes = {
-            'Long Coupon': {
-                width: Math.round(8.5 * INCH_TO_MICRONS), // 8.5 inches converted to microns
-                height: Math.round(13 * INCH_TO_MICRONS) // 13 inches converted to microns
-            }
-            // Add other custom sizes if needed
-        }
-
-        let paperPageSize = options.pageSize
-
-        const PrinterOption = {
-            silent: true,
-            deviceName: printerName, // Use the passed printerName here
-            pageSize: customPaperSizes[paperPageSize]
-                ? customPaperSizes[paperPageSize]
-                : paperPageSize,
-            printBackground: options.printBackground ?? true,
-            color: options.color ?? true,
-            landscape: options.landscape ?? false,
-            copies: options.copies ?? 1,
-            duplexMode: options.duplexMode ?? 'simplex',
-            scaleFactor: options.scaleFactor ?? 1,
-            pagesPerSheet: options.pagesPerSheet ?? 1,
-            collate: options.collate ?? true,
-            margins: options.margins ?? {
-                marginType: 'default',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0
-            },
-            dpi: options.dpi ?? { horizontal: 300, vertical: 300 }
-        }
-
-        console.log('[CONFIG] Received Paper Size ', paperPageSize)
-        console.log(
-            '[CONFIG] Customized Paper Size ',
-            customPaperSizes[paperPageSize]
-        )
-        console.log(
-            '-------------------------------------------------------------------'
-        )
-        console.log(
-            '-------------------------------------------------------------------'
-        )
-        console.log(
-            '[CONFIG] Page Ranges (raw from options): ',
-            options.pageRanges
-        )
-        console.log(
-            '[CONFIG] PrinterOption.pageRanges (passed to print): ',
-            PrinterOption.pageRanges
-        )
-        console.log(
-            '-------------------------------------------------------------------'
-        )
-        console.log(
-            '-------------------------------------------------------------------'
-        )
-        console.log('[CONFIG] Printer Options: ', PrinterOption)
-
-        return new Promise((resolve, reject) => {
-            const win = new BrowserWindow({
-                show: false, // Keep it hidden for silent printing
-                webPreferences: {
-                    plugins: true
-                }
-            })
-
-            const cleanup = () => {
-                if (win && !win.isDestroyed()) {
-                    win.destroy()
-                }
-            }
-
-            const b64 = `data:application/pdf;base64,${base64Data}`
-
-            win.webContents.on(
-                'did-fail-load',
-                (event, errorCode, errorDescription) => {
-                    console.error(
-                        `[Print] PDF window failed to load content: ${errorDescription}`
-                    )
-                    const msg = `PDF content failed to load: ${errorDescription}`
-                    console.error(`[Print] ${msg}`)
-                    cleanup()
-                    resolve({ status: false, message: msg }) // instead of reject
-                }
-            )
-
-            win.webContents.on('did-finish-load', () => {
-                console.log(
-                    '[Print] "did-finish-load" fired. PDF data is in the window.'
-                )
-                console.log(
-                    '[Print] Waiting 2 seconds for the internal PDF viewer to render...'
-                )
-
-                setTimeout(async () => {
-                    try {
-                        // The printer has already been validated and confirmed to exist before this Promise.
-                        // So, we can directly use printerName from the function arguments.
-                        console.log(
-                            `[Print] Sending print command to "${printerName}".`
-                        )
-
-                        win.webContents.print(
-                            PrinterOption,
-                            (success, failureReason) => {
-                                if (success) {
-                                    console.log('[Print] Print job sent successfully to spooler.')
-                                    cleanup()
-                                    resolve({
-                                        status: true,
-                                        message: 'Print job sent successfully.'
-                                    })
-                                } else {
-                                    const errorMsg = `Print command failed: ${failureReason}`
-                                    console.error(`[Print] ${errorMsg}`)
-                                    cleanup()
-                                    resolve({ status: false, message: errorMsg }) // changed from reject
-                                }
-
-                            }
-                        )
-                    } catch (err) {
-                        console.error(
-                            '[Print] An error occurred during the print process:',
-                            err
-                        )
-                        cleanup()
-                        // Reject with an Error object containing the status and message
-                        reject({
-                            status: false,
-                            message: `An unexpected error occurred during printing: ${err.message}`
-                        })
-                    }
-                }, 4000)
-            })
-
-            win.loadURL(b64)
-        })
     }
-)
+);
 
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     await printPDF(base64Data, sumatraPath)
 })
+
+
+
+ipcMain.handle('print-pdf', async (_, base64Data, printerName, optionsJson, method, range) => {
+
+    if (!base64Data || typeof base64Data !== 'string' || base64Data.trim() === '') {
+        return { status: false, message: 'Invalid or no PDF data provided.' };
+    }
+
+    const selected_method = method && ['method1', 'method2', 'method3'].includes(method)
+        ? method
+        : 'method2';
+
+    let result;
+    try {
+        if (selected_method === 'method1') {
+            result = await printPdfMethod1(base64Data);
+        } else if (selected_method === 'method2') {
+            // Method 2 only needs base64Data
+            console.log('[DEBUG] Using Method 2 for printing with range:', range);
+            result = await printPdfMethod2(base64Data, range);
+        } else if (selected_method === 'method3') {
+            // Method 3 needs base64, printerName, and optionsJson
+            result = await printPdfMethod3(base64Data, printerName, optionsJson);
+        } else {
+            // Fallback in case selected_method somehow ends up as an unhandled value
+            result = { status: false, message: 'Unknown printing method selected.' };
+        }
+    } catch (error) {
+        // Catch any unexpected errors that might escape the print functions
+        console.error(`[IPC Main] Unhandled error during print for method ${selected_method}:`, error);
+        result = { status: false, message: `An unexpected error occurred: ${error.message || 'Unknown error'}` };
+    }
+
+    return result; // Always return the consistent { status, message } object
+});
+
+
+
+
+async function cleanupTempFolder() {
+    try {
+        const tempDir = join(__dirname, '../../resources/temp/').replace('app.asar', 'app.asar.unpacked');
+        console.log('[DEBUG] Temp Path:', tempDir);
+
+        // Check access to the directory
+        await fsp.access(tempDir, fs.constants.R_OK | fs.constants.W_OK);
+        console.log('[Cleanup] Temp directory is accessible.');
+
+        // Read all contents inside the directory
+        const items = await fsp.readdir(tempDir);
+        for (const item of items) {
+            const itemPath = path.join(tempDir, item);
+            const stat = await fsp.stat(itemPath);
+
+            if (stat.isDirectory()) {
+                await fsp.rm(itemPath, { recursive: true, force: true });
+                console.log(`[Cleanup] Deleted folder: ${item}`);
+            } else {
+                await fsp.unlink(itemPath);
+                console.log(`[Cleanup] Deleted file: ${item}`);
+            }
+        }
+
+    } catch (error) {
+        console.error('[Cleanup] Error cleaning temp folder:', error.message);
+    }
+}
+
+
+
+
 
 /**
  * Form IPC
@@ -1181,7 +1015,7 @@ app.whenReady().then(() => {
     app.on('browser-window-created', (_, window) => {
         optimizer.watchWindowShortcuts(window)
     })
-
+    cleanupTempFolder()
     // runPermissionController()
     mainWindow()
 

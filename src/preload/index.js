@@ -295,15 +295,25 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
         }
     },
 
-    printPDF: async ( base64Data, printerName, optionsJson) => {
+    // printPDF: async ( base64Data, printerName, optionsJson) => {
+    //     try {
+    //         const result = await ipcRenderer.invoke('print-pdf-electron-custom-size', base64Data, printerName, optionsJson);
+    //         return result;
+    //     } catch (error) {
+    //         console.error('Error in preload printPDFBase64:', error);
+    //         return { success: false, message: error.message };
+    //     }
+    // }
+    printPDF: async (base64Data, printerName, optionsJson, method, range) => {
         try {
-            const result = await ipcRenderer.invoke('print-pdf-electron-custom-size', base64Data, printerName, optionsJson);
+            const result = await ipcRenderer.invoke('print-pdf', base64Data, printerName, optionsJson, method, range);
             return result;
         } catch (error) {
             console.error('Error in preload printPDFBase64:', error);
             return { success: false, message: error.message };
         }
     }
+
 })
 
 contextBridge.exposeInMainWorld('UpdateApi', {

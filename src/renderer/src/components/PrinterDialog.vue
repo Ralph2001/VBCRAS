@@ -181,7 +181,6 @@ import { useToast } from '../lib/useToast';
 
 const toast = useToast()
 
-
 const props = defineProps({
     pdfBase64: { type: String, required: true },
     defaultPageSize: { type: String, required: true, default: 'Long Coupon' },
@@ -238,6 +237,10 @@ onMounted(async () => {
 });
 
 const handlePrint = async () => {
+
+    console.log('[RENDERER] Printing PDF with method:', props.printMethod);
+
+
     if (!selectedPrinterName.value) return alert('Select a printer.');
 
     const pageSize = selectedPaperSize.value;
@@ -295,7 +298,7 @@ const handlePrint = async () => {
         const printThis = await window.LocalCivilApi.printPDF(
             props.pdfBase64,
             selectedPrinterName.value,
-            optionData
+            optionData, 'method3'
         );
 
         if (printThis.status) {
@@ -304,12 +307,10 @@ const handlePrint = async () => {
             console.warn('Print failed:', printThis.message)
         }
 
-
-
-
     } catch (error) {
         console.error(error);
     }
+
 };
 
 function parsePageRanges(input) {
