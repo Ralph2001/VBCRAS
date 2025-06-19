@@ -11,7 +11,7 @@
             <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
             <div class="flex flex-col items-start">
 
-                <p class="text-xs">Print Active Document </p>
+                <p class="text-xs">Print Document </p>
             </div>
         </button>
         <button
@@ -21,7 +21,7 @@
         </button>
 
         <div v-if="isSelectPrintMethodOpen" ref="target"
-            class="absolute overflow-hidden w-[20rem] gap-2 top-14 bg-white rounded-xl p-2 shadow-xl border border-gray-100 flex flex-col font-sans">
+            class="absolute overflow-hidden z-[90] w-[20rem] gap-2 top-14 right-0 bg-white rounded-xl p-2 shadow-xl border border-gray-100 flex flex-col font-sans">
             <button v-for="method in printMethods" :key="method.id" @click="selectPrintMethod(method)" :class="[
                 ' py-3 px-4 rounded-lg h-20 flex items-center text-left transition-all duration-200 ease-in-out border-gray-200',
                 'border',
@@ -53,8 +53,9 @@
             </button>
         </div>
 
-        
+
     </div>
+
 </template>
 
 <script setup>

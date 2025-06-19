@@ -15,8 +15,11 @@
         </Header>
 
 
-        <PrinterDialog v-if="print" :pdfBase64="pdfBase64Value" @close="print = false"
-            :defaultPageSize="defaultPageSize" :maxPageRanges="maxPageRange" />
+        <!-- <PrinterDialog v-if="print" :pdfBase64="pdfBase64Value" @close="print = false"
+            :defaultPageSize="defaultPageSize" :maxPageRanges="maxPageRange" /> -->
+
+
+
 
         <!-- For Viewing -->
         <FormModal :title="`View Document - ${documentOwner}`" v-if="isViewLocalOpen"
@@ -24,11 +27,7 @@
             <template v-slot:control>
                 <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm">
                     <div class="ml-auto">
-                        <button @click="printDocument"
-                            class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
-                            <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
-                            Print Document
-                        </button>
+                        <PrintManager :active_pdf_link="localPdf" :active_pdf="''" :count="1" />
                     </div>
                 </div>
             </template>
@@ -126,11 +125,9 @@
                             <font-awesome-icon icon="fa-solid fa-gear" class="mr-2 text-base" />
                             Configuration
                         </button>
-                        <button @click="printDocument"
-                            class="h-8 px-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
-                            <font-awesome-icon icon="fa-solid fa-print" class="mr-2 text-base" />
-                            Print Document
-                        </button>
+
+                        <PrintManager :active_pdf_link="previewUrl" :active_pdf="''" :count="1" />
+
 
                         <button @click="saveForm"
                             class="h-8 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
@@ -682,6 +679,7 @@ import { useActivityLog } from '../../stores/logs.js'
 import IsPathAccessible from '../../components/IsPathAccessible.vue'
 import { useSetup } from '../../stores/Setting/setup.js'
 import PrinterDialog from '../../components/PrinterDialog.vue'
+import PrintManager from '../../components/PrintManager.vue'
 
 const TableGrid = defineAsyncComponent(() => import("../../components/TableGrid.vue")); // Data Grid
 const search = ref(null)
@@ -1175,64 +1173,6 @@ const saveForm = async () => {
 };
 
 
-
-const printDocument = async () => {
-
-    const formType = selectedType.value?.toUpperCase();
-
-    const formAvailableMapping = {
-        '1A': Form1A,
-        '2A': Form2A,
-        '3A': Form3A,
-        '1B': Form1B,
-        '2B': Form2B,
-        '3B': Form3B,
-        '1C': Form1C,
-        '2C': Form2C,
-        '3C': Form3C,
-    };
-
-    if (!formType || !formAvailableMapping[formType]) {
-        console.warn(`Invalid or unsupported form type selected: "${formType}"`);
-        return;
-    }
-
-    try {
-        const baseData = {
-            form_type: formType,
-            ...toRaw(preference),
-            ...toRaw(transactions),
-            ...toRaw(destroyed),
-            ...(formType.endsWith('A') ? toRaw(available) : {}),
-            ...formAvailableMapping[formType],
-        };
-
-        const preview = await window?.FormApi?.PreviewFormPDF(JSON.stringify(baseData));
-        const pdfBase64 = preview?.result?.pdfbase64;
-
-
-        print.value = true
-        pdfBase64Value.value = pdfBase64
-        const or_number = baseData.or_number ? baseData.or_number : ''
-        // if (!pdfBase64) {
-        //     throw new Error('Failed to generate PDF preview');
-        // }
-
-        // await window?.LocalCivilApi?.printPDFBase64(pdfBase64);
-
-        await activityLog.createNewLog(
-            'PRINT',
-            'Forms',
-            `User printed a ${formType} form with O.R. Number ${or_number || 'N/A'}. The form was successfully generated as a PDF and sent to the printer.`,
-            'SUCCESS'
-        );
-
-    } catch (error) {
-        console.error('Failed to print document:', error);
-    }
-};
-
-
 const previewForm = async () => {
     const form_type = selectedType.value;
 
@@ -1270,7 +1210,6 @@ const previewForm = async () => {
         console.log('Invalid form type selected');
     }
 };
-
 
 
 const is_with_remarks = computed(() => {
@@ -1478,7 +1417,6 @@ const handleViewLocal = async (data) => {
             return;
         }
 
-
         //Set Document Owner in Viewer
         documentOwner.value = data.name_child ||
             data.name_deceased ||
@@ -1510,6 +1448,7 @@ const handleViewLocal = async (data) => {
         console.error('Failed to generate PDF preview:', error);
     }
 };
+
 
 const handleCloseViewLocal = () => {
     isViewLocalOpen.value = false;

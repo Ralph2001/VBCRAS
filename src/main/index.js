@@ -152,8 +152,6 @@ for (let k in interfaces) {
     }
 }
 
-
-
 ipcMain.handle('get-printers', async (event) => {
     // This needs to be called after the app is ready and a browser window is created,
     // as it relies on Chromium's printer capabilities.
@@ -169,93 +167,121 @@ ipcMain.handle(
     'print-pdf-electron-custom-size',
     async (_, base64, printerName, optionsJson) => {
         try {
-            return await printPdfElectronCustomSize(base64, printerName, optionsJson);
+            return await printPdfElectronCustomSize(
+                base64,
+                printerName,
+                optionsJson
+            )
         } catch (error) {
             // Catch any unexpected rejections from the function
-            console.error('[IPC Main Handle] Uncaught error from printPdfElectronCustomSize:', error);
+            console.error(
+                '[IPC Main Handle] Uncaught error from printPdfElectronCustomSize:',
+                error
+            )
             return {
                 status: false,
-                message: error.message || 'An unhandled error occurred during printing.'
-            };
+                message:
+                    error.message ||
+                    'An unhandled error occurred during printing.'
+            }
         }
     }
-);
+)
 
 ipcMain.handle('PrintThisPDF', async (event, base64Data) => {
     await printPDF(base64Data, sumatraPath)
 })
 
-
-
-ipcMain.handle('print-pdf', async (_, base64Data, printerName, optionsJson, method, range) => {
-
-    if (!base64Data || typeof base64Data !== 'string' || base64Data.trim() === '') {
-        return { status: false, message: 'Invalid or no PDF data provided.' };
-    }
-
-    const selected_method = method && ['method1', 'method2', 'method3'].includes(method)
-        ? method
-        : 'method2';
-
-    let result;
-    try {
-        if (selected_method === 'method1') {
-            result = await printPdfMethod1(base64Data);
-        } else if (selected_method === 'method2') {
-            // Method 2 only needs base64Data
-            console.log('[DEBUG] Using Method 2 for printing with range:', range);
-            result = await printPdfMethod2(base64Data, range);
-        } else if (selected_method === 'method3') {
-            // Method 3 needs base64, printerName, and optionsJson
-            result = await printPdfMethod3(base64Data, printerName, optionsJson);
-        } else {
-            // Fallback in case selected_method somehow ends up as an unhandled value
-            result = { status: false, message: 'Unknown printing method selected.' };
-        }
-    } catch (error) {
-        // Catch any unexpected errors that might escape the print functions
-        console.error(`[IPC Main] Unhandled error during print for method ${selected_method}:`, error);
-        result = { status: false, message: `An unexpected error occurred: ${error.message || 'Unknown error'}` };
-    }
-
-    return result; // Always return the consistent { status, message } object
-});
-
-
-
-
-async function cleanupTempFolder() {
-    try {
-        const tempDir = join(__dirname, '../../resources/temp/').replace('app.asar', 'app.asar.unpacked');
-        console.log('[DEBUG] Temp Path:', tempDir);
-
-        // Check access to the directory
-        await fsp.access(tempDir, fs.constants.R_OK | fs.constants.W_OK);
-        console.log('[Cleanup] Temp directory is accessible.');
-
-        // Read all contents inside the directory
-        const items = await fsp.readdir(tempDir);
-        for (const item of items) {
-            const itemPath = path.join(tempDir, item);
-            const stat = await fsp.stat(itemPath);
-
-            if (stat.isDirectory()) {
-                await fsp.rm(itemPath, { recursive: true, force: true });
-                console.log(`[Cleanup] Deleted folder: ${item}`);
-            } else {
-                await fsp.unlink(itemPath);
-                console.log(`[Cleanup] Deleted file: ${item}`);
+ipcMain.handle(
+    'print-pdf',
+    async (_, base64Data, printerName, optionsJson, method, range) => {
+        if (
+            !base64Data ||
+            typeof base64Data !== 'string' ||
+            base64Data.trim() === ''
+        ) {
+            return {
+                status: false,
+                message: 'Invalid or no PDF data provided.'
             }
         }
 
+        const selected_method =
+            method && ['method1', 'method2', 'method3'].includes(method)
+                ? method
+                : 'method2'
+
+        let result
+        try {
+            if (selected_method === 'method1') {
+                result = await printPdfMethod1(base64Data)
+            } else if (selected_method === 'method2') {
+                // Method 2 only needs base64Data
+                console.log(
+                    '[DEBUG] Using Method 2 for printing with range:',
+                    range
+                )
+                result = await printPdfMethod2(base64Data, range)
+            } else if (selected_method === 'method3') {
+                // Method 3 needs base64, printerName, and optionsJson
+                result = await printPdfMethod3(
+                    base64Data,
+                    printerName,
+                    optionsJson
+                )
+            } else {
+                // Fallback in case selected_method somehow ends up as an unhandled value
+                result = {
+                    status: false,
+                    message: 'Unknown printing method selected.'
+                }
+            }
+        } catch (error) {
+            // Catch any unexpected errors that might escape the print functions
+            console.error(
+                `[IPC Main] Unhandled error during print for method ${selected_method}:`,
+                error
+            )
+            result = {
+                status: false,
+                message: `An unexpected error occurred: ${error.message || 'Unknown error'}`
+            }
+        }
+
+        return result // Always return the consistent { status, message } object
+    }
+)
+
+async function cleanupTempFolder() {
+    try {
+        const tempDir = join(__dirname, '../../resources/temp/').replace(
+            'app.asar',
+            'app.asar.unpacked'
+        )
+        console.log('[DEBUG] Temp Path:', tempDir)
+
+        // Check access to the directory
+        await fsp.access(tempDir, fs.constants.R_OK | fs.constants.W_OK)
+        console.log('[Cleanup] Temp directory is accessible.')
+
+        // Read all contents inside the directory
+        const items = await fsp.readdir(tempDir)
+        for (const item of items) {
+            const itemPath = path.join(tempDir, item)
+            const stat = await fsp.stat(itemPath)
+
+            if (stat.isDirectory()) {
+                await fsp.rm(itemPath, { recursive: true, force: true })
+                console.log(`[Cleanup] Deleted folder: ${item}`)
+            } else {
+                await fsp.unlink(itemPath)
+                console.log(`[Cleanup] Deleted file: ${item}`)
+            }
+        }
     } catch (error) {
-        console.error('[Cleanup] Error cleaning temp folder:', error.message);
+        console.error('[Cleanup] Error cleaning temp folder:', error.message)
     }
 }
-
-
-
-
 
 /**
  * Form IPC
@@ -522,43 +548,41 @@ function executeCommand(executable, originalDirectory, outputDirectory, args) {
  */
 
 function validateAndSanitizeWhitespace(input, options = {}) {
-    const {
-        requireNonEmpty = false,
-        sanitizeForFilename = false
-    } = options;
+    const { requireNonEmpty = false, sanitizeForFilename = false } = options
 
     if (typeof input !== 'string') {
-        throw new TypeError('Input must be a string');
+        throw new TypeError('Input must be a string')
     }
 
     // Trim and normalize whitespace
-    let sanitized = input.trim().replace(/\s+/g, ' ');
+    let sanitized = input.trim().replace(/\s+/g, ' ')
 
     if (sanitizeForFilename) {
         // Allow letters, numbers, spaces, dashes, underscores
         // Remove forbidden Windows characters and also remove trailing hyphen
         sanitized = sanitized
-            .replace(/[\\/:*?"<>|.]/g, '')   // Remove invalid Windows characters
-            .replace(/-+$/, '');             // Remove trailing hyphen(s)
+            .replace(/[\\/:*?"<>|.]/g, '') // Remove invalid Windows characters
+            .replace(/-+$/, '') // Remove trailing hyphen(s)
     }
 
     if (requireNonEmpty && sanitized.length === 0) {
         return {
             valid: false,
-            sanitized: '',
-        };
+            sanitized: ''
+        }
     }
 
-    return sanitized;
+    return sanitized
 }
-
 
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
 
-        console.log('[DEBUG] Proceed Creation of Petition receiving filepath', data.orignal_path)
-
+        console.log(
+            '[DEBUG] Proceed Creation of Petition receiving filepath',
+            data.orignal_path
+        )
 
         const executable = join(
             __dirname,
@@ -575,17 +599,21 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             `${data.petition_type} ${data.event_type}`,
             { sanitizeForFilename: true }
         )
-        const prepared_by = validateAndSanitizeWhitespace(data.prepared_by,
-            { sanitizeForFilename: true })
+        const prepared_by = validateAndSanitizeWhitespace(data.prepared_by, {
+            sanitizeForFilename: true
+        })
         const republicAct = validateAndSanitizeWhitespace(
             data.republic_act_number,
             { sanitizeForFilename: true }
         )
         const documentOwner =
             data.document_owner === 'N/A'
-                ? validateAndSanitizeWhitespace(data.petitioner_name, { sanitizeForFilename: true })
-                : validateAndSanitizeWhitespace(data.document_owner, { sanitizeForFilename: true })
-
+                ? validateAndSanitizeWhitespace(data.petitioner_name, {
+                      sanitizeForFilename: true
+                  })
+                : validateAndSanitizeWhitespace(data.document_owner, {
+                      sanitizeForFilename: true
+                  })
 
         const date_filed = data.date_filed
         const year = new Date(date_filed).getFullYear().toString()
@@ -637,7 +665,10 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
             ? path.relative(userBasePath, outputDirectory)
             : outputDirectory
 
-        console.log('[DEBUG] Proceed Creation of Petition with returning filepath', relativeFilePath)
+        console.log(
+            '[DEBUG] Proceed Creation of Petition with returning filepath',
+            relativeFilePath
+        )
         return {
             status: true,
             filepath: relativeFilePath,
@@ -742,7 +773,10 @@ ipcMain.handle('create_publication_letter', async (event, data) => {
             : path.resolve(userBasePath, publication_letter.filepath)
 
         const filefolder = await shell.openExternal(resolvedPath)
-        console.log('[DEBUG  Publication Letter Path]', publication_letter.filepath)
+        console.log(
+            '[DEBUG  Publication Letter Path]',
+            publication_letter.filepath
+        )
         console.log('[DEBUG Opening Publication Letter Path]', resolvedPath)
         if (!filefolder) {
             await shell.openPath(resolvedPath)
@@ -1036,6 +1070,9 @@ app.on('window-all-closed', () => {
         // Unregister all global shortcuts
         globalShortcut.unregisterAll()
 
+        // Cleanup the temp folder
+        cleanupTempFolder()
+
         // Kill the Flask server if it's running
         if (flaskPID) {
             console.log(`Killing Flask server process with PID: ${flaskPID}`)
@@ -1051,6 +1088,9 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
     // Optional: Cleanup any resources before quitting
+    cleanupTempFolder()
+    globalShortcut.unregisterAll()
+
     if (flaskPID) {
         console.log(`Cleaning up Flask server process with PID: ${flaskPID}`)
         killProcessTree(flaskPID)
