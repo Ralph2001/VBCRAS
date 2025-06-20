@@ -646,7 +646,7 @@ async function generate_marriage_license(formData) {
             }
         })
 
-        form.flatten()
+        // form.flatten()
         const pdfBytes = await pdfDoc.saveAsBase64({ dataUri: true })
 
         return { status: true, pdfbase64: pdfBytes }
@@ -1236,6 +1236,9 @@ async function save_marriage_license_and_notice(formData, image) {
             `${data.groom_first_name} ${groomLastName} & ${data.bride_first_name} ${brideLastName}`
         )
 
+
+        console.log('[DEBUG] Marriage License Folder Name:', folderName)
+
         if (!folderName) {
             return {
                 status: false,
@@ -1243,17 +1246,29 @@ async function save_marriage_license_and_notice(formData, image) {
                     'Folder name could not be generated from provided names.'
             }
         }
+
         if (folderName.length > 100) {
             folderName = folderName.slice(0, 100)
+            console.log('[DEBUG: Path] Trimmed Folder Name:', folderName)
         }
 
-        // All output images will go to the "Gallery" subfolder inside the main output directory
         const galleryPath = path.join('Gallery', folderName)
+        console.log('[DEBUG: Path] Gallery Path:', galleryPath)
 
-        // Example: data.file_path = C:/VBCRAS/Application for Marriage License/2025/June
-        const cleanFilePath = path.normalize(+'\\' + data.file_path || '')
+        const cleanFilePath = data.file_path ? path.normalize(data.file_path) : ''
+
+        console.log('[DEBUG: Path] Clean File Path:', cleanFilePath)
+
         const outputDir = path.resolve(userBasePath, cleanFilePath, folderName)
-        const userPicturesDir = path.resolve(userBasePath, cleanFilePath, galleryPath)
+        console.log('[DEBUG: Path] Output Directory:', outputDir)
+
+        const userPicturesDir = path.resolve(
+            userBasePath,
+            cleanFilePath,
+            galleryPath
+        )
+        console.log('[DEBUG: Path] User Pictures Directory:', userPicturesDir)
+
 
 
         try {
@@ -1271,7 +1286,10 @@ async function save_marriage_license_and_notice(formData, image) {
             outputDir,
             'Application for Marriage License.pdf'
         )
+        console.log('[DEBUG: Path] Marriage License PDF Path:', marriageLicensePath)
+
         const marriageNoticePath = path.join(outputDir, 'Notice.pdf')
+        console.log('[DEBUG: Path] Marriage Notice PDF Path:', marriageNoticePath)
 
         // Write PDF files asynchronously
         try {

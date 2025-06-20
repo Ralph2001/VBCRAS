@@ -35,7 +35,10 @@
 
                     <div class="flex-1 h-full  w-full  flex justify-center items-center">
                         <div v-if="capturedImage === null" class="video h-full relative">
-                            <video class="h-full" ref="videoElement" autoplay playsinline></video>
+                            <!-- <video class="h-full" ref="videoElement" autoplay playsinline></video> -->
+                            <video class="h-full transform -scale-x-100" ref="videoElement" autoplay
+                                playsinline></video>
+
                             <div class="overlay absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div class="border border-gray-100   h-44 w-44"></div>
                             </div>
@@ -75,7 +78,7 @@
 
         <div @click="openCamera" tabindex="0"
             class="w-[170px] h-[166px] bg-gray-200 active:ring-2 focus:ring-2 outline-1 hover:bg-gray-300 transition-all duration-300 cursor-pointer  flex items-center justify-center">
-            <button  @click="openCamera" tabindex="-1">
+            <button @click="openCamera" tabindex="-1">
                 <font-awesome-icon icon="fa-solid fa-camera" class="text-2xl text-gray-600 hover:text-gray-800" />
             </button>
             <!-- <p v-else class="text-xs text-gray-700 font-mono">No Camera Detected</p> -->
@@ -159,11 +162,29 @@ const captureImage = () => {
         canvas.height = videoHeight;
 
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+        const zoom = 1.2; // 🔍 zoom factor (1.0 = no zoom)
+
+        // Calculate zoomed area
+        const zoomWidth = videoWidth / zoom;
+        const zoomHeight = videoHeight / zoom;
+        const offsetX = (videoWidth - zoomWidth) / 2;
+        const offsetY = (videoHeight - zoomHeight) / 2;
+
+        // ✅ Mirror and zoom the image
+        ctx.translate(videoWidth, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(
+            video,
+            offsetX, offsetY,        // source x, y (start from cropped area)
+            zoomWidth, zoomHeight,   // source width, height
+            0, 0,                     // destination x, y
+            videoWidth, videoHeight  // destination width, height (fills full canvas)
+        );
 
         const dataUrl = canvas.toDataURL('image/png', 1.0);
         capturedImage.value = dataUrl;
-        originalImage.value = dataUrl; // Save the original image
+        originalImage.value = dataUrl;
 
         if (mediaStream) {
             mediaStream.getTracks().forEach(track => track.stop());
@@ -171,6 +192,7 @@ const captureImage = () => {
         }
     });
 };
+
 
 const resetBrightness = () => {
     brightness.value = 100

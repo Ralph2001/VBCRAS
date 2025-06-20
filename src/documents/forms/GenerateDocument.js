@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 
 const fs = require('fs')
 const path = require('path')
+const os = require('os')
 
 // Configuration constants
 const CONFIG = {
@@ -25,8 +26,8 @@ const CONFIG = {
 // Main function to generate the PDF form
 export async function generateFormPDF(
     main_data,
-    isToSave = false,
-    filePath = null
+    isToSave,
+    filePath
 ) {
     const data = JSON.parse(main_data)
     const pdfDoc = await PDFDocument.create()
@@ -90,17 +91,26 @@ export async function generateFormPDF(
     if (isToSave) {
         if (filePath && typeof filePath === 'string' && filePath.trim()) {
             try {
-             
                 const buffer = Buffer.from(pdfBase64, 'base64')
-                const resolvedPath = path.resolve(filePath)
+
+                // If the filePath is not absolute, make it relative to user's home directory
+                const resolvedPath = path.isAbsolute(filePath)
+                    ? path.resolve(filePath)
+                    : path.resolve(os.homedir(), filePath)
+
                 const dir = path.dirname(resolvedPath)
 
-                // Ensure directory exists
+                // Ensure the directory exists
                 if (!fs.existsSync(dir)) {
                     fs.mkdirSync(dir, { recursive: true })
                 }
 
                 fs.writeFileSync(resolvedPath, buffer)
+
+                console.log('[DEBUG] Received Path:', filePath)
+                console.log('[DEBUG] Resolved Path:', resolvedPath)
+                console.log('[DEBUG] PDF saved to:', dir)
+
                 return { status: true, message: 'PDF saved successfully.' }
             } catch (err) {
                 return {
@@ -444,18 +454,18 @@ function create_we_clerify(data, page, height, fontSize, fonts) {
         data.form_type === '1A'
             ? 'birth'
             : data.form_type === '2A'
-              ? 'death'
-              : data.form_type === '3A'
-                ? 'marriage'
-                : ''
+                ? 'death'
+                : data.form_type === '3A'
+                    ? 'marriage'
+                    : ''
     const typeofdocument =
         data.form_type === '1A'
             ? 'Births'
             : data.form_type === '2A'
-              ? 'Deaths'
-              : data.form_type === '3A'
-                ? 'Marriage'
-                : ''
+                ? 'Deaths'
+                : data.form_type === '3A'
+                    ? 'Marriage'
+                    : ''
 
     page.drawText(
         `We certify that among others the following facts of ${type} appear in our Register of`,
@@ -563,10 +573,10 @@ function document_body_available(data, page, height, fontSize, fonts) {
     const table = data.form_type.includes('1A')
         ? table_for_1
         : data.form_type.includes('2A')
-          ? table_for_2
-          : data.form_type.includes('3A')
-            ? table_for_3
-            : []
+            ? table_for_2
+            : data.form_type.includes('3A')
+                ? table_for_3
+                : []
 
     let tableGap = 0
     const tablePositionX = Number(data.body_data.x)
@@ -584,18 +594,18 @@ function document_body_available(data, page, height, fontSize, fonts) {
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 145
                 : data.form_type.includes('3A') && item.another_data
-                  ? 72
-                  : data.form_type.includes('3A')
-                    ? 107
-                    : 0
+                    ? 72
+                    : data.form_type.includes('3A')
+                        ? 107
+                        : 0
         const xAdderForData =
             data.form_type.includes('1A') || data.form_type.includes('2A')
                 ? 155
                 : data.form_type.includes('3A') && item.another_data
-                  ? 79
-                  : data.form_type.includes('3A')
-                    ? 127
-                    : 0
+                    ? 79
+                    : data.form_type.includes('3A')
+                        ? 127
+                        : 0
 
         // Get the appropriate font size for each piece of data
         const dataFontSize = getFontSizeBasedOnLength(item.data)
@@ -654,17 +664,17 @@ function document_body_intact(
     const record_of = data.form_type.includes('1')
         ? 'of birth of '
         : data.form_type.includes('2')
-          ? 'of death of'
-          : data.form_type.includes('3')
-            ? 'of marriage between'
-            : ''
+            ? 'of death of'
+            : data.form_type.includes('3')
+                ? 'of marriage between'
+                : ''
     const have_b = data.form_type.includes('1')
         ? 'have been born'
         : data.form_type.includes('2')
-          ? 'have died'
-          : data.form_type.includes('3')
-            ? 'have been married'
-            : ''
+            ? 'have died'
+            : data.form_type.includes('3')
+                ? 'have been married'
+                : ''
     const is_for_1 = data.form_type.includes('1')
         ? `, of parents {{${data.father_name}}}${data.mother_name ? ` and {{${data.mother_name}}}` : ''}`
         : ''
@@ -681,32 +691,32 @@ function document_body_intact(
     const certificate_of = data.form_type.includes('1')
         ? 'Live Birth'
         : data.form_type.includes('2')
-          ? 'Death'
-          : data.form_type.includes('3')
-            ? 'Marriage'
-            : ''
+            ? 'Death'
+            : data.form_type.includes('3')
+                ? 'Marriage'
+                : ''
     const register_of = data.form_type.includes('1')
         ? 'Births'
         : data.form_type.includes('2')
-          ? 'Deaths'
-          : data.form_type.includes('3')
-            ? 'Marriages'
-            : ''
+            ? 'Deaths'
+            : data.form_type.includes('3')
+                ? 'Marriages'
+                : ''
 
     const document_owner = data.form_type.includes('1')
         ? data.no_record_birth_of
         : data.form_type.includes('2')
-          ? data.no_record_death_of
-          : data.form_type.includes('3')
-            ? data.no_record_marriage_of
-            : ''
+            ? data.no_record_death_of
+            : data.form_type.includes('3')
+                ? data.no_record_marriage_of
+                : ''
     const date_field = data.form_type.includes('1')
         ? data.born_on
         : data.form_type.includes('2')
-          ? data.died_on
-          : data.form_type.includes('3')
-            ? data.married_on
-            : ''
+            ? data.died_on
+            : data.form_type.includes('3')
+                ? data.married_on
+                : ''
 
     const we_clerify_for_b = `We certify that this office has no record ${record_of} {{${document_owner}}} ${is_for_3} ${the_who_b} alleged to ${have_b} on {{${date_field}}} in this municipality${is_for_1}. Hence, we cannot issue, as requested, a true copy of his/her Certificate of ${certificate_of} or transcription from the Register of ${register_of}.`
 
@@ -747,17 +757,17 @@ function document_body_intact(
     const we_also_certify_records_of_b = data.form_type.includes('1')
         ? 'births'
         : data.form_type.includes('2')
-          ? 'deaths'
-          : data.form_type.includes('3')
-            ? 'marriage'
-            : ''
+            ? 'deaths'
+            : data.form_type.includes('3')
+                ? 'marriage'
+                : ''
     const intact_year = data.form_type.includes('1')
         ? data.intact_birth_year
         : data.form_type.includes('2')
-          ? data.intact_death_year
-          : data.form_type.includes('3')
-            ? data.intact_marriage_year
-            : ''
+            ? data.intact_death_year
+            : data.form_type.includes('3')
+                ? data.intact_marriage_year
+                : ''
     const for_B = `We also certify that the records of ${we_also_certify_records_of_b} for the year {{${intact_year}}} are still intact in the archives of this office`
 
     const we_also_certify_with_break = add_line_break(
@@ -809,18 +819,18 @@ function document_body_destroyed(
     const document_owner = data.form_type.includes('1')
         ? `${data.birth_name}`
         : data.form_type.includes('2')
-          ? `${data.death_name}`
-          : data.form_type.includes('3')
-            ? `${data.groom_name} and ${data.bride_name}`
-            : ''
+            ? `${data.death_name}`
+            : data.form_type.includes('3')
+                ? `${data.groom_name} and ${data.bride_name}`
+                : ''
 
     const date_field = data.form_type.includes('1')
         ? `${data.born_on}`
         : data.form_type.includes('2')
-          ? `${data.died_on}`
-          : data.form_type.includes('3')
-            ? `${data.married_on}`
-            : ''
+            ? `${data.died_on}`
+            : data.form_type.includes('3')
+                ? `${data.married_on}`
+                : ''
 
     const isBirth =
         data.form_type.includes('1') && data.father_name
@@ -830,34 +840,34 @@ function document_body_destroyed(
     const eventPlural = data.form_type.includes('1')
         ? 'births'
         : data.form_type.includes('2')
-          ? 'deaths'
-          : data.form_type.includes('3')
-            ? 'marriages'
-            : ''
+            ? 'deaths'
+            : data.form_type.includes('3')
+                ? 'marriages'
+                : ''
 
     const eventRegister = data.form_type.includes('1')
         ? 'Register of Births'
         : data.form_type.includes('2')
-          ? 'Register of Deaths'
-          : data.form_type.includes('3')
-            ? 'Register of Marriages'
-            : ''
+            ? 'Register of Deaths'
+            : data.form_type.includes('3')
+                ? 'Register of Marriages'
+                : ''
 
     const certificateType = data.form_type.includes('1')
         ? 'Certificate of Live Birth'
         : data.form_type.includes('2')
-          ? 'Certificate of Death'
-          : data.form_type.includes('3')
-            ? 'Certificate of Marriage'
-            : ''
+            ? 'Certificate of Death'
+            : data.form_type.includes('3')
+                ? 'Certificate of Marriage'
+                : ''
 
     const eventVerb = data.form_type.includes('1')
         ? 'born'
         : data.form_type.includes('2')
-          ? 'died'
-          : data.form_type.includes('3')
-            ? 'married'
-            : ''
+            ? 'died'
+            : data.form_type.includes('3')
+                ? 'married'
+                : ''
 
     const we_clerify_for_c = `We certify that the records of ${eventPlural} filed in the archives of this office, include those which were registered from {{${data.registered_from}}} to present. However, the records of ${eventPlural} during the period {{${data.from_year} to ${data.to_year}}} were totally destroyed by {{${data.destroyed_by}}}. Hence, we cannot issue as requested a true transcription from the ${eventRegister} or true copy of the ${certificateType} of {{${document_owner}}} who was alleged to have been ${eventVerb} on {{${date_field}}} in this municipality${isBirth}.`
 
@@ -1194,10 +1204,10 @@ async function remark_annotation_maker(config, data, fonts, page, pdfDoc) {
             attributes.bold && attributes.italic
                 ? fonts.boldItalic
                 : attributes.bold
-                  ? fonts.bold
-                  : attributes.italic
-                    ? fonts.italic
-                    : fonts.regular
+                    ? fonts.bold
+                    : attributes.italic
+                        ? fonts.italic
+                        : fonts.regular
 
         const fontSize = Number(config.remarks_config.font)
 
@@ -1390,10 +1400,10 @@ function add_line_break(
         item.includes('{{') && item.includes('}}')
             ? (isBold = false)
             : item.includes('{{')
-              ? (isBold = true)
-              : item.includes('}}')
-                ? (isBold = false)
-                : ''
+                ? (isBold = true)
+                : item.includes('}}')
+                    ? (isBold = false)
+                    : ''
 
         const tell_the_max_space =
             this_is_not_the_first || item !== 'archives' ? 415 : 415

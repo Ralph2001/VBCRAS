@@ -33,6 +33,7 @@ export const AuthStore = defineStore('auth', {
                 this.error = error.response.data.error
             }
         },
+
         async signUp(username, password) {
             try {
                 const host = useHostStore()
@@ -81,6 +82,29 @@ export const AuthStore = defineStore('auth', {
                 return false
             }
         },
+        async validatePassword(password) {
+            try {
+                const host = useHostStore()
+                const hostAddress = host.host || localStorage.getItem('host')
+
+                const response = await axios.post(
+                    `http://${hostAddress}:1216/validate-password`,
+                    { password },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${this.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                )
+
+                return response.data.valid
+            } catch (error) {
+                console.error('[validatePassword] Error:', error)
+                return false
+            }
+        },
+
         logout() {
             this.token = null
             localStorage.removeItem('token')

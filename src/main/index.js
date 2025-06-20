@@ -107,10 +107,69 @@ async function validateDirectoryPath(filePath) {
     }
 }
 
+function validateAndSanitizeWhitespace(input, options = {}) {
+    const { requireNonEmpty = false, sanitizeForFilename = false } = options
+
+    if (typeof input !== 'string') {
+        throw new TypeError('Input must be a string')
+    }
+
+    // Trim and normalize whitespace
+    let sanitized = input.trim().replace(/\s+/g, ' ')
+
+    if (sanitizeForFilename) {
+        // Allow letters, numbers, spaces, dashes, underscores
+        // Remove forbidden Windows characters and also remove trailing hyphen
+        sanitized = sanitized
+            .replace(/[\\/:*?"<>|.]/g, '') // Remove invalid Windows characters
+            .replace(/-+$/, '') // Remove trailing hyphen(s)
+    }
+
+    if (requireNonEmpty && sanitized.length === 0) {
+        return {
+            valid: false,
+            sanitized: ''
+        }
+    }
+
+    return sanitized
+}
+
+async function cleanupTempFolder() {
+    try {
+        const tempDir = join(__dirname, '../../resources/temp/').replace(
+            'app.asar',
+            'app.asar.unpacked'
+        )
+        console.log('[DEBUG] Temp Path:', tempDir)
+
+        // Check access to the directory
+        await fsp.access(tempDir, fs.constants.R_OK | fs.constants.W_OK)
+        console.log('[Cleanup] Temp directory is accessible.')
+
+        // Read all contents inside the directory
+        const items = await fsp.readdir(tempDir)
+        for (const item of items) {
+            const itemPath = path.join(tempDir, item)
+            const stat = await fsp.stat(itemPath)
+
+            if (stat.isDirectory()) {
+                await fsp.rm(itemPath, { recursive: true, force: true })
+                console.log(`[Cleanup] Deleted folder: ${item}`)
+            } else {
+                await fsp.unlink(itemPath)
+                console.log(`[Cleanup] Deleted file: ${item}`)
+            }
+        }
+    } catch (error) {
+        console.error('[Cleanup] Error cleaning temp folder:', error.message)
+    }
+}
+
+
 ipcMain.handle('validate-path', async (_, filePath) => {
     return await validateDirectoryPath(filePath)
 })
-
 ipcMain.handle('read-pdf-file', async (_, filePath) => {
     try {
         if (!filePath || typeof filePath !== 'string') {
@@ -127,6 +186,7 @@ ipcMain.handle('read-pdf-file', async (_, filePath) => {
         return { status: false, fileUrl: null }
     }
 })
+
 
 /**
  * Main Printer Opener
@@ -252,42 +312,10 @@ ipcMain.handle(
     }
 )
 
-async function cleanupTempFolder() {
-    try {
-        const tempDir = join(__dirname, '../../resources/temp/').replace(
-            'app.asar',
-            'app.asar.unpacked'
-        )
-        console.log('[DEBUG] Temp Path:', tempDir)
 
-        // Check access to the directory
-        await fsp.access(tempDir, fs.constants.R_OK | fs.constants.W_OK)
-        console.log('[Cleanup] Temp directory is accessible.')
-
-        // Read all contents inside the directory
-        const items = await fsp.readdir(tempDir)
-        for (const item of items) {
-            const itemPath = path.join(tempDir, item)
-            const stat = await fsp.stat(itemPath)
-
-            if (stat.isDirectory()) {
-                await fsp.rm(itemPath, { recursive: true, force: true })
-                console.log(`[Cleanup] Deleted folder: ${item}`)
-            } else {
-                await fsp.unlink(itemPath)
-                console.log(`[Cleanup] Deleted file: ${item}`)
-            }
-        }
-    } catch (error) {
-        console.error('[Cleanup] Error cleaning temp folder:', error.message)
-    }
-}
-
-/**
- * Form IPC
- * @FORM
- * Document
- */
+// ==============================
+// Form Section
+// ==============================
 
 ipcMain.handle('previewFormPDF', async (event, formData) => {
     try {
@@ -302,7 +330,8 @@ ipcMain.handle(
     'saveFormPDF',
     async (_, { data, form_type, documentOwner, basePath }) => {
         const timestamp = Date.now()
-        const sanitizedOwner = documentOwner.replace(/[<>:"/\\|?*]+/g, '_')
+        const sanitizedFormType = validateAndSanitizeWhitespace(form_type, { sanitizeForFilename: true })
+        const sanitizedOwner = validateAndSanitizeWhitespace(documentOwner, { sanitizeForFilename: true })
         const fileName = `${sanitizedOwner}_${timestamp}.pdf`
 
         const year = new Date().getFullYear()
@@ -327,11 +356,12 @@ ipcMain.handle(
             'FORMS',
             year.toString(),
             month,
-            `Form ${form_type}`
+            `Form ${sanitizedFormType}`
         )
 
         const fullFilePath = path.join(folderPath, fileName)
 
+        // SynologyDrive\VBCRAS\FORMS\2025\June\Form 1A\RALPH ADVINCULA VILLANUEVA_1750384839566.pdf
         try {
             const pdfBuffer = await generateFormPDF(data, true, fullFilePath)
             console.log(pdfBuffer)
@@ -354,46 +384,10 @@ ipcMain.handle(
         }
     }
 )
+// ==============================
+// Ausf Section
+// ==============================
 
-// ipcMain.handle('createPdfForm', async (event, formData) => {
-//     try {
-//         const generate_record = await generate_form(formData)
-//         if ((generate_record.success = true)) {
-//             return {
-//                 status: generate_record.status,
-//                 filepath: true,
-//                 dataurl: generate_record.pdfbase64
-//             }
-//         }
-//     } catch (error) {
-//         console.log(error)
-//     }
-// })
-
-// ipcMain.handle('open-form', async (event, source) => {
-//     try {
-//         win = new BrowserWindow({
-//             webPreferences: {
-//                 plugins: true,
-//                 devTools: true
-//             },
-
-//             autoHideMenuBar: true,
-//             show: true
-//         })
-
-//         const load = await win.loadURL(source)
-//         return true
-//     } catch (error) {
-//         win.close()
-//         return false
-//     }
-// })
-/////////////
-/////////////
-// AUSF
-/////////////
-/////////////
 
 ipcMain.handle('createLegitimation', async (event, formData) => {
     try {
@@ -402,12 +396,6 @@ ipcMain.handle('createLegitimation', async (event, formData) => {
         console.log(error)
     }
 })
-
-/////////////
-/////////////
-// AUSF
-/////////////
-/////////////
 
 ipcMain.handle('createAUSF', async (event, formData) => {
     try {
@@ -423,6 +411,7 @@ ipcMain.handle('createAUSF', async (event, formData) => {
         console.log(error)
     }
 })
+
 
 // ==============================
 // Clerical Section
@@ -547,34 +536,6 @@ function executeCommand(executable, originalDirectory, outputDirectory, args) {
  *  para i convert na ito
  */
 
-function validateAndSanitizeWhitespace(input, options = {}) {
-    const { requireNonEmpty = false, sanitizeForFilename = false } = options
-
-    if (typeof input !== 'string') {
-        throw new TypeError('Input must be a string')
-    }
-
-    // Trim and normalize whitespace
-    let sanitized = input.trim().replace(/\s+/g, ' ')
-
-    if (sanitizeForFilename) {
-        // Allow letters, numbers, spaces, dashes, underscores
-        // Remove forbidden Windows characters and also remove trailing hyphen
-        sanitized = sanitized
-            .replace(/[\\/:*?"<>|.]/g, '') // Remove invalid Windows characters
-            .replace(/-+$/, '') // Remove trailing hyphen(s)
-    }
-
-    if (requireNonEmpty && sanitized.length === 0) {
-        return {
-            valid: false,
-            sanitized: ''
-        }
-    }
-
-    return sanitized
-}
-
 ipcMain.handle('proceedCreatePetition', async (event, formData) => {
     try {
         const data = JSON.parse(formData)
@@ -609,11 +570,11 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         const documentOwner =
             data.document_owner === 'N/A'
                 ? validateAndSanitizeWhitespace(data.petitioner_name, {
-                      sanitizeForFilename: true
-                  })
+                    sanitizeForFilename: true
+                })
                 : validateAndSanitizeWhitespace(data.document_owner, {
-                      sanitizeForFilename: true
-                  })
+                    sanitizeForFilename: true
+                })
 
         const date_filed = data.date_filed
         const year = new Date(date_filed).getFullYear().toString()
@@ -917,76 +878,42 @@ function showNotification(NOTIFICATION_TITLE, NOTIFICATION_BODY) {
  */
 
 // Function to handle updates
+let isUpdateDownloaded = false;
+
 function handleUpdates(mainWindow) {
-    autoUpdater.checkForUpdatesAndNotify()
+    autoUpdater.autoDownload = true;
+    autoUpdater.checkForUpdatesAndNotify();
 
     autoUpdater.on('checking-for-update', (info) => {
-        mainWindow.webContents.send('checking-for-update', info)
-    })
+        mainWindow.webContents.send('checking-for-update', info);
+    });
 
     autoUpdater.on('update-available', (info) => {
         showNotification(
             'Update Available',
-            'A new update is ready for download. The process will begin shortly to ensure you have the latest features and improvements. Thank you for keeping your application up-to-date.'
-        )
-        mainWindow.webContents.send('update-available', info)
-    })
+            'A new update is ready for download. The process will begin shortly.'
+        );
+        mainWindow.webContents.send('update-available', info);
+    });
+
     autoUpdater.on('update-not-available', (info) => {
-        mainWindow.webContents.send('update-not-available', info)
-    })
+        mainWindow.webContents.send('update-not-available', info);
+    });
 
     autoUpdater.on('update-downloaded', (info) => {
+        isUpdateDownloaded = true;
         showNotification(
             'Update Downloaded',
-            'The update has been downloaded. Please restart the app to apply the update.'
-        )
-        mainWindow.webContents.send('update-downloaded', info)
-        // Do Not Quit
-        // autoUpdater.quitAndInstall();
-    })
+            'The update has been downloaded. It will be installed after you quit the application.'
+        );
+        mainWindow.webContents.send('update-downloaded', info);
+    });
 
     autoUpdater.on('error', (err) => {
-        log.error('Error while checking for updates:', err)
-        mainWindow.webContents.send('update-error', err.message)
-    })
+        log.error('Update error:', err);
+        mainWindow.webContents.send('update-error', err.message);
+    });
 }
-// // Function to check if the executable is already whitelisted
-// function isWhitelisted() {
-//     const whitelistFilePath = join(__dirname, '../../resources/app/whitelist.txt').replace('app.asar', 'app.asar.unpacked');
-//     // Check if the file exists and contains a success marker
-//     return fs.existsSync(whitelistFilePath);
-// }
-
-// function markAsWhitelisted() {
-//     const whitelistFilePath = join(__dirname, '../../resources/app/whitelist.txt').replace('app.asar', 'app.asar.unpacked');
-//     // Create a file to mark the executable as whitelisted
-//     fs.writeFileSync(whitelistFilePath, 'whitelisted', 'utf8');
-// }
-
-// function runPermissionController() {
-//     try {
-//         if (isWhitelisted()) {
-//             return true
-//         }
-//         const batFilePath = join(__dirname, '../../resources/app/permission.bat').replace('app.asar', 'app.asar.unpacked');
-//         execFile(batFilePath, (error, stdout, stderr) => {
-//             if (error) {
-//                 console.error(`Error executing batch file: ${error.message}`);
-//                 return false
-//             }
-//             if (stderr) {
-//                 console.error(`stderr: ${stderr}`);
-//                 return false
-//             }
-
-//         });
-//         markAsWhitelisted();
-//         return true
-//     } catch (error) {
-//         console.log(error)
-//         return false
-//     }
-// }
 
 function mainWindow() {
     const mainWindow = new BrowserWindow({
@@ -1025,9 +952,25 @@ function mainWindow() {
     ipcMain.handle('app-version', () => app.getVersion())
     handleUpdates(mainWindow)
 
-    // Listen for the close event on the window
     mainWindow.on('close', (e) => {
-        // Display a modal confirmation dialog
+        if (isUpdateDownloaded) {
+            e.preventDefault();
+
+            dialog.showMessageBoxSync(mainWindow, {
+                type: 'info',
+                title: 'Installing Update',
+                message: 'Please wait while the update is being installed.',
+                buttons: ['OK'],
+                defaultId: 0
+            });
+
+            // Give UI time to show dialog before quitting
+            setTimeout(() => {
+                autoUpdater.quitAndInstall(false, true);
+            }, 1000);
+            return;
+        }
+
         const choice = dialog.showMessageBoxSync(mainWindow, {
             type: 'question',
             buttons: ['Exit', 'Cancel'],
@@ -1036,12 +979,12 @@ function mainWindow() {
             defaultId: 0,
             cancelId: 1,
             noLink: true
-        })
+        });
 
         if (choice === 1) {
-            e.preventDefault()
+            e.preventDefault();
         }
-    })
+    });
 }
 
 app.whenReady().then(() => {
@@ -1351,31 +1294,18 @@ ipcMain.handle('previewMarriage', async (event, formData) => {
         console.log(error)
     }
 })
+
 ipcMain.handle('printMarriage', async (event, formData, params) => {
     try {
         const print_application_for_marriage_license =
             await print_decided_license(formData, params)
-        if (
-            print_application_for_marriage_license &&
-            print_application_for_marriage_license.pdfbase64
-        ) {
-            // await printPDF(
-            //     print_application_for_marriage_license.pdfbase64,
-            //     sumatraPath
-            // )
 
-            await printPDF(
-                print_application_for_marriage_license.pdfbase64,
-                sumatraPath,
-                'Legal'
-            )
-
-            return { status: true }
-        } else {
-            console.error('Failed to generate valid PDF base64 data.')
+        if (print_application_for_marriage_license.status) {
+            return { status: true, pdfbase64: print_application_for_marriage_license.pdfbase64 }
         }
     } catch (error) {
         console.error('Error in printing marriage application:', error)
+        return { status: false, pdfbase64: null }
     }
 })
 

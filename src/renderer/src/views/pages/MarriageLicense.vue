@@ -162,7 +162,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[0]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-1 gap-2 mb-auto">
@@ -196,7 +196,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[1]
-                                        }}
+                                            }}
                                         </p>
                                     </div>
 
@@ -313,7 +313,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[2]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-3 gap-1 items-end">
@@ -427,7 +427,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[3]
-                                        }}
+                                            }}
                                         </p>
                                     </div>
                                     <div class="grid grid-cols-3 gap-1 items-end">
@@ -542,7 +542,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[4]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
 
@@ -649,7 +649,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[5]
-                                    }}
+                                        }}
                                     </p>
                                 </div>
 
@@ -676,11 +676,11 @@
 
                                 <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
-                                    }}
+                                        }}
                                     </p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                                         steps[6]
-                                    }} Details
+                                        }} Details
                                     </p>
                                 </div>
                                 <div class="w-80 mt-8">
@@ -774,106 +774,97 @@
                                 </div>
 
                             </div>
+
                             <div v-if="currentStep === 7 || form_mode === 1"
-                                class="px-4 h-full gap-4 flex flex-col mt-8 mb-2">
+                                class="px-6 h-full flex flex-col gap-6 mt-6 mb-2">
+
                                 <!-- Section Header -->
                                 <div v-if="form_mode === 1">
-                                    <p class="font-bold text-xl mb-4 uppercase text-gray-900">{{ steps[7] }}</p>
+                                    <h2 class="text-lg font-semibold text-gray-800 mb-2">{{ steps[7] }}</h2>
                                 </div>
 
                                 <!-- Step 1: Select Document -->
                                 <div>
-                                    <label class="font-semibold flex items-center gap-1">
-                                        <span>1. What document do you want to preview and print?</span>
+                                    <label class="text-gray-700 font-medium flex items-center gap-1">
+                                        <span>1. Select a document to preview and print</span>
                                         <font-awesome-icon icon="fa-solid fa-circle-question"
                                             class="text-gray-400 cursor-pointer"
                                             title="Select the document you want to preview and print." />
                                     </label>
-                                    <div class="flex gap-2 mt-2">
+
+                                    <div class="flex flex-wrap gap-2 mt-3">
                                         <button
-                                            :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 1 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
+                                            :class="['px-4 py-2 rounded-lg border font-medium transition', select_page === 1 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 hover:bg-gray-100']"
                                             @click="select_page = 1; change_page()">
                                             Application for Marriage License
                                         </button>
                                         <button
-                                            :class="['px-4 py-2 rounded-md border transition-colors font-medium  shadow-sm', select_page === 2 ? 'bg-blue-500 text-white' : 'bg-white   text-gray-700']"
+                                            :class="['px-4 py-2 rounded-lg border font-medium transition', select_page === 2 ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 hover:bg-gray-100']"
                                             @click="select_page = 2; change_page()">
                                             Notice of Posting
                                         </button>
                                     </div>
                                 </div>
 
+                                <!-- Step 2: Print Options -->
                                 <div>
-                                    <label class="font-semibold mt-4">2. Print</label>
-                                    <div class="flex flex-col gap-2 mt-1">
-                                        <div v-if="select_page === 1" class="flex flex-row gap-2 relative">
-                                            <button @click="printAFML()"
-                                                class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
-                                                <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print
-                                                Application for Marriage License
-                                            </button>
-                                            <button @click="openAFMLSetting()"
-                                                class="flex gap-2 px-3 py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 w-52 items-center justify-center text-white text-sm transition-colors">
-                                                <font-awesome-icon icon="fa-solid fa-gear" />
-                                                Adjust Position
-                                            </button>
+                                    <label class="text-gray-700 font-medium">2. Print Options</label>
 
-                                            <!-- Settings Panel -->
-                                            <div v-if="afml_setting"
-                                                class="absolute right-0 top-14 shadow-lg border p-2 w-56 h-auto bg-white rounded-md z-10">
-                                                <p class="text-center font-medium">Print Position Adjustment</p>
-                                                <div class="flex flex-col mt-2">
-                                                    <div class="flex flex-row items-center gap-4">
-                                                        <font-awesome-icon icon="fa-solid fa-x" class="text-xs w-10" />
-                                                        <InputMarriage v-model="pdf_settings.x" type="number"
-                                                            step="0.1" />
-                                                    </div>
-                                                    <div class="flex flex-row items-center gap-4">
-                                                        <font-awesome-icon icon="fa-solid fa-y" class="text-xs w-10" />
-                                                        <InputMarriage v-model="pdf_settings.y" type="number"
-                                                            step="0.1" />
-                                                    </div>
-                                                    <button class="w-full rounded-md mt-4 bg-blue-500 h-10 text-white"
-                                                        @click="saveAFMLSetting()">Save</button>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="flex flex-wrap items-center justify-between gap-4 mt-2">
+                                        <PrintManager :active_pdf_link="base64forPrinting" :active_pdf="''"
+                                            :count="1" />
 
-                                        <button v-if="select_page === 2" @click="printNoticePosting()"
-                                            class="bg-gray-200 hover:bg-gray-300 py-2 rounded-md text-gray-800 w-full">
-                                            <font-awesome-icon icon="fa-solid fa-print" class="mr-1" /> Print Notice of
-                                            Posting
+                                        <button v-if="page === 1" @click="openAFMLSetting()"
+                                            class="flex items-center gap-2 px-3 py-2 text-sm rounded-md bg-indigo-500 hover:bg-indigo-600 text-white transition">
+                                            <font-awesome-icon icon="fa-solid fa-gear" />
+                                            Adjust
                                         </button>
+                                    </div>
+
+                                    <!-- Position Adjustment Popup -->
+                                    <div v-if="afml_setting"
+                                        class="absolute right-0 top-20 w-64 bg-white rounded-lg shadow-lg p-4 z-50">
+                                        <h3 class="text-center font-semibold text-gray-700 mb-3">Adjust Print Position
+                                        </h3>
+                                        <div class="space-y-3">
+                                            <div class="flex items-center gap-4">
+                                                <font-awesome-icon icon="fa-solid fa-x" class="w-5 text-gray-500" />
+                                                <InputMarriage v-model="pdf_settings.x" type="number" step="0.1" />
+                                            </div>
+                                            <div class="flex items-center gap-4">
+                                                <font-awesome-icon icon="fa-solid fa-y" class="w-5 text-gray-500" />
+                                                <InputMarriage v-model="pdf_settings.y" type="number" step="0.1" />
+                                            </div>
+                                            <button
+                                                class="w-full mt-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                @click="saveAFMLSetting()">
+                                                Save
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Step 2: Document Preview -->
+                                <!-- Step 3: Document Preview -->
                                 <div>
-                                    <label class="font-semibold mt-4">3. Document Preview</label>
-                                    <div class="mt-2 bg-gray-50 rounded-xl  shadow-inner flex items-center justify-center h-[30rem] relative"
-                                        ref="pdfContainer">
+                                    <label class="text-gray-700 font-medium">3. Document Preview</label>
+                                    <div ref="pdfContainer"
+                                        class="mt-3 relative h-[30rem] bg-white rounded-lg border border-gray-200 shadow-inner flex items-center justify-center">
+
                                         <button
-                                            class="absolute top-2  right-4 z-10 bg-white shadow px-3 py-1 rounded text-sm hover:bg-gray-100"
+                                            class="absolute top-2 right-4 z-10 px-3 py-1 text-sm rounded bg-white border shadow hover:bg-gray-100 transition"
                                             @click="toggleFullScreen">
                                             {{ isFullScreen ? 'Exit Full Screen' : 'Full Screen' }}
-
                                         </button>
 
-
-                                        <p v-if="isLoadingPrev" class="italic text-gray-600">Loading preview...</p>
-                                        <PDFViewerWorker :pdfBytes64="pdf_content" v-if="pdf_content" />
-                                        <p v-if="!pdf_content && !isLoadingPrev"
-                                            class="italic text-gray-500 flex items-center gap-2">
-
+                                        <p v-if="isLoadingPrev" class="italic text-gray-500">Loading preview...</p>
+                                        <PDFViewerWorker v-if="pdf_content" :pdfBytes64="pdf_content" />
+                                        <p v-if="!pdf_content && !isLoadingPrev" class="italic text-gray-400">
                                             Select a document above to see a preview.
                                         </p>
                                     </div>
-
                                 </div>
-
-                                <!-- Step 3: Print -->
-
                             </div>
+
 
                         </div>
 
@@ -926,12 +917,8 @@
 
 
                 <!-- Print Buttons -->
-                <div v-if="previewPage === 1" class="flex items-center gap-2 ml-auto">
-                    <button @click="handlePreviewPrint()"
-                        class="bg-green-500 hoverbg-green-600 text-white px-4 py-2 rounded">
-                        <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
-                        Print Application
-                    </button>
+                <div class="flex items-center gap-2 ml-auto">
+                    <PrintManager :active_pdf_link="previewPdfContent" :active_pdf="''" :count="1" />
                     <button @click="openAFMLSetting()"
                         class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded flex items-center gap-2">
                         <font-awesome-icon icon="fa-solid fa-gear" />
@@ -939,15 +926,15 @@
                     </button>
                 </div>
 
-                <button v-if="previewPage === 2" @click="handlePreviewPrint()"
-                    class="bg-green-500 text-white px-4 py-2 rounded ml-auto">
+                <!-- <button @click="handlePreviewPrint()" class="bg-green-500 text-white px-4 py-2 rounded ml-auto">
                     <font-awesome-icon icon="fa-solid fa-print" class="mr-1" />
                     Print Notice
-                </button>
+                </button> -->
             </div>
 
             <!-- Settings Panel -->
-            <div v-if="afml_setting" class="absolute right-4 top-20 bg-white border shadow-xl rounded-md p-4 w-64 z-50">
+            <div v-if="afml_setting"
+                class="absolute right-4 top-20 bg-white border shadow-xl rounded-md p-4 w-64 z-[90]">
                 <h3 class="text-center font-semibold mb-2">Print Position Adjustment</h3>
                 <div class="space-y-4">
                     <div class="flex items-center gap-4">
@@ -1005,6 +992,7 @@ import { addDays, format, isFriday, isValid, nextMonday, parseISO } from 'date-f
 import { useSetup } from '../../stores/Setting/setup.js';
 import IsPathAccessible from '../../components/IsPathAccessible.vue';
 import { useComputerStore } from '../../stores/computer.js';
+import PrintManager from '../../components/PrintManager.vue';
 
 const computer = useComputerStore()
 
@@ -1165,12 +1153,12 @@ const paper_size = computed(() => {
 
 const select_page = ref(0)
 const change_page = async () => {
-    if (!(await validateForm())) {
+    // if (!(await validateForm())) {
 
-        page.value = 0
-        select_page.value = 0
-        return
-    }
+    //     page.value = 0
+    //     select_page.value = 0
+    //     return
+    // }
 
     page.value = select_page.value
     preview_document()
@@ -1183,8 +1171,8 @@ const preview = ref(false)
 const pdf_content = ref(null)
 
 const pdf_settings = reactive({
-    x: 0,
-    y: 0,
+    x: 1,
+    y: 0.8,
 })
 onMounted(() => {
     const saved = localStorage.getItem('afml_pdf_settings')
@@ -1199,12 +1187,29 @@ onMounted(() => {
     }
 })
 
+
+
 const apl = useApplicationMarriageLicense()
 
 onMounted(() => {
     auth.isAuthenticated()
     apl.getApplicationMarriageLicense()
 });
+
+watch(() => pdf_settings.x, (newX, oldX) => {
+    console.log(`X changed from ${oldX} to ${newX}`)
+    // Call your function here
+    preview_document()
+})
+
+// Watch `y` changes
+watch(() => pdf_settings.y, (newY, oldY) => {
+    console.log(`Y changed from ${oldY} to ${newY}`)
+    // Call your function here
+    preview_document()
+})
+
+
 
 /**
  * Main Modal
@@ -1687,11 +1692,14 @@ const validateForm = async () => {
     }
     return true
 }
+
+const base64forPrinting = ref(null)
 const preview_document = async () => {
-    if (!(await validateForm())) return
+    // if (!(await validateForm())) return
 
     isLoadingPrev.value = true
     pdf_content.value = null
+    base64forPrinting.value = null
 
     const data = JSON.stringify({ ...formData })
 
@@ -1699,16 +1707,28 @@ const preview_document = async () => {
         let previewData
 
         if (page.value === 1) {
+            base64forPrinting.value = null
+
             previewData = await window.MarriageApi.previewMarriage(data)
+            const base64forPrint = await printAFML()
+            base64forPrinting.value = base64forPrint || null
+
+
         } else if (page.value === 2) {
+            base64forPrinting.value = null
+
             const images = JSON.stringify([
                 bride_picture.value,
                 groom_picture.value
             ])
             previewData = await window.MarriageApi.previewNotice(data, images)
-        }
+            base64forPrinting.value = previewData.pdfbase64?.replace('data:application/pdf;base64,', '')
 
+
+        }
         pdf_content.value = previewData?.pdfbase64 || null
+
+
     } catch (err) {
         console.error('Preview failed:', err)
     } finally {
@@ -1730,32 +1750,20 @@ const saveAFMLSetting = () => {
 
 }
 
-
 const printAFML = async () => {
-    if (!(await validateForm())) return
-
     const data = JSON.stringify({ ...formData })
     const settings = JSON.stringify({ ...pdf_settings })
 
     const previewData = await window.MarriageApi.printMarriage(data, settings)
+
+    if (previewData.status) {
+        return previewData.pdfbase64
+    }
+    return false
 }
 
 const getBrideGroomImages = () => JSON.stringify([bride_picture.value, groom_picture.value])
 
-const printNoticePosting = async () => {
-    if (!(await validateForm())) return
-
-    const data = JSON.stringify({ ...formData })
-
-    const image_data = getBrideGroomImages
-
-    const previewData = await window.MarriageApi.previewNotice(data, image_data)
-
-    if (previewData?.pdfbase64) {
-        const dataUri = removeBase64Prefix(previewData.pdfbase64)
-        await window.MarriageApi.printNotice(dataUri)
-    }
-}
 
 const submit = async () => {
     if (!(await validateForm())) return
@@ -1869,11 +1877,17 @@ const cancelRemove = () => {
 const confirmDeleteWithPassword = async () => {
     deleteError.value = ''
 
-    const isValid = await auth.validatePassword(deletePassword.value)
-    if (!isValid) {
-        deleteError.value = 'Incorrect password. Please try again.'
-        return
+    try {
+        const isValid = await auth.validatePassword(deletePassword.value)
+        if (!isValid) {
+            deleteError.value = 'Incorrect password. Please try again.'
+            return
+        }
+    } catch (e) {
+        deleteError.value = 'Could not validate password. Please try again later.'
     }
+
+
     await proceedRemoveRecord(idToRemove.value)
     showPasswordInput.value = false
     deletePassword.value = ''
@@ -1930,9 +1944,12 @@ const closePreviewModal = () => {
     isDocReady.value = false
 }
 
+const loadPreviewPrintBase64 = ref(null)
 const loadPreview = async () => {
     if (!selectedRecord.value?.id) return;
 
+
+    loadPreviewPrintBase64.value = null
     isDocReady.value = false;
     previewPdfContent.value = null;
 
@@ -1983,51 +2000,51 @@ watch(previewPage, () => {
 })
 
 
-const handlePreviewPrint = async () => {
-    if (!selectedRecord.value?.id) {
-        console.warn("No record selected for printing.");
-        return;
-    }
-    try {
-        const { data } = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id);
-        if (!data) {
-            toast.fire({
-                icon: 'error',
-                title: 'Unable to retrieve record details.',
-                duration: 5000,
-            });
-            return;
-        }
+// const handlePreviewPrint = async () => {
+//     if (!selectedRecord.value?.id) {
+//         console.warn("No record selected for printing.");
+//         return;
+//     }
+//     try {
+//         const { data } = await apl.getApplicationMarriageLicenseById(selectedRecord.value.id);
+//         if (!data) {
+//             toast.fire({
+//                 icon: 'error',
+//                 title: 'Unable to retrieve record details.',
+//                 duration: 5000,
+//             });
+//             return;
+//         }
 
-        if (previewPage.value === 1) {
-            // Print Application for Marriage License
-            const mainData = JSON.stringify({ ...data });
-            const settings = JSON.stringify({ ...pdf_settings });
-            await window.MarriageApi.printMarriage(mainData, settings);
-        } else if (previewPage.value === 2) {
-            // Print Notice of Posting
-            const fileName = 'Notice.pdf';
-            const filePath = `${data.file_path}\\${fileName}`;
-            const pdfResult = await window.LocalCivilApi.readPdfFile(filePath);
-            if (pdfResult?.fileUrl) {
-                await window.LocalCivilApi.printPDFBase64(pdfResult.fileUrl);
-            } else {
-                toast.fire({
-                    icon: 'error',
-                    title: 'Failed to load Notice of Posting for printing.',
-                    duration: 5000,
-                });
-            }
-        }
-    } catch (error) {
-        console.error("Print error:", error);
-        toast.fire({
-            icon: 'error',
-            title: 'An error occurred while printing the document.',
-            duration: 5000,
-        });
-    }
-};
+//         if (previewPage.value === 1) {
+//             // Print Application for Marriage License
+//             const mainData = JSON.stringify({ ...data });
+//             const settings = JSON.stringify({ ...pdf_settings });
+//             await window.MarriageApi.printMarriage(mainData, settings);
+//         } else if (previewPage.value === 2) {
+//             // Print Notice of Posting
+//             const fileName = 'Notice.pdf';
+//             const filePath = `${data.file_path}\\${fileName}`;
+//             const pdfResult = await window.LocalCivilApi.readPdfFile(filePath);
+//             if (pdfResult?.fileUrl) {
+//                 await window.LocalCivilApi.printPDFBase64(pdfResult.fileUrl);
+//             } else {
+//                 toast.fire({
+//                     icon: 'error',
+//                     title: 'Failed to load Notice of Posting for printing.',
+//                     duration: 5000,
+//                 });
+//             }
+//         }
+//     } catch (error) {
+//         console.error("Print error:", error);
+//         toast.fire({
+//             icon: 'error',
+//             title: 'An error occurred while printing the document.',
+//             duration: 5000,
+//         });
+//     }
+// };
 
 
 

@@ -64,6 +64,7 @@ def login():
     return jsonify(access_token=access_token), 200
 
 
+
 @user.route("/user", methods=["GET"])
 @jwt_required()
 def get_user():
@@ -72,3 +73,23 @@ def get_user():
     user_record = Users.query.get_or_404(current_user)
     result = user_schema.dump(user_record)
     return jsonify(result), 200
+
+
+@user.route("/validate-password", methods=["POST"])
+@jwt_required()
+def validate_password():
+    data = request.get_json()
+    password = data.get("password")
+
+    if not password:
+        return jsonify({"error": "Password is required"}), 400
+
+    current_user_id = get_jwt_identity()
+    user = Users.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    is_valid = user.check_password(password)
+    return jsonify({"valid": is_valid}), 200
+

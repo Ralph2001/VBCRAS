@@ -27,7 +27,7 @@
             <template v-slot:control>
                 <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm">
                     <div class="ml-auto">
-                        <PrintManager :active_pdf_link="localPdf" :active_pdf="''" :count="1" />
+                        <PrintManager :active_pdf_link="localPdf" :active_pdf="''" :count="localViewCount" />
                     </div>
                 </div>
             </template>
@@ -126,7 +126,10 @@
                             Configuration
                         </button>
 
-                        <PrintManager :active_pdf_link="previewUrl" :active_pdf="''" :count="1" />
+                        <PrintManager :active_pdf_link="previewUrl" :active_pdf="''"
+                            :count="transactions.is_with_authentication ? 2 : 1" />
+
+
 
 
                         <button @click="saveForm"
@@ -1008,7 +1011,7 @@ const preference = reactive({
 
 watch(selectedType, (newVal) => {
     if (newVal?.includes('A')) {
-        preference.authentication.y = 280
+        preference.authentication.y = 300
         preference.logo.right_y = 797.75
         preference.logo.left_y = 797.75
     } else {
@@ -1118,6 +1121,8 @@ const saveForm = async () => {
             documentOwner,
             basePath: system_setting.defaults.file_path
         });
+
+        console.log('Save Result:', saveResult.result);
 
         if (saveResult.result.status) {
             filePath = saveResult.result.filePath;
@@ -1406,6 +1411,7 @@ const EditMap = (data) => {
 
 const isViewLocalOpen = ref(false)
 const isOnEdit = ref(false)
+const localViewCount = ref(0)
 
 const localPdf = ref(null)
 const documentOwner = ref(null)
@@ -1416,6 +1422,8 @@ const handleViewLocal = async (data) => {
             console.warn('Invalid data: expected a non-null object');
             return;
         }
+
+        localViewCount.value = 0
 
         //Set Document Owner in Viewer
         documentOwner.value = data.name_child ||
@@ -1441,6 +1449,7 @@ const handleViewLocal = async (data) => {
 
             isViewLocalOpen.value = true;
             localPdf.value = preview.result.pdfbase64;
+            localViewCount.value = data.is_with_authentication ? 2 : 1;
         }
 
     } catch (error) {
@@ -1453,6 +1462,7 @@ const handleViewLocal = async (data) => {
 const handleCloseViewLocal = () => {
     isViewLocalOpen.value = false;
     localPdf.value = null;
+    localViewCount.value = 0;
 };
 
 
@@ -1493,10 +1503,10 @@ const handleRemove = async (data) => {
         return;
     }
 
-    const confirmDelete = window.confirm('Are you sure you want to delete this record?');
-    if (!confirmDelete) {
-        return;
-    }
+    // const confirmDelete = window.confirm('Are you sure you want to delete this record?');
+    // if (!confirmDelete) {
+    //     return;
+    // }
 
     try {
         await removeAction(id);
