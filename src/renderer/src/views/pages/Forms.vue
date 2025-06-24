@@ -26,13 +26,82 @@
             @exit-modal="handleCloseViewLocal">
             <template v-slot:control>
                 <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm">
-                    <div class="ml-auto">
+                    <div class="ml-auto flex flex-row gap-2">
                         <PrintManager :active_pdf_link="localPdf" :active_pdf="''" :count="localViewCount" />
+                        <button @click="showProperties = true"
+                            class="text-gray-500 hover:text-gray-600 w-10 bg-white rounded">
+                            <font-awesome-icon icon="fa-solid fa-circle-info" />
+                        </button>
                     </div>
                 </div>
             </template>
             <template v-slot:content>
-                <div class="w-full h-full">
+                <div class="w-full h-full relative">
+                    <div v-if="showProperties"
+                        class="fixed inset-0 bg-black/10 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div
+                            class="w-full max-w-md overflow-hidden shadow-md bg-white rounded-lg border border-gray-200 flex flex-col">
+
+                            <!-- Header -->
+                            <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                                <h2 class="text-gray-800 text-base font-semibold">Document Properties</h2>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 px-4 py-3 text-sm text-gray-700 space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Title:</span>
+                                    <span class="font-medium">Form {{ localInformation?.form_type }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Document owner:</span>
+                                    <span class="font-medium">{{ localInformation?.name_child }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Issued to:</span>
+                                    <span class="font-medium">{{ localInformation?.certification_issued_to }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Created by:</span>
+                                    <span class="font-medium">{{ localInformation?.created_by }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Verified by:</span>
+                                    <span class="font-medium">{{ localInformation?.verified_by }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Created:</span>
+                                    <span class="font-medium">{{ localInformation?.date_paid }}</span>
+                                </div>
+
+
+                                <div class="flex justify-between">
+                                    <span>With Authentication</span>
+                                    <span class="font-normal">{{ localInformation?.is_with_authentication ? 'Yes' : 'No'
+                                        }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Reconstructed Copy</span>
+                                    <span class="font-normal">{{ localInformation?.is_reconstructed ? 'Yes' : 'No'
+                                        }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>File Size:</span>
+                                    <span class="font-normal">UNKNOWN</span>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="px-4 py-2 border-t border-gray-200 flex justify-end">
+                                <button @click="showProperties = false"
+                                    class="text-sm px-4 py-1.5 rounded border border-gray-300 hover:bg-gray-100 transition">
+                                    Close
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
                     <PDFViewerWorker :scale="1.5" :pdfBytes64="localPdf" @update:pdfBytes64="previewUrl = $event" />
                 </div>
             </template>
@@ -122,8 +191,8 @@
                     <div class="ml-auto flex gap-2">
                         <button @click="setSettingsState(true)"
                             class="h-8 px-4 bg-white border border-gray-300 hover:bg-gray-300 text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
-                            <font-awesome-icon icon="fa-solid fa-gear" class="mr-2 text-base" />
-                            Configuration
+                            <font-awesome-icon icon="fa-solid fa-gear" class="text-base" />
+
                         </button>
 
                         <PrintManager :active_pdf_link="previewUrl" :active_pdf="''"
@@ -133,7 +202,7 @@
 
 
                         <button @click="saveForm"
-                            class="h-8 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                            class="h-8 px-4 bg-blue-500 w-32 hover:bg-blue-600 text-white text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
                             <font-awesome-icon icon="fa-solid fa-save" class="mr-2 text-base" />
                             Save
                         </button>
@@ -145,30 +214,28 @@
             <template v-slot:content>
                 <div v-if="!isPreview" class="flex flex-col w-full overflow-y-auto  h-full items-center">
 
-                    <div class="w-full  grid grid-cols-1 max-w-screen-lg  py-1.5 bg-white ">
-
+                    <div class="w-full  grid grid-cols-1 max-w-screen-lg  py-1.5  ">
+                        <!-- {{ isAnyFormFilled }} -->
                         <div v-if="unsavedDataMessage"
-                            class="fixed top-0 flex items-center justify-center bottom-0 left-0 right-0 backdrop-blur-sm z-50 backdrop-brightness-75">
-                            <div class="w-[40rem]  bg-white rounded flex flex-col  p-4">
-                                <p class="font-bold text-red-400  text-lg">Are you sure you want to close the form?</p>
-                                <p class="text-justify text-pretty mt-4">It looks like you have unsaved changes in the
-                                    form.
-                                    If
-                                    you
-                                    close this
-                                    window now, any data
-                                    you've entered
-                                    <span class="font-medium"> will be lost</span>. If you'd
-                                    like to keep
-                                    your information, please save before closing.
+                            class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm backdrop-brightness-75">
+                            <div class="bg-white rounded-xl p-6 shadow-lg w-full max-w-screen-sm">
+                                <h2 class="text-lg font-semibold text-red-500">Discard changes?</h2>
+
+                                <p class="mt-4 text-sm text-gray-700 leading-relaxed">
+                                    You have unsaved changes in the form. Closing this window now will
+                                    <span class="font-medium text-red-500">discard all entered data</span>.
+                                    If you'd like to keep your information, please save before closing.
                                 </p>
 
-                                <div class="mt-6 ml-auto gap-2 flex">
-
+                                <div class="mt-6 flex justify-end gap-2">
                                     <button
-                                        class="py-1 w-24 rounded border px-2 hover:bg-red-400 hover:text-white transition-colors">Exit</button>
+                                        class="w-24 py-1.5 text-sm rounded border border-red-400 text-red-500 hover:bg-red-500 hover:text-white transition-colors">
+                                        Exit
+                                    </button>
                                     <button @click="unsavedDataMessage = false"
-                                        class="py-1 w-24 rounded border px-2 hover:bg-gray-200">Cancel</button>
+                                        class="w-24 py-1.5 text-sm rounded border text-gray-700 hover:bg-gray-100 transition-colors">
+                                        Cancel
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -195,9 +262,11 @@
 
                                         of <br>{{
                                             register_of }} on page
-                                        <InputforForm middle width="6rem" bold v-model="available.page_number" />
+                                        <InputforForm middle width="6rem" type="number" bold
+                                            v-model="available.page_number" />
                                         of book number
-                                        <InputforForm middle width="6rem" bold v-model="available.book_number" />
+                                        <InputforForm middle width="6rem" type="number" bold
+                                            v-model="available.book_number" />
                                         .
                                     </p>
                                 </div>
@@ -251,7 +320,7 @@
                                         <InputforForm width="100%" v-model="available.registry_number" />
                                     </InputLabel>
 
-                                    <InputLabel label="Date of Registration">
+                                    <InputLabel label="Date of Registration" :error="isRegistrationValid">
                                         :
                                         <InputforForm width="100%" v-model="available.date_registration" />
                                     </InputLabel>
@@ -287,7 +356,7 @@
                                             :options="['Male', 'Female']" />
                                         <!-- <InputforFormSuggestions width="100%" v-model="Form1A.sex" /> -->
                                     </InputLabel>
-                                    <InputLabel label="Date of birth">
+                                    <InputLabel label="Date of birth" :error="isRegistrationValid">
                                         :
                                         <InputforForm width="100%" v-model="Form1A.date_birth" isDate />
                                     </InputLabel>
@@ -351,7 +420,7 @@
                                         :
                                         <InputforForm width="100%" v-model="Form2A.deceased_citizenship" />
                                     </InputLabel>
-                                    <InputLabel label="Date of Death">
+                                    <InputLabel label="Date of Death" :error="isRegistrationValid">
                                         :
                                         <InputforForm width="100%" v-model="Form2A.date_of_death" />
                                     </InputLabel>
@@ -529,7 +598,7 @@
                                     <div class="pl-0 flex flex-col items-center gap-[0.10rem]">
                                         <InputforForm skip width="100%" bold middle v-model="transactions.verified_by"
                                             isUpperCase />
-                                        <InputforForm skip width="100%" middle italic unbordered isTransparent
+                                        <InputforForm skip width="100%" middle italic unbordered
                                             v-model="transactions.verifier_position" />
                                     </div>
                                 </div>
@@ -543,14 +612,14 @@
                                             of:</p>
                                         <InputforForm skip middle width="100%" bold
                                             v-model="transactions.civil_registrar" isUpperCase />
-                                        <InputforForm skip width="100%" middle italic unbordered isTransparent
+                                        <InputforForm skip width="100%" middle italic unbordered
                                             v-model="transactions.civil_registrar_position" />
                                         <div v-if="transactions.for_and_in_the_absence"
                                             class="mt-4 flex flex-col items-center gap-[0.10rem] ">
                                             <InputforForm skip width="20rem" bold middle
                                                 v-model="transactions.absence_verified_by"
                                                 @input="transactions.absence_verified_by = $event.target.value.toUpperCase()" />
-                                            <InputforForm skip width="20rem" middle italic unbordered isTransparent
+                                            <InputforForm skip width="20rem" middle italic unbordered
                                                 v-model="transactions.absence_verifier_position" />
                                         </div>
                                     </div>
@@ -736,6 +805,8 @@ const alleged_to = computed(() => {
 })
 
 
+
+
 const formToRender = computed(() => {
     let render
     switch (menu.value) {
@@ -869,6 +940,76 @@ let Form1C = reactive({ ...useForm1C })
 let Form2C = reactive({ ...useForm2C })
 let Form3C = reactive({ ...useForm3C })
 
+
+const isValidDate = (str) => {
+    if (!str || typeof str !== 'string') return false;
+
+    const parsed = new Date(str);
+    if (isNaN(parsed.getTime())) return false;
+
+    // Ensure it didn't auto-correct a bad date (e.g., "Feb 30" → "Mar 1")
+    const [inputDay, inputMonth, inputYear] = parsed.toDateString().split(' ').slice(1);
+    const normalizedInput = new Date(`${inputMonth} ${inputDay}, ${inputYear}`);
+
+    return parsed.toDateString() === normalizedInput.toDateString();
+}
+
+
+const isRegistrationValid = computed(() => {
+    const selected_form = selectedType.value
+
+    const fields = {
+        '1A': 'date_birth',
+        '2A': 'date_of_death',
+        '3A': 'date_marriage'
+    }
+
+    const forms = {
+        '1A': Form1A,
+        '2A': Form2A,
+        '3A': Form3A
+    }
+
+    const form = forms[selected_form]
+    const eventField = fields[selected_form]
+
+    if (!form || !eventField) {
+        return { status: false, message: 'Invalid form selection.' }
+    }
+
+    const dateEvent = new Date(form[eventField])
+    const reg = new Date(available.date_registration)
+
+    if (!isValidDate(form[eventField]) || !isValidDate(available.date_registration)) {
+        return { status: false, message: 'Please enter valid dates.' }
+    }
+
+    if (reg > dateEvent) {
+        return {
+            status: true,
+            message: 'Registration date cannot be earlier than event date.'
+        }
+    }
+
+    return { status: false, message: '' }
+})
+
+
+
+
+const isAnyFormFilled = computed(() => {
+    const allForms = [
+        Form1A, Form2A, Form3A,
+        Form1B, Form2B, Form3B,
+        Form1C, Form2C, Form3C,
+    ]
+
+    return allForms.some(form =>
+        Object.values(form).some(value =>
+            value !== null && value !== undefined && value !== ''
+        )
+    )
+})
 
 
 
@@ -1415,6 +1556,7 @@ const localViewCount = ref(0)
 
 const localPdf = ref(null)
 const documentOwner = ref(null)
+const localInformation = ref(null)
 
 const handleViewLocal = async (data) => {
     try {
@@ -1422,6 +1564,8 @@ const handleViewLocal = async (data) => {
             console.warn('Invalid data: expected a non-null object');
             return;
         }
+
+        localInformation.value = data
 
         localViewCount.value = 0
 
@@ -1529,6 +1673,9 @@ const handleEdit = async (data) => {
     formData.form_type = '1A'
     isPreview.value = false
 }
+
+const showProperties = ref(false)
+
 const handleUpdate = async () => {
 
 }

@@ -4,15 +4,14 @@ module.exports = {
         './index.html',
         './src/**/*.{vue,js,ts,jsx,tsx}',
         'node_modules/flowbite-vue/**/*.{js,vue}',
-        'node_modules/flowbite/**/*.js,',
-     
+        'node_modules/flowbite/**/*.js,'
     ],
     theme: {
         screens: {
             sm: '480px',
             md: '768px',
             lg: '976px',
-            xl: '1280px',
+            xl: '1280px'
         },
         extend: {
             colors: {
@@ -38,14 +37,20 @@ module.exports = {
                 'surface-700': 'rgb(var(--surface-700))',
                 'surface-800': 'rgb(var(--surface-800))',
                 'surface-900': 'rgb(var(--surface-900))',
-                'surface-950': 'rgb(var(--surface-950))',
+                'surface-950': 'rgb(var(--surface-950))'
             },
             boxShadow: {
-                'page': 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
+                page: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
                 'custom-inset':
-                    'rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset',
+                    'rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset'
             },
-        },
+            fontFamily: {
+                inter: ['Inter', 'sans-serif'],
+                roboto: ['Roboto', 'sans-serif'],
+                public: ['Public Sans', 'sans-serif']
+
+            }
+        }
     },
-    plugins: [require('flowbite/plugin')],
+    plugins: [require('flowbite/plugin')]
 }

@@ -5,7 +5,7 @@
             baseClasses,
             {
                 'text-center': middle,
-                'border-0 ring-0 focus:outline-none focus:ring-0': unbordered,
+                'border-0 ring-0 focus:outline-none focus:ring-0 ': unbordered,
                 'border border-gray-300 focus:ring-blue-500 focus:border-blue-500': !unbordered,
                 italic,
                 'font-bold': bold,
@@ -51,9 +51,9 @@ const props = defineProps({
 const baseClasses = computed(() => [
     `w-[${props.width}]`,
     !props.bold && 'font-semibold',
-    !props.isTransparent && 'bg-neutral-50',
+    !props.isTransparent && 'bg-neutral-100',
     !props.she && 'focus:ring-blue-500 focus:border-blue-500',
-    'items-center text-gray-900 text-sm rounded px-2 py-1.5'
+    'items-center text-gray-900 text-sm rounded px-2 py-1.5 font-inter'
 ].filter(Boolean))
 
 const handleInput = (target) => {

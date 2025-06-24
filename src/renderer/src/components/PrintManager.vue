@@ -6,16 +6,16 @@
 
     <div class="flex flex-row gap-0 items-center relative">
         <button
-            class="text-white hover:text-white hover:bg-green-600 gap-3 rounded-l text-sm bg-green-500 shadow-sm outline-none font-medium px-4 py-1.5 tracking-wide flex flex-row items-center"
+            class="text-white w-24 justify-center  hover:text-white hover:bg-green-600 gap-3 rounded-l text-sm bg-green-500 shadow-sm outline-none font-medium px-4 py-1.5 tracking-wide flex flex-row items-center"
             v-if="props.active_pdf_link" @click="printPDF">
             <font-awesome-icon icon="fa-solid fa-print" class="text-lg" />
             <div class="flex flex-col items-start">
 
-                <p class="text-xs">Print Document </p>
+                <p class="text-xs">Print</p>
             </div>
         </button>
         <button
-            class="text-white border-l border-green-700 hover:text-white hover:bg-green-700 rounded-r gap-3 text-sm bg-green-600 shadow-sm outline-none font-medium px-4 py-1.5 tracking-wide flex flex-row items-center"
+            class="text-white border-l border-green-700 hover:text-white hover:bg-green-700 rounded-r gap-3 text-sm bg-green-600 shadow-sm outline-none font-medium px-2 py-1.5 tracking-wide flex flex-row items-center"
             v-if="props.active_pdf_link" @click="managePrinterMethod">
             <font-awesome-icon icon="fa-solid fa-gear" class="text-lg" />
         </button>

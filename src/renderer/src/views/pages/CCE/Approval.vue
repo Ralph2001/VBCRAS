@@ -218,100 +218,102 @@
                             </div>
 
                             <!-- Form 102 Adjustments -->
-                            <div>
-                                <h3 class="mt-2 mb-2 text-sm font-semibold text-gray-800">Form 102 Position</h3>
-                                <div class="flex flex-col gap-2">
-                                    <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
-                                        <input type="number" step="0.1" v-model="formData.form_scale" @input="submit"
-                                            class="py-1 border border-gray-300 rounded w-full" />
-                                        <label class="text-sm text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-up-right-and-down-left-from-center"
-                                                class="w-4" />
-                                            Scale
-                                        </label>
-                                    </div>
+                            <div class="flex flex-row mt-auto">
+                                <div class="w-full">
+                                    <h3 class="mt-2 mb-2 text-sm font-semibold text-gray-800">Form 102 Position</h3>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
+                                            <input type="number" step="0.1" v-model="formData.form_scale"
+                                                @input="submit" class="py-1 border border-gray-300 rounded w-full" />
+                                            <label class="text-sm text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-up-right-and-down-left-from-center"
+                                                    class="w-4" />
+                                                Scale
+                                            </label>
+                                        </div>
 
-                                    <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
-                                        <input type="number" step="0.1" v-model="formData.form_x" @input="submit"
-                                            class="py-1 border border-gray-300 rounded w-full" />
-                                        <label class="text-sm text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-left-right" class="w-4" />
-                                            Horizontal
-                                        </label>
-                                    </div>
+                                        <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
+                                            <input type="number" step="0.1" v-model="formData.form_x" @input="submit"
+                                                class="py-1 border border-gray-300 rounded w-full" />
+                                            <label class="text-sm text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-left-right" class="w-4" />
+                                                Horizontal
+                                            </label>
+                                        </div>
 
-                                    <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
-                                        <input type="number" step="0.1" v-model="formData.form_y" @input="submit"
-                                            class="py-1 border border-gray-300 rounded w-full" />
-                                        <label class="text-sm text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-up-down" class="w-4" />
-                                            Vertical
-                                        </label>
+                                        <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
+                                            <input type="number" step="0.1" v-model="formData.form_y" @input="submit"
+                                                class="py-1 border border-gray-300 rounded w-full" />
+                                            <label class="text-sm text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-up-down" class="w-4" />
+                                                Vertical
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Divider -->
-                            <hr class="border-t border-gray-300 my-2" />
+                                <!-- Divider -->
+                                <!-- <hr class="border-t border-gray-300 my-2" /> -->
 
-                            <!-- Annotation Adjustments -->
-                            <div>
-                                <h3 class="mb-2 text-sm font-semibold text-gray-800">Annotation Settings</h3>
-                                <div class="flex flex-col gap-2">
-                                    <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
-                                        <input type="number" step="0.1" v-model="formData.annotation_width"
-                                            @input="submit" class="py-1 border border-gray-300 rounded w-full" />
-                                        <label class="text-sm text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-left-right" class="w-4" />
-                                            Width
-                                        </label>
-                                    </div>
-
-                                    <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
-                                        <input type="number" step="0.1" v-model="formData.annotation_x" @input="submit"
-                                            class="py-1 border border-gray-300 rounded w-full" />
-                                        <label class="text-sm text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-left-right" class="w-4" />
-                                            Horizontal
-                                        </label>
-                                    </div>
-
-                                    <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
-                                        <input type="number" step="0.1" v-model="formData.annotation_y" @input="submit"
-                                            class="py-1 border border-gray-300 rounded w-full" />
-                                        <label class="text-sm text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-up-down" class="w-4" />
-                                            Vertical
-                                        </label>
-                                    </div>
-
-                                    <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
-                                        <input type="number" step="0.1" v-model="formData.annotation_font_size"
-                                            @input="submit" class="py-1 border border-gray-300 rounded w-full" />
-                                        <label class="text-sm text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-text-height" class="w-4" />
-                                            Font Size
-                                        </label>
-                                    </div>
-
-                                    <!-- Rotation -->
-                                    <div class="flex items-center gap-2 mt-2">
-                                        <div class="flex gap-1">
-                                            <button @click="change_annotation_width(-90)"
-                                                :class="formData.annotation_rotation === -90 ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-700'"
-                                                class="w-9 h-9 border rounded hover:shadow-sm">
-                                                <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
-                                            </button>
-                                            <button @click="change_annotation_width(0)"
-                                                :class="formData.annotation_rotation === 0 ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-700'"
-                                                class="w-9 h-9 border rounded hover:shadow-sm">
-                                                <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
-                                            </button>
+                                <!-- Annotation Adjustments -->
+                                <div class="w-full">
+                                    <h3 class="mb-2 text-sm font-semibold text-gray-800">Annotation Settings</h3>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
+                                            <input type="number" step="0.1" v-model="formData.annotation_width"
+                                                @input="submit" class="py-1 border border-gray-300 rounded w-full" />
+                                            <label class="text-sm text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-left-right" class="w-4" />
+                                                Width
+                                            </label>
                                         </div>
-                                        <span class="text-sm ml-6 text-gray-700 flex items-center gap-1">
-                                            <font-awesome-icon icon="fa-solid fa-text-height" class="w-4" />
-                                            Text Rotation
-                                        </span>
+
+                                        <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
+                                            <input type="number" step="0.1" v-model="formData.annotation_x"
+                                                @input="submit" class="py-1 border border-gray-300 rounded w-full" />
+                                            <label class="text-sm text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-left-right" class="w-4" />
+                                                Horizontal
+                                            </label>
+                                        </div>
+
+                                        <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
+                                            <input type="number" step="0.1" v-model="formData.annotation_y"
+                                                @input="submit" class="py-1 border border-gray-300 rounded w-full" />
+                                            <label class="text-sm text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-up-down" class="w-4" />
+                                                Vertical
+                                            </label>
+                                        </div>
+
+                                        <div class="grid grid-cols-[6rem_1fr] gap-3 items-center">
+                                            <input type="number" step="0.1" v-model="formData.annotation_font_size"
+                                                @input="submit" class="py-1 border border-gray-300 rounded w-full" />
+                                            <label class="text-sm text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-text-height" class="w-4" />
+                                                Font Size
+                                            </label>
+                                        </div>
+
+                                        <!-- Rotation -->
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <div class="flex gap-1">
+                                                <button @click="change_annotation_width(-90)"
+                                                    :class="formData.annotation_rotation === -90 ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-700'"
+                                                    class="w-9 h-9 border rounded hover:shadow-sm">
+                                                    <font-awesome-icon icon="fa-solid fa-arrows-up-down" />
+                                                </button>
+                                                <button @click="change_annotation_width(0)"
+                                                    :class="formData.annotation_rotation === 0 ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-700'"
+                                                    class="w-9 h-9 border rounded hover:shadow-sm">
+                                                    <font-awesome-icon icon="fa-solid fa-arrows-left-right" />
+                                                </button>
+                                            </div>
+                                            <span class="text-sm ml-6 text-gray-700 flex items-center gap-1">
+                                                <font-awesome-icon icon="fa-solid fa-text-height" class="w-4" />
+                                                Text Rotation
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
