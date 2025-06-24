@@ -33,75 +33,51 @@
                             <font-awesome-icon icon="fa-solid fa-circle-info" />
                         </button>
                     </div>
+
                 </div>
             </template>
             <template v-slot:content>
-                <div class="w-full h-full relative">
-                    <div v-if="showProperties"
-                        class="fixed inset-0 bg-black/10 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                        <div
-                            class="w-full max-w-md overflow-hidden shadow-md bg-white rounded-lg border border-gray-200 flex flex-col">
+                <div class="w-full h-full">
+                    <div class="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm  p-4 justify-center items-center flex">
 
-                            <!-- Header -->
-                            <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
-                                <h2 class="text-gray-800 text-base font-semibold">Document Properties</h2>
-                            </div>
+                        <!-- Document Properties Panel -->
+                        <div class="max-w-md bg-white h-auto p-2 flex flex-col w-full rounded-lg shadow-lg p-4 gap-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Document Properties</h2>
 
-                            <!-- Content -->
-                            <div class="flex-1 px-4 py-3 text-sm text-gray-700 space-y-2">
-                                <div class="flex justify-between">
-                                    <span>Title:</span>
-                                    <span class="font-medium">Form {{ localInformation?.form_type }}</span>
+                            <div class="space-y-2 text-sm text-gray-700">
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">Title:</span>
+                                    <span class="text-right truncate"></span>
+                                </div>
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">Owner:</span>
+                                    <span class="text-right truncate"></span>
+                                </div>
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">Date Uploaded:</span>
+                                    <span class="text-right"></span>
+                                </div>
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">File Size:</span>
+                                    <span class="text-right"></span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span>Document owner:</span>
-                                    <span class="font-medium">{{ localInformation?.name_child }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Issued to:</span>
-                                    <span class="font-medium">{{ localInformation?.certification_issued_to }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Created by:</span>
-                                    <span class="font-medium">{{ localInformation?.created_by }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Verified by:</span>
-                                    <span class="font-medium">{{ localInformation?.verified_by }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Created:</span>
-                                    <span class="font-medium">{{ localInformation?.date_paid }}</span>
-                                </div>
-
-
-                                <div class="flex justify-between">
-                                    <span>With Authentication</span>
-                                    <span class="font-normal">{{ localInformation?.is_with_authentication ? 'Yes' : 'No'
-                                        }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Reconstructed Copy</span>
-                                    <span class="font-normal">{{ localInformation?.is_reconstructed ? 'Yes' : 'No'
-                                        }}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>File Size:</span>
-                                    <span class="font-normal">UNKNOWN</span>
+                                    <span class="font-medium">Status:</span>
+                                    <span class="text-right">
+                                        <!-- <span :class="[
+                                            'px-2 py-0.5 rounded-full text-xs font-semibold',
+                                            documentData.status === 'Active' ? 'bg-green-100 text-green-700' :
+                                                documentData.status === 'Archived' ? 'bg-yellow-100 text-yellow-700' :
+                                                    'bg-gray-100 text-gray-600'
+                                        ]">
+                                          
+                                        </span> -->
+                                    </span>
                                 </div>
                             </div>
-
-                            <!-- Footer -->
-                            <div class="px-4 py-2 border-t border-gray-200 flex justify-end">
-                                <button @click="showProperties = false"
-                                    class="text-sm px-4 py-1.5 rounded border border-gray-300 hover:bg-gray-100 transition">
-                                    Close
-                                </button>
-                            </div>
-
                         </div>
-                    </div>
 
+                    </div>
                     <PDFViewerWorker :scale="1.5" :pdfBytes64="localPdf" @update:pdfBytes64="previewUrl = $event" />
                 </div>
             </template>
