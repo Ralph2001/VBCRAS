@@ -26,13 +26,61 @@
             @exit-modal="handleCloseViewLocal">
             <template v-slot:control>
                 <div class="flex flex-row items-center w-full gap-3 p-2 rounded-md shadow-sm">
-                    <div class="ml-auto">
+                    <div class="ml-auto flex flex-row gap-2 items-center">
                         <PrintManager :active_pdf_link="localPdf" :active_pdf="''" :count="localViewCount" />
+
+
+                        <button
+                            class="h-8 px-2 bg-white border border-gray-300 hover:bg-gray-300 text-sm font-medium rounded-md shadow-sm transition duration-150 flex items-center justify-center">
+                            <font-awesome-icon icon="fa-solid fa-circle-info" class="text-gray-600" />
+                        </button>
+
                     </div>
+
                 </div>
             </template>
             <template v-slot:content>
                 <div class="w-full h-full">
+                    <div class="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm  p-4 justify-center items-center flex">
+
+                        <!-- Document Properties Panel -->
+                        <div class="max-w-md bg-white h-auto p-2 flex flex-col w-full rounded-lg shadow-lg p-4 gap-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Document Properties</h2>
+
+                            <div class="space-y-2 text-sm text-gray-700">
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">Title:</span>
+                                    <span class="text-right truncate"></span>
+                                </div>
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">Owner:</span>
+                                    <span class="text-right truncate"></span>
+                                </div>
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">Date Uploaded:</span>
+                                    <span class="text-right"></span>
+                                </div>
+                                <div class="flex justify-between border-b pb-1">
+                                    <span class="font-medium">File Size:</span>
+                                    <span class="text-right"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Status:</span>
+                                    <span class="text-right">
+                                        <!-- <span :class="[
+                                            'px-2 py-0.5 rounded-full text-xs font-semibold',
+                                            documentData.status === 'Active' ? 'bg-green-100 text-green-700' :
+                                                documentData.status === 'Archived' ? 'bg-yellow-100 text-yellow-700' :
+                                                    'bg-gray-100 text-gray-600'
+                                        ]">
+                                          
+                                        </span> -->
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                     <PDFViewerWorker :scale="1.5" :pdfBytes64="localPdf" @update:pdfBytes64="previewUrl = $event" />
                 </div>
             </template>

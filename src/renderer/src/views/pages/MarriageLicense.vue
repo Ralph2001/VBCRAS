@@ -144,6 +144,7 @@
                                 License
                             </h2>
                             <h2 class="font-semibold text-xs  text-gray-600 ">Municipal Form No. 90 (Form No. 2)</h2>
+
                         </div>
 
                         <button @click="close_modal"
@@ -162,7 +163,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[0]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-1 gap-2 mb-auto">
@@ -196,7 +197,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[1]
-                                            }}
+                                        }}
                                         </p>
                                     </div>
 
@@ -313,7 +314,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[2]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
                                 <div class="grid grid-cols-3 gap-1 items-end">
@@ -427,7 +428,7 @@
                                         </p>
                                         <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                             steps[3]
-                                            }}
+                                        }}
                                         </p>
                                     </div>
                                     <div class="grid grid-cols-3 gap-1 items-end">
@@ -542,7 +543,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[4]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
 
@@ -649,7 +650,7 @@
                                     <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                                         steps[5]
-                                        }}
+                                    }}
                                     </p>
                                 </div>
 
@@ -676,11 +677,11 @@
 
                                 <div class="flex flex-col gap-1" v-if="form_mode === 1">
                                     <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
-                                        }}
+                                    }}
                                     </p>
                                     <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                                         steps[6]
-                                        }} Details
+                                    }} Details
                                     </p>
                                 </div>
                                 <div class="w-80 mt-8">
@@ -894,6 +895,29 @@
         </transition>
 
 
+        <div v-if="showConfirm"
+            class="fixed inset-0 flex items-center justify-center bg-black/30 z-50 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-800 mb-2">Discard Changes?</h2>
+                <p class="text-sm text-gray-600 mb-6">
+                    You have unsaved changes in this form. If you close it now, your input will be lost. Do you want to
+                    continue?
+                </p>
+                <div class="flex justify-end gap-3">
+                    <button @click="showConfirm = false"
+                        class="px-4 py-2 text-sm rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition">
+                        Stay on Form
+                    </button>
+                    <button @click="confirmClose"
+                        class="px-4 py-2 text-sm rounded-xl bg-red-600 text-white hover:bg-red-700 transition">
+                        Discard & Exit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
         <!-- Full Page PDF Preview Modal -->
         <div v-if="isPreview" class="fixed inset-0 bg-white z-50 flex flex-col h-screen">
 
@@ -993,6 +1017,7 @@ import { useSetup } from '../../stores/Setting/setup.js';
 import IsPathAccessible from '../../components/IsPathAccessible.vue';
 import { useComputerStore } from '../../stores/computer.js';
 import PrintManager from '../../components/PrintManager.vue';
+import isEqual from 'lodash/isEqual'
 
 const computer = useComputerStore()
 
@@ -1400,6 +1425,17 @@ const initialForm = {
 const formData = reactive({ ...initialForm })
 
 
+const originalForm = JSON.parse(JSON.stringify(initialForm))
+
+
+const isFormDirty = computed(() => {
+    return !isEqual(formData, originalForm)
+})
+
+
+
+
+
 const v$ = useVuelidate(MarriageRules, formData);
 
 const add_details_to_notice = () => {
@@ -1582,37 +1618,59 @@ const handle_bride_image = (capturedImage) => {
 /**
  * Helper to blank form
  */
-const blank = () => {
-    Object.assign(formData, { ...initialForm });
+
+const showConfirm = ref(false)
+
+// const onTryClose = () => {
+//   if (isFormDirty.value) {
+//     showConfirm.value = true
+//   } else {
+//     closeForm()
+//   }
+// }
+
+const resetForm = () => {
+    Object.assign(formData, JSON.parse(JSON.stringify(initialForm)))
 }
-const close_modal = async () => {
 
-    /**
-     * Reset all the value
-     */
+const confirmClose = async () => {
+    resetForm()
+    showConfirm.value = false
 
+    // Reset PDF content and pagination
     pdf_content.value = null
-
     page.value = 0
     select_page.value = 0
 
-    modal.value = false;
-    blank();
-    await nextTick();
-    v$.value.$reset();
+    // Close modal
+    modal.value = false
 
-    // Reset edit/delete state only if they were active
+    await nextTick()
+
+    // Reset validation
+    v$.value.$reset()
+
+    // Reset edit state
     if (isUpdating.value) {
-        isUpdating.value = false;
-        idToEdit.value = null;
+        isUpdating.value = false
+        idToEdit.value = null
     }
 
+    // Reset delete state
     if (isToRemove.value) {
-        isToRemove.value = false;
-        idToRemove.value = null;
+        isToRemove.value = false
+        idToRemove.value = null
     }
+}
 
-};
+const close_modal = () => {
+    if (isFormDirty.value) {
+        showConfirm.value = true
+    } else {
+        confirmClose()
+    }
+}
+
 const isLoadingPrev = ref(false)
 const municipality_with_province = ref(municipalityProvinceAddress())
 const municipality = ref(complete_municipality_with_province('Pangasinan'))
@@ -1780,7 +1838,7 @@ const submit = async () => {
             created_by: auth.user_id
         }
         await apl.addApplicationMarriageLicense(dataToSave)
-        close_modal()
+        confirmClose()
         toast.fire({
             icon: 'success',
             title: 'Marriage license application has been successfully added.',

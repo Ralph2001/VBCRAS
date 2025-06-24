@@ -157,6 +157,8 @@ async function generate_marriage_notice(formData, image) {
         const date_posting = form.getTextField('date_posting')
         const civil_registrar = form.getTextField('civil_registrar')
         const position = form.getTextField('position')
+
+
         const copy_furnished1 = form.getTextField('copy_furnished1')
         const copy_furnished2 = form.getTextField('copy_furnished2')
         const copy_furnished3 = form.getTextField('copy_furnished3')
@@ -272,14 +274,47 @@ async function generate_marriage_notice(formData, image) {
         position.setText('Municipal Civil Registrar')
         position.updateAppearances(ArialItalicFont)
 
-        copy_furnished1.setText(data.notice_copy_furnished1)
-        copy_furnished1.updateAppearances(ArialFont)
-        copy_furnished2.setText(data.notice_copy_furnished2)
-        copy_furnished2.updateAppearances(ArialFont)
-        copy_furnished3.setText(data.notice_copy_furnished3)
-        copy_furnished3.updateAppearances(ArialFont)
-        copy_furnished4.setText(data.notice_copy_furnished4)
-        copy_furnished4.updateAppearances(ArialFont)
+        // copy_furnished1.setText(data.notice_copy_furnished1)
+        // copy_furnished1.updateAppearances(ArialFont)
+        // copy_furnished2.setText(data.notice_copy_furnished2)
+        // copy_furnished2.updateAppearances(ArialFont)
+        // copy_furnished3.setText(data.notice_copy_furnished3)
+        // copy_furnished3.updateAppearances(ArialFont)
+        // copy_furnished4.setText(data.notice_copy_furnished4)
+        // copy_furnished4.updateAppearances(ArialFont)
+
+        const copy_furnised = (params) => {
+            const copyFields = [
+                'copy_furnished1',
+                'copy_furnished2',
+                'copy_furnished3',
+                'copy_furnished4'
+            ]
+
+            copyFields.forEach((fieldName, index) => {
+                const field = form.getTextField(fieldName)
+                const value = params[`notice_${fieldName}`] || ''
+
+                adjustTextFieldSizeAndFit(
+                    pdfDoc,
+                    field,
+                    value,
+                    ArialFont
+                )
+                // field.setText(value)
+                // field.updateAppearances(ArialFont)
+
+                // // Adjust alignment based on the length of the value
+                // if (value.length > 40) {
+                //     field.setAlignment(TextAlignment.Left)
+                // } else {
+                //     field.setAlignment(TextAlignment.Center)
+                // }
+            })
+        }
+
+
+        copy_furnised(data)
 
         form.flatten()
 
@@ -461,31 +496,25 @@ async function generate_marriage_license(formData) {
                 (value) => value === 'N/A'
             )
 
+            const fullplace = [municipality, province, country]
+                .filter(val => val && val !== 'N/A') // remove empty or 'N/A'
+                .join(', ')
+
+            const fullPlaceField = form.getTextField(`${prefix}_place_dissolved`)
+
             if (allAreNA) {
-                const fullPlaceField = form.getTextField(
-                    `${prefix}_place_dissolved`
-                )
                 fullPlaceField.setText('N/A')
                 fullPlaceField.updateAppearances(helveticaFont)
             } else {
-                const municipalityField = form.getTextField(
-                    `${prefix}_place_dissolved_municipality`
+                adjustTextFieldSizeAndFit(
+                    pdfDoc,
+                    fullPlaceField,
+                    fullplace,
+                    helveticaFont
                 )
-                const provinceField = form.getTextField(
-                    `${prefix}_place_dissolved_province`
-                )
-                const countryField = form.getTextField(
-                    `${prefix}_place_dissolved_country`
-                )
-
-                municipalityField.setText(municipality || '')
-                provinceField.setText(province || '')
-                countryField.setText(country || '')
-                    ;[municipalityField, provinceField, countryField].forEach(
-                        (field) => field.updateAppearances(helveticaFont)
-                    )
             }
         }
+
 
         setDissolvedPlace('groom')
         setDissolvedPlace('bride')
@@ -533,6 +562,26 @@ async function generate_marriage_license(formData) {
         setDissolvedDate(data.groom_date_dissolved, 'groom')
         setDissolvedDate(data.bride_date_dissolved, 'bride')
 
+
+
+
+
+        const setPlaceofBirth = (prefix) => {
+            const municipality = data[`${prefix}_municipality`] || ''
+            const province = data[`${prefix}_province`] || ''
+            const country = data[`${prefix}_country`] || ''
+
+            const fullplace = [municipality, province, country].filter(Boolean).join(', ')
+
+            const fullPlaceField = form.getTextField(`${prefix}_place_birth`)
+
+            adjustTextFieldSizeAndFit(pdfDoc, fullPlaceField, fullplace, helveticaFont)
+        }
+
+        setPlaceofBirth('groom')
+        setPlaceofBirth('bride')
+
+
         // Define the fields in the form
         const fields = [
             'header_province',
@@ -547,9 +596,7 @@ async function generate_marriage_license(formData) {
             'groom_middle_name',
             'groom_last_name',
             'groom_age',
-            'groom_municipality',
-            'groom_province',
-            'groom_country',
+
             'groom_sex',
             'groom_citizenship',
             'groom_residence',
@@ -578,9 +625,7 @@ async function generate_marriage_license(formData) {
             'bride_middle_name',
             'bride_last_name',
             'bride_age',
-            'bride_municipality',
-            'bride_province',
-            'bride_country',
+
             'bride_sex',
             'bride_citizenship',
             'bride_residence',
@@ -607,21 +652,17 @@ async function generate_marriage_license(formData) {
             'bride_ctc_at'
         ]
 
-        const fields_to_avoid = [
+        const fields_need_adjustment = [
             'groom_contract_marriage_with',
             'bride_contract_marriage_with',
-            'groom_municipality',
-            'groom_province',
-            'groom_country',
+
             'groom_residence',
             'groom_father_residence',
             'groom_mother_residence',
             'groom_person_who_gave_consent',
             'groom_person_who_gave_consent_residence',
 
-            'bride_municipality',
-            'bride_province',
-            'bride_country',
+
             'bride_residence',
             'groom_father_residence',
             'bride_mother_residence',
@@ -633,7 +674,7 @@ async function generate_marriage_license(formData) {
             const field = form.getTextField(fieldName)
             const fieldValue = data[fieldName] || ''
 
-            if (fields_to_avoid.includes(fieldName)) {
+            if (fields_need_adjustment.includes(fieldName)) {
                 adjustTextFieldSizeAndFit(
                     pdfDoc,
                     field,
@@ -659,7 +700,7 @@ async function adjustTextFieldSizeAndFit(
     pdfDoc,
     field,
     fieldValue,
-    helveticaFont
+    FontType = StandardFonts.Helvetica
 ) {
     try {
         const acroField = field.acroField
@@ -682,7 +723,7 @@ async function adjustTextFieldSizeAndFit(
 
         // Measure the width of the text
         const measureTextWidth = (text, fontSize) =>
-            helveticaFont.widthOfTextAtSize(text, fontSize)
+            FontType.widthOfTextAtSize(text, fontSize)
 
         // Check if the text fits within the width and height
         const doesTextFit = (text, fontSize, maxWidth, maxHeight) => {
@@ -702,12 +743,12 @@ async function adjustTextFieldSizeAndFit(
 
         // Set the adjusted text, font size, and appearance
         field.setText(fieldValue)
-        field.updateAppearances(helveticaFont)
+        field.updateAppearances(FontType)
         field.setFontSize(fontSize)
         field.enableMultiline()
 
         console.log(
-            field.getName() + ' Does it Print? ' + field.setText(fieldValue)
+            field.getName() + '[DEBUG] Marriage Main: Field Name:', field.setText(fieldValue)
         )
 
         // if (field.getName() === 'groom_contract_marriage_with' || field.getName() === 'bride_contract_marriage_with'
@@ -716,12 +757,20 @@ async function adjustTextFieldSizeAndFit(
         //     return
         // }
 
+
+
         if (
             fieldValue.length > 40 ||
             field.getName() === 'groom_person_who_gave_consent' ||
             field.getName() === 'groom_person_who_gave_consent_residence' ||
             field.getName() === 'bride_person_who_gave_consent' ||
-            field.getName() === 'bride_person_who_gave_consent_residence'
+            field.getName() === 'bride_person_who_gave_consent_residence' ||
+
+            // Adjustments for furnished copies
+            field.getName() === 'copy_furnished1' ||
+            field.getName() === 'copy_furnished2' ||
+            field.getName() === 'copy_furnished3' ||
+            field.getName() === 'copy_furnished4'
         ) {
             field.setAlignment(TextAlignment.Left)
         } else {
@@ -882,33 +931,30 @@ async function print_decided_license(formData, params) {
             const municipality = data[`${prefix}_place_dissolved_municipality`]
             const province = data[`${prefix}_place_dissolved_province`]
             const country = data[`${prefix}_place_dissolved_country`]
+
             const allAreNA = [municipality, province, country].every(
                 (value) => value === 'N/A'
             )
+
+            const fullplace = [municipality, province, country]
+                .filter(val => val && val !== 'N/A') // remove empty or 'N/A'
+                .join(', ')
+
+            const fullPlaceField = form.getTextField(`${prefix}_place_dissolved`)
+
             if (allAreNA) {
-                const fullPlaceField = form.getTextField(
-                    `${prefix}_place_dissolved`
-                )
                 fullPlaceField.setText('N/A')
                 fullPlaceField.updateAppearances(helveticaFont)
             } else {
-                const municipalityField = form.getTextField(
-                    `${prefix}_place_dissolved_municipality`
+                adjustTextFieldSizeAndFit(
+                    pdfDoc,
+                    fullPlaceField,
+                    fullplace,
+                    helveticaFont
                 )
-                const provinceField = form.getTextField(
-                    `${prefix}_place_dissolved_province`
-                )
-                const countryField = form.getTextField(
-                    `${prefix}_place_dissolved_country`
-                )
-                municipalityField.setText(municipality || '')
-                provinceField.setText(province || '')
-                countryField.setText(country || '')
-                    ;[municipalityField, provinceField, countryField].forEach(
-                        (field) => field.updateAppearances(helveticaFont)
-                    )
             }
         }
+
 
         setDissolvedPlace('groom')
         setDissolvedPlace('bride')
@@ -952,6 +998,22 @@ async function print_decided_license(formData, params) {
         setDissolvedDate(data.groom_date_dissolved, 'groom')
         setDissolvedDate(data.bride_date_dissolved, 'bride')
 
+
+        const setPlaceofBirth = (prefix) => {
+            const municipality = data[`${prefix}_municipality`] || ''
+            const province = data[`${prefix}_province`] || ''
+            const country = data[`${prefix}_country`] || ''
+
+            const fullplace = [municipality, province, country].filter(Boolean).join(', ')
+
+            const fullPlaceField = form.getTextField(`${prefix}_place_birth`)
+
+            adjustTextFieldSizeAndFit(pdfDoc, fullPlaceField, fullplace, helveticaFont)
+        }
+
+        setPlaceofBirth('groom')
+        setPlaceofBirth('bride')
+
         // Define the fields in the form
         const fields = [
             'header_province',
@@ -966,9 +1028,7 @@ async function print_decided_license(formData, params) {
             'groom_middle_name',
             'groom_last_name',
             'groom_age',
-            'groom_municipality',
-            'groom_province',
-            'groom_country',
+
             'groom_sex',
             'groom_citizenship',
             'groom_residence',
@@ -997,9 +1057,7 @@ async function print_decided_license(formData, params) {
             'bride_middle_name',
             'bride_last_name',
             'bride_age',
-            'bride_municipality',
-            'bride_province',
-            'bride_country',
+
             'bride_sex',
             'bride_citizenship',
             'bride_residence',
@@ -1026,21 +1084,17 @@ async function print_decided_license(formData, params) {
             'bride_ctc_at'
         ]
 
-        const fields_to_avoid = [
+        const fields_need_adjustment = [
             'groom_contract_marriage_with',
             'bride_contract_marriage_with',
-            'groom_municipality',
-            'groom_province',
-            'groom_country',
+
             'groom_residence',
             'groom_father_residence',
             'groom_mother_residence',
             'groom_person_who_gave_consent',
             'groom_person_who_gave_consent_residence',
 
-            'bride_municipality',
-            'bride_province',
-            'bride_country',
+
             'bride_residence',
             'groom_father_residence',
             'bride_mother_residence',
@@ -1052,7 +1106,7 @@ async function print_decided_license(formData, params) {
             const field = form.getTextField(fieldName)
             const fieldValue = data[fieldName] || ''
 
-            if (fields_to_avoid.includes(fieldName)) {
+            if (fields_need_adjustment.includes(fieldName)) {
                 adjustTextFieldSizeAndFit(
                     pdfDoc,
                     field,

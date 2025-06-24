@@ -12,8 +12,13 @@
                 <PrintManager :active_pdf_link="active_pdf_link" :active_pdf="active_pdf"
                     :count="document_file_count" />
 
+                <button @click="show_timeline = !show_timeline"
+                    class="border h-7 text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 w-fit tracking-wide"><font-awesome-icon
+                        icon="fa-solid fa-timeline" /></button>
                 <button @click="exit_btn"
                     class="border h-7 text-sm bg-white shadow-sm rounded-sm hover:bg-gray-300 outline-none font-medium px-2 w-20 tracking-wide">Exit</button>
+
+
             </div>
         </div>
 
@@ -86,6 +91,16 @@
                 </div>
             </div>
         </div>
+
+        <DateTree v-if="show_timeline" @close="show_timeline = false" :dates="[
+            { date: details?.date_filed, title: 'Date Filed', description: 'Date Filed' },
+            { date: details?.notice_posting, title: 'Notice of Posting' },
+            { date: details?.certificate_posting_start, title: 'Certififate of Posting', description: 'Start of Certificate of Posting' },
+            { date: details?.certificate_posting_end, title: 'Certificate of Posting', description: 'End of Certificate of Posting' },
+            { date: details?.petition_date_issued, title: 'Date Issued' },
+            { date: details?.petition_date_granted, title: 'Date Granted' },
+        ]" />
+
     </div>
 </template>
 
@@ -93,6 +108,7 @@
 import { computed, onMounted, ref } from 'vue';
 import PDFViewerWorker from './PDFViewerWorker.vue';
 import PrintManager from './PrintManager.vue'; // <-- Import the new component
+import DateTree from './DateTree.vue';
 
 const emit = defineEmits(['exit-btn']);
 
@@ -101,6 +117,7 @@ const props = defineProps({
     details: { type: [String, Object, Array] }
 });
 
+const show_timeline = ref(false);
 const pdfs = ref(props.pdf_data);
 const active_pdf = ref(null);
 const active_pdf_link = ref(null);
