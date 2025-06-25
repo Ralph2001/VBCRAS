@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, webUtils } from 'electron'
+import { app, contextBridge, ipcRenderer, webUtils } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 const api = {}
@@ -14,6 +14,14 @@ if (process.contextIsolated) {
     window.electron = electronAPI
     window.api = api
 }
+
+contextBridge.exposeInMainWorld('vbcrasUpdateApi', {
+    appVersion: () => ipcRenderer.invoke('app-version'),
+    onUpdateStatus: (callback) =>
+        ipcRenderer.on('update-status', (_, msg) => callback(msg)),
+    onUpdateProgress: (callback) =>
+        ipcRenderer.on('update-progress', (_, data) => callback(data))
+})
 
 contextBridge.exposeInMainWorld('getPathApi', {
     showFilePath(file) {
@@ -287,11 +295,11 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     },
     getPrinters: async () => {
         try {
-            const result = await ipcRenderer.invoke('get-printers');
-            return result;
+            const result = await ipcRenderer.invoke('get-printers')
+            return result
         } catch (error) {
-            console.error('Error in preload getPrinters:', error);
-            return { success: false, message: error.message };
+            console.error('Error in preload getPrinters:', error)
+            return { success: false, message: error.message }
         }
     },
 
@@ -306,14 +314,20 @@ contextBridge.exposeInMainWorld('LocalCivilApi', {
     // }
     printPDF: async (base64Data, printerName, optionsJson, method, range) => {
         try {
-            const result = await ipcRenderer.invoke('print-pdf', base64Data, printerName, optionsJson, method, range);
-            return result;
+            const result = await ipcRenderer.invoke(
+                'print-pdf',
+                base64Data,
+                printerName,
+                optionsJson,
+                method,
+                range
+            )
+            return result
         } catch (error) {
-            console.error('Error in preload printPDFBase64:', error);
-            return { success: false, message: error.message };
+            console.error('Error in preload printPDFBase64:', error)
+            return { success: false, message: error.message }
         }
     }
-
 })
 
 contextBridge.exposeInMainWorld('UpdateApi', {

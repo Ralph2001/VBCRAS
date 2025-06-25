@@ -21,29 +21,29 @@ import Menu from "../components/Menu.vue";
 import Noice from "./Noice.vue";
 import ToastContainer from "../components/ToastContainer.vue";
 
-onMounted(() => {
-  window.UpdateApi.onUpdateCheck((event, info) => {
-    console.log('Checking for updates:', info);
-  });
+// onMounted(() => {
+//   window.UpdateApi.onUpdateCheck((event, info) => {
+//     console.log('Checking for updates:', info);
+//   });
 
-  window.UpdateApi.onUpdateAvailable((event, info) => {
-    console.log('Update available:', info);
-  });
-  window.UpdateApi.onUpdateNotAvailable((event, info) => {
-    console.log('Update not available:', info);
-  });
+//   window.UpdateApi.onUpdateAvailable((event, info) => {
+//     console.log('Update available:', info);
+//   });
+//   window.UpdateApi.onUpdateNotAvailable((event, info) => {
+//     console.log('Update not available:', info);
+//   });
 
-  window.UpdateApi.onUpdateDownloaded((event, info) => {
-    console.log('Update downloaded:', info);
-  });
+//   window.UpdateApi.onUpdateDownloaded((event, info) => {
+//     console.log('Update downloaded:', info);
+//   });
 
-  window.UpdateApi.onUpdateError((event, errorMessage) => {
-    console.error('Update error:', errorMessage);
-  });
-  window.UpdateApi.appVersion((event, app_versiong) => {
-    console.log('Hi')
-  });
-})
+//   window.UpdateApi.onUpdateError((event, errorMessage) => {
+//     console.error('Update error:', errorMessage);
+//   });
+//   window.UpdateApi.appVersion((event, app_versiong) => {
+//     console.log('Hi')
+//   });
+// })
 </script>
 
 <style scoped>

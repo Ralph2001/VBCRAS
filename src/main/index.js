@@ -29,8 +29,9 @@ import {
 import { generateFormPDF } from '../documents/forms/GenerateDocument'
 import { create_publication_letter } from '../documents/clerical/create_publication'
 import { generate_legitimation } from '../documents/legitimation/generatelegma'
-import { extractPageRange } from '../documents/extract'
+// import { extractPageRange } from '../documents/extract'
 import { printPdfMethod1, printPdfMethod2, printPdfMethod3 } from './printer'
+import { clearUpdateFlags, handleUpdates } from './updater'
 
 const log = require('electron-log')
 const path = require('path')
@@ -166,7 +167,6 @@ async function cleanupTempFolder() {
     }
 }
 
-
 ipcMain.handle('validate-path', async (_, filePath) => {
     return await validateDirectoryPath(filePath)
 })
@@ -186,7 +186,6 @@ ipcMain.handle('read-pdf-file', async (_, filePath) => {
         return { status: false, fileUrl: null }
     }
 })
-
 
 /**
  * Main Printer Opener
@@ -312,7 +311,6 @@ ipcMain.handle(
     }
 )
 
-
 // ==============================
 // Form Section
 // ==============================
@@ -330,8 +328,12 @@ ipcMain.handle(
     'saveFormPDF',
     async (_, { data, form_type, documentOwner, basePath }) => {
         const timestamp = Date.now()
-        const sanitizedFormType = validateAndSanitizeWhitespace(form_type, { sanitizeForFilename: true })
-        const sanitizedOwner = validateAndSanitizeWhitespace(documentOwner, { sanitizeForFilename: true })
+        const sanitizedFormType = validateAndSanitizeWhitespace(form_type, {
+            sanitizeForFilename: true
+        })
+        const sanitizedOwner = validateAndSanitizeWhitespace(documentOwner, {
+            sanitizeForFilename: true
+        })
         const fileName = `${sanitizedOwner}_${timestamp}.pdf`
 
         const year = new Date().getFullYear()
@@ -388,7 +390,6 @@ ipcMain.handle(
 // Ausf Section
 // ==============================
 
-
 ipcMain.handle('createLegitimation', async (event, formData) => {
     try {
         const Legitimation = generate_legitimation(formData)
@@ -411,7 +412,6 @@ ipcMain.handle('createAUSF', async (event, formData) => {
         console.log(error)
     }
 })
-
 
 // ==============================
 // Clerical Section
@@ -570,11 +570,11 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         const documentOwner =
             data.document_owner === 'N/A'
                 ? validateAndSanitizeWhitespace(data.petitioner_name, {
-                    sanitizeForFilename: true
-                })
+                      sanitizeForFilename: true
+                  })
                 : validateAndSanitizeWhitespace(data.document_owner, {
-                    sanitizeForFilename: true
-                })
+                      sanitizeForFilename: true
+                  })
 
         const date_filed = data.date_filed
         const year = new Date(date_filed).getFullYear().toString()
@@ -877,45 +877,9 @@ function showNotification(NOTIFICATION_TITLE, NOTIFICATION_BODY) {
  *
  */
 
-// Function to handle updates
-let isUpdateDownloaded = false;
+let mainWindow
 
-function handleUpdates(mainWindow) {
-    autoUpdater.autoDownload = true;
-    autoUpdater.checkForUpdatesAndNotify();
-
-    autoUpdater.on('checking-for-update', (info) => {
-        mainWindow.webContents.send('checking-for-update', info);
-    });
-
-    autoUpdater.on('update-available', (info) => {
-        showNotification(
-            'Update Available',
-            'A new update is ready for download. The process will begin shortly.'
-        );
-        mainWindow.webContents.send('update-available', info);
-    });
-
-    autoUpdater.on('update-not-available', (info) => {
-        mainWindow.webContents.send('update-not-available', info);
-    });
-
-    autoUpdater.on('update-downloaded', (info) => {
-        isUpdateDownloaded = true;
-        showNotification(
-            'Update Downloaded',
-            'The update has been downloaded. It will be installed after you quit the application.'
-        );
-        mainWindow.webContents.send('update-downloaded', info);
-    });
-
-    autoUpdater.on('error', (err) => {
-        log.error('Update error:', err);
-        mainWindow.webContents.send('update-error', err.message);
-    });
-}
-
-function mainWindow() {
+function createMainWindow() {
     const mainWindow = new BrowserWindow({
         width: 1060,
         height: 670,
@@ -930,17 +894,6 @@ function mainWindow() {
         }
     })
 
-    // mainWindow.setMinimumSize(1050, 500)
-
-    mainWindow.on('ready-to-show', () => {
-        mainWindow.show()
-    })
-
-    mainWindow.webContents.setWindowOpenHandler((details) => {
-        shell.openExternal(details.url)
-        return { action: 'deny' }
-    })
-
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
     } else {
@@ -949,42 +902,11 @@ function mainWindow() {
         })
     }
 
+    mainWindow.on('ready-to-show', () => {
+        mainWindow.show()
+    })
     ipcMain.handle('app-version', () => app.getVersion())
     handleUpdates(mainWindow)
-
-    mainWindow.on('close', (e) => {
-        if (isUpdateDownloaded) {
-            e.preventDefault();
-
-            dialog.showMessageBoxSync(mainWindow, {
-                type: 'info',
-                title: 'Installing Update',
-                message: 'Please wait while the update is being installed.',
-                buttons: ['OK'],
-                defaultId: 0
-            });
-
-            // Give UI time to show dialog before quitting
-            setTimeout(() => {
-                autoUpdater.quitAndInstall(false, true);
-            }, 1000);
-            return;
-        }
-
-        const choice = dialog.showMessageBoxSync(mainWindow, {
-            type: 'question',
-            buttons: ['Exit', 'Cancel'],
-            title: 'Confirm Exit',
-            message: 'Are you sure you want to exit?',
-            defaultId: 0,
-            cancelId: 1,
-            noLink: true
-        });
-
-        if (choice === 1) {
-            e.preventDefault();
-        }
-    });
 }
 
 app.whenReady().then(() => {
@@ -992,16 +914,11 @@ app.whenReady().then(() => {
     app.on('browser-window-created', (_, window) => {
         optimizer.watchWindowShortcuts(window)
     })
-    cleanupTempFolder()
-    // runPermissionController()
-    mainWindow()
 
-    // Registert Shortcut that can affect Suste,
-    // globalShortcut.register('CommandOrControl+R', () => { });
-    // globalShortcut.register('F5', () => { });
-    // globalShortcut.register('F12', () => { });
-    // globalShortcut.register('CommandOrControl+Shift+I', () => { });
-    // globalShortcut.register('CommandOrControl+Shift+R', () => { });
+    // This causes slow startup, so we disable it for now
+    // cleanupTempFolder()
+    clearUpdateFlags()
+    createMainWindow()
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) mainWindow()
@@ -1301,7 +1218,10 @@ ipcMain.handle('printMarriage', async (event, formData, params) => {
             await print_decided_license(formData, params)
 
         if (print_application_for_marriage_license.status) {
-            return { status: true, pdfbase64: print_application_for_marriage_license.pdfbase64 }
+            return {
+                status: true,
+                pdfbase64: print_application_for_marriage_license.pdfbase64
+            }
         }
     } catch (error) {
         console.error('Error in printing marriage application:', error)

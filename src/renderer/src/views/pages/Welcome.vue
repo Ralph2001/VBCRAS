@@ -8,25 +8,12 @@
 <template>
   <div class="flex flex-col h-[calc(100vh-100px)] relative w-full">
     <!-- Crtl + F -->
-    
+
     <div
       class="bg-transparent border h-full flex-1 rounded-sm flex md:flex-row sm:flex-col p-4 sm:px-10 md:lg:px-40 items-center flex-wrap">
-      <div class="flex flex-col grow items-center h-full justify-center px-10">
-        <!-- <div class="w-full flex justify-center">
-          <p class="font-semibold p-4 text-gray-700 text-2xl">System</p>
-        </div>
-
-        <div class="w-full flex flex-row gap-2 justify-center items-center">
-          <div v-for="app in system_class"
-            class="w-[10rem] h-[5rem] p-2 bg-gray-200 hover:cursor-pointer rounded flex items-center justify-center shadow hover:bg-gray-300 transition-all">
-            <p class="text-xs text-center font-semibold">
-
-              {{ app.name }}</p>
-          </div>
-        </div> -->
-
+      <div class="flex flex-col grow items-center py-4 h-full justify-center px-10">
         <div
-          class="flex flex-row gap-2 items-center text-lg uFppercase font-semibold text-nowrap text-gray-800 justify-center h-[5rem]">
+          class="flex flex-row mt-auto gap-2 items-center text-lg uFppercase font-semibold text-nowrap text-gray-800 justify-center h-[5rem]">
           <p class="transition-all" @mouseover="hoverTitle" ref="Vital">Vital</p>
           <p class="transition-all" @mouseover="hoverTitle" ref="Bridge">Bridge</p>
           <p class="transition-all" @mouseover="hoverTitle" ref="Civil">Civil</p>
@@ -51,19 +38,19 @@
           </p>
 
         </div>
+        <div class=" max-w-sm w-full mt-auto ml-auto flex flex-row gap-2">
+
+          <UpdateUI />
+        </div>
       </div>
 
 
-      <div class="absolute bottom-10 right-10 flex flex-row items-center gap-2">
-        <p class="text-xs text-gray-600">
-          App Version:
-        </p>
-        <p class="text-xs text-blue-800 font-medium">{{ appVersion }}</p>
-      </div>
+
 
     </div>
 
-    <div class="fixed flex flex-row sm:gap-5 md:gap-[5rem] bottom-0 right-0 left-0 px-10 py-2 bg-gray-100 shadow-lg border border-t">
+    <div
+      class="fixed flex flex-row sm:gap-5 md:gap-[5rem] bottom-0 right-0 left-0 px-10 py-2 bg-gray-100 shadow-lg border border-t">
 
       <div class="md:flex hidden md:flex-row lg:flex-row sm:flex-col sm:gap-2 md:gap-[5rem]">
         <div>
@@ -102,23 +89,24 @@ import { onMounted, ref } from "vue";
 import Carousel from "../../components/Carousel.vue";
 import Menu from "../../components/Menu.vue";
 import { useSetup } from "../../stores/Setting/setup.js";
+import UpdateUI from "../../components/UpdateUI.vue";
 
 
 const system_setting = useSetup()
 const appVersion = ref()
 
-onMounted(async () => {
-  system_setting.getSystemSetting()
+// onMounted(async () => {
+//   system_setting.getSystemSetting()
 
-  try {
-    const version = await window.UpdateApi.appVersion();
-    appVersion.value = 'v' + version; // Set the fetched version
-  } catch (error) {
-    console.error('Failed to fetch app version:', error);
-    appVersion.value = 'Error fetching version'; // Handle error
-  }
+//   try {
+//     const version = await window.UpdateApi.appVersion();
+//     appVersion.value = 'v' + version; // Set the fetched version
+//   } catch (error) {
+//     console.error('Failed to fetch app version:', error);
+//     appVersion.value = 'Error fetching version'; // Handle error
+//   }
 
-})
+// })
 
 const Vital = ref();
 const Bridge = ref();
