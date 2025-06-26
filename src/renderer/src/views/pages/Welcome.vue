@@ -13,7 +13,7 @@
       class="bg-transparent border h-full flex-1 rounded-sm flex md:flex-row sm:flex-col p-4 sm:px-10 md:lg:px-40 items-center flex-wrap">
       <div class="flex flex-col grow items-center py-4 h-full justify-center px-10">
         <div
-          class="flex flex-row mt-auto gap-2 items-center text-lg uFppercase font-semibold text-nowrap text-gray-800 justify-center h-[5rem]">
+          class="flex flex-row mt-auto gap-2 items-center text-lg font-inter font-semibold text-nowrap text-gray-800 justify-center h-[5rem]">
           <p class="transition-all" @mouseover="hoverTitle" ref="Vital">Vital</p>
           <p class="transition-all" @mouseover="hoverTitle" ref="Bridge">Bridge</p>
           <p class="transition-all" @mouseover="hoverTitle" ref="Civil">Civil</p>
@@ -23,7 +23,7 @@
           <p class="transition-all" @mouseover="hoverTitle" ref="System">System</p>
         </div>
         <div class="">
-          <p class="text-md font-normal text-center leading-7 tracking-wider text-gray-800">
+          <p class="text-md font-normal font-public text-center leading-7 tracking-wider text-gray-800">
             <span class="font-bold hover:scale-95 font-mono text-2xl">Vital Bridge</span>
             suggests a connection or link that is essential or crucial. In the context of
             a birth, death, and marriage record system, it could signify the pivotal role
@@ -53,7 +53,7 @@
       class="fixed flex flex-row sm:gap-5 md:gap-[5rem] bottom-0 right-0 left-0 px-10 py-2 bg-gray-100 shadow-lg border border-t">
 
       <div class="md:flex hidden md:flex-row lg:flex-row sm:flex-col sm:gap-2 md:gap-[5rem]">
-        <div>
+        <div  v-if="system_setting?.defaults.civil_registrar">
           <p class="text-sm text-slate-800 font-bold text-nowrap antialiased tracking-widest">
             {{ system_setting.defaults.civil_registrar }}
           </p>
@@ -61,14 +61,14 @@
             MUNICIPAL CIVIL REGISTRAR
           </p>
         </div>
-        <div>
+        <div v-if="system_setting?.defaults.mayor">
           <p class="text-sm text-slate-800 font-bold text-nowrap antialiased">
             {{ system_setting.defaults.mayor }}
           </p>
           <p class="text-xs text-yellow-400 font-semibold antialiased">MUNICIPAL MAYOR</p>
         </div>
       </div>
-      <div class="flex items-center sm:justify-end w-full md:ml-auto gap-2">
+      <div v-if="system_setting?.defaults.municipality && system_setting?.defaults.province" class="flex items-center sm:justify-end w-full md:ml-auto gap-2">
         <!-- <img src="../../assets/bayambang_logo.png" class="h-14 animate__animated animate__tada" alt="" srcset="" /> -->
         <div class="flex-col items-center">
           <p class="text-md text-slate-800 font-bold text-nowrap tracking-widest">

@@ -144,11 +144,14 @@ async function cleanupTempFolder() {
         )
         console.log('[DEBUG] Temp Path:', tempDir)
 
-        // Check access to the directory
-        await fsp.access(tempDir, fs.constants.R_OK | fs.constants.W_OK)
-        console.log('[Cleanup] Temp directory is accessible.')
+        // Skip if directory does not exist
+        try {
+            await fsp.access(tempDir, fs.constants.R_OK | fs.constants.W_OK)
+        } catch {
+            console.log('[Cleanup] Temp directory not found. Skipping cleanup.')
+            return
+        }
 
-        // Read all contents inside the directory
         const items = await fsp.readdir(tempDir)
         for (const item of items) {
             const itemPath = path.join(tempDir, item)
@@ -167,6 +170,7 @@ async function cleanupTempFolder() {
     }
 }
 
+
 ipcMain.handle('validate-path', async (_, filePath) => {
     return await validateDirectoryPath(filePath)
 })
@@ -175,18 +179,22 @@ ipcMain.handle('read-pdf-file', async (_, filePath) => {
         if (!filePath || typeof filePath !== 'string') {
             return { status: false, error: 'Invalid path type.' }
         }
-        // const resolvePath = path.resolve(filePath)
-        const data = fs.readFileSync(filePath)
-        if (data) {
-            return { status: true, fileUrl: data.toString('base64') }
-        }
-        return { status: false, fileUrl: null }
-    } catch (error) {
-        console.log(error)
-        return { status: false, fileUrl: null }
-    }
-})
 
+        const resolvedPath = path.isAbsolute(filePath)
+            ? filePath
+            : path.join(os.homedir(), filePath);
+
+        const data = fs.readFileSync(resolvedPath);
+        if (data) {
+            return { status: true, fileUrl: data.toString('base64') };
+        }
+
+        return { status: false, fileUrl: null };
+    } catch (error) {
+        console.log(error);
+        return { status: false, fileUrl: null };
+    }
+});
 /**
  * Main Printer Opener
  */
@@ -570,11 +578,11 @@ ipcMain.handle('proceedCreatePetition', async (event, formData) => {
         const documentOwner =
             data.document_owner === 'N/A'
                 ? validateAndSanitizeWhitespace(data.petitioner_name, {
-                      sanitizeForFilename: true
-                  })
+                    sanitizeForFilename: true
+                })
                 : validateAndSanitizeWhitespace(data.document_owner, {
-                      sanitizeForFilename: true
-                  })
+                    sanitizeForFilename: true
+                })
 
         const date_filed = data.date_filed
         const year = new Date(date_filed).getFullYear().toString()
@@ -905,6 +913,24 @@ function createMainWindow() {
     mainWindow.on('ready-to-show', () => {
         mainWindow.show()
     })
+
+    mainWindow.on('close', (e) => {
+        const choice = dialog.showMessageBoxSync(mainWindow, {
+            type: 'warning',
+            buttons: ['Cancel', 'Exit'],
+            defaultId: 1,
+            cancelId: 0,
+            title: 'Confirm Exit',
+            message: 'Are you sure you want to exit?',
+            detail: 'Any unsaved changes will be lost. Make sure to save your data before closing the application.'
+        });
+
+        if (choice === 0) {
+            e.preventDefault(); // Cancel close
+        }
+    });
+
+
     ipcMain.handle('app-version', () => app.getVersion())
     handleUpdates(mainWindow)
 }
@@ -916,7 +942,6 @@ app.whenReady().then(() => {
     })
 
     // This causes slow startup, so we disable it for now
-    // cleanupTempFolder()
     clearUpdateFlags()
     createMainWindow()
 
@@ -925,13 +950,13 @@ app.whenReady().then(() => {
     })
 })
 
-app.on('window-all-closed', () => {
+app.on('window-all-closed', async () => {
     if (process.platform !== 'darwin') {
         // Unregister all global shortcuts
         globalShortcut.unregisterAll()
 
         // Cleanup the temp folder
-        cleanupTempFolder()
+        await cleanupTempFolder()
 
         // Kill the Flask server if it's running
         if (flaskPID) {
@@ -946,9 +971,9 @@ app.on('window-all-closed', () => {
     }
 })
 
-app.on('before-quit', () => {
+app.on('before-quit', async () => {
     // Optional: Cleanup any resources before quitting
-    cleanupTempFolder()
+    await cleanupTempFolder()
     globalShortcut.unregisterAll()
 
     if (flaskPID) {
@@ -1172,13 +1197,18 @@ ipcMain.handle('open-file-folder', async (event, path) => {
     }
 })
 
-ipcMain.handle('openSpecifiedFolder', async (event, path) => {
+ipcMain.handle('openSpecifiedFolder', async (event, inputPath) => {
     try {
-        const folderpath = shell.openPath(path)
+        const fullPath = path.isAbsolute(inputPath)
+            ? inputPath
+            : path.join(os.homedir(), inputPath);
+
+        await shell.openPath(fullPath);
+        return true;
     } catch (error) {
-        return false
+        return false;
     }
-})
+});
 
 ipcMain.handle('get-user', async (event) => {
     /**

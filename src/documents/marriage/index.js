@@ -1398,7 +1398,11 @@ async function save_marriage_license_and_notice(formData, image) {
             await Promise.allSettled(imageSavePromises)
         }
 
-        return { status: true, filepath: outputDir }
+        const relativeFilePath = path.relative(userBasePath, outputDir)
+
+
+        return { status: true, filepath: relativeFilePath }
+
     } catch (error) {
         return {
             status: false,
