@@ -15,7 +15,7 @@
 
 
         <div class="h-[calc(100vh-200px)]">
-            <TableGrid :data="apl.application_marriage_license" :dataColumns="colDefs" :suppressRowTransform="true" />
+            <TableGrid :data="sortedMarriageLicenses" :dataColumns="colDefs" :suppressRowTransform="true" />
         </div>
 
         <transition name="fade-scale">
@@ -1208,6 +1208,27 @@ onMounted(() => {
 
 const apl = useApplicationMarriageLicense()
 
+const sortedMarriageLicenses = computed(() => {
+  return [...apl.application_marriage_license].sort((a, b) => {
+    const regA = a.registry_number
+    const regB = b.registry_number
+
+    // Case 1: both have registry_number
+    if (regA && regB) {
+      const [yearA, numA] = regA.split('-').map(Number)
+      const [yearB, numB] = regB.split('-').map(Number)
+      if (yearA !== yearB) return yearB - yearA
+      return numB - numA
+    }
+
+    // Case 2: one or both are blank — fallback to created_at
+    const dateA = new Date(a.created_at)
+    const dateB = new Date(b.created_at)
+    return dateB - dateA // newest first
+  })
+})
+
+
 onMounted(() => {
     auth.isAuthenticated()
     apl.getApplicationMarriageLicense()
@@ -1865,6 +1886,7 @@ const isUpdating = ref(false)
 const idToEdit = ref(null)
 const handleEdit = (data) => {
     modal.value = true
+    console.log(data)
     isUpdating.value = true
     idToEdit.value = data.id
     dataMapper(data)
@@ -2041,6 +2063,7 @@ const loadPreview = async () => {
 
 const handlePreview = async (record_data) => {
     selectedRecord.value = record_data
+    
     handlePreviewModal()
     await loadPreview()
 }
@@ -2134,9 +2157,19 @@ const colDefs = ref([
     },
 
     {
+        field: "registry_number",
+        headerName: "Registry Number",
+        filter: true,
+    },
+    {
+        field: "marriage_license_number",
+        headerName: "Marriage License No.",
+        filter: true,
+    },
+    {
         field: "date_of_receipt",
         headerName: "Date Receipt",
-        cellClass: 'font-medium',
+
         filter: true,
         valueGetter: (params) => {
             const rawDate = params.data.date_of_receipt;
@@ -2153,7 +2186,7 @@ const colDefs = ref([
     {
         field: "notice_date_posting",
         headerName: "Date Posting",
-        cellClass: 'font-medium',
+
         filter: true,
         valueGetter: (params) => {
             const rawDate = params.data.notice_date_posting;

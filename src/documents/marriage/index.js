@@ -667,7 +667,9 @@ async function generate_marriage_license(formData) {
             'groom_father_residence',
             'bride_mother_residence',
             'bride_person_who_gave_consent',
-            'bride_person_who_gave_consent_residence'
+            'bride_person_who_gave_consent_residence',
+            'groom_previously_married_dissolved',
+            'bride_previously_married_dissolved'
         ]
 
         fields.forEach((fieldName) => {
@@ -765,6 +767,10 @@ async function adjustTextFieldSizeAndFit(
             field.getName() === 'groom_person_who_gave_consent_residence' ||
             field.getName() === 'bride_person_who_gave_consent' ||
             field.getName() === 'bride_person_who_gave_consent_residence' ||
+
+            field.getName() === 'groom_previously_married_dissolved' ||
+            field.getName() === 'bride_previously_married_dissolved' ||
+
 
             // Adjustments for furnished copies
             field.getName() === 'copy_furnished1' ||
@@ -1099,7 +1105,11 @@ async function print_decided_license(formData, params) {
             'groom_father_residence',
             'bride_mother_residence',
             'bride_person_who_gave_consent',
-            'bride_person_who_gave_consent_residence'
+            'bride_person_who_gave_consent_residence',
+
+
+            'groom_previously_married_dissolved',
+            'bride_previously_married_dissolved'
         ]
 
         fields.forEach((fieldName) => {
