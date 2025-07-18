@@ -1209,23 +1209,23 @@ onMounted(() => {
 const apl = useApplicationMarriageLicense()
 
 const sortedMarriageLicenses = computed(() => {
-  return [...apl.application_marriage_license].sort((a, b) => {
-    const regA = a.registry_number
-    const regB = b.registry_number
+    return [...apl.application_marriage_license].sort((a, b) => {
+        const regA = a.registry_number
+        const regB = b.registry_number
 
-    // Case 1: both have registry_number
-    if (regA && regB) {
-      const [yearA, numA] = regA.split('-').map(Number)
-      const [yearB, numB] = regB.split('-').map(Number)
-      if (yearA !== yearB) return yearB - yearA
-      return numB - numA
-    }
+        // Case 1: both have registry_number
+        if (regA && regB) {
+            const [yearA, numA] = regA.split('-').map(Number)
+            const [yearB, numB] = regB.split('-').map(Number)
+            if (yearA !== yearB) return yearB - yearA
+            return numB - numA
+        }
 
-    // Case 2: one or both are blank — fallback to created_at
-    const dateA = new Date(a.created_at)
-    const dateB = new Date(b.created_at)
-    return dateB - dateA // newest first
-  })
+        // Case 2: one or both are blank — fallback to created_at
+        const dateA = new Date(a.created_at)
+        const dateB = new Date(b.created_at)
+        return dateB - dateA // newest first
+    })
 })
 
 
@@ -2063,7 +2063,7 @@ const loadPreview = async () => {
 
 const handlePreview = async (record_data) => {
     selectedRecord.value = record_data
-    
+
     handlePreviewModal()
     await loadPreview()
 }
@@ -2131,7 +2131,7 @@ const colDefs = ref([
 
         headerName: "Groom Name",
         cellClass: 'font-bold text-gray-800',
-        flex: 2,
+
         filter: true,
 
         valueGetter: (params) => {
@@ -2145,7 +2145,7 @@ const colDefs = ref([
 
         headerName: "Bride Name",
         cellClass: 'font-bold text-gray-800',
-        flex: 2,
+
         valueGetter: (params) => {
             const firstName = params.data.bride_first_name || '';
             const middleName = params.data.bride_middle_name || '';

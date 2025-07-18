@@ -1,15 +1,11 @@
 <template>
-  <div class="flex items-center" >
+  <div class="flex items-center">
     <input :disabled="props.readonly" @keydown.down="focusNextInput" @keydown.up="focusPreviousInput"
-      :tabindex="skip ? '-1' : '0'" :id="id" type="checkbox" :checked="modelValue"
-      :class="{
+      :tabindex="skip ? '-1' : '0'" :id="id" type="checkbox" :checked="modelValue" :class="{
         'border-red-400 focus:ring-red-500 focus:border-red-500 focus:bg-red-50': error,
-      }"
-      @change="$emit('update:modelValue', !modelValue)"
+      }" @change="$emit('update:modelValue', !modelValue)"
       class="w-8 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-      @focus="scrollToView"
-   
-      />
+      @focus="scrollToView" />
   </div>
 </template>
 

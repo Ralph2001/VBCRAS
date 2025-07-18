@@ -78,7 +78,7 @@
         <button
           class="rounded px-2.5 bg-gray-200 py-1 text-sm hover:bg-red-400 outline-none hover:text-white font-medium text-gray-700"
           @click="close_modal"> <font-awesome-icon icon="fa-solid fa-arrow-left" /> Return</button>
-    
+
       </template> -->
 
 
@@ -185,7 +185,7 @@
                       <CheckBox v-model="is_same_as_petitioner_name" @change="changes_document_owner" />
                       <p class="text-xs font-medium">Same as Petitioner Name</p>
                     </div>
-                    <!-- 
+                    <!--
                     {{ formData.petitioner_error_in }}
                     {{ formData.event_type }}
                     {{ is_same_as_petitioner_name }} -->
@@ -225,6 +225,8 @@
               </Box>
             </div>
           </div>
+
+
           <!-- 6th Event Date and Place-->
           <div class="flex sm:flex-col md:lg:flex-row gap-2">
             <div class="basis-[30%]">
@@ -263,6 +265,8 @@
               </Box>
             </div>
           </div>
+
+
           <!-- 7th Clerical Errors And Facts and Reasons-->
           <div class="flex flex-row flex-wrap gap-2">
             <!-- Subpart 1: Shows when Petition Type is CCE -->
@@ -442,6 +446,8 @@
               </Box>
             </div>
           </div>
+
+
           <!-- 8th Supporting Documents Note: Need to fix buttons and designs-->
           <div class="flex sm:flex-col md:lg:flex-row flex-wrap gap-2">
             <div class="grow">
@@ -493,6 +499,8 @@
               PAGE 2
             </p>
           </div>
+
+
           <!-- 10th Verification, Administering and CTC-->
           <div class="flex flex-wrap sm:flex-col md:lg:flex-row gap-2">
             <div class="basis-[50%]">
@@ -532,6 +540,8 @@
               </Box>
             </div>
           </div>
+
+
           <!-- 11th Action Taken-->
           <div class="flex flex-row gap-2">
 
@@ -584,6 +594,8 @@
 
 
           </div>
+
+
           <!-- 12th Payment and Date Preview-->
           <div class="flex sm:flex-col md:lg:flex-row gap-2">
             <div class=" flex flex-col  gap-2 basis-[35%]">
@@ -712,11 +724,11 @@
 <script setup>
 
 /**
- * 
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
+ *
  */
 
 import { usePetitions } from "../../stores/Petition/petitions.js";
@@ -803,11 +815,11 @@ const alertmodal_title = ref()
 const alertmodal_body = ref()
 const auth = AuthStore()
 /**
- * 
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
+ *
  */
 
 const province = ref(complete_province())
@@ -823,9 +835,9 @@ const municipality = computed(() => {
 const all_ = ref(all_address())
 
 /**
- * 
+ *
  * System Default Settings
- * 
+ *
  */
 const system_setting = useSetup()
 
@@ -1233,7 +1245,7 @@ function remove_supporting_documents() {
   }
 }
 
-// Document Changer Dynamically Change the Error in 
+// Document Changer Dynamically Change the Error in
 function change_event_selected_error_in() {
   changes_document_owner()
   formData.event_type === 'Birth' ? (formData.petitioner_error_in = 'my', formData.document_owner = 'N/A', formData.relation_owner = 'N/A') :
@@ -1259,7 +1271,7 @@ function change_document_owner_relation() {
 
 }
 
-// Migrant Changes 
+// Migrant Changes
 
 
 function change_migrant() {
@@ -1345,7 +1357,7 @@ const initialForm = {
 
   petitioner_name: '', // TESTING
   nationality: 'Filipino',
-  petitioner_address: '', // Testing 
+  petitioner_address: '', // Testing
   petitioner_error_in: '',
 
   document_owner: '',
@@ -1355,15 +1367,15 @@ const initialForm = {
 
 
   relation_owner: '',
-  event_date: '',// Testing 
+  event_date: '',// Testing
   event_country: 'Philippines',
-  event_province: system_setting.defaults.province || '',// Testing 
-  event_municipality: system_setting.defaults.municipality || '',// Testing 
-  registry_number: '',// Testing 
+  event_province: system_setting.defaults.province || '',// Testing
+  event_municipality: system_setting.defaults.municipality || '',// Testing
+  registry_number: '',// Testing
   filing_city_municipality: system_setting.defaults.municipality || '',
   filing_province: system_setting.defaults.province || '',
 
-  administering_officer_name: system_setting.defaults.civil_registrar || '', // Testing 
+  administering_officer_name: system_setting.defaults.civil_registrar || '', // Testing
   administering_officer_position: 'Municipal Civil Registrar', // Testing
   subscribe_sworn_date: new Date().toISOString().split('T')[0],
   subscribe_sworn_city_municipality: system_setting.defaults.municipality + ', ' + system_setting.defaults.province || '',
@@ -1428,7 +1440,7 @@ const initialForm = {
   ],
 
 
-  // Clerical Errors, 
+  // Clerical Errors,
 
   clerical_errors: [
     {
@@ -1439,7 +1451,7 @@ const initialForm = {
     }
   ],
 
-  // Reasons 
+  // Reasons
   reasons: [
     { error_num: '1', reason: '' }
   ],
@@ -1590,7 +1602,7 @@ const rules = computed(() => {
 
     /**
      *  Validation for Dynamically Changing List
-     * 
+     *
      */
 
 
@@ -1971,7 +1983,7 @@ const close_generated = () => {
   // router.go(0)
 
 }
-// 
+//
 
 
 const bgTexture = ref(
@@ -1983,7 +1995,7 @@ const bgTexture = ref(
 
 
 
-// This is Column Data in Datatable 
+// This is Column Data in Datatable
 
 
 const search = ref()
@@ -2240,16 +2252,23 @@ const colDefs = ref([
     filter: true,
   },
   {
-    headerName: "Document Status",
-    flex: 2,
-    pinned: "right",
-    lockPinned: true,
-    resizable: false,
-    cellRenderer: DocumentStatus,
-    cellClass: "text-center",
-    cellStyle: { overflow: "visible", border: "none" },
-    sortable: false,
+
+    cellClass: "font-medium tracking-wider w-full text-gray-600",
+    headerName: "Status",
+    flex: 1,
+    filter: true,
   },
+  // {
+  //   headerName: "Document Status",
+  //   flex: 2,
+  //   pinned: "right",
+  //   lockPinned: true,
+  //   resizable: false,
+  //   cellRenderer: DocumentStatus,
+  //   cellClass: "text-center",
+  //   cellStyle: { overflow: "visible", border: "none" },
+  //   sortable: false,
+  // },
   {
     headerName: "Action",
     cellStyle: { border: "none" },
