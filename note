@@ -1,0 +1,90 @@
+🧠 LOGIC FLOW FOR THE WEBSITE (No Online Payment)
+✅ 1. Browse Products
+Homepage shows featured clothing items
+
+Product Categories: Men, Women, Tops, Bottoms, etc.
+
+Each product page includes:
+
+Images
+
+Price
+
+Description
+
+Sizes available
+
+"Add to Inquiry" or “Reserve” button
+
+✅ 2. Inquiry Cart (Instead of Checkout)
+Users can add products to an Inquiry Cart (like a shopping cart)
+
+Instead of "Buy Now" → it's "Send Inquiry"
+
+✅ 3. Contact / Order Form
+When ready, the customer clicks "Send Inquiry"
+
+A form appears asking for:
+
+Full name
+
+Address (for shipping cost estimate)
+
+Phone number
+
+Preferred courier (e.g., J&T Express, LBC)
+
+Preferred payment method (e.g., GCash, bank transfer)
+
+Notes (e.g., size confirmation, color request)
+
+✅ 4. Owner Gets Notified
+Website sends an email or SMS to the owner with the order details
+
+Owner can manually reply via:
+
+Email
+
+Facebook Messenger
+
+Viber or SMS
+
+✅ 5. Negotiate & Finalize via Chat
+Owner and buyer agree on:
+
+Final price
+
+Shipping method
+
+Payment channel
+
+✅ 6. Manual Shipping (J&T Express)
+Once paid, the seller:
+
+Packs the item
+
+Books shipment via J&T mobile app or drops off at a branch
+
+Sends tracking number to customer
+
+✅ 7. Order Status (Optional on Site)
+You can show a "Track My Order" page (optional)
+
+OR just update customer by text/chat
+
+💡 Website Features You Need
+Feature	Description
+🖼 Product Catalog	Show clothing with price, photos, stock
+🛒 Inquiry Cart	Collect items without checkout
+📋 Inquiry Form	Collect buyer info & send to admin
+📧 Admin Notification	Email or dashboard to notify owner
+📱 Contact Integration	Link to Messenger, Viber, WhatsApp
+🚚 Courier Option	Let buyers choose J&T, LBC, etc.
+🖥 Optional CMS	Manage products easily via admin panel
+
+🔧 Tools/Platforms You Can Use
+Platform	Notes
+WordPress + WooCommerce	Customize checkout to remove payment & add "Send Inquiry"
+Shopify (with apps)	Modify checkout flow or use "request a quote" app
+Custom Website	Built from scratch with form handling and inquiry system
+Wix / Squarespace	Use “Contact to Buy” buttons linked to forms or messaging

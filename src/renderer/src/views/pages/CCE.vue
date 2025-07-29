@@ -791,6 +791,7 @@ import HowTo from "../../components/Form/HowTo.vue";
 import DocumentStatusModal from "../../components/Correction/DocumentStatusModal.vue";
 import IsPathAccessible from "../../components/IsPathAccessible.vue";
 import { useRouter } from "vue-router";
+import { format, isValid, parseISO } from "date-fns";
 // import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -2243,6 +2244,15 @@ const colDefs = ref([
     flex: 1,
     filter: true,
     cellClass: "font-medium tracking-wider w-full text-gray-600",
+    valueGetter: (params) => {
+      const rawDate = params.data.date_filed;
+
+      const parsedDate = parseISO(rawDate);
+
+      if (!isValid(parsedDate)) return '';
+
+      return format(parsedDate, 'MMMM dd, yyyy');
+    }
   },
   {
     field: "created_by_user.username",
