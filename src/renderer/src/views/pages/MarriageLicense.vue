@@ -153,11 +153,11 @@
             <!-- Main Content -->
             <div class="flex flex-col gap-4 max-w-screen-xl mx-auto w-full">
               <div v-if="currentStep === 0 || form_mode === 1" class="flex flex-col px-10  gap-2 justify-center">
-                <div class="flex flex-col gap-1 bg-blue-100 justify-center       p-2" v-if="form_mode === 1">
-                  <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[0] }}</p>
+                <div class="flex flex-col gap-1 bg-gray-200 justify-center       p-2" v-if="form_mode === 1">
+                  <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[0] }}</p>
                   <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                     steps[0]
-                    }}
+                  }}
                   </p>
                 </div>
                 <div class="grid grid-cols-1 gap-2 mb-auto">
@@ -182,12 +182,12 @@
               <div v-if="currentStep === 1 || form_mode === 1" class="flex flex-col px-10 justify-center  ">
                 <div class="grid grid-cols-1 gap-2">
 
-                  <div class="flex flex-col gap-1 bg-blue-100 justify-center       p-2" v-if="form_mode === 1">
-                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[1] }}
+                  <div class="flex flex-col gap-1 bg-gray-200 justify-center       p-2" v-if="form_mode === 1">
+                    <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[1] }}
                     </p>
                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                       steps[1]
-                      }}
+                    }}
                     </p>
                   </div>
 
@@ -289,11 +289,11 @@
               <div v-if="currentStep === 2 || form_mode === 1" class="flex flex-col gap-2 px-10 justify-center">
 
 
-                <div class="flex flex-col gap-1 bg-blue-100 justify-center       p-2" v-if="form_mode === 1">
-                  <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[2] }}</p>
+                <div class="flex flex-col gap-1 bg-gray-200 justify-center       p-2" v-if="form_mode === 1">
+                  <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[2] }}</p>
                   <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                     steps[2]
-                    }}
+                  }}
                   </p>
                 </div>
                 <div class="grid grid-cols-3 gap-1 items-end">
@@ -375,6 +375,16 @@
 
                 </div>
 
+
+                <!--  -->
+
+                <div
+                  class="flex items-center gap-2 mb-14 mt-6 w-full bg-blue-200 h-14 rounded-lg px-4 text-base text-blue-900 font-medium">
+                  ℹ️ A consent form will be generated automatically — <span class="font-bold">Groom aged 18–25
+                    years</span>.
+                </div>
+
+
               </div>
 
               <!-- Bride Details -->
@@ -384,12 +394,12 @@
 
                 <div class="grid grid-cols-1 gap-2">
 
-                  <div class="flex flex-col gap-1 bg-blue-100 justify-center       p-2" v-if="form_mode === 1">
-                    <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[3] }}
+                  <div class="flex flex-col gap-1 bg-gray-200 justify-center       p-2" v-if="form_mode === 1">
+                    <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[3] }}
                     </p>
                     <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                       steps[3]
-                      }}
+                    }}
                     </p>
                   </div>
                   <div class="grid grid-cols-3 gap-1 items-end">
@@ -489,11 +499,11 @@
               </div>
               <div v-if="currentStep === 4 || form_mode === 1" class="flex flex-col gap-2 px-10 justify-center">
 
-                <div class="flex flex-col gap-1 bg-blue-100 justify-center       p-2" v-if="form_mode === 1">
-                  <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[4] }}</p>
+                <div class="flex flex-col gap-1 bg-gray-200 justify-center       p-2" v-if="form_mode === 1">
+                  <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[4] }}</p>
                   <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                     steps[4]
-                    }}
+                  }}
                   </p>
                 </div>
 
@@ -576,14 +586,22 @@
 
                 </div>
 
+
+                <div
+                  class="flex items-center gap-2 mb-14 mt-6 w-full bg-blue-200 h-14 rounded-lg px-4 text-base text-blue-900 font-medium">
+                  ℹ️ A consent form will be generated automatically — <span class="font-bold">Bride aged 18–25
+                    years</span>.
+                </div>
+
+
               </div>
               <div v-if="currentStep === 5 || form_mode === 1" class="flex flex-col gap-2 px-10 justify-center">
 
-                <div class="flex flex-col gap-1 bg-blue-100 justify-center       p-2" v-if="form_mode === 1">
-                  <p class="font-bold text-lg uppercase  text-blue-600 leading-3">{{ steps[5] }}</p>
+                <div class="flex flex-col gap-1 bg-gray-200 justify-center       p-2" v-if="form_mode === 1">
+                  <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[5] }}</p>
                   <p class=" text-xs text-gray-600 text-semibold uppercase">Please provide {{
                     steps[5]
-                    }}
+                  }}
                   </p>
                 </div>
 
@@ -607,13 +625,13 @@
               </div>
               <div v-if="currentStep === 6 || form_mode === 1" class="flex flex-col gap-2 px-10 justify-center mt-10">
 
-                <div class="flex flex-col gap-1 bg-blue-100 justify-center       p-2" v-if="form_mode === 1">
+                <div class="flex flex-col gap-1 bg-gray-200 justify-center       p-2" v-if="form_mode === 1">
                   <p class="font-bold text-lg uppercase  text-black leading-3">{{ steps[6]
-                    }}
+                  }}
                   </p>
                   <p class=" text-xs text-gray-600 text-semibold uppercase mt-2">Please provide {{
                     steps[6]
-                    }} Details
+                  }} Details
                   </p>
                 </div>
                 <div class="w-80 mt-8">
@@ -655,6 +673,8 @@
                         :error="v$.notice_groom_mother.$error" />
 
                     </div>
+
+
                   </div>
                   <!-- Bride -->
                   <div class="flex flex-col gap-2 justify-center  items-center">

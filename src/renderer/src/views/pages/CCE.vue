@@ -273,12 +273,7 @@
             <div class="grow" v-if="formData.petition_type === 'CCE'">
               <Box title="The clerical error(s) to be corrected is (are): " width="w-full">
                 <div class="flex flex-col gap-2 w-full font-bold relative">
-                  <div class="absolute w-auto -top-4 right-4">
-                    <p class="text-xs italic text-gray-400 font-normal">
-                      <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1 text-blue-600" />
-                      <span class="font-medium text-blue-600">Crtl + Space</span> to add new column
-                    </p>
-                  </div>
+
                   <div class="flex flex-row w-full items-center justify-center gap-2 mt-4">
                     <div class="basis-[10%]">
                       <p class="text-sm text-center">Item No.</p>
@@ -299,40 +294,83 @@
 
                   <p class="text-xs text-gray-300"> {{ formData.clerical_errors.length }}</p>
 
-                  <div class="flex flex-row w-full items-center gap-2" v-for="(value, index) in clerical_errors_items"
-                    :key="index">
-                    <div class="basis-[10%]">
-                      <Input center type="number" @keydown="(event) => handleKeyClerical(event, 1)"
-                        @change="generate_granted_text()" v-model="formData.clerical_errors[index].error_num" nolabel />
-                    </div>
 
-                    <div class="grow">
-                      <InputAutoComplete @keydown="(event) => handleKeyClerical(event, 2)"
-                        @change="generate_granted_text()" nolabel @keydown.ctrlKey="add_clerical_error()"
-                        :suggestion_data="petitions.saved_clerical"
-                        v-model="formData.clerical_errors[index].description" />
+
+                  <draggable v-model="formData.clerical_errors" item-key="error_num" handle=".drag-handle"
+                    animation="200" class="w-full flex flex-col gap-2">
+                    <template #item="{ element, index }">
+                      <div class="flex flex-row w-full items-center gap-2">
+                        <!-- drag icon -->
+                        <div class="cursor-move drag-handle text-gray-400 px-2">
+                          <font-awesome-icon icon="fa-solid fa-grip-vertical" />
+                        </div>
+
+                        <!-- Item No -->
+                        <div class="basis-[14%]">
+                          <!-- <Input center type="number"  v-model="element.error_num"
+                            nolabel /> -->
+                          <Input nolabel @keydown="(event) => handleKeyClerical(event, 4)"
+                            @change="generate_granted_text()"  v-model="element.error_num" />
+                        </div>
+
+                        <!-- Description -->
+                        <div class="grow">
+                          <InputAutoComplete @keydown="(event) => handleKeyClerical(event, 2)"
+                            @change="generate_granted_text()" nolabel @keydown.ctrlKey="add_clerical_error()"
+                            :suggestion_data="petitions.saved_clerical" v-model="element.description" />
+                        </div>
+
+                        <!-- From -->
+                        <div class="grow">
+                          <Input nolabel @keydown="(event) => handleKeyClerical(event, 3)"
+                            @change="generate_granted_text()" cap v-model="element.error_description_from" />
+                        </div>
+
+                        <!-- To -->
+                        <div class="grow">
+                          <Input nolabel @keydown="(event) => handleKeyClerical(event, 4)"
+                            @change="generate_granted_text()" cap v-model="element.error_description_to" />
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex flex-row gap-1 items-center justify-center">
+                          <button tabindex="-1" type="button" v-if="formData.clerical_errors.length > 1"
+                            @click="remove_clerical_error(index)"
+                            class="text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded px-2 py-1 shadow transition-all"
+                            title="Remove this entry">
+                            <font-awesome-icon icon="fa-solid fa-trash" />
+                          </button>
+
+                          <button tabindex="-1" type="button" v-if="formData.clerical_errors.length > 1"
+                            @click="add_clerical_next_to_this(index)"
+                            class="text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded px-2 py-1 shadow transition-all"
+                            title="Insert entry below">
+                            <font-awesome-icon icon="fa-solid fa-arrow-turn-down" />
+                          </button>
+                        </div>
+                      </div>
+                    </template>
+                  </draggable>
+
+
+                  <div class="flex justify-between items-center gap-2 mt-3">
+
+
+                    <div class=" w-auto -top-4 right-4">
+                      <p class="text-sm italic text-gray-400 font-normal">
+                        <font-awesome-icon icon="fa-solid fa-circle-info" class="me-1 text-blue-600" />
+                        <kbd>Ctrl</kbd> + <kbd>Space</kbd> to add new <strong>row</strong>
+                      </p>
                     </div>
-                    <div class="grow">
-                      <Input nolabel @keydown="(event) => handleKeyClerical(event, 3)" @change="generate_granted_text()"
-                        cap v-model="formData.clerical_errors[index].error_description_from" />
-                    </div>
-                    <div class="grow">
-                      <Input nolabel @keydown="(event) => handleKeyClerical(event, 4)" @change="generate_granted_text()"
-                        cap v-model="formData.clerical_errors[index].error_description_to" />
-                    </div>
-                  </div>
-                  <div class="flex justify-end gap-2 mt-3">
-                    <button @keydown.down="focusNextInput" @keydown.up="focusPreviousInput" type="button"
-                      @click="remove_clerical_error()" v-if="clerical_errors_items.length > 1" tabindex="-1"
-                      class="py-1 px-3 font-mono text-sm font-medium text-white bg-red-400 rounded-sm tracking-wider hover:bg-red-500 hover:shadow-md transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                      Remove
-                    </button>
-                    <button type="button" @click="add_clerical_error()" tabindex="-1" @keydown.down="focusNextInput"
+                    <button type="button" @click="add_clerical_error()" @keydown.down="focusNextInput"
                       @keydown.up="focusPreviousInput"
-                      class="py-1 px-3 font-mono text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded-sm tracking-wider transition-all shadow-sm hover:text-white focus:z-10 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                      Add
+                      class="py-1 px-3 h-10  text-sm font-medium text-white bg-green-400 hover:bg-green-500 hover:shadow-md rounded tracking-wider transition-all shadow-sm hover:text-white focus:z-10  ">
+                      Add New Entry
                     </button>
                   </div>
+
+
+
                 </div>
               </Box>
             </div>
@@ -419,6 +457,7 @@
               </Box>
             </div>
             <!-- Subpart 3: Shows when Petition Type CCE -->
+            <!-- This will automatic -->
             <div class="basis-[100%]" v-if="formData.petition_type !== 'CFN'">
               <Box title="The facts/reasons for filing this petition are the following. " width="w-auto">
                 <div class="flex flex-col w-full" v-if="
@@ -426,12 +465,16 @@
                   formData.event_type === 'Birth' &&
                   formData.republic_act_number === '10172'
                 ">
-                  <div class="flex flex-row w-full p-2 gap-2" v-for="(value, index) in clerical_errors_items"
+                  <div class="flex flex-row w-full p-2 gap-2" v-for="(value, index) in formData.clerical_errors"
                     :key="index">
-                    <div class="basis-[20%] px-8 flex items-center">
+                    <div class="basis-[20%] px-8 flex items-start justify-start flex-col">
                       <label :for="index" class="text-sm text-nowrap w-full font-semibold tracking-wide text-gray-900">
                         For error No. {{ index + 1 }}:
                       </label>
+                      <p v-if="formData.clerical_errors.length > 0" class="italic text-gray-600 text-xs">Item No. <span
+                          class="text-blue-600 font-semibold">
+                          ({{ formData.clerical_errors[index].error_num }})
+                        </span></p>
                     </div>
                     <div class="flex flex-col grow">
                       <textarea rows="3" :id="index" v-model="formData.reasons[index].reason"
@@ -793,6 +836,9 @@ import IsPathAccessible from "../../components/IsPathAccessible.vue";
 import { useRouter } from "vue-router";
 import { format, isValid, parseISO } from "date-fns";
 // import { useRouter } from "vue-router";
+
+import draggable from 'vuedraggable'
+
 
 const router = useRouter();
 
@@ -1191,28 +1237,28 @@ const next_input = (event, to_add) => {
 
 // Function that adds clerical error field
 function add_clerical_error() {
-  clerical_errors_items.value.push('');
-  console.log(clerical_errors_items.value)
-  const newClericalError = {
+
+  const nextErrorNumn = formData.clerical_errors.length + 1
+
+  formData.clerical_errors.push({
     error_num: '',
     description: '',
     error_description_from: '',
     error_description_to: '',
-  };
+  });
 
-  formData.clerical_errors.push(newClericalError);
-
+  // If the republic act number is 10172, we also add a reason and action
   if (formData.republic_act_number === '10172') {
     // Reason
     const newReason = {
-      error_num: clerical_errors_items.value.length.toString(),
+      error_num: nextErrorNumn,
       reason: ''
     }
     formData.reasons.push(newReason)
 
     // Actions
     const newActions = {
-      error_num: clerical_errors_items.value.length.toString(),
+      error_num: nextErrorNumn,
       action_decision: 'Granted',
       action_text: ''
     }
@@ -1220,15 +1266,51 @@ function add_clerical_error() {
   }
 
 }
-function remove_clerical_error() {
-  if (clerical_errors_items.value.length > 1) {
-    const indexToRemove = clerical_errors_items.value.length - 1;
-    clerical_errors_items.value.splice(indexToRemove, 1);
-    formData.clerical_errors.splice(indexToRemove, 1);
-    if (formData.republic_act_number === '10172') {
-      formData.reasons.splice(indexToRemove, 1);
-    }
+
+function add_clerical_next_to_this(index) {
+  const nextErrorNum = formData.clerical_errors.length + 1;
+
+  const newEntry = {
+    error_num: '',
+    description: '',
+    error_description_from: '',
+    error_description_to: '',
+  };
+
+  formData.clerical_errors.splice(index + 1, 0, newEntry); // Insert after current index
+
+  if (formData.republic_act_number === '10172') {
+    const newReason = {
+      error_num: nextErrorNum,
+      reason: '',
+    };
+    formData.reasons.splice(index + 1, 0, newReason);
+
+    const newActions = {
+      error_num: nextErrorNum,
+      action_decision: 'Granted',
+      action_text: '',
+    };
+    formData.petition_actions.splice(index + 1, 0, newActions);
   }
+}
+
+
+
+function remove_clerical_error(indexToRemove) {
+  formData.clerical_errors.splice(indexToRemove, 1);
+  if (formData.republic_act_number === '10172') {
+    formData.reasons.splice(indexToRemove, 1);
+  }
+
+  // if (clerical_errors_items.value.length > 1) {
+  //   const indexToRemove = clerical_errors_items.value.length - 1;
+  //   clerical_errors_items.value.splice(indexToRemove, 1);
+  //   formData.clerical_errors.splice(indexToRemove, 1);
+  //   if (formData.republic_act_number === '10172') {
+  //     formData.reasons.splice(indexToRemove, 1);
+  //   }
+  // }
 }
 
 function add_supporting_documents() {
@@ -2301,3 +2383,10 @@ const colDefs = ref([
 
 
 </script>
+
+<style scoped>
+.drag-handle:hover {
+  color: #3b82f6;
+  /* blue-500 */
+}
+</style>
