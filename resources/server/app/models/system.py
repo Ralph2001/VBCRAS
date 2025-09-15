@@ -3,16 +3,18 @@ from ..extensions import db, func, DateTime
 
 class SystemSettings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    
+
     province = db.Column(db.String(255))
     municipality = db.Column(db.String(255))
     civil_registrar = db.Column(db.String(255))
     mayor = db.Column(db.String(255))
     file_path = db.Column(db.String(455))
 
-    
+
     created_on = db.Column(DateTime(timezone=True), server_default=func.now())
     updated_on = db.Column(DateTime(timezone=True), server_default=func.now(),  onupdate=func.now(),  nullable=False)
+
+    
 class DateRules(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)

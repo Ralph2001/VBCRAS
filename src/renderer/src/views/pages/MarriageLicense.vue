@@ -286,6 +286,8 @@
 
                 </div>
               </div>
+
+
               <div v-if="currentStep === 2 || form_mode === 1" class="flex flex-col gap-2 px-10 justify-center">
 
 
@@ -638,6 +640,8 @@
                   <InputMarriage label="Date of Posting" type="date" v-model="formData.notice_date_posting"
                     :error="v$.notice_date_posting.$error" />
                 </div>
+
+                
                 <div class="grid grid-cols-2 gap-4 mt-4">
                   <!-- Groom -->
                   <div class="flex flex-col gap-2 justify-center  items-center">
