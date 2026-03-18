@@ -47,7 +47,8 @@ module.exports = {
             fontFamily: {
                 inter: ['Inter', 'sans-serif'],
                 roboto: ['Roboto', 'sans-serif'],
-                public: ['Public Sans', 'sans-serif']
+                public: ['Public Sans', 'sans-serif'],
+                times: ['Times New Roman', 'sans-serif']
 
             }
         }
