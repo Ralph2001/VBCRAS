@@ -4,41 +4,73 @@ import time
 import win32com.client
 import pythoncom
 import gc
+import win32com.client.dynamic
+
+# def convert_docx_to_pdf_word(docx_path, pdf_path, retries=3):
+#     """Convert DOCX to PDF using Microsoft Word with improved instance handling."""
+#     for attempt in range(retries):
+#         word = None
+#         doc = None
+#         try:
+#             pythoncom.CoInitialize()
+#             # Use DispatchEx to create a new instance regardless of existing ones
+#             word = win32com.client.DispatchEx('Word.Application')
+#             word.Visible = False  # Keep Word hidden
+
+#             doc = word.Documents.Open(docx_path)
+#             doc.SaveAs(pdf_path, FileFormat=17)  # PDF format
+#             print(f"[Word] Successfully converted '{docx_path}'")
+#             return True
+#         except Exception as e:
+#             print(f"[Word] Attempt {attempt + 1} failed: {str(e)}")
+#             time.sleep(2)  # Wait before retry
+#         finally:
+#             # Cleanup in reverse order of creation
+#             if doc:
+#                 doc.Close(SaveChanges=0)
+#                 del doc
+#             if word:
+#                 word.Quit()
+#                 del word
+#             # Release COM resources
+#             pythoncom.CoUninitialize()
+#             # Force garbage collection to ensure COM objects are released
+#             gc.collect()
+#             # Optional: Force kill any remaining WinWord processes
+#             # os.system('taskkill /f /im winword.exe 2>nul')
+#     return False
+
 
 def convert_docx_to_pdf_word(docx_path, pdf_path, retries=3):
-    """Convert DOCX to PDF using Microsoft Word with improved instance handling."""
     for attempt in range(retries):
         word = None
         doc = None
         try:
             pythoncom.CoInitialize()
-            # Use DispatchEx to create a new instance regardless of existing ones
-            word = win32com.client.DispatchEx('Word.Application')
-            word.Visible = False  # Keep Word hidden
-            
-            doc = word.Documents.Open(docx_path)
-            doc.SaveAs(pdf_path, FileFormat=17)  # PDF format
-            print(f"[Word] Successfully converted '{docx_path}'")
+            # USE DYNAMIC DISPATCH to bypass gen_py cache issues
+            word = win32com.client.dynamic.Dispatch('Word.Application')
+            word.Visible = False
+
+            # Use absolute paths (COM can be picky about relative paths)
+            abs_docx = os.path.abspath(docx_path)
+            abs_pdf = os.path.abspath(pdf_path)
+
+            doc = word.Documents.Open(abs_docx)
+            doc.SaveAs(abs_pdf, FileFormat=17)
             return True
         except Exception as e:
             print(f"[Word] Attempt {attempt + 1} failed: {str(e)}")
-            time.sleep(2)  # Wait before retry
+            time.sleep(2)
         finally:
-            # Cleanup in reverse order of creation
             if doc:
-                doc.Close(SaveChanges=0)
-                del doc
+                try: doc.Close(0)
+                except: pass
             if word:
-                word.Quit()
-                del word
-            # Release COM resources
+                try: word.Quit()
+                except: pass
             pythoncom.CoUninitialize()
-            # Force garbage collection to ensure COM objects are released
             gc.collect()
-            # Optional: Force kill any remaining WinWord processes
-            # os.system('taskkill /f /im winword.exe 2>nul')
     return False
-
 def convert_docx_to_pdf_wps(docx_path, pdf_path, retries=3):
     """Attempt to convert using WPS Office with retries and graceful cleanup."""
     wps = None
@@ -49,7 +81,7 @@ def convert_docx_to_pdf_wps(docx_path, pdf_path, retries=3):
             pythoncom.CoInitialize()
             wps = win32com.client.Dispatch('KWPS.Application')
             wps.Visible = False  # Keep WPS hidden
-            
+
             # Open the document
             doc = wps.Documents.Open(docx_path)
             doc.SaveCopyAs(pdf_path)  # Use SaveCopyAs for WPS
@@ -79,7 +111,7 @@ def convert_docx_to_pdf_wps(docx_path, pdf_path, retries=3):
 def convert_docx_to_pdf(docx_path, pdf_path):
     """Try to convert DOCX to PDF using Word, then WPS if Word fails."""
     print(f"Trying to convert '{docx_path}' to '{pdf_path}' using Microsoft Word...")
-    
+
     if convert_docx_to_pdf_word(docx_path, pdf_path):
         return True  # Conversion successful with Word
 
